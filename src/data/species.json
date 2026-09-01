@@ -1,0 +1,147 @@
+[
+  {
+    "id": "trucha_comun",
+    "nombre": "Trucha común",
+    "nombreCientifico": "Salmo trutta",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Especie protegida por cupo y talla mínima en la mayoría de cotos. Vedas estacionales estrictas.",
+    "equipo": {
+      "cana": "Caña de trucha ligera de acción rápida, 2.10-2.70 m (spinning ultraligero o caña de mosca #3-#5)",
+      "carrete": "Carrete spinning talla 1000-2000 con freno suave",
+      "linea": "Nylon 0.14-0.18 mm o final de línea de mosca del mismo diámetro",
+      "senuelosCebos": ["Cucharilla ondulante pequeña", "Mosca artificial (seca o ninfa)", "Lombriz natural donde esté permitido cebo natural"],
+      "tecnica": "Spinning fino aguas arriba o pesca a mosca en tramos de corriente; un solo anzuelo, preferible sin arponcillo"
+    }
+  },
+  {
+    "id": "trucha_arcoiris",
+    "nombre": "Trucha arcoíris",
+    "nombreCientifico": "Oncorhynchus mykiss",
+    "categoria": "introducida_repoblacion",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Sin cupo ni talla mínima en tramos habitados por esta especie. Solo mosca o cucharilla, un anzuelo sin arponcillo.",
+    "equipo": {
+      "cana": "Caña de spinning ligera 2.10-2.40 m o caña de mosca #4-#6",
+      "carrete": "Carrete spinning 1000-2000",
+      "linea": "Nylon 0.16-0.20 mm",
+      "senuelosCebos": ["Cucharilla giratoria/ondulante", "Mosca artificial"],
+      "tecnica": "Igual que trucha común: solo mosca artificial o cucharilla, un anzuelo sin arponcillo"
+    }
+  },
+  {
+    "id": "black_bass",
+    "nombre": "Black bass (perca americana)",
+    "nombreCientifico": "Micropterus salmoides",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐡",
+    "notas": "Especie invasora. Se fomenta su captura; en muchos embalses no hay límite de capturas.",
+    "equipo": {
+      "cana": "Caña de casting o spinning medium-heavy, 1.80-2.10 m, potencia 10-30 g",
+      "carrete": "Carrete casting (baitcasting) o spinning 2500-3000",
+      "linea": "Trenzado 0.12-0.16 mm + líder de fluorocarbono 0.30-0.40 mm",
+      "senuelosCebos": ["Señuelos topwater (poppers/walkers)", "Texas rig con creature bait", "Crankbait", "Spinnerbait"],
+      "tecnica": "Lanzados a estructuras (troncos, vegetación, orillas rocosas); topwater al amanecer/atardecer, profundidad media en horas centrales"
+    }
+  },
+  {
+    "id": "lucio",
+    "nombre": "Lucio",
+    "nombreCientifico": "Esox lucius",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🦈",
+    "notas": "Especie invasora de gran voracidad. Recomendada su extracción activa.",
+    "equipo": {
+      "cana": "Caña de spinning heavy 2.10-2.70 m, potencia 20-60 g",
+      "carrete": "Carrete spinning 4000 con buena capacidad de línea",
+      "linea": "Trenzado 0.18-0.25 mm + bajo de acero o fluorocarbono grueso (imprescindible, tiene dientes)",
+      "senuelosCebos": ["Cucharas grandes", "Swimbaits", "Jerkbaits"],
+      "tecnica": "Lanzados largos en zonas de vegetación acuática y cambios de profundidad; recuperación irregular"
+    }
+  },
+  {
+    "id": "carpa",
+    "nombre": "Carpa común",
+    "nombreCientifico": "Cyprinus carpio",
+    "categoria": "introducida_naturalizada",
+    "invasora": false,
+    "icono": "🐠",
+    "notas": "Muy extendida en embalses. No suele estar catalogada como invasora prioritaria, pero es alóctona.",
+    "equipo": {
+      "cana": "Caña de carpfishing 3.60 m, 2.75-3.5 lb de acción",
+      "carrete": "Carrete de carpfishing (frontal, big pit) 5000-8000 con baitrunner",
+      "linea": "Monofilamento 0.30-0.35 mm o trenzado con líder",
+      "senuelosCebos": ["Boilies", "Maíz dulce", "Pellets", "Masa/pan"],
+      "tecnica": "Pesca a fondo con montaje de plomada fija (hair rig), cebado previo de la zona (PVA/spod)"
+    }
+  },
+  {
+    "id": "barbo",
+    "nombre": "Barbo",
+    "nombreCientifico": "Luciobarbus guiraonis / L. graellsii",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Ciprínido autóctono habitual en el Mijares y afluentes.",
+    "equipo": {
+      "cana": "Caña de river/feeder 3.60-3.90 m, acción media",
+      "carrete": "Carrete spinning 3000-4000",
+      "linea": "Nylon 0.20-0.25 mm",
+      "senuelosCebos": ["Lombriz", "Masa/pasta de barbo", "Maíz"],
+      "tecnica": "Pesca a fondo en zonas de corriente moderada, con feeder o plomada corredera"
+    }
+  },
+  {
+    "id": "siluro",
+    "nombre": "Siluro",
+    "nombreCientifico": "Silurus glanis",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐋",
+    "notas": "El pez de agua dulce más grande de Europa (puede superar los 2 m y 100 kg). Introducido en 1974 en el Ebro, se ha extendido a varios embalses y ríos de la Comunitat Valenciana, incluido Castellón.",
+    "normativaEspecial": "⚠️ NORMATIVA ESPECÍFICA: en toda la Comunitat Valenciana está PROHIBIDA la tenencia, el transporte y la circulación de ejemplares de siluro, vivos o muertos. No se puede devolver al agua ni llevárselo a casa. Si capturas uno, debes notificarlo a los agentes medioambientales de la zona lo antes posible.",
+    "equipo": {
+      "cana": "Caña específica de siluro o de depredadores pesados, 2,10-2,70 m, potencia alta (100-300 g para pesca a cebo/clonk; combos más ligeros de 10-25 g solo para spinning con señuelo)",
+      "carrete": "Carrete de gran capacidad y freno potente: talla 5000-6000 para señuelo, 8000-10000 para cebo vivo/muerto",
+      "linea": "Trenzado 0,30-0,40 mm (14-20 kg) + bajo de línea de nailon o fluorocarbono grueso, 0,40-0,50 mm, 1,20-1,80 m",
+      "senuelosCebos": ["Pez muerto o vivo (donde esté permitido)", "Swimbaits y vinilos grandes", "Señuelo de percusión para técnica \"clonk\"", "Pellets con flotador submarino"],
+      "tecnica": "Pesca a fondo en zonas profundas cerca de refugios (puentes, pecios, agujeros de orilla), sobre todo al atardecer y de noche, cuando el siluro está más activo. Técnica \"clonk\" desde embarcación con sonda para localizarlo."
+    }
+  },
+  {
+    "id": "cangrejo_americano",
+    "nombre": "Cangrejo americano",
+    "nombreCientifico": "Procambarus clarkii",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🦞",
+    "notas": "Especie invasora. Su captura suele estar permitida y recomendada, revisar normativa local.",
+    "equipo": {
+      "cana": "No requiere caña: se captura con reteles/nasas o a mano en orilla (verificar normativa local sobre artes permitidas)",
+      "carrete": "No aplica",
+      "linea": "No aplica",
+      "senuelosCebos": ["Cebo de pescado o hígado en nasa"],
+      "tecnica": "Colocación de reteles/nasas cerca de la orilla al atardecer, revisión al amanecer (verificar si está permitido en la zona)"
+    }
+  },
+  {
+    "id": "gambusia",
+    "nombre": "Gambusia",
+    "nombreCientifico": "Gambusia holbrooki",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐠",
+    "notas": "Pez invasor de pequeño tamaño, compite con especies autóctonas amenazadas.",
+    "equipo": {
+      "cana": "No es objetivo habitual de pesca deportiva por su tamaño",
+      "carrete": "No aplica",
+      "linea": "No aplica",
+      "senuelosCebos": [],
+      "tecnica": "No es una especie objetivo de pesca recreativa habitual"
+    }
+  }
+]

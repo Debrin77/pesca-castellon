@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Pesca Castellón",
+    "slug": "pesca-castellon",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#2e7d32"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tuusuario.pescacastellon",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para avisarte si te acercas o estás dentro de un coto o zona vedada, y para mostrarte las zonas libres más cercanas."
+      }
+    },
+    "android": {
+      "package": "com.tuusuario.pescacastellon",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "TU_API_KEY_DE_GOOGLE_MAPS_AQUI"
+        }
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "name": "Pesca Castellón",
+      "shortName": "Pesca CS",
+      "themeColor": "#1b5e3f",
+      "backgroundColor": "#f4f7f5",
+      "lang": "es"
+    },
+    "experiments": {
+      "baseUrl": "/pesca-castellon"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usamos tu ubicación para avisarte de cotos/vedas cercanos y mostrarte zonas libres."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#1b5e3f"
+        }
+      ]
+    ]
+  }
+}

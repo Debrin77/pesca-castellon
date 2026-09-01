@@ -1,0 +1,312 @@
+[
+  {
+    "id": "embalse_arenos",
+    "nombre": "Embalse de Arenós (Arenoso)",
+    "tipo": "embalse",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Ciprinícola",
+    "rio": "Río Mijares",
+    "municipio": "Puebla de Arenoso / Montanejos",
+    "lat": 40.0867,
+    "lng": -0.5471,
+    "radioAproxKm": 3.5,
+    "descripcion": "Embalse de media montaña rodeado de pinares. Aguas limpias pero con fuerte estiaje estacional.",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "septiembre",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE ARENÓS",
+    "saihFichaId": 266
+  },
+  {
+    "id": "embalse_sichar",
+    "nombre": "Embalse de Sichar",
+    "tipo": "embalse",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Ciprinícola",
+    "rio": "Río Mijares",
+    "municipio": "Onda",
+    "lat": 40.0105,
+    "lng": -0.2332,
+    "radioAproxKm": 2.5,
+    "descripcion": "Aguas abajo de Arenós, en la cuenca baja del Mijares.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo",
+      "siluro"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "junio",
+        "julio",
+        "agosto"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE SICHAR",
+    "saihFichaId": 247
+  },
+  {
+    "id": "embalse_maria_cristina",
+    "nombre": "Embalse de María Cristina",
+    "tipo": "embalse",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Ciprinícola",
+    "rio": "Rambla de la Viuda",
+    "municipio": "Alcora",
+    "lat": 40.0282,
+    "lng": -0.1619,
+    "radioAproxKm": 2.5,
+    "descripcion": "Embalse en la Rambla de la Viuda, muy popular para carpfishing y black bass.",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "lucio",
+      "siluro"
+    ],
+    "mejoresEpocas": {
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "black_bass": [
+        "marzo",
+        "abril",
+        "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE MARÍA CRISTINA",
+    "saihFichaId": 248
+  },
+  {
+    "id": "rio_villahermosa_alto",
+    "nombre": "Río Villahermosa - tramos altos (Coto Benagés / Ludiente)",
+    "tipo": "rio_coto",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Salmonícola",
+    "rio": "Río Villahermosa",
+    "municipio": "Ludiente / Benagés",
+    "lat": 39.98,
+    "lng": -0.545,
+    "radioAproxKm": 2,
+    "descripcion": "Cabecera fría del Villahermosa, hábitat de trucha común. Aguas abajo, cerca del embalse de Arenoso, ya no hay trucha (agua demasiado cálida en verano).",
+    "especies": [
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio"
+      ]
+    },
+    "saihEstacion": null
+  },
+  {
+    "id": "rio_palancia_regajo",
+    "nombre": "Embalse del Regajo / Río Palancia (Jérica-Teresa)",
+    "tipo": "mixto",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Salmonícola / Ciprinícola mixto",
+    "rio": "Río Palancia",
+    "municipio": "Jérica / Teresa",
+    "lat": 39.8899,
+    "lng": -0.5245,
+    "radioAproxKm": 2.5,
+    "descripcion": "Tramos libres sin muerte en el Palancia, con zonas de embalse y río.",
+    "especies": [
+      "trucha_comun",
+      "black_bass",
+      "barbo"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "marzo",
+        "abril",
+        "mayo"
+      ],
+      "black_bass": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE REGAJO",
+    "saihFichaId": 221
+  },
+  {
+    "id": "rio_mijares_puebla_arenoso_libre",
+    "nombre": "Río Mijares - Puebla de Arenoso (Libre sin muerte)",
+    "tipo": "rio_libre",
+    "estadoZona": "libre_sin_muerte",
+    "vocacionOficial": "Salmonícola - captura y suelta",
+    "rio": "Río Mijares",
+    "municipio": "Puebla de Arenoso",
+    "lat": 40.095,
+    "lng": -0.5,
+    "radioAproxKm": 2,
+    "descripcion": "Tramo de aguas libres (sin necesidad de permiso de coto) pero en régimen de captura y suelta (\"sin muerte\"): todo pez capturado debe devolverse vivo al agua. Sigue siendo obligatoria la licencia de pesca continental.",
+    "especies": [
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio"
+      ]
+    },
+    "saihEstacion": null
+  },
+  {
+    "id": "rio_palancia_teresa_libre",
+    "nombre": "Río Palancia - Teresa (Libre sin muerte)",
+    "tipo": "rio_libre",
+    "estadoZona": "libre_sin_muerte",
+    "vocacionOficial": "Salmonícola - captura y suelta",
+    "rio": "Río Palancia",
+    "municipio": "Teresa",
+    "lat": 39.87,
+    "lng": -0.58,
+    "radioAproxKm": 2,
+    "descripcion": "Tramo libre en régimen de captura y suelta. Aguas frías de cabecera, buen hábitat para trucha común.",
+    "especies": [
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "marzo",
+        "abril",
+        "mayo"
+      ]
+    },
+    "saihEstacion": null
+  },
+  {
+    "id": "rio_palancia_teresa_bejis_libre",
+    "nombre": "Río Palancia - Teresa y Bejís (Libre sin muerte)",
+    "tipo": "rio_libre",
+    "estadoZona": "libre_sin_muerte",
+    "vocacionOficial": "Salmonícola - captura y suelta",
+    "rio": "Río Palancia",
+    "municipio": "Teresa / Bejís",
+    "lat": 39.858,
+    "lng": -0.565,
+    "radioAproxKm": 2.5,
+    "descripcion": "Tramo libre entre Teresa y Bejís, régimen de captura y suelta. Continúa aguas abajo del tramo de Teresa.",
+    "especies": [
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "marzo",
+        "abril",
+        "mayo"
+      ]
+    },
+    "saihEstacion": null
+  },
+  {
+    "id": "embalse_regajo_libre",
+    "nombre": "Embalse del Regajo (Libre sin muerte)",
+    "tipo": "mixto_libre",
+    "estadoZona": "libre_sin_muerte",
+    "vocacionOficial": "Salmonícola - captura y suelta",
+    "rio": "Río Palancia",
+    "municipio": "Jérica",
+    "lat": 39.8899,
+    "lng": -0.5245,
+    "radioAproxKm": 1.5,
+    "descripcion": "Zona del embalse del Regajo en régimen libre de captura y suelta, junto al tramo controlado de Jérica-Teresa.",
+    "especies": [
+      "trucha_comun",
+      "black_bass"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "marzo",
+        "abril",
+        "mayo"
+      ],
+      "black_bass": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE REGAJO",
+    "saihFichaId": 221
+  },
+  {
+    "id": "embalse_ulldecona",
+    "nombre": "Embalse de Ulldecona",
+    "tipo": "embalse",
+    "estadoZona": "controlada",
+    "vocacionOficial": "Ciprinícola",
+    "rio": "Río Cenia",
+    "municipio": "La Pobla de Benifassà",
+    "lat": 40.6707,
+    "lng": 0.2336,
+    "radioAproxKm": 3,
+    "descripcion": "Extremo norte de la provincia, límite con Tarragona. Buen embalse para carpa y black bass.",
+    "especies": [
+      "carpa",
+      "black_bass"
+    ],
+    "mejoresEpocas": {
+      "carpa": [
+        "junio",
+        "julio",
+        "agosto"
+      ],
+      "black_bass": [
+        "abril",
+        "mayo",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE ULLDECONA",
+    "saihFichaId": 243
+  }
+]
