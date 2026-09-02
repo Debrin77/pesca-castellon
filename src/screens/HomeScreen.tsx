@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import MapView, { Marker } from "../components/map";
+import MapView, { Marker, Circle } from "../components/map";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
@@ -15,10 +15,10 @@ interface Props {
 }
 
 const CASTELLON_REGION = {
-  latitude: 40.15,
-  longitude: -0.2,
-  latitudeDelta: 1.4,
-  longitudeDelta: 1.4,
+  latitude: 40.12,
+  longitude: -0.38,
+  latitudeDelta: 1.15,
+  longitudeDelta: 1.15,
 };
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
@@ -69,10 +69,9 @@ export default function HomeScreen({ navigation }: Props) {
   }, []);
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
-  const region = ubicacion
-    ? { latitude: ubicacion.lat, longitude: ubicacion.lng, latitudeDelta: 0.6, longitudeDelta: 0.6 }
-    : CASTELLON_REGION;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
+  const zonas = zones as any[];
+  const fitMapa = zonas.map((z: any) => ({ latitude: z.lat, longitude: z.lng }));
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
@@ -136,32 +135,68 @@ export default function HomeScreen({ navigation }: Props) {
         <LicenseBanner onPress={() => navigation.navigate("License")} />
 
         <TouchableOpacity style={styles.myCatchesButton} onPress={() => navigation.navigate("MyCatches")}>
-          <Text style={styles.myCatchesIcon}>🎣</Text>
+          <View style={styles.myCatchesGlyph}>
+            <Text style={styles.myCatchesIcon}>●</Text>
+          </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.myCatchesTitle}>Mis puntos y capturas</Text>
-            <Text style={styles.myCatchesSubtitle}>Guarda tus sitios favoritos y registra lo que pescas</Text>
+            <Text style={styles.myCatchesSubtitle}>Sitios guardados y registro de lo que pescas</Text>
           </View>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>🗺️ Castellón</Text>
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionTitle}>Mapa de la provincia</Text>
+          <Text style={styles.sectionMeta}>capas · zoom · satélite</Text>
+        </View>
         <View style={styles.mapWrap}>
-          <MapView style={styles.map} region={region}>
-            {ubicacion && (
-              <Marker coordinate={{ latitude: ubicacion.lat, longitude: ubicacion.lng }} pinColor={COLORS.water} title="Tú" />
-            )}
-            {(zones as any[]).map((z: any) => (
+          <MapView style={styles.map} initialRegion={CASTELLON_REGION} fitCoordinates={fitMapa}>
+            {zonas.map((z: any) => (
+              <Circle
+                key={`r-${z.id}`}
+                center={{ latitude: z.lat, longitude: z.lng }}
+                radius={(z.radioAproxKm || 1.2) * 1000}
+                strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+                fillColor={
+                  z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"
+                }
+              />
+            ))}
+            {zonas.map((z: any) => (
               <Marker
                 key={z.id}
                 coordinate={{ latitude: z.lat, longitude: z.lng }}
                 pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+                identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
                 title={z.nombre}
                 onPress={() => navigation.navigate("ZoneDetail", { zoneId: z.id })}
               />
             ))}
+            {ubicacion && (
+              <Marker
+                coordinate={{ latitude: ubicacion.lat, longitude: ubicacion.lng }}
+                pinColor={COLORS.water}
+                identifier="user"
+                title="Tú"
+              />
+            )}
           </MapView>
         </View>
-        <Text style={styles.mapHint}>Toca un marcador para ver el detalle de la zona</Text>
+        <View style={styles.legend}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: COLORS.primary }]} />
+            <Text style={styles.legendText}>Coto / controlada</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: COLORS.success }]} />
+            <Text style={styles.legendText}>Libre sin muerte</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: COLORS.water }]} />
+            <Text style={styles.legendText}>Tu posición</Text>
+          </View>
+        </View>
+        <Text style={styles.mapHint}>Toca un pin para abrir la ficha. Arriba a la derecha: mapa, relieve o satélite.</Text>
       </View>
     </ScrollView>
   );
@@ -206,7 +241,6 @@ const styles = StyleSheet.create({
   weatherAlertDanger: { backgroundColor: "rgba(198,40,40,0.35)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
   body: { paddingHorizontal: SPACING.lg, marginTop: -SPACING.lg },
-  sectionTitle: { fontSize: 15.5, fontWeight: "800", color: COLORS.textPrimary, marginTop: SPACING.lg, marginBottom: SPACING.sm },
   myCatchesButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -214,13 +248,31 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     padding: 14,
     marginBottom: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     ...SHADOW_SOFT,
   },
-  myCatchesIcon: { fontSize: 26, marginRight: 12 },
+  myCatchesGlyph: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: COLORS.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  myCatchesIcon: { fontSize: 10, color: COLORS.primary, fontWeight: "800" },
   myCatchesTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   myCatchesSubtitle: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 2 },
   chevron: { fontSize: 22, color: COLORS.textMuted },
-  mapWrap: { height: 260, borderRadius: RADIUS.lg, overflow: "hidden", ...SHADOW },
+  sectionRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginTop: SPACING.lg, marginBottom: SPACING.sm },
+  sectionTitle: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary },
+  sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
+  mapWrap: { height: 420, borderRadius: RADIUS.lg, overflow: "hidden", borderWidth: 1, borderColor: COLORS.border, ...SHADOW },
   map: { flex: 1 },
-  mapHint: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 8, textAlign: "center" },
+  legend: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 10, justifyContent: "center" },
+  legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
+  legendDot: { width: 9, height: 9, borderRadius: 5 },
+  legendText: { fontSize: 11, color: COLORS.textSecondary, fontWeight: "600" },
+  mapHint: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 8, textAlign: "center", lineHeight: 16 },
 });

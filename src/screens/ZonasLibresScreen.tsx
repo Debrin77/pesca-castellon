@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import MapView, { Marker } from "../components/map";
+import MapView, { Marker, Circle } from "../components/map";
 
 type LatLng = { latitude: number; longitude: number };
 import zones from "../data/zones.json";
@@ -16,10 +16,10 @@ interface Props {
 }
 
 const CASTELLON_REGION = {
-  latitude: 40.15,
-  longitude: -0.2,
-  latitudeDelta: 1.4,
-  longitudeDelta: 1.4,
+  latitude: 40.12,
+  longitude: -0.38,
+  latitudeDelta: 1.15,
+  longitudeDelta: 1.15,
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
@@ -109,13 +109,25 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
+          fitCoordinates={(zones as any[]).map((z: any) => ({ latitude: z.lat, longitude: z.lng }))}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
+          {zonasVisibles.map((z) => (
+            <Circle
+              key={`r-${z.id}`}
+              center={{ latitude: z.lat, longitude: z.lng }}
+              radius={(z.radioAproxKm || 1.2) * 1000}
+              strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+              fillColor={z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"}
+            />
+          ))}
           {zonasVisibles.map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
               pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+              identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
+              title={z.nombre}
               onPress={() => evaluarPunto(z.lat, z.lng)}
             />
           ))}
@@ -125,11 +137,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
                 pinColor={COLORS.gold}
+                identifier="spot"
                 title={p.nombre}
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
             ))}
-          {marcador && <Marker coordinate={marcador} pinColor={COLORS.water} title="Tu punto marcado" />}
+          {marcador && (
+            <Marker
+              coordinate={marcador}
+              pinColor={COLORS.water}
+              identifier="user"
+              title="Tu punto marcado"
+            />
+          )}
         </MapView>
         <Text style={styles.mapHint}>Mantén pulsado el mapa para chequear cualquier punto</Text>
       </View>
@@ -234,7 +254,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: { fontSize: 13, color: COLORS.textPrimary },
   suggestionMeta: { fontSize: 11, color: COLORS.textMuted },
-  mapWrap: { height: 220 },
+  mapWrap: { height: 300 },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
     paddingHorizontal: 12,

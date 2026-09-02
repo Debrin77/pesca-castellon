@@ -22,7 +22,7 @@ por Expo Go ni por la App Store.
    `.github/workflows/deploy-web.yml` se ejecuta solo, compila la
    versión web con Expo y la publica.
 4. Al cabo de 1-2 minutos, tu app estará en:
-   `https://TU-USUARIO.github.io/pesca-castellon/`
+   `https://debrin77.github.io/pesca-castellon/`
 5. Abre esa URL en **Safari** en el iPhone → botón compartir → **"Añadir
    a pantalla de inicio"**. Te quedará un icono como el de una app.
 
@@ -251,7 +251,7 @@ git init
 git add .
 git commit -m "Primera versión: mapa de zonas de pesca en Castellón"
 git branch -M main
-git remote add origin https://github.com/TU_USUARIO/pesca-castellon.git
+git remote add origin https://github.com/debrin77/pesca-castellon.git
 git push -u origin main
 ```
 

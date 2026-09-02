@@ -1,17 +1,9 @@
 /**
- * Equivalente web de react-native-maps, usado solo cuando la app corre
- * en un navegador (Safari en iPhone, Chrome, etc.). Metro elige este
- * archivo automáticamente en vez de index.native.tsx al compilar para web.
- *
- * Usa OpenStreetMap a través de Leaflet: no requiere ninguna clave de API,
- * a diferencia de Google Maps en Android.
- *
- * Implementa solo el subconjunto de props de react-native-maps que usa
- * esta app (region/initialRegion, onLongPress, Marker con coordinate/
- * pinColor/title/onPress, Circle con center/radius/strokeColor/fillColor),
- * para que el resto del código no necesite saber en qué plataforma corre.
+ * Mapa web (Leaflet). Metro elige este archivo en vez de index.native.tsx.
+ * Teselas Carto / relieve / satélite, pines con forma, pulso de ubicación
+ * y controles de capas. Misma API que react-native-maps en lo que usa la app.
  */
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 import {
   MapContainer,
@@ -21,9 +13,121 @@ import {
   Popup,
   useMap,
   useMapEvents,
+  LayersControl,
+  ZoomControl,
+  ScaleControl,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+
+const CSS_ID = "pesca-leaflet-theme";
+
+function inyectarCssMapa() {
+  if (typeof document === "undefined" || document.getElementById(CSS_ID)) return;
+  const style = document.createElement("style");
+  style.id = CSS_ID;
+  style.textContent = `
+    .pesca-map .leaflet-container {
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      background: #d5e4d8;
+    }
+    .pesca-map .leaflet-control-zoom,
+    .pesca-map .leaflet-control-layers,
+    .pesca-map .leaflet-control-scale {
+      border: none !important;
+      border-radius: 12px !important;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(12, 44, 32, 0.16) !important;
+    }
+    .pesca-map .leaflet-control-zoom a {
+      width: 36px !important;
+      height: 36px !important;
+      line-height: 36px !important;
+      color: #164a36 !important;
+      font-weight: 700;
+    }
+    .pesca-map .leaflet-control-layers {
+      background: rgba(255,255,255,0.96);
+    }
+    .pesca-map .leaflet-control-layers-toggle {
+      width: 38px !important;
+      height: 38px !important;
+    }
+    .pesca-map .leaflet-popup-content-wrapper {
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(12, 44, 32, 0.18);
+      padding: 2px 4px;
+    }
+    .pesca-map .leaflet-popup-content {
+      margin: 10px 12px;
+      font-size: 13px;
+      font-weight: 650;
+      color: #122018;
+    }
+    .pesca-map .leaflet-popup-tip {
+      box-shadow: none;
+    }
+    .pesca-pin {
+      position: relative;
+      width: 22px;
+      height: 32px;
+    }
+    .pesca-pin span {
+      display: block;
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      background: var(--pin, #164a36);
+      transform: rotate(-45deg);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+    }
+    .pesca-pin i {
+      position: absolute;
+      left: 7px;
+      top: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      z-index: 1;
+    }
+    .pesca-user-marker { background: transparent !important; border: none !important; }
+    .pesca-pulse {
+      position: relative;
+      width: 28px;
+      height: 28px;
+    }
+    .pesca-pulse-dot {
+      position: absolute;
+      left: 8px; top: 8px;
+      width: 12px; height: 12px;
+      background: #1a6f8a;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(26,111,138,0.25);
+      z-index: 2;
+    }
+    .pesca-pulse-ring {
+      position: absolute;
+      left: 0; top: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(26,111,138,0.28);
+      animation: pesca-ping 1.8s ease-out infinite;
+    }
+    @keyframes pesca-ping {
+      0% { transform: scale(0.55); opacity: 0.85; }
+      100% { transform: scale(1.55); opacity: 0; }
+    }
+    .pesca-map .leaflet-control-attribution {
+      background: rgba(255,255,255,0.82) !important;
+      font-size: 10px;
+      max-width: 70%;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 interface Region {
   latitude: number;
@@ -34,30 +138,62 @@ interface Region {
 
 function zoomDesdeDelta(delta?: number): number {
   if (!delta) return 9;
-  if (delta > 1) return 8;
-  if (delta > 0.5) return 9;
-  if (delta > 0.2) return 10;
+  if (delta > 1.2) return 8;
+  if (delta > 0.7) return 9;
+  if (delta > 0.35) return 10;
+  if (delta > 0.12) return 11;
   if (delta > 0.05) return 12;
   return 13;
 }
 
-function iconoColor(color: string) {
+function tipoMarcador(identifier?: string, pinColor?: string, title?: string): "user" | "spot" | "pin" {
+  if (identifier === "user" || title === "Tú") return "user";
+  if (identifier === "spot" || pinColor === "#c4921a" || pinColor === "#f9a825") return "spot";
+  return "pin";
+}
+
+function iconoMarcador(pinColor: string, identifier?: string, title?: string) {
+  const tipo = tipoMarcador(identifier, pinColor, title);
+  if (tipo === "user") {
+    return L.divIcon({
+      className: "pesca-user-marker",
+      html: `<div class="pesca-pulse"><span class="pesca-pulse-ring"></span><span class="pesca-pulse-dot"></span></div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -12],
+    });
+  }
   return L.divIcon({
-    className: "pesca-marker",
-    html: `<div style="width:18px;height:18px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.45)"></div>`,
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
+    className: "pesca-pin-wrap",
+    html: `<div class="pesca-pin" style="--pin:${pinColor}"><i></i><span></span></div>`,
+    iconSize: [22, 32],
+    iconAnchor: [11, 30],
+    popupAnchor: [0, -28],
   });
 }
 
-function SincronizarRegion({ region }: { region?: Region }) {
+function SincronizarRegion({ region, disabled }: { region?: Region; disabled?: boolean }) {
   const map = useMap();
+  const ultima = useRef<string>("");
   useEffect(() => {
-    if (region) {
-      map.setView([region.latitude, region.longitude], zoomDesdeDelta(region.latitudeDelta));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region?.latitude, region?.longitude, region?.latitudeDelta]);
+    if (disabled || !region) return;
+    const clave = `${region.latitude.toFixed(3)}|${region.longitude.toFixed(3)}|${region.latitudeDelta ?? 0}`;
+    if (clave === ultima.current) return;
+    ultima.current = clave;
+    map.setView([region.latitude, region.longitude], zoomDesdeDelta(region.latitudeDelta));
+  }, [disabled, map, region?.latitude, region?.longitude, region?.latitudeDelta]);
+  return null;
+}
+
+function EncajarCoordenadas({ coords }: { coords?: { latitude: number; longitude: number }[] }) {
+  const map = useMap();
+  const hecho = useRef(false);
+  useEffect(() => {
+    if (hecho.current || !coords || coords.length < 2) return;
+    hecho.current = true;
+    const bounds = L.latLngBounds(coords.map((c) => [c.latitude, c.longitude] as [number, number]));
+    map.fitBounds(bounds, { padding: [36, 36], maxZoom: 11 });
+  }, [coords, map]);
   return null;
 }
 
@@ -76,24 +212,58 @@ interface MapViewProps {
   initialRegion?: Region;
   onLongPress?: (e: any) => void;
   children?: React.ReactNode;
+  fitCoordinates?: { latitude: number; longitude: number }[];
 }
 
-export default function MapView({ style, region, initialRegion, onLongPress, children }: MapViewProps) {
-  const inicio = region || initialRegion || { latitude: 40.15, longitude: -0.2, latitudeDelta: 1.4 };
+export default function MapView({
+  style,
+  region,
+  initialRegion,
+  onLongPress,
+  children,
+  fitCoordinates,
+}: MapViewProps) {
+  inyectarCssMapa();
+  const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
 
   return (
     <View style={[{ flex: 1 }, style]}>
       <MapContainer
+        className="pesca-map"
         center={[inicio.latitude, inicio.longitude]}
         zoom={zoomDesdeDelta(inicio.latitudeDelta)}
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={true}
+        zoomControl={false}
+        attributionControl={true}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <SincronizarRegion region={region} />
+        <LayersControl position="topright">
+          <LayersControl.BaseLayer checked name="Mapa">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              maxZoom={19}
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Relieve">
+            <TileLayer
+              attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+              maxZoom={17}
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Satélite">
+            <TileLayer
+              attribution="Teselas &copy; Esri"
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              maxZoom={19}
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
+        <ZoomControl position="bottomright" />
+        <ScaleControl position="bottomleft" imperial={false} />
+        <SincronizarRegion region={region} disabled={!!fitCoordinates?.length} />
+        <EncajarCoordenadas coords={fitCoordinates} />
         {onLongPress && <ManejadorClick onLongPress={onLongPress} />}
         {children}
       </MapContainer>
@@ -107,13 +277,21 @@ interface MarkerProps {
   title?: string;
   onPress?: () => void;
   children?: React.ReactNode;
+  identifier?: string;
 }
 
-export function Marker({ coordinate, pinColor = "#1b5e3f", title, onPress, children }: MarkerProps) {
+export function Marker({
+  coordinate,
+  pinColor = "#164a36",
+  title,
+  onPress,
+  children,
+  identifier,
+}: MarkerProps) {
   return (
     <LeafletMarker
       position={[coordinate.latitude, coordinate.longitude]}
-      icon={iconoColor(pinColor)}
+      icon={iconoMarcador(pinColor, identifier, title)}
       eventHandlers={{ click: () => onPress?.() }}
     >
       {(title || children) && <Popup>{children ?? title}</Popup>}
@@ -128,12 +306,23 @@ interface CircleProps {
   fillColor?: string;
 }
 
-export function Circle({ center, radius, strokeColor = "#1b5e3f", fillColor = "rgba(27,94,63,0.15)" }: CircleProps) {
+export function Circle({
+  center,
+  radius,
+  strokeColor = "#164a36",
+  fillColor = "rgba(22,74,54,0.12)",
+}: CircleProps) {
   return (
     <LeafletCircle
       center={[center.latitude, center.longitude]}
       radius={radius}
-      pathOptions={{ color: strokeColor, fillColor }}
+      pathOptions={{
+        color: strokeColor,
+        fillColor,
+        weight: 1.5,
+        opacity: 0.75,
+        fillOpacity: 0.22,
+      }}
     />
   );
 }

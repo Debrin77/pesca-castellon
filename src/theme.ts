@@ -1,36 +1,35 @@
 /**
- * Sistema de diseño de la app. Paleta natural (verde bosque + azul agua)
- * con acabado moderno: gradientes suaves, esquinas grandes y sombras
- * elevadas en vez de bordes planos.
+ * Identidad visual: bosque de interior + agua de embalse.
+ * Superficies claras, acentos profundos, sin recargar de degradados.
  */
 export const COLORS = {
-  primary: "#1b5e3f",
-  primaryDark: "#0f3d29",
-  primaryLight: "#e8f3ec",
-  water: "#0277bd",
-  waterDark: "#01466e",
-  waterLight: "#e3f2fd",
-  warning: "#ef6c00",
-  warningLight: "#fff3e0",
-  danger: "#c62828",
+  primary: "#164a36",
+  primaryDark: "#0c2c20",
+  primaryLight: "#e4efe8",
+  water: "#1a6f8a",
+  waterDark: "#0e4456",
+  waterLight: "#e6f3f7",
+  warning: "#c45c12",
+  warningLight: "#fef3e6",
+  danger: "#b42318",
   dangerLight: "#fdecea",
-  success: "#2e7d32",
-  gold: "#f9a825",
+  success: "#2f7d4a",
+  gold: "#c4921a",
   surface: "#ffffff",
-  background: "#f4f7f5",
-  border: "#e6ebe8",
-  textPrimary: "#132019",
-  textSecondary: "#5b6b62",
-  textMuted: "#98a39c",
+  background: "#eef2ee",
+  border: "#d8e2db",
+  textPrimary: "#122018",
+  textSecondary: "#4d5d54",
+  textMuted: "#87948c",
+  mist: "#f7faf7",
 };
 
-/** Pares de colores para gradientes (usar con expo-linear-gradient). */
 export const GRADIENTS = {
-  primary: ["#1f6b47", "#123f2a"] as const,
-  water: ["#0288d1", "#01466e"] as const,
-  sunset: ["#f9a825", "#ef6c00"] as const,
-  dusk: ["#2c3e50", "#0f3d29"] as const,
-  danger: ["#e53935", "#8e1414"] as const,
+  primary: ["#1a5640", "#0f3326"] as const,
+  water: ["#2a7a94", "#13485a"] as const,
+  sunset: ["#d4a017", "#c45c12"] as const,
+  dusk: ["#24352c", "#0f3326"] as const,
+  danger: ["#c53030", "#8a1f1f"] as const,
 };
 
 export const RADIUS = {
@@ -42,18 +41,18 @@ export const RADIUS = {
 };
 
 export const SHADOW = {
-  shadowColor: "#0f3d29",
-  shadowOffset: { width: 0, height: 6 },
+  shadowColor: "#0c2c20",
+  shadowOffset: { width: 0, height: 8 },
   shadowOpacity: 0.1,
-  shadowRadius: 14,
-  elevation: 4,
+  shadowRadius: 18,
+  elevation: 5,
 };
 
 export const SHADOW_SOFT = {
-  shadowColor: "#0f3d29",
+  shadowColor: "#0c2c20",
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.06,
-  shadowRadius: 6,
+  shadowRadius: 8,
   elevation: 2,
 };
 

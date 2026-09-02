@@ -1,10 +1,16 @@
 /**
- * En iOS/Android, Metro elige automáticamente este archivo (index.native.tsx)
- * en vez de index.web.tsx. Simplemente reexportamos react-native-maps tal cual,
- * así el resto de la app usa siempre "../components/map" sin preocuparse
- * de en qué plataforma corre.
+ * En iOS/Android, Metro elige este archivo. Reexportamos react-native-maps
+ * e ignoramos props solo-web (fitCoordinates).
  */
-import MapView, { Marker, Circle } from "react-native-maps";
+import React from "react";
+import MapViewRN, { Marker, Circle, MapViewProps } from "react-native-maps";
 
-export default MapView;
+type Props = MapViewProps & {
+  fitCoordinates?: { latitude: number; longitude: number }[];
+};
+
+export default function MapView({ fitCoordinates: _omit, ...props }: Props) {
+  return <MapViewRN {...props} />;
+}
+
 export { Marker, Circle };

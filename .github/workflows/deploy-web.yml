@@ -32,6 +32,9 @@ jobs:
       - name: Compilar la versión web (Expo)
         run: npx expo export --platform web
 
+      - name: Permitir la carpeta _expo en GitHub Pages
+        run: touch dist/.nojekyll
+
       - name: Preparar la carpeta para GitHub Pages
         uses: actions/configure-pages@v4
 

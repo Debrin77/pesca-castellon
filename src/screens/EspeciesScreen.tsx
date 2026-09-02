@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
-import MapView, { Marker } from "../components/map";
+import MapView, { Marker, Circle } from "../components/map";
 
 type LatLng = { latitude: number; longitude: number };
 import zones from "../data/zones.json";
@@ -15,10 +15,10 @@ interface Props {
 }
 
 const CASTELLON_REGION = {
-  latitude: 40.15,
-  longitude: -0.2,
-  latitudeDelta: 1.4,
-  longitudeDelta: 1.4,
+  latitude: 40.12,
+  longitude: -0.38,
+  latitudeDelta: 1.15,
+  longitudeDelta: 1.15,
 };
 
 export default function EspeciesScreen({ navigation }: Props) {
@@ -57,17 +57,36 @@ export default function EspeciesScreen({ navigation }: Props) {
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
+          fitCoordinates={(zones as any[]).map((z: any) => ({ latitude: z.lat, longitude: z.lng }))}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
+          {(zones as any[]).map((z) => (
+            <Circle
+              key={`r-${z.id}`}
+              center={{ latitude: z.lat, longitude: z.lng }}
+              radius={(z.radioAproxKm || 1.2) * 1000}
+              strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+              fillColor={z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"}
+            />
+          ))}
           {(zones as any[]).map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
               pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
+              identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
+              title={z.nombre}
               onPress={() => evaluarPunto(z.lat, z.lng)}
             />
           ))}
-          {marcador && <Marker coordinate={marcador} pinColor={COLORS.water} title="Punto consultado" />}
+          {marcador && (
+            <Marker
+              coordinate={marcador}
+              pinColor={COLORS.water}
+              identifier="user"
+              title="Punto consultado"
+            />
+          )}
         </MapView>
         <TouchableOpacity style={styles.myLocationButton} onPress={usarMiUbicacion}>
           <Text style={styles.myLocationButtonText}>📍 Usar mi ubicación</Text>
@@ -149,7 +168,7 @@ export default function EspeciesScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  mapWrap: { height: 230 },
+  mapWrap: { height: 280 },
   map: { flex: 1 },
   myLocationButton: {
     position: "absolute",

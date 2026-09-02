@@ -3,7 +3,10 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
+import { aplicarEstilosWeb } from "./src/webChrome";
 import TabIcon, { NombreIcono } from "./src/components/TabIcon";
+
+aplicarEstilosWeb();
 
 import HomeScreen from "./src/screens/HomeScreen";
 import ZonasLibresScreen from "./src/screens/ZonasLibresScreen";
@@ -26,15 +29,16 @@ const navTheme = {
 };
 
 const stackScreenOptions = {
-  headerStyle: { backgroundColor: COLORS.primary },
+  headerStyle: { backgroundColor: COLORS.primaryDark },
   headerTintColor: "#fff",
-  headerTitleStyle: { fontWeight: "700" as const },
+  headerShadowVisible: false,
+  headerTitleStyle: { fontWeight: "700" as const, fontSize: 17 },
 };
 
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator screenOptions={stackScreenOptions}>
-      <HomeStack.Screen name="HomeMain" component={HomeScreen} options={{ title: "🎣 Pesca Castellón" }} />
+      <HomeStack.Screen name="HomeMain" component={HomeScreen} options={{ title: "Pesca Castellón" }} />
       <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="MyCatches" component={MyCatchesScreen} options={{ title: "Mis puntos y capturas" }} />
@@ -81,22 +85,22 @@ export default function App() {
           tabBarInactiveTintColor: COLORS.textMuted,
           tabBarStyle: {
             position: "absolute",
-            left: 14,
-            right: 14,
-            bottom: 18,
-            height: 68,
-            borderRadius: 26,
+            left: 12,
+            right: 12,
+            bottom: 14,
+            height: 64,
+            borderRadius: 22,
             backgroundColor: COLORS.surface,
             borderTopWidth: 0,
-            paddingBottom: 10,
-            paddingTop: 10,
-            shadowColor: "#0f3d29",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.15,
-            shadowRadius: 16,
-            elevation: 10,
+            paddingBottom: 8,
+            paddingTop: 8,
+            shadowColor: COLORS.primaryDark,
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.12,
+            shadowRadius: 20,
+            elevation: 12,
           },
-          tabBarLabelStyle: { fontSize: 10.5, fontWeight: "700" as const },
+          tabBarLabelStyle: { fontSize: 10, fontWeight: "700" as const, letterSpacing: 0.2 },
           tabBarIcon: ({ color, focused, size }) => (
             <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size + 2 : size} color={color} />
           ),
