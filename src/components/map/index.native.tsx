@@ -3,7 +3,7 @@
  * e ignoramos props solo-web; cameraTarget anima la cámara.
  */
 import React, { useEffect, useRef } from "react";
-import MapViewRN, { Marker, Circle, MapViewProps } from "react-native-maps";
+import MapViewRN, { Marker, Circle, Polygon as PolygonRN, MapViewProps } from "react-native-maps";
 
 type CameraTarget = {
   latitude: number;
@@ -38,3 +38,27 @@ export default function MapView({ fitCoordinates: _omit, cameraTarget, ...props 
 }
 
 export { Marker, Circle };
+
+export function Polygon({
+  coordinates,
+  holes = [],
+  strokeColor = "#164a36",
+  fillColor = "#164a36",
+  strokeWidth = 2,
+}: {
+  coordinates: { latitude: number; longitude: number }[];
+  holes?: { latitude: number; longitude: number }[][];
+  strokeColor?: string;
+  fillColor?: string;
+  strokeWidth?: number;
+}) {
+  return (
+    <PolygonRN
+      coordinates={coordinates}
+      holes={holes}
+      strokeColor={strokeColor}
+      fillColor={fillColor + "48"}
+      strokeWidth={strokeWidth}
+    />
+  );
+}

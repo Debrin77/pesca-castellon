@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ConsultaPesca } from "../services/consultaPescaService";
 import { FUENTE_NORMATIVA } from "../data/normativa2026";
+import { FUENTE_ICV } from "../services/geojsonHit";
+import ListaAnimada from "../components/ListaAnimada";
 import { COLORS, RADIUS } from "../theme";
 
 interface Props {
@@ -10,13 +12,29 @@ interface Props {
   onAparejos?: (especieId: string) => void;
 }
 
+function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
+  if (c.veredicto === "coto") return { texto: "COTO — HACE FALTA PERMISO", sub: "Hoy no es zona libre" };
+  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") {
+    return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
+  }
+  if (c.veredicto === "fuera_catalogo") return { texto: "SIN TRAMO", sub: "No está en el catálogo" };
+  if (c.sePuedePescarHoy) return { texto: "HOY SÍ", sub: "Zona libre · con licencia" };
+  return { texto: "HOY NO", sub: "Restricción de día o temporada" };
+}
+
 export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Props) {
   const especieDestacada = consulta.tramo?.especies?.[0];
+  const hoy = etiquetaHoy(consulta);
   return (
+    <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
     <View style={[styles.card, { borderLeftColor: consulta.color }]}>
-      <View style={[styles.pill, { backgroundColor: consulta.color }]}>
+      <View style={[styles.veredicto, { backgroundColor: consulta.color }]}>
+        <Text style={styles.veredictoText}>{hoy.texto}</Text>
+        <Text style={styles.veredictoSub}>{hoy.sub}</Text>
+      </View>
+      <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? "#1a6f8a" : COLORS.textMuted }]}>
         <Text style={styles.pillText}>
-          {consulta.sePuedePescarHoy ? "Consulta del punto" : "Restricción activa"}
+          {consulta.confianza === "oficial" ? "Polígono ICV oficial" : "Radio del anexo I (aprox.)"}
         </Text>
       </View>
       <Text style={styles.title}>{consulta.titulo}</Text>
@@ -42,6 +60,7 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
       ) : null}
 
       <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
+      <Text style={styles.fuente}>{FUENTE_ICV}</Text>
 
       <View style={styles.row}>
         {consulta.tramo?.fichaId && onFicha ? (
@@ -56,6 +75,7 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
         ) : null}
       </View>
     </View>
+    </ListaAnimada>
   );
 }
 
@@ -68,6 +88,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  veredicto: {
+    borderRadius: RADIUS.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+  },
+  veredictoText: { color: "#fff", fontSize: 16, fontWeight: "800", letterSpacing: 0.4 },
+  veredictoSub: { color: "rgba(255,255,255,0.9)", fontSize: 12, fontWeight: "600", marginTop: 2 },
   pill: { alignSelf: "flex-start", borderRadius: RADIUS.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: 8 },
   pillText: { color: "#fff", fontSize: 10, fontWeight: "800", letterSpacing: 0.4, textTransform: "uppercase" },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
@@ -75,7 +103,7 @@ const styles = StyleSheet.create({
   ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
   warn: { fontSize: 12.5, color: COLORS.danger, lineHeight: 18, marginBottom: 4, fontWeight: "600" },
   especies: { fontSize: 12, color: COLORS.water, marginTop: 6, fontWeight: "600" },
-  fuente: { fontSize: 10, color: COLORS.textMuted, marginTop: 10, fontStyle: "italic" },
+  fuente: { fontSize: 10, color: COLORS.textMuted, marginTop: 8, fontStyle: "italic" },
   row: { flexDirection: "row", gap: 8, marginTop: 12 },
   btn: { backgroundColor: COLORS.primary, borderRadius: RADIUS.sm, paddingHorizontal: 12, paddingVertical: 8 },
   btnText: { color: "#fff", fontWeight: "700", fontSize: 12 },

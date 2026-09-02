@@ -6,6 +6,7 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerPrevision, descripcionTiempo, detectarAlertas, PrevisionDia } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { COLORS, RADIUS, SHADOW, SPACING } from "../theme";
+import ListaAnimada from "../components/ListaAnimada";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -83,8 +84,8 @@ export default function PrevisionScreen() {
           const abierto = expandido === d.fecha;
 
           return (
+            <ListaAnimada key={d.fecha} index={i}>
             <TouchableOpacity
-              key={d.fecha}
               activeOpacity={0.85}
               style={styles.dayCardWrap}
               onPress={() => ind && toggleExpandido(d.fecha)}
@@ -154,6 +155,7 @@ export default function PrevisionScreen() {
                 )}
               </LinearGradient>
             </TouchableOpacity>
+            </ListaAnimada>
           );
         })}
     </ScrollView>

@@ -4,6 +4,7 @@ import { useScrollToTop } from "@react-navigation/native";
 import speciesCatalog from "../data/species.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
+import ListaAnimada from "../components/ListaAnimada";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -46,7 +47,7 @@ export default function AparejosScreen({ route }: Props) {
 
       <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {sp && (
-          <>
+          <ListaAnimada key={sp.id} replayKey={sp.id} index={0}>
             <LinearGradient
               colors={sp.invasora ? GRADIENTS.sunset : GRADIENTS.primary}
               style={styles.headerCard}
@@ -116,7 +117,7 @@ export default function AparejosScreen({ route }: Props) {
             ) : (
               <Text style={styles.emptyText}>No hay recomendaciones de equipo para esta especie.</Text>
             )}
-          </>
+          </ListaAnimada>
         )}
       </ScrollView>
     </View>

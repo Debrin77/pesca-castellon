@@ -2,15 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
-
-type LatLng = { latitude: number; longitude: number };
-import zones from "../data/zones.json";
 import speciesCatalog from "../data/species.json";
-import { consultarPuntoPesca, ConsultaPesca } from "../services/consultaPescaService";
+import { consultarPuntoPesca, consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
+import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
+import ListaAnimada from "../components/ListaAnimada";
+
+type LatLng = { latitude: number; longitude: number };
 
 interface Props {
   navigation: any;
@@ -26,6 +27,7 @@ const CASTELLON_REGION = {
 export default function EspeciesScreen({ navigation }: Props) {
   const listRef = useRef<ScrollView>(null);
   useScrollToTop(listRef);
+  const tramos = todosLosTramos();
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
@@ -57,33 +59,39 @@ export default function EspeciesScreen({ navigation }: Props) {
     setMarcador({ latitude: lat, longitude: lng });
   }
 
+  function evaluarTramo(z: TramoOficial) {
+    setConsulta(consultarPorTramo(z));
+    setMarcador({ latitude: z.lat, longitude: z.lng });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.mapWrap}>
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
-          fitCoordinates={(zones as any[]).map((z: any) => ({ latitude: z.lat, longitude: z.lng }))}
+          fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
           cameraTarget={camara}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          {(zones as any[]).map((z) => (
+          <CapaPoligonosIcv />
+          {tramos.filter(tramoUsaRadioAnexo).map((z) => (
             <Circle
               key={`r-${z.id}`}
               center={{ latitude: z.lat, longitude: z.lng }}
-              radius={(z.radioAproxKm || 1.2) * 1000}
-              strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-              fillColor={z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"}
+              radius={z.radioKm * 1000}
+              strokeColor={colorAprovechamiento(z.aprovechamiento)}
+              fillColor={colorAprovechamiento(z.aprovechamiento) + "33"}
             />
           ))}
-          {(zones as any[]).map((z) => (
+          {tramos.map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-              identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
+              pinColor={colorAprovechamiento(z.aprovechamiento)}
+              identifier={z.aprovechamiento === "ZPL" ? "libre" : "coto"}
               title={z.nombre}
-              onPress={() => evaluarPunto(z.lat, z.lng)}
+              onPress={() => evaluarTramo(z)}
             />
           ))}
           {marcador && (
@@ -107,12 +115,13 @@ export default function EspeciesScreen({ navigation }: Props) {
             {consulta.restriccionesHoy.slice(0, 2).map((r, i) => (
               <Text key={i} style={styles.cardText}>{r}</Text>
             ))}
-            {(consulta.tramo?.especies ?? []).map((especieId: string) => {
+            {(consulta.tramo?.especies ?? []).map((especieId: string, i: number) => {
               const sp = speciesCatalog.find((s: any) => s.id === especieId);
               if (!sp) return null;
               const enVeda = estaEnVeda(especieId);
               return (
-                <View key={especieId} style={[styles.card, sp.invasora && styles.cardInvasora]}>
+                <ListaAnimada key={especieId} index={i}>
+                <View style={[styles.card, sp.invasora && styles.cardInvasora]}>
                   <Text style={styles.cardTitle}>
                     {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
                   </Text>
@@ -138,6 +147,7 @@ export default function EspeciesScreen({ navigation }: Props) {
                     <Text style={styles.gearLink}>Ver aparejos recomendados →</Text>
                   </TouchableOpacity>
                 </View>
+                </ListaAnimada>
               );
             })}
           </>
@@ -157,8 +167,9 @@ export default function EspeciesScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         {mostrarCatalogoCompleto &&
-          speciesCatalog.map((sp: any) => (
-            <View key={sp.id} style={[styles.card, sp.invasora && styles.cardInvasora]}>
+          speciesCatalog.map((sp: any, i: number) => (
+            <ListaAnimada key={sp.id} index={i} replayKey={`cat-${sp.id}`}>
+            <View style={[styles.card, sp.invasora && styles.cardInvasora]}>
               <Text style={styles.cardTitle}>
                 {sp.icono} {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
               </Text>
@@ -170,6 +181,7 @@ export default function EspeciesScreen({ navigation }: Props) {
                 </View>
               )}
             </View>
+            </ListaAnimada>
           ))}
       </ScrollView>
     </View>

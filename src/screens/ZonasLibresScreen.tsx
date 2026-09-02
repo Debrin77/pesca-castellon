@@ -4,15 +4,19 @@ import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import {
   consultarPuntoPesca,
+  consultarPorTramo,
   colorAprovechamiento,
   todosLosTramos,
   ConsultaPesca,
   TramoOficial,
+  tramoUsaRadioAnexo,
 } from "../services/consultaPescaService";
 import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
+import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
+import ListaAnimada from "../components/ListaAnimada";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -85,6 +89,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     return tramos.filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
   }, [busqueda, tramos]);
 
+  function evaluarTramo(z: TramoOficial) {
+    setConsulta(consultarPorTramo(z));
+    setMarcador({ latitude: z.lat, longitude: z.lng });
+    if (!tramoUsaRadioAnexo(z)) {
+      setCamara({ latitude: z.lat, longitude: z.lng, zoom: 15, nonce: Date.now() });
+    }
+  }
+
   function evaluarPunto(lat: number, lng: number) {
     setConsulta(consultarPuntoPesca(lat, lng));
     setMarcador({ latitude: lat, longitude: lng });
@@ -114,18 +126,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         />
         {sugerencias.length > 0 && (
           <View style={styles.suggestionsBox}>
-            {sugerencias.map((z) => (
+            {sugerencias.map((z, i) => (
+              <ListaAnimada key={z.id} index={i} replayKey={busqueda}>
               <TouchableOpacity
-                key={z.id}
                 style={styles.suggestionRow}
                 onPress={() => {
                   setBusqueda(z.nombre);
-                  evaluarPunto(z.lat, z.lng);
+                  evaluarTramo(z);
                 }}
               >
                 <Text style={styles.suggestionText}>{z.nombre}</Text>
                 <Text style={styles.suggestionMeta}>{z.aprovechamiento}</Text>
               </TouchableOpacity>
+              </ListaAnimada>
             ))}
           </View>
         )}
@@ -154,7 +167,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           cameraTarget={camara}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          {tramosVisibles.map((z) => {
+          <CapaPoligonosIcv zpc={capas.zpc} reservas={capas.vedado} />
+          {tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
             const color = colorAprovechamiento(z.aprovechamiento);
             return (
               <Circle
@@ -173,7 +187,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               pinColor={colorAprovechamiento(z.aprovechamiento)}
               identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "coto"}
               title={`${z.aprovechamiento} · ${z.nombre}`}
-              onPress={() => evaluarPunto(z.lat, z.lng)}
+              onPress={() => evaluarTramo(z)}
             />
           ))}
           {capas.misPuntos &&
@@ -211,7 +225,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             }
           />
         ) : (
-          <Text style={styles.hint}>Pulsa el mapa (o un pin) sobre el agua. Te diremos si es libre, coto o vedado según el anexo de 2024, y si hoy puedes pescar.</Text>
+          <Text style={styles.hint}>Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar.</Text>
         )}
 
         {consulta?.tramo && (

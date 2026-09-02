@@ -10,7 +10,8 @@ import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../servic
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
-import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos } from "../services/consultaPescaService";
+import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
+import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo } from "../services/consultaPescaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 
 interface Props {
@@ -176,7 +177,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Dónde estás ahora</Text>
-          <Text style={styles.sectionMeta}>anexo I 2024 · pulsa un tramo</Text>
+          <Text style={styles.sectionMeta}>polígono ICV · pulsa un tramo</Text>
         </View>
         {consultaViva ? (
           <View style={{ marginBottom: 12 }}>
@@ -200,7 +201,8 @@ export default function HomeScreen({ navigation }: Props) {
             fitCoordinates={fitMapa}
             cameraTarget={camara}
           >
-            {tramos.map((z) => {
+            <CapaPoligonosIcv />
+            {tramos.filter(tramoUsaRadioAnexo).map((z) => {
               const color = colorAprovechamiento(z.aprovechamiento);
               return (
                 <Circle
@@ -249,11 +251,15 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.legendText}>Vedado</Text>
           </View>
           <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#5b4aa8" }]} />
+            <Text style={styles.legendText}>Reserva</Text>
+          </View>
+          <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: COLORS.water }]} />
             <Text style={styles.legendText}>Tú</Text>
           </View>
         </View>
-        <Text style={styles.mapHint}>Verde libre · ámbar coto · rojo vedado. Pulsa «Ir a mí» para centrar el mapa. En Mapa consulta cualquier punto.</Text>
+        <Text style={styles.mapHint}>Polígono ICV = límite oficial de coto/reserva. Círculo = tramo ZPL/VP del anexo (aprox.). Pulsa «Ir a mí» y consulta el veredicto grande.</Text>
       </View>
     </ScrollView>
   );

@@ -10,12 +10,14 @@ import {
   TileLayer,
   Marker as LeafletMarker,
   Circle as LeafletCircle,
+  Polygon as LeafletPolygon,
   Popup,
   useMap,
   useMapEvents,
   LayersControl,
   ZoomControl,
   ScaleControl,
+  WMSTileLayer,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -270,6 +272,16 @@ export default function MapView({
               maxZoom={19}
             />
           </LayersControl.BaseLayer>
+          <LayersControl.Overlay name="WMS ICV (oficial)">
+            <WMSTileLayer
+              url="https://terramapas.icv.gva.es/0504_CazaPesca"
+              layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
+              format="image/png"
+              transparent={true}
+              opacity={0.45}
+              attribution="ICV / GVA"
+            />
+          </LayersControl.Overlay>
         </LayersControl>
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
@@ -334,6 +346,39 @@ export function Circle({
         weight: 1.5,
         opacity: 0.75,
         fillOpacity: 0.22,
+      }}
+    />
+  );
+}
+
+interface PolygonProps {
+  coordinates: { latitude: number; longitude: number }[];
+  holes?: { latitude: number; longitude: number }[][];
+  strokeColor?: string;
+  fillColor?: string;
+  strokeWidth?: number;
+}
+
+export function Polygon({
+  coordinates,
+  holes = [],
+  strokeColor = "#164a36",
+  fillColor = "#164a36",
+  strokeWidth = 2,
+}: PolygonProps) {
+  const positions = [
+    coordinates.map((c) => [c.latitude, c.longitude] as [number, number]),
+    ...holes.map((h) => h.map((c) => [c.latitude, c.longitude] as [number, number])),
+  ];
+  return (
+    <LeafletPolygon
+      positions={positions}
+      pathOptions={{
+        color: strokeColor,
+        fillColor,
+        weight: strokeWidth,
+        opacity: 0.95,
+        fillOpacity: strokeWidth >= 4 ? 0.4 : 0.28,
       }}
     />
   );

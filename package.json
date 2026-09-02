@@ -4,6 +4,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
+    "sync:icv": "node scripts/build_icv_geojson.mjs",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",

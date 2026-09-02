@@ -22,6 +22,7 @@ import {
 } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
+import ListaAnimada from "../components/ListaAnimada";
 
 type Tab = "puntos" | "capturas";
 
@@ -151,10 +152,11 @@ export default function MyCatchesScreen() {
 
             <Text style={styles.sectionTitle}>Historial ({capturas.length})</Text>
             {capturas.length === 0 && <Text style={styles.emptyText}>Aún no has registrado ninguna captura.</Text>}
-            {capturas.map((c) => {
+            {capturas.map((c, i) => {
               const sp = especieInfo(c.especieId);
               return (
-                <View key={c.id} style={styles.card}>
+                <ListaAnimada key={c.id} index={i}>
+                <View style={styles.card}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text style={styles.cardTitle}>{sp?.icono} {sp?.nombre ?? c.especieId}</Text>
                     <TouchableOpacity onPress={() => { eliminarCaptura(c.id).then(cargar); }}>
@@ -169,6 +171,7 @@ export default function MyCatchesScreen() {
                   )}
                   {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
                 </View>
+                </ListaAnimada>
               );
             })}
           </>
@@ -182,8 +185,9 @@ export default function MyCatchesScreen() {
 
             <Text style={styles.sectionTitle}>Puntos guardados ({puntos.length})</Text>
             {puntos.length === 0 && <Text style={styles.emptyText}>Aún no has guardado ningún punto propio.</Text>}
-            {puntos.map((p) => (
-              <View key={p.id} style={styles.card}>
+            {puntos.map((p, i) => (
+              <ListaAnimada key={p.id} index={i}>
+              <View style={styles.card}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                   <Text style={styles.cardTitle}>{p.nombre}</Text>
                   <TouchableOpacity onPress={() => { eliminarPunto(p.id).then(cargar); }}>
@@ -192,6 +196,7 @@ export default function MyCatchesScreen() {
                 </View>
                 <Text style={styles.cardMeta}>{p.lat.toFixed(4)}, {p.lng.toFixed(4)}</Text>
               </View>
+              </ListaAnimada>
             ))}
           </>
         )}

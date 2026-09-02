@@ -1,5 +1,14 @@
 """
-extract_castellon_zones.py
+extract_castellon_zones.py  (legado)
+
+La app ya usa scripts/build_icv_geojson.mjs (Node, sin QGIS):
+descarga el WFS del ICV, recorta Castellón y escribe
+src/data/icvPescaCastellon.json
+
+QGIS sigue siendo útil para ABRIR el GeoPackage oficial y revisar
+límites, no para inventar geometrías. Si editas a mano, exporta
+GeoJSON WGS84 y sustituye ese JSON.
+"""
 
 Descarga el dataset OFICIAL de Zonas de Pesca Controlada de la GVA,
 se queda solo con los cotos de Castellón, simplifica la geometría para
