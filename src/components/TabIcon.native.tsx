@@ -1,1 +1,2 @@
+import React from "react"; import { Ionicons } from "@expo/vector-icons"; export type NombreIcono = "home" | "water" | "fish" | "construct" | "partly-sunny"; const MAPA_IONICONS: Record<NombreIcono, keyof typeof Ionicons.glyphMap> = { home: "home", water: "water", fish: "fish", construct: "construct", "partly-sunny": "partly-sunny", }; interface Props { nombre: NombreIcono; color: string; size: number; } export default function TabIcon({ nombre, color, size }: Props) { return <Ionicons name={MAPA_IONICONS[nombre]} size={size} color={color} />; }
 
