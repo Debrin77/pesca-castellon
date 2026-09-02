@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import {
   consultarPuntoPesca,
@@ -14,6 +14,7 @@ import {
 import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import VentanaConsulta from "../components/VentanaConsulta";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
@@ -36,8 +37,6 @@ const CASTELLON_REGION = {
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
-  const resultRef = useRef<ScrollView>(null);
-  useScrollToTop(resultRef);
   const tramos = todosLosTramos();
   const playas = todasLasPlayas();
   const [busqueda, setBusqueda] = useState("");
@@ -49,6 +48,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [localizando, setLocalizando] = useState(false);
   const [modo, setModo] = useState<"continental" | "costa">("continental");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
+  const [fichaAbierta, setFichaAbierta] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -98,9 +98,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     return tramos.filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
   }, [busqueda, tramos, playas, modo]);
 
+  function mostrarFicha(c: ConsultaPesca) {
+    setConsulta(c);
+    setFichaAbierta(true);
+    setBusqueda("");
+  }
+
   function evaluarTramo(z: TramoOficial) {
     setModo("continental");
-    setConsulta(consultarPorTramo(z));
+    mostrarFicha(consultarPorTramo(z));
     setMarcador({ latitude: z.lat, longitude: z.lng });
     if (!tramoUsaRadioAnexo(z)) {
       setCamara({ latitude: z.lat, longitude: z.lng, zoom: 15, nonce: Date.now() });
@@ -115,7 +121,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     } else {
       setModo("continental");
     }
-    setConsulta(r);
+    mostrarFicha(r);
     setMarcador({ latitude: lat, longitude: lng });
   }
 
@@ -123,7 +129,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     const p = playas.find((x) => x.id === id);
     if (!p) return;
     setModo("costa");
-    setConsulta(consultarCosta(p.lat, p.lng));
+    mostrarFicha(consultarCosta(p.lat, p.lng));
     setMarcador({ latitude: p.lat, longitude: p.lng });
     setCamara({ latitude: p.lat, longitude: p.lng, zoom: 14, nonce: Date.now() });
   }
@@ -296,44 +302,60 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
       </View>
 
-      <ScrollView ref={resultRef} style={styles.resultWrap} contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
-        {consulta ? (
-          <ConsultaPescaCard
-            consulta={consulta}
-            onFicha={
-              consulta.tramo?.fichaId
-                ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })
-                : undefined
-            }
-            onAparejos={(id) =>
-              navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } })
-            }
-          />
-        ) : (
-          <Text style={styles.hint}>
-            {modo === "costa"
-              ? "Toca esa playa (o su pin). El nombre es solo la que pulsas, no las de al lado. Rojo: puerto. Violeta: vedado."
-              : "Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar."}
-          </Text>
-        )}
-
-        {(consulta?.tramo || consulta?.ambito === "maritimo") && (
-          <TouchableOpacity
-            style={styles.saveSpotButton}
-            onPress={async () => {
-              await guardarPunto({
-                nombre: consulta.titulo,
-                lat: marcador?.latitude ?? 0,
-                lng: marcador?.longitude ?? 0,
-                zonaRelacionadaId: consulta.tramo?.fichaId ?? consulta.tramo?.id,
-              });
-              setPuntosPersonales(await obtenerPuntosGuardados());
-            }}
-          >
-            <Text style={styles.saveSpotButtonText}>Guardar este punto</Text>
+      <View style={styles.pieMapa}>
+        <Text style={styles.hint}>
+          {modo === "costa"
+            ? "Toca una playa o un pin. La ficha se abre a pantalla completa."
+            : "Toca el agua o un marcador. La ficha se abre a pantalla completa."}
+        </Text>
+        {consulta && !fichaAbierta ? (
+          <TouchableOpacity style={styles.reabrir} onPress={() => setFichaAbierta(true)}>
+            <Text style={styles.reabrirTxt}>Ver última consulta</Text>
           </TouchableOpacity>
-        )}
-      </ScrollView>
+        ) : null}
+      </View>
+
+      <VentanaConsulta
+        visible={fichaAbierta && !!consulta}
+        titulo={consulta?.titulo ?? "Consulta de pesca"}
+        onCerrar={() => setFichaAbierta(false)}
+      >
+        {consulta ? (
+          <>
+            <ConsultaPescaCard
+              consulta={consulta}
+              onFicha={
+                consulta.tramo?.fichaId
+                  ? () => {
+                      setFichaAbierta(false);
+                      navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId });
+                    }
+                  : undefined
+              }
+              onAparejos={(id) => {
+                setFichaAbierta(false);
+                navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } });
+              }}
+            />
+            {(consulta.tramo || consulta.ambito === "maritimo") && (
+              <TouchableOpacity
+                style={styles.saveSpotButton}
+                onPress={async () => {
+                  await guardarPunto({
+                    nombre: consulta.titulo,
+                    lat: marcador?.latitude ?? 0,
+                    lng: marcador?.longitude ?? 0,
+                    zonaRelacionadaId: consulta.tramo?.fichaId ?? consulta.tramo?.id,
+                  });
+                  setPuntosPersonales(await obtenerPuntosGuardados());
+                }}
+              >
+                <Text style={styles.saveSpotButtonText}>Guardar este punto</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : null}
+      </VentanaConsulta>
     </View>
   );
 }
@@ -383,7 +405,7 @@ const styles = StyleSheet.create({
   modoBtnOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { height: 340, position: "relative" },
+  mapWrap: { flex: 1, position: "relative", minHeight: 220 },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
     paddingHorizontal: 12,
@@ -399,8 +421,23 @@ const styles = StyleSheet.create({
   layerChipText: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "700" },
   map: { flex: 1 },
-  resultWrap: { flex: 1 },
-  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center", padding: 8 },
+  pieMapa: {
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 14,
+    paddingTop: 8,
+    paddingBottom: 88,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center" },
+  reabrir: {
+    marginTop: 8,
+    alignItems: "center",
+    paddingVertical: 12,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.md,
+  },
+  reabrirTxt: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 14 },
   saveSpotButton: {
     alignItems: "center",
     paddingVertical: 12,
