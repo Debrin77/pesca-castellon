@@ -97,7 +97,7 @@ export default function App() {
             elevation: 10,
           },
           tabBarLabelStyle: { fontSize: 10.5, fontWeight: "700" as const },
-           tabBarIcon: ({ color, focused, size }) => ( <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size + 2 : size} color={color} /> )
+           tabBarIcon: ({ color, focused, size }) => ( <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size + 2 : size} color={color} /> ),
           ),
         })}
       >
