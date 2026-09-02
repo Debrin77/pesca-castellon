@@ -16,7 +16,9 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
+import CapaPuertos from "../components/CapaPuertos";
 import ListaAnimada from "../components/ListaAnimada";
+import { consultarCosta, todosLosPuertos } from "../services/consultaCostaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -43,6 +45,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [puntosPersonales, setPuntosPersonales] = useState<PuntoGuardado[]>([]);
   const [capas, setCapas] = useState({ zpl: true, zpc: true, vedado: true, misPuntos: true });
   const [localizando, setLocalizando] = useState(false);
+  const [modo, setModo] = useState<"continental" | "costa">("continental");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
 
   useFocusEffect(
@@ -90,6 +93,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [busqueda, tramos]);
 
   function evaluarTramo(z: TramoOficial) {
+    setModo("continental");
     setConsulta(consultarPorTramo(z));
     setMarcador({ latitude: z.lat, longitude: z.lng });
     if (!tramoUsaRadioAnexo(z)) {
@@ -98,8 +102,18 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   function evaluarPunto(lat: number, lng: number) {
-    setConsulta(consultarPuntoPesca(lat, lng));
+    setConsulta(modo === "costa" ? consultarCosta(lat, lng) : consultarPuntoPesca(lat, lng));
     setMarcador({ latitude: lat, longitude: lng });
+  }
+
+  function cambiarModo(siguiente: "continental" | "costa") {
+    setModo(siguiente);
+    if (siguiente === "costa") {
+      setCamara({ latitude: 40.05, longitude: 0.12, zoom: 10, nonce: Date.now() });
+      if (marcador) setConsulta(consultarCosta(marcador.latitude, marcador.longitude));
+    } else if (marcador) {
+      setConsulta(consultarPuntoPesca(marcador.latitude, marcador.longitude));
+    }
   }
 
   async function irAMiPosicion() {
@@ -119,7 +133,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       <View style={styles.searchBox}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Busca un tramo (Arenós, Palancia, Teresa, Sitjar...)"
+          placeholder={
+            modo === "costa"
+              ? "Toca la orilla o un puerto (pesca desde tierra)"
+              : "Busca un tramo (Arenós, Palancia, Teresa, Sitjar...)"
+          }
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}
@@ -142,6 +160,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             ))}
           </View>
         )}
+      </View>
+
+      <View style={styles.modoBar}>
+        <TouchableOpacity
+          style={[styles.modoBtn, modo === "continental" && styles.modoBtnOn]}
+          onPress={() => cambiarModo("continental")}
+        >
+          <Text style={[styles.modoTxt, modo === "continental" && styles.modoTxtOn]}>Ríos y embalses</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.modoBtn, modo === "costa" && styles.modoBtnOn]}
+          onPress={() => cambiarModo("costa")}
+        >
+          <Text style={[styles.modoTxt, modo === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.layerBar} contentContainerStyle={{ paddingHorizontal: 12 }}>
@@ -167,8 +200,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           cameraTarget={camara}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          <CapaPoligonosIcv zpc={capas.zpc} reservas={capas.vedado} />
-          {tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
+          <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
+          {modo === "costa" ? <CapaPuertos /> : null}
+          {modo === "costa" &&
+            todosLosPuertos().map((p) => (
+              <Marker
+                key={p.id}
+                coordinate={{ latitude: p.lat, longitude: p.lng }}
+                pinColor="#b42318"
+                identifier="coto"
+                title={p.nombre}
+                onPress={() => evaluarPunto(p.lat, p.lng)}
+              />
+            ))}
+          {modo === "continental" &&
+            tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
             const color = colorAprovechamiento(z.aprovechamiento);
             return (
               <Circle
@@ -180,7 +226,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               />
             );
           })}
-          {tramosVisibles.map((z) => (
+          {modo === "continental" &&
+          tramosVisibles.map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
@@ -225,7 +272,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             }
           />
         ) : (
-          <Text style={styles.hint}>Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar.</Text>
+          <Text style={styles.hint}>
+            {modo === "costa"
+              ? "Toca la orilla. Los círculos rojos son puertos (no pescar). En capas del mapa puedes activar profundidad EMODnet y carta IHM: no sirven para navegar. El Mediterráneo aquí casi no tiene marea."
+              : "Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar."}
+          </Text>
         )}
 
         {consulta?.tramo && (
@@ -281,6 +332,20 @@ const styles = StyleSheet.create({
   },
   suggestionText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
   suggestionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700" },
+  modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
+  modoBtn: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.background,
+  },
+  modoBtnOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
+  modoTxtOn: { color: "#fff" },
   mapWrap: { height: 340, position: "relative" },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {

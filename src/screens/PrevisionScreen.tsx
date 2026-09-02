@@ -15,9 +15,12 @@ import {
   obtenerHorario,
   descripcionTiempo,
   detectarAlertas,
+  obtenerOleaje,
+  GRAO_CASTELLON,
   PrevisionDia,
   PrevisionHora,
 } from "../services/weatherService";
+import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { COLORS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
@@ -80,6 +83,7 @@ export default function PrevisionScreen() {
   const [cargando, setCargando] = useState(true);
   const [permisoDenegado, setPermisoDenegado] = useState(false);
   const [seleccion, setSeleccion] = useState<string | null>(null);
+  const [oleaje, setOleaje] = useState<{ hora: string; alturaM: number }[]>([]);
 
   async function cargar() {
     setCargando(true);
@@ -92,14 +96,16 @@ export default function PrevisionScreen() {
     setPermisoDenegado(false);
     const loc = await obtenerUbicacionActual();
     if (loc) {
-      const [prevision, horario, ind] = await Promise.all([
+      const [prevision, horario, ind, mar] = await Promise.all([
         obtenerPrevision(loc.lat, loc.lng, 7),
         obtenerHorario(loc.lat, loc.lng, 7),
         calcularIndicePesca(loc.lat, loc.lng, 7),
+        obtenerOleaje(GRAO_CASTELLON.lat, GRAO_CASTELLON.lng),
       ]);
       setDias(prevision);
       setHoras(horario);
       setIndice(ind);
+      setOleaje(mar.filter((o) => o.alturaM != null).slice(0, 12));
       setSeleccion(prevision[0]?.fecha ?? null);
     }
     setCargando(false);
@@ -329,6 +335,22 @@ export default function PrevisionScreen() {
                   </View>
                 </ListaAnimada>
               ))}
+            </View>
+          ) : null}
+
+          {oleaje.length > 0 ? (
+            <View style={styles.why}>
+              <Text style={styles.sectionTitle}>Oleaje en el Grao (costa)</Text>
+              <Text style={styles.subtitle}>{NOTA_MAREAS_CASTELLON}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hours}>
+                {oleaje.map((o) => (
+                  <View key={o.hora} style={styles.hourCard}>
+                    <Text style={styles.hourTime}>{o.hora}</Text>
+                    <Text style={styles.hourTemp}>{o.alturaM.toFixed(1)} m</Text>
+                    <Text style={styles.hourRain}>altura de ola</Text>
+                  </View>
+                ))}
+              </ScrollView>
             </View>
           ) : null}
 

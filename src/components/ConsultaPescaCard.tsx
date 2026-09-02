@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ConsultaPesca } from "../services/consultaPescaService";
 import { FUENTE_NORMATIVA } from "../data/normativa2026";
+import { FUENTE_MARITIMA } from "../data/normativaMaritima";
 import { FUENTE_ICV } from "../services/geojsonHit";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import SitiosOrientativos from "./SitiosOrientativos";
@@ -65,8 +66,14 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
         <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
       ) : null}
 
-      <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
-      <Text style={styles.fuente}>{FUENTE_ICV}</Text>
+      {consulta.ambito === "maritimo" ? (
+        <Text style={styles.fuente}>{FUENTE_MARITIMA.titulo}</Text>
+      ) : (
+        <>
+          <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
+          <Text style={styles.fuente}>{FUENTE_ICV}</Text>
+        </>
+      )}
 
       <View style={styles.row}>
         {consulta.tramo?.fichaId && onFicha ? (

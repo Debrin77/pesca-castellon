@@ -48,7 +48,21 @@ export default function LicenseScreen() {
         style={styles.ctaButton}
         onPress={() => Linking.openURL(LICENCIA_INFO.tramiteOnline)}
       >
-        <Text style={styles.ctaText}>Tramitar licencia online (Sede GVA)</Text>
+        <Text style={styles.ctaText}>Tramitar licencia continental (Sede GVA)</Text>
+      </TouchableOpacity>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Pesca marítima desde tierra</Text>
+        <Text style={styles.cardText}>
+          En la orilla del mar hace falta la licencia de pesca marítima recreativa desde tierra. No sustituye a la continental, ni al revés. Decreto 41/2013: no puertos, no a menos de 100 m de bañistas, no vender capturas.
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.ctaButtonSecondary}
+        onPress={() => Linking.openURL("https://sede.gva.es/es/inicio/procedimientos?id_proc=17170")}
+      >
+        <Text style={styles.ctaTextSecondary}>Licencia marítima desde tierra (GVA)</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

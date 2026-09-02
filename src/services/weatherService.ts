@@ -170,3 +170,24 @@ export async function obtenerPrevision(lat: number, lng: number, dias: number = 
     return [];
   }
 }
+
+/** Oleaje frente al Grao. En Castellón la marea astronómica es irrelevante frente a esto. */
+export async function obtenerOleaje(lat: number, lng: number): Promise<{ hora: string; alturaM: number }[]> {
+  try {
+    const url =
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lng}` +
+      `&hourly=wave_height&timezone=auto&forecast_days=2`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Oleaje ${res.status}`);
+    const data = await res.json();
+    return data.hourly.time.map((iso: string, i: number) => ({
+      hora: iso.slice(11, 16),
+      alturaM: data.hourly.wave_height[i] as number,
+    }));
+  } catch (err) {
+    console.warn("Error obteniendo oleaje:", err);
+    return [];
+  }
+}
+
+export const GRAO_CASTELLON = { lat: 39.97, lng: 0.03 };

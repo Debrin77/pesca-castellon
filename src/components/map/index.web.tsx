@@ -212,7 +212,8 @@ function VolarA({ target }: { target?: { latitude: number; longitude: number; zo
   const map = useMap();
   useEffect(() => {
     if (!target) return;
-    map.flyTo([target.latitude, target.longitude], target.zoom ?? 14, { duration: 0.7 });
+    const zoom = Math.min(target.zoom ?? 14, 16);
+    map.flyTo([target.latitude, target.longitude], zoom, { duration: 0.7 });
   }, [map, target?.nonce]);
   return null;
 }
@@ -255,6 +256,14 @@ export default function MapView({
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              maxZoom={18}
+              maxNativeZoom={18}
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Mapa IGN">
+            <TileLayer
+              attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
+              url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
               maxZoom={19}
             />
           </LayersControl.BaseLayer>
@@ -263,16 +272,17 @@ export default function MapView({
               attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
               url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
               maxZoom={17}
+              maxNativeZoom={17}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Satélite">
+          <LayersControl.BaseLayer name="Satélite IGN">
             <TileLayer
-              attribution="Teselas &copy; Esri"
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution="PNOA-MA © IGN-CNIG"
+              url="https://www.ign.es/wmts/pnoa-ma?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=OI.OrthoimageCoverage&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
               maxZoom={19}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.Overlay name="WMS ICV (oficial)">
+          <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
             <WMSTileLayer
               url="https://terramapas.icv.gva.es/0504_CazaPesca"
               layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
@@ -280,6 +290,26 @@ export default function MapView({
               transparent={true}
               opacity={0.45}
               attribution="ICV / GVA"
+            />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Profundidad EMODnet (no navegar)">
+            <WMSTileLayer
+              url="https://ows.emodnet-bathymetry.eu/wms"
+              layers="mean_atlas_land"
+              format="image/png"
+              transparent={true}
+              opacity={0.55}
+              attribution="EMODnet Bathymetry"
+            />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Carta IHM (no navegar)">
+            <WMSTileLayer
+              url="https://ideihm.covam.es/wms/enc"
+              layers="RasterENC"
+              format="image/png"
+              transparent={true}
+              opacity={0.72}
+              attribution="© Instituto Hidrográfico de la Marina — no válido para navegación"
             />
           </LayersControl.Overlay>
         </LayersControl>

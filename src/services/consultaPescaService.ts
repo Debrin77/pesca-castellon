@@ -49,6 +49,7 @@ export interface ConsultaPesca {
   permisos: string[];
   fuenteGeometria: "poligono_icv" | "radio_anexo" | "ninguna";
   confianza: "oficial" | "aproximada";
+  ambito?: "continental" | "maritimo";
 }
 
 const COLORES: Record<VeredictoPesca, string> = {
