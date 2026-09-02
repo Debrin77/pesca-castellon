@@ -1,0 +1,152 @@
+{
+  "aviso": "Equipo de pesca marítima recreativa desde tierra en Castellón. No es pesca desde barco. De noche no. 100 m de bañistas. Dársena no.",
+  "porId": {
+    "lubina": {
+      "cana": "Spinning 2,40–2,70 m MH (10–40 g) o surfcasting 4,20 m si lanzas a rompiente",
+      "carrete": "4000–5000 spinning, o 6500 surfcasting con buen freno",
+      "linea": "Trenzado 0,12–0,18 mm + bajo fluoro 0,30–0,40 mm",
+      "senuelosCebos": ["Minnow 9–14 cm (walk the dog / jerk)", "Vinilo shad 10 cm en rompiente", "Gusano coreano / americano a fondo"],
+      "tecnica": "Spinning paralelo a la orilla al alba. Surfcasting a la segunda rompiente. Fuera de puerto y de Irta."
+    },
+    "dorada": {
+      "cana": "Surfcasting 4,20–4,50 m acción semiparalela",
+      "carrete": "6500–8000, freno suave",
+      "linea": "Nylon 0,30–0,35 mm o trenzado fino + bajo 0,35",
+      "senuelosCebos": ["Gusano americano / coreano", "Tita, muergo, cañaílla", "Montaje running con pirámide 100–150 g"],
+      "tecnica": "Lances a la rompiente en arena (Voramar, Pinar, Arenal). Mide 20 cm de tenedor a cola."
+    },
+    "sargo": {
+      "cana": "Rockfishing 2,10–2,40 m o spinning ligero 5–25 g",
+      "carrete": "2500–3000",
+      "linea": "Fluoro 0,22–0,28 mm o trenzado 0,10 + bajo fluoro",
+      "senuelosCebos": ["Cangrejo de roca", "Muergo, gusano", "Jig 5–10 g en cabeza de espigón de playa"],
+      "tecnica": "Fondo junto a piedra, fuera de dársena. Talla Diplodus 15 cm."
+    },
+    "mojarra": {
+      "cana": "Rockfishing UL 1,80–2,10 m",
+      "carrete": "1000–2000",
+      "linea": "Fluoro 0,16–0,20 mm",
+      "senuelosCebos": ["Trozo de gusano", "Masa / pan donde esté permitido", "Jig 3–7 g"],
+      "tecnica": "Roca baja. Mide: muchos no llegan a 15 cm."
+    },
+    "herrera": {
+      "cana": "Surfcasting 4,20 m o spinning ligero en rompiente",
+      "carrete": "4000–6500",
+      "linea": "Nylon 0,28–0,32 mm",
+      "senuelosCebos": ["Gusano", "Tita", "Pirámide 80–120 g"],
+      "tecnica": "Playas de arena de la Plana. Sin talla en anexo II: no te lleves alevines."
+    },
+    "oblada": {
+      "cana": "Rockfishing / spinning ligero",
+      "carrete": "2000–2500",
+      "linea": "Fluoro 0,18–0,22 mm",
+      "senuelosCebos": ["Pan, masa", "Jig pequeño", "Pluma"],
+      "tecnica": "Cardumen junto a espigón de playa, de día. Fuera de puerto."
+    },
+    "salema": {
+      "cana": "Rockfishing 2,10 m",
+      "carrete": "2500",
+      "linea": "Fluoro 0,20–0,25 mm",
+      "senuelosCebos": ["Alga / pan", "Gusano en roca", "Jig 5 g"],
+      "tecnica": "Orilla de piedra pastando. Talla 15 cm. Carne a veces amarga."
+    },
+    "llisa": {
+      "cana": "Surfcasting o spinning 2,40 m",
+      "carrete": "4000",
+      "linea": "Nylon 0,25–0,30 mm",
+      "senuelosCebos": ["Masa de pan", "Alga", "Gusano en superficie"],
+      "tecnica": "Playas y golas legales. No marjal vedado ni gola del Millars. 16 cm."
+    },
+    "mabra": {
+      "cana": "Surfcasting 4,20 m",
+      "carrete": "6500",
+      "linea": "Nylon 0,28 mm",
+      "senuelosCebos": ["Gusano", "Masa", "Tita"],
+      "tecnica": "Atardecer en playa. Activa de noche: tú no puedes pescar de noche."
+    },
+    "jurel": {
+      "cana": "Spinning 2,10–2,40 m L-ML",
+      "carrete": "2500–3000",
+      "linea": "Trenzado 0,10 mm + bajo 0,25",
+      "senuelosCebos": ["Cucharilla 7–12 g", "Minnow 7 cm", "Jig 10 g"],
+      "tecnica": "Pases de cardumen, a menudo con agua fría. 12 cm."
+    },
+    "caballa": {
+      "cana": "Spinning 2,40 m MH",
+      "carrete": "4000",
+      "linea": "Trenzado 0,12–0,16 mm",
+      "senuelosCebos": ["Minnow hundido 10 cm", "Jig 15–25 g", "Pluma si hay pajarera"],
+      "tecnica": "Pases desde espigón de playa (fuera de puerto). 18 cm."
+    },
+    "sepia": {
+      "cana": "Eging 2,40–2,60 m",
+      "carrete": "2500–3000",
+      "linea": "Trenzado PE 0,6–0,8 + bajo fluoro 0,30",
+      "senuelosCebos": ["Egi 2.5–3.5", "Pata de sepia (si está permitido el cebo)"],
+      "tecnica": "Atardecer en roca y rompiente, otoño-invierno. No dársena. No de noche cerrada."
+    },
+    "calamar": {
+      "cana": "Eging 2,40–2,70 m",
+      "carrete": "3000–4000",
+      "linea": "PE 0,8–1.0 + bajo 0,35",
+      "senuelosCebos": ["Egi 3.0–3.5", "Egi con luz (última hora legal)"],
+      "tecnica": "Última luz, otoño, escollera de playa no muelle interior."
+    },
+    "pulpo": {
+      "cana": "Rockfishing corta o spinning 2,10 m",
+      "carrete": "3000",
+      "linea": "Nylon 0,30–0,40 mm (abrasión en roca)",
+      "senuelosCebos": ["Jig / pata", "Cangrejo de roca"],
+      "tecnica": "Grietas de día. 1 kg mínimo en Mediterráneo. Irta: no marisqueo de bivalvos."
+    },
+    "salmonete": {
+      "cana": "Rockfishing / surf ligero",
+      "carrete": "2500",
+      "linea": "Fluoro 0,18–0,22 mm",
+      "senuelosCebos": ["Gusano fino", "Tita pequeña"],
+      "tecnica": "Fondo de arena junto a piedra. 11 cm."
+    },
+    "boga": {
+      "cana": "Rockfishing UL",
+      "carrete": "1000–2000",
+      "linea": "Fluoro 0,14–0,18 mm",
+      "senuelosCebos": ["Pan", "Jig 2–5 g"],
+      "tecnica": "Cardumen de orilla. No te lleves alevines."
+    },
+    "corvina": {
+      "cana": "Spinning 2,70 m H o surfcasting potente",
+      "carrete": "5000–8000",
+      "linea": "Trenzado 0,18–0,22 mm + bajo 0,50",
+      "senuelosCebos": ["Minnow 14–18 cm", "Vinilo grande", "Cefalópodo a fondo"],
+      "tecnica": "Oleaje y atardecer en playa/gola legal. No retengas juveniles."
+    },
+    "palometon": {
+      "cana": "Spinning 2,40–2,70 m MH-H",
+      "carrete": "4000–5000, freno potente",
+      "linea": "Trenzado 0,16–0,20 mm",
+      "senuelosCebos": ["Stickbait 12–16 cm", "Minnow hundido", "Jig 20–40 g"],
+      "tecnica": "Pases al amanecer desde espigón de playa (Pinar, Arenal), cara al mar, no dársena."
+    },
+    "anjova": {
+      "cana": "Spinning 2,40 m MH",
+      "carrete": "4000",
+      "linea": "Trenzado 0,14–0,18 mm + bajo resistente (dientes)",
+      "senuelosCebos": ["Minnow 10–14 cm", "Metal jig", "Cucharilla pesada"],
+      "tecnica": "Agua picada, norte de Castellón, fuera de Irta."
+    },
+    "espeton": {
+      "cana": "Spinning 2,40 m MH",
+      "carrete": "4000",
+      "linea": "Trenzado 0,14 mm + bajo fluoro 0,40 (dientes)",
+      "senuelosCebos": ["Minnow largo 12 cm", "Jig 15–25 g"],
+      "tecnica": "Vinaròs y roca norte, agua clara. Fuera de puerto."
+    },
+    "cangrejo_azul": {
+      "cana": "Caña corta o retel donde la norma lo permita",
+      "carrete": "Según arte legal",
+      "linea": "Robusta; pinzas",
+      "senuelosCebos": ["Pescado, marisco"],
+      "tecnica": "Invasor: no lo devuelvas. Fuera de marjal vedado. No lo confundas con cangrejo de roca nativo."
+    }
+  }
+}

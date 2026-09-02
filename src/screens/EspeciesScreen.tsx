@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useScrollToTop } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker, Circle } from "../components/map";
 import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
@@ -13,6 +12,7 @@ import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import ListaAnimada from "../components/ListaAnimada";
 import SitiosOrientativos from "../components/SitiosOrientativos";
+import VentanaConsulta from "../components/VentanaConsulta";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import MejorHoraPesca from "../components/MejorHoraPesca";
 
@@ -23,20 +23,76 @@ interface Props {
 }
 
 const CASTELLON_REGION = {
-  latitude: 40.12,
-  longitude: -0.38,
-  latitudeDelta: 1.15,
-  longitudeDelta: 1.15,
+  latitude: 40.05,
+  longitude: -0.02,
+  latitudeDelta: 1.25,
+  longitudeDelta: 1.25,
 };
 
+function TarjetaEspecie({
+  sp,
+  index,
+  enVeda,
+  onAparejos,
+  extra,
+}: {
+  sp: any;
+  index: number;
+  enVeda?: boolean;
+  onAparejos?: () => void;
+  extra?: React.ReactNode;
+}) {
+  return (
+    <ListaAnimada key={sp.id} index={index} replayKey={sp.id}>
+      <View style={[styles.card, (sp.invasora || sp.id === "cangrejo_azul") && styles.cardInvasora]}>
+        <Text style={styles.cardTitle}>
+          {sp.icono ? `${sp.icono} ` : ""}
+          {sp.nombre}{" "}
+          {(sp.invasora || sp.id === "cangrejo_azul") && <Text style={styles.badgeInvasora}>INVASORA</Text>}
+        </Text>
+        <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
+        {sp.tallaCm != null || sp.tallaNota ? (
+          <Text style={styles.cardStatus}>
+            Talla: {sp.tallaCm != null ? `${sp.tallaCm} cm` : "sin cifra en anexo II"}
+            {sp.tallaNota ? ` · ${sp.tallaNota}` : ""}
+          </Text>
+        ) : null}
+        {sp.tallaOficial ? <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text> : null}
+        <Text style={styles.cardText}>{sp.notas}</Text>
+        {sp.noConfundirCon ? <Text style={styles.cardText}>No lo confundas con: {sp.noConfundirCon}</Text> : null}
+        {sp.motivo ? <Text style={styles.avisoLegalText}>{sp.motivo}</Text> : null}
+        <MejorHoraPesca especie={sp} />
+        {sp.normativaEspecial && (
+          <View style={styles.avisoLegalBox}>
+            <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
+          </View>
+        )}
+        {enVeda != null && (
+          <Text style={styles.cardStatus}>
+            Estado ahora:{" "}
+            <Text style={{ fontWeight: "800", color: enVeda ? COLORS.danger : COLORS.success }}>
+              {enVeda ? "EN VEDA" : "Periodo hábil"}
+            </Text>
+          </Text>
+        )}
+        {extra}
+        {onAparejos ? (
+          <TouchableOpacity onPress={onAparejos} style={styles.gearBtn}>
+            <Text style={styles.gearLink}>Ver aparejos →</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    </ListaAnimada>
+  );
+}
+
 export default function EspeciesScreen({ navigation }: Props) {
-  const listRef = useRef<ScrollView>(null);
-  useScrollToTop(listRef);
   const tramos = todosLosTramos();
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
-  const [mostrarCatalogoCompleto, setMostrarCatalogoCompleto] = useState(false);
+  const [fichaAbierta, setFichaAbierta] = useState(false);
+  const [catalogoAbierto, setCatalogoAbierto] = useState(false);
   const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no">("rio");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
 
@@ -65,12 +121,31 @@ export default function EspeciesScreen({ navigation }: Props) {
     setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
     if (r.ambito === "maritimo") setCatalogo("mar");
+    setFichaAbierta(true);
+    setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
   }
 
   function evaluarTramo(z: TramoOficial) {
     setConsulta(consultarPorTramo(z));
     setMarcador({ latitude: z.lat, longitude: z.lng });
+    setCatalogo("rio");
+    setFichaAbierta(true);
   }
+
+  function irAparejos(especieId: string) {
+    setFichaAbierta(false);
+    setCatalogoAbierto(false);
+    navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId } });
+  }
+
+  const especiesConsulta =
+    consulta?.ambito === "maritimo"
+      ? (consulta.especiesIds ?? []).map((id) =>
+          [...(orilla.pescablesOrilla as any[]), ...(orilla.invasorasOrilla as any[])].find((s) => s.id === id)
+        )
+      : (consulta?.tramo?.especies ?? []).map((especieId: string) =>
+          speciesCatalog.find((s: any) => s.id === especieId)
+        );
 
   return (
     <View style={styles.container}>
@@ -78,7 +153,6 @@ export default function EspeciesScreen({ navigation }: Props) {
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
-          fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
           cameraTarget={camara}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
@@ -115,17 +189,34 @@ export default function EspeciesScreen({ navigation }: Props) {
         <BotonMiPosicion onPress={usarMiUbicacion} cargando={cargandoUbicacion} />
       </View>
 
-      <ScrollView ref={listRef} style={styles.listWrap} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        {cargandoUbicacion && !consulta && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 20 }} />}
+      <View style={styles.pie}>
+        <Text style={styles.hint}>Toca río o playa: las especies se abren a pantalla completa.</Text>
+        <View style={styles.pieRow}>
+          {consulta && !fichaAbierta ? (
+            <TouchableOpacity style={styles.pieBtn} onPress={() => setFichaAbierta(true)}>
+              <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity style={[styles.pieBtn, styles.pieBtnGhost]} onPress={() => setCatalogoAbierto(true)}>
+            <Text style={styles.pieBtnGhostTxt}>Catálogo</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
+      <VentanaConsulta
+        visible={fichaAbierta && !!consulta}
+        titulo={consulta?.titulo ?? "Especies"}
+        onCerrar={() => setFichaAbierta(false)}
+      >
         {consulta ? (
           <>
-            <Text style={styles.zoneHeader}>{consulta.titulo}</Text>
-            {consulta.restriccionesHoy.slice(0, 2).map((r, i) => (
-              <Text key={i} style={styles.cardText}>{r}</Text>
+            {consulta.restriccionesHoy.slice(0, 3).map((r, i) => (
+              <Text key={i} style={styles.cardText}>
+                {r}
+              </Text>
             ))}
             {consulta.especiesHabituales ? (
-              <Text style={styles.cardText}>Especies habituales: {consulta.especiesHabituales}</Text>
+              <Text style={styles.lead}>{consulta.especiesHabituales}</Text>
             ) : null}
             {consulta.ambito === "maritimo" ? (
               <SitiosOrientativos
@@ -136,180 +227,110 @@ export default function EspeciesScreen({ navigation }: Props) {
             ) : consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
               <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
             ) : null}
-            {(consulta.ambito === "maritimo"
-              ? (consulta.especiesIds ?? []).map((id) =>
-                  [...(orilla.pescablesOrilla as any[]), ...(orilla.invasorasOrilla as any[])].find((s) => s.id === id)
-                )
-              : (consulta.tramo?.especies ?? []).map((especieId: string) =>
-                  speciesCatalog.find((s: any) => s.id === especieId)
-                )
-            )
-              .filter(Boolean)
-              .map((sp: any, i: number) => {
-              const especieId = sp.id;
-              const enVeda = consulta.ambito === "maritimo" ? false : estaEnVeda(especieId);
-              return (
-                <ListaAnimada key={especieId} index={i}>
-                <View style={[styles.card, sp.invasora && styles.cardInvasora]}>
-                  <Text style={styles.cardTitle}>
-                    {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
-                  </Text>
-                  <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-                  <Text style={styles.cardText}>{sp.notas}</Text>
-                  <MejorHoraPesca especie={sp} />
-                  {sp.tallaOficial ? <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text> : null}
-                  {sp.normativaEspecial && (
-                    <View style={styles.avisoLegalBox}>
-                      <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
-                    </View>
-                  )}
-                  <Text style={styles.cardStatus}>
-                    Estado ahora:{" "}
-                    <Text style={{ fontWeight: "bold", color: enVeda ? COLORS.danger : COLORS.success }}>
-                      {enVeda ? "EN VEDA" : "Periodo hábil"}
-                    </Text>
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId } })
-                    }
-                  >
-                    <Text style={styles.gearLink}>Ver aparejos recomendados →</Text>
-                  </TouchableOpacity>
-                </View>
-                </ListaAnimada>
-              );
-            })}
+            {especiesConsulta.filter(Boolean).length === 0 ? (
+              <Text style={styles.emptyText}>No hay ficha de especies para este punto. Abre el catálogo.</Text>
+            ) : (
+              especiesConsulta.filter(Boolean).map((sp: any, i: number) => (
+                <TarjetaEspecie
+                  key={sp.id}
+                  sp={sp}
+                  index={i}
+                  enVeda={consulta.ambito === "maritimo" ? undefined : estaEnVeda(sp.id)}
+                  onAparejos={() => irAparejos(sp.id)}
+                />
+              ))
+            )}
           </>
-        ) : (
-          !cargandoUbicacion && (
-            <Text style={styles.emptyText}>Toca el mapa o activa tu ubicación para ver las especies de una zona.</Text>
-          )
-        )}
+        ) : null}
+      </VentanaConsulta>
 
-        <TouchableOpacity
-          style={styles.toggleCatalog}
-          onPress={() => setMostrarCatalogoCompleto(!mostrarCatalogoCompleto)}
-        >
-          <Text style={styles.toggleCatalogText}>
-            {mostrarCatalogoCompleto ? "▲ Ocultar" : "▼ Ver"} catálogo de especies
-          </Text>
-        </TouchableOpacity>
-
-        {mostrarCatalogoCompleto && (
-          <View style={styles.modoBar}>
-            <TouchableOpacity style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOn]} onPress={() => setCatalogo("rio")}>
-              <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOn]} onPress={() => setCatalogo("mar")}>
-              <Text style={[styles.modoTxt, catalogo === "mar" && styles.modoTxtOn]}>Orilla mar (20)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOn]} onPress={() => setCatalogo("no")}>
-              <Text style={[styles.modoTxt, catalogo === "no" && styles.modoTxtOn]}>No tocar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {mostrarCatalogoCompleto && catalogo === "rio" &&
+      <VentanaConsulta visible={catalogoAbierto} titulo="Catálogo de especies" onCerrar={() => setCatalogoAbierto(false)}>
+        <View style={styles.modoBar}>
+          <TouchableOpacity style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOn]} onPress={() => setCatalogo("rio")}>
+            <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOn]} onPress={() => setCatalogo("mar")}>
+            <Text style={[styles.modoTxt, catalogo === "mar" && styles.modoTxtOn]}>Orilla mar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOn]} onPress={() => setCatalogo("no")}>
+            <Text style={[styles.modoTxt, catalogo === "no" && styles.modoTxtOn]}>No tocar</Text>
+          </TouchableOpacity>
+        </View>
+        {catalogo === "rio" &&
           speciesCatalog.map((sp: any, i: number) => (
-            <ListaAnimada key={sp.id} index={i} replayKey={`cat-${sp.id}`}>
-            <View style={[styles.card, sp.invasora && styles.cardInvasora]}>
-              <Text style={styles.cardTitle}>
-                {sp.icono} {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
-              </Text>
-              <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-              <Text style={styles.cardText}>{sp.notas}</Text>
-              <MejorHoraPesca especie={sp} />
-              {sp.normativaEspecial && (
-                <View style={styles.avisoLegalBox}>
-                  <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
-                </View>
-              )}
-            </View>
-            </ListaAnimada>
+            <TarjetaEspecie key={sp.id} sp={sp} index={i} enVeda={estaEnVeda(sp.id)} onAparejos={() => irAparejos(sp.id)} />
           ))}
-
-        {mostrarCatalogoCompleto && catalogo === "mar" && (
+        {catalogo === "mar" && (
           <>
             <Text style={styles.cardText}>{orilla.fuenteTallas}</Text>
             {orilla.invasorasOrilla.map((sp: any, i: number) => (
-              <ListaAnimada key={sp.id} index={i} replayKey={sp.id}>
-                <View style={[styles.card, styles.cardInvasora]}>
-                  <Text style={styles.cardTitle}>{sp.nombre} <Text style={styles.badgeInvasora}>INVASORA</Text></Text>
-                  <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-                  <Text style={styles.cardText}>{sp.notas}</Text>
-                  <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text>
-                  <MejorHoraPesca especie={sp} />
-                </View>
-              </ListaAnimada>
+              <TarjetaEspecie key={sp.id} sp={sp} index={i} onAparejos={() => irAparejos(sp.id)} />
             ))}
             {orilla.pescablesOrilla.map((sp: any, i: number) => (
-              <ListaAnimada key={sp.id} index={i} replayKey={sp.id}>
-                <View style={styles.card}>
-                  <Text style={styles.cardTitle}>{i + 1}. {sp.nombre}</Text>
-                  <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-                  <Text style={styles.cardStatus}>
-                    Talla mínima: {sp.tallaCm != null ? `${sp.tallaCm} cm` : "sin cifra en el anexo II"} · {sp.tallaNota}
-                  </Text>
-                  <Text style={styles.cardText}>{sp.notas}</Text>
-                  <Text style={styles.cardText}>No lo confundas con: {sp.noConfundirCon}</Text>
-                  <MejorHoraPesca especie={sp} />
-                </View>
-              </ListaAnimada>
+              <TarjetaEspecie key={sp.id} sp={sp} index={i} onAparejos={() => irAparejos(sp.id)} />
             ))}
           </>
         )}
-
-        {mostrarCatalogoCompleto && catalogo === "no" &&
-          orilla.noCapturar.map((sp: any, i: number) => (
-            <ListaAnimada key={sp.id} index={i} replayKey={sp.id}>
-              <View style={[styles.card, styles.avisoLegalBox]}>
-                <Text style={styles.cardTitle}>{sp.nombre}</Text>
-                <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-                <Text style={styles.avisoLegalText}>{sp.motivo}</Text>
-              </View>
-            </ListaAnimada>
-          ))}
-      </ScrollView>
+        {catalogo === "no" && orilla.noCapturar.map((sp: any, i: number) => <TarjetaEspecie key={sp.id} sp={sp} index={i} />)}
+      </VentanaConsulta>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  mapWrap: { height: 280, position: "relative" },
+  mapWrap: { flex: 1, position: "relative", minHeight: 220 },
   map: { flex: 1 },
-  listWrap: { flex: 1 },
-  zoneHeader: { fontSize: 15.5, fontWeight: "700", color: COLORS.textPrimary, marginBottom: 10 },
-  emptyText: { fontSize: 13, color: COLORS.textMuted, fontStyle: "italic", textAlign: "center", marginTop: 20 },
+  pie: {
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 88,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center" },
+  pieRow: { flexDirection: "row", gap: 8, marginTop: 10 },
+  pieBtn: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pieBtnTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 14 },
+  pieBtnGhost: { backgroundColor: COLORS.waterLight },
+  pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },
+  lead: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, marginBottom: 12, lineHeight: 22 },
+  emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 16, lineHeight: 20 },
   card: {
     backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
-    padding: 14,
-    marginBottom: 10,
+    borderRadius: RADIUS.lg,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
     ...SHADOW,
   },
   cardInvasora: { borderColor: COLORS.warning, backgroundColor: "#fffaf3" },
-  cardTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary },
-  cardNote: { fontSize: 11, color: COLORS.textMuted, marginTop: 2, fontStyle: "italic" },
-  cardText: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4 },
+  cardTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -0.3 },
+  cardNote: { fontSize: 12, color: COLORS.textMuted, marginTop: 3, fontStyle: "italic" },
+  cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
   avisoLegalBox: {
-    marginTop: 8,
+    marginTop: 10,
     backgroundColor: COLORS.dangerLight,
     borderRadius: 10,
     padding: 10,
     borderWidth: 1,
     borderColor: COLORS.danger,
   },
-  avisoLegalText: { fontSize: 12, color: "#7a1414", lineHeight: 17, fontWeight: "600" },
-  cardStatus: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 6 },
-  badgeInvasora: { fontSize: 11, color: COLORS.warning, fontWeight: "bold" },
-  gearLink: { fontSize: 12.5, color: COLORS.water, fontWeight: "600", marginTop: 8 },
-  toggleCatalog: { alignItems: "center", paddingVertical: 12, marginTop: 8 },
-  toggleCatalogText: { color: COLORS.primary, fontWeight: "600", fontSize: 13 },
-  modoBar: { flexDirection: "row", gap: 6, marginBottom: 10 },
+  avisoLegalText: { fontSize: 13, color: "#7a1414", lineHeight: 19, fontWeight: "600", marginTop: 6 },
+  cardStatus: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, lineHeight: 20 },
+  badgeInvasora: { fontSize: 11, color: COLORS.warning, fontWeight: "800" },
+  gearBtn: { marginTop: 12, alignSelf: "flex-start" },
+  gearLink: { fontSize: 15, color: COLORS.water, fontWeight: "800" },
+  modoBar: { flexDirection: "row", gap: 6, marginBottom: 14 },
   modoBtn: {
     flex: 1,
     minHeight: 44,
@@ -320,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 4,
   },
-  modoBtnOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoBtnOn: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
 });

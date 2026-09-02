@@ -32,7 +32,8 @@ function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
 }
 
 export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Props) {
-  const especieDestacada = consulta.tramo?.especies?.[0];
+  const especieDestacada =
+    consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
   const hoy = etiquetaHoy(consulta);
   return (
     <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
