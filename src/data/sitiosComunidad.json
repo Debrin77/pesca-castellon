@@ -1,0 +1,263 @@
+{
+  "aviso": "Lugares que se citan una y otra vez en webs y foros de pesca (Hay Pesca, Iberpesca, Pesca en España, blogs, Elveril, noticias CHJ). No son el DOGV ni un GPS secreto. El nivel de agua cambia el sitio. Vedados y reservas no llevan recomendaciones.",
+  "porTramo": {
+    "s2.2": [
+      {
+        "nombre": "Puente de la CV-105 (codo de los dos brazos)",
+        "especies": "Black bass",
+        "cuando": "Todo el año; mejor primavera y otoño",
+        "detalle": "Acceso fácil. Debajo del puente: cucharilla, vinilo plomado o crank si el bass no está orillado."
+      },
+      {
+        "nombre": "Área recreativa Umbrías de Benifassà",
+        "especies": "Bass y carpa",
+        "cuando": "Mañanas; evita el baño de verano a mediodía",
+        "detalle": "Orillas suaves y aparcamiento. Lengua este-oeste siguiendo el sendero junto a la carretera."
+      },
+      {
+        "nombre": "Cola del río Sénia / Cenia",
+        "especies": "Bass, barbo",
+        "cuando": "Tras lluvias y en otoño",
+        "detalle": "Extremo oeste de esa lengua: desembocadura del tributario, orilla más escarpada y menos pisada."
+      },
+      {
+        "nombre": "Entrada del barranco de la Fou",
+        "especies": "Bass (agua muy clara)",
+        "cuando": "Amanecer; finesse",
+        "detalle": "Brazo norte-sur: pista forestal, accesos peores, sitios más salvajes. Aguas cristalinas."
+      }
+    ],
+    "s2.3": [
+      {
+        "nombre": "Corriente al pie de presa (hasta la CV-100)",
+        "especies": "Barbo, carpa",
+        "cuando": "Mañanas; agua algo teñida",
+        "detalle": "Ciprínidos en agua oxigenada. No entres a la zona de seguridad de la presa si está señalizada."
+      }
+    ],
+    "m10.1": [
+      {
+        "nombre": "Pozas y colas de tabla (Mijares alto, entrada CV)",
+        "especies": "Trucha común (sin muerte)",
+        "cuando": "Temporada salmonícola; martes, jueves, sábado y domingo (nota 1)",
+        "detalle": "Aguas arriba de la cola de Arenós. Mosca o cucharilla, un anzuelo sin arpón. No es el vaso del embalse."
+      }
+    ],
+    "m10.2": [
+      {
+        "nombre": "Cola salmonícola de Arenós (entrada del Mijares)",
+        "especies": "Trucha (temporada) y bass en transición",
+        "cuando": "Primavera; mismos días que nota 1",
+        "detalle": "Donde el río se abre al embalse. En verano el agua del vaso es demasiado cálida para trucha."
+      }
+    ],
+    "m10.3": [
+      {
+        "nombre": "Cola del Villahermosa (transición río-embalse)",
+        "especies": "Black bass (freza) y barbo",
+        "cuando": "Marzo-junio",
+        "detalle": "La zona más citada para bass en Castellón. Texas y spinnerbait en cobertura; barbo en la corriente de entrada."
+      },
+      {
+        "nombre": "Puntas con caída y fondos de roca",
+        "especies": "Bass grande",
+        "cuando": "Verano y otoño; mediodía en profundidad",
+        "detalle": "Drop shot fino (agua clara) y football jig en el escalón. Los grandes se bajan de cota con el calor."
+      },
+      {
+        "nombre": "Brazos laterales y cañones",
+        "especies": "Bass",
+        "cuando": "Amanecer (superficie) y sombra de día",
+        "detalle": "Topwater al alba en el fondo del brazo; jig pegado a la pared del cañón con sol."
+      },
+      {
+        "nombre": "Orillas de la CV-20, árboles sumergidos y escalones",
+        "especies": "Carpa, barbo, lucio",
+        "cuando": "Carpa: mayo-septiembre al alba; lucio: agua fría",
+        "detalle": "Accesos desde la carretera. Lucio en escalón de roca y palos. Carpa a inglesa/boloñesa: talla media, no trophy."
+      }
+    ],
+    "m10.5": [
+      {
+        "nombre": "Tablas entre puentes bajo Arenós",
+        "especies": "Trucha (sin muerte)",
+        "cuando": "Solo martes y jueves (nota 2 del anexo)",
+        "detalle": "Tramo corto salmonícola. Si hoy no es martes o jueves, no es día hábil."
+      }
+    ],
+    "m10.7": [
+      {
+        "nombre": "Tablas y azudes de Maimona a Vallat",
+        "especies": "Barbo, carpa",
+        "cuando": "Mañanas; tras lluvias con agua teñida",
+        "detalle": "Aguas no trucheras. Evita el tramo vedado de la Maimona aguas arriba."
+      }
+    ],
+    "m10.8": [
+      {
+        "nombre": "Cola de Sitjar (antes del vaso)",
+        "especies": "Barbo, carpa",
+        "cuando": "Si el tramo sigue abierto y hay caudal",
+        "detalle": "El vaso de Sitjar tiene otra norma (mejillón cebra). Quédate en el río, no entres al embalse si hay duda."
+      }
+    ],
+    "m10.12": [
+      {
+        "nombre": "Azudes y orillas del Millars (Santa Quiteria–Almassora)",
+        "especies": "Barbo, carpa, mugílidos en tramo bajo",
+        "cuando": "Con permiso de coto CS (ZPC Millars)",
+        "detalle": "No es zona libre. Sin permiso del titular no se pesca. Desembocadura aguas abajo es vedado."
+      }
+    ],
+    "m10.13": [
+      {
+        "nombre": "Tramo urbano Almassora (antes de la vía del tren)",
+        "especies": "Ciprínidos, lisas si sube agua salobre",
+        "cuando": "Primeras horas",
+        "detalle": "ZPL corto. No pases a la desembocadura: es vedado (VP)."
+      }
+    ],
+    "v10.20": [
+      {
+        "nombre": "Tablas entre la CV-197 y la depuradora",
+        "especies": "Trucha común (sin muerte)",
+        "cuando": "Temporada salmonícola, amanecer y atardecer",
+        "detalle": "Tramo libre truchero. Cabecera (ZRTC) y tramos de coto no se pescan sin permiso / están vedados."
+      }
+    ],
+    "v10.21": [
+      {
+        "nombre": "Coto Villahermosa–Cedramán (CS-011)",
+        "especies": "Trucha común",
+        "cuando": "Días del plan del coto (permiso obligatorio)",
+        "detalle": "Desde el puente a Cortes hasta el badén de Cedramán. Una caña, sin cebar. No inventamos cupos del PTOP."
+      }
+    ],
+    "v10.23": [
+      {
+        "nombre": "Argelita hasta la confluencia con el Mijares",
+        "especies": "Trucha en temporada; barbo hacia el Mijares",
+        "cuando": "Temporada salmonícola",
+        "detalle": "ZPL. El tramo Cedramán–Argelita es vedado: no lo uses de atajo."
+      }
+    ],
+    "r10.25": [
+      {
+        "nombre": "Cola de María Cristina (rambla de la Viuda)",
+        "especies": "Bass en primavera; carpa si hay lámina",
+        "cuando": "Si el embalse tiene agua",
+        "detalle": "La rambla solo pesca con caudal. En sequía la cola queda en charcos: no fuerces."
+      }
+    ],
+    "r10.26": [
+      {
+        "nombre": "Orillas accesibles y cola de la rambla",
+        "especies": "Carpa, bass, lucio (históricamente siluro)",
+        "cuando": "Con nivel decente; alba y atardecer",
+        "detalle": "Sitio clásico de carpfishing y depredadores de La Plana. En 2024 la CHJ hizo despesque por sequía (siluro, carpa, carpín). Mira el SAIH: si está bajo, espera poco pez."
+      },
+      {
+        "nombre": "Cambios de cota y vegetación de orilla",
+        "especies": "Lucio y bass",
+        "cuando": "Agua fría (lucio); primavera (bass)",
+        "detalle": "Jerkbait y swimbait junto a cañas y entradas de rambla. Invasoras: no devolver."
+      }
+    ],
+    "r10.27": [
+      {
+        "nombre": "Rambla de la Viuda bajo la presa, hacia el Mijares",
+        "especies": "Barbo, carpa",
+        "cuando": "Con suelta o lluvias",
+        "detalle": "Cauce a menudo seco. Solo merece la pena con agua. Lombriz solo en aguas no trucheras."
+      }
+    ],
+    "b9.1": [
+      {
+        "nombre": "Remansos del Sec de Borriol (si lleva agua)",
+        "especies": "Ciprínidos menores",
+        "cuando": "Tras lluvias",
+        "detalle": "Poco citado en foros. Rambla mediterránea: muchos tramos secos. No hay un 'hotspot' documentado."
+      }
+    ],
+    "p17.2": [
+      {
+        "nombre": "Pozas y sombras de ribera Bejís–Teresa (ZPL)",
+        "especies": "Trucha común (sin muerte)",
+        "cuando": "Temporada; amanecer. Evita El Molinar si es reserva o baño masivo",
+        "detalle": "Aguas claras de cabecera. Mosca o cucharilla. El nacimiento y la reserva ZRTC no se pescan."
+      }
+    ],
+    "p17.3": [
+      {
+        "nombre": "Coto Teresa (CS-008): puente de Teresa hacia Bejís",
+        "especies": "Trucha común (sin muerte) y arcoíris de suelta",
+        "cuando": "Con permiso; días que fije el coto (clásicamente jueves, sábado y domingo)",
+        "detalle": "Permisos en Segorbe / servicios territoriales. No pesques los 3 días posteriores a una suelta si así lo marca el coto."
+      }
+    ],
+    "p17.4": [
+      {
+        "nombre": "Palancia del puente de Teresa a la cola del Regajo",
+        "especies": "Trucha sin muerte; barbo hacia el embalse",
+        "cuando": "Temporada salmonícola; jueves, sábado y domingo en tramos libres trucheros del Palancia (comprueba anexo)",
+        "detalle": "ZPL entre cotos. Tablas, pozas y sombra de chopos."
+      }
+    ],
+    "p17.5": [
+      {
+        "nombre": "Orillas del Regajo (Jérica) y cola del Palancia",
+        "especies": "Bass, barbo, carpa; trucha en cola fría",
+        "cuando": "Primavera-otoño; orilla con vegetación",
+        "detalle": "Embalse pequeño (vía verde / CV-213). Algunas normas antiguas lo vedaron: hoy el anexo lo marca ZPL, pero mira la señalización. Una caña."
+      }
+    ],
+    "p17.6": [
+      {
+        "nombre": "Palancia pie de Regajo hacia Segorbe / Navajas",
+        "especies": "Barbo, carpa",
+        "cuando": "Mañanas de corriente",
+        "detalle": "Aguas ya más cálidas. No entres al coto de Segorbe (CS-009) sin permiso."
+      }
+    ],
+    "p17.7": [
+      {
+        "nombre": "Coto Segorbe (CS-009)",
+        "especies": "Barbo, carpa",
+        "cuando": "Solo con permiso de coto",
+        "detalle": "Ciprínidos. Sin permiso no es libre. El PTOP puede añadir días: no los inventamos aquí."
+      }
+    ],
+    "p17.8": [
+      {
+        "nombre": "Palancia rambla Seca–cola de Algar",
+        "especies": "Barbo, carpa",
+        "cuando": "Con caudal (el Palancia medio a menudo baja)",
+        "detalle": "Poco cubierto en foros. Azudes y tablas. La cola del embalse de Algar concentra pez si hay lámina."
+      }
+    ],
+    "p17.9": [
+      {
+        "nombre": "Cola del Palancia en Algar y orillas accesibles",
+        "especies": "Carpa, bass, barbo (si hay agua)",
+        "detalle": "Embalse joven (año 2000), a menudo muy bajo o vacío en SAIH. No hay literatura bassera comparable a Arenós. Si está seco, no hay sitio.",
+        "cuando": "Solo con nivel visible en orilla"
+      }
+    ],
+    "p17.10": [
+      {
+        "nombre": "Azudes bajos del Palancia (hacia la CV-320)",
+        "especies": "Lisas y ciprínidos",
+        "cuando": "Subida de caudal o primeras horas",
+        "detalle": "Mugílidos pastando en superficie. Muchas desembocaduras y marjales de la Plana son VP: no bajes al marjal."
+      }
+    ],
+    "al15.zpc": [
+      {
+        "nombre": "Els Estanys / La Ponderosa (CS-010)",
+        "especies": "Carpa, bass; anguila con cupo y talla",
+        "cuando": "Solo con permiso de esa ZPC",
+        "detalle": "El marjal de Almenara está vedado (VP3) salvo este coto. Sin permiso no se pesca. Anguila: 25 cm y cupo de aguas libres no aplica igual en coto."
+      }
+    ]
+  }
+}

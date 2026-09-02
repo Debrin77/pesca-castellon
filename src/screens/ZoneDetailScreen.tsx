@@ -6,6 +6,8 @@ import { estaEnVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import LicenseBanner from "../components/LicenseBanner";
 import MejorHoraPesca from "../components/MejorHoraPesca";
+import SitiosOrientativos from "../components/SitiosOrientativos";
+import { sitiosDeFicha } from "../services/sitiosComunidad";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 
@@ -61,6 +63,14 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
       </LinearGradient>
 
       <LicenseBanner onPress={() => navigation.navigate("License")} />
+
+      {sitiosDeFicha(zone.id).map((bloque) => (
+        <SitiosOrientativos
+          key={bloque.tramoNombre}
+          titulo={`Sitios que más se citan · ${bloque.tramoNombre}`}
+          sitios={bloque.sitios}
+        />
+      ))}
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>💧 Estado del embalse (SAIH)</Text>

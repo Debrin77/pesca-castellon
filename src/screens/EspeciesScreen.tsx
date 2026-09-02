@@ -10,6 +10,8 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import ListaAnimada from "../components/ListaAnimada";
+import SitiosOrientativos from "../components/SitiosOrientativos";
+import { sitiosDeTramo } from "../services/sitiosComunidad";
 import MejorHoraPesca from "../components/MejorHoraPesca";
 
 type LatLng = { latitude: number; longitude: number };
@@ -116,6 +118,9 @@ export default function EspeciesScreen({ navigation }: Props) {
             {consulta.restriccionesHoy.slice(0, 2).map((r, i) => (
               <Text key={i} style={styles.cardText}>{r}</Text>
             ))}
+            {consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
+              <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
+            ) : null}
             {(consulta.tramo?.especies ?? []).map((especieId: string, i: number) => {
               const sp = speciesCatalog.find((s: any) => s.id === especieId);
               if (!sp) return null;

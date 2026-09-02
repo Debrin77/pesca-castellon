@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ConsultaPesca } from "../services/consultaPescaService";
 import { FUENTE_NORMATIVA } from "../data/normativa2026";
 import { FUENTE_ICV } from "../services/geojsonHit";
+import { sitiosDeTramo } from "../services/sitiosComunidad";
+import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "../components/ListaAnimada";
 import { COLORS, RADIUS } from "../theme";
 
@@ -57,6 +59,10 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
 
       {consulta.tramo?.especies?.length ? (
         <Text style={styles.especies}>Especies habituales: {consulta.tramo.especies.join(" · ")}</Text>
+      ) : null}
+
+      {consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
+        <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
       ) : null}
 
       <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>

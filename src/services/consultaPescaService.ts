@@ -186,6 +186,17 @@ function evaluarTramo(
     permisos.push("No hace falta permiso de coto: es zona de pesca libre (ZPL).");
   }
 
+  if (t.id === "m10.9") {
+    restricciones.push(
+      "Sitjar / Sichar: la Resolución 2/11/2006 (DOGV) prohibió la pesca deportiva por mejillón cebra. Turismo Castellón sigue diciendo que no se pesca. El anexo de 2024 lista un tramo ZPL de recreo: antes de lanzar, mira la señalización o pregunta a agentes. No recomendamos 'mejores sitios' aquí."
+    );
+  }
+  if (t.id === "r10.26") {
+    restricciones.push(
+      "María Cristina: en 2024 la CHJ retiró toneladas de pez (siluro, carpa, carpín) por sequía. El SAIH marca el nivel; si está muy bajo, espera poca pesca."
+    );
+  }
+
   if (salmonicola) {
     permisos.push(`Tramos trucheros: ${etiquetaTemporadaTrucha(fecha.getFullYear())}.`);
     permisos.push("Una caña, sin abandono, anzuelo sin arpón, solo mosca o cucharilla. Trucha común siempre sin muerte.");
