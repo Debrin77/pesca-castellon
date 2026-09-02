@@ -79,25 +79,37 @@
       "tecnica": "Pases desde espigón de playa (fuera de puerto). 18 cm."
     },
     "sepia": {
-      "cana": "Eging 2,40–2,60 m",
-      "carrete": "2500–3000",
+      "cana": "Eging 2,40–2,60 m (caña específica o spinning MH suave)",
+      "carrete": "2500–3000, freno suave",
       "linea": "Trenzado PE 0,6–0,8 + bajo fluoro 0,30",
-      "senuelosCebos": ["Egi 2.5–3.5", "Pata de sepia (si está permitido el cebo)"],
-      "tecnica": "Atardecer en roca y rompiente, otoño-invierno. No dársena. No de noche cerrada."
+      "senuelosCebos": [
+        "Hasta 2 poteras/egi (Decreto 41/2013). Egi 2.5–3.5 es lo habitual",
+        "No nasas ni redes",
+        "Cebo natural en anzuelo legal (12×5 mm mínimo) si no usas potera"
+      ],
+      "tecnica": "Legal en Castellón. Atardecer en roca y rompiente, otoño-invierno. Máximo dos poteras. Fuera de dársena e Irta. Sin talla en cm: no te lleves crías. No de noche cerrada."
+    },
+    "pulpo": {
+      "cana": "Rockfishing o spinning 2,10 m, o un aparejo a mano (un aparejo por pescador)",
+      "carrete": "3000, freno a prueba de roca",
+      "linea": "Nylon 0,30–0,40 mm (abrasión). Anzuelo no menor de 12 mm × 5 mm si usas anzuelo",
+      "senuelosCebos": [
+        "Jig o cangrejo de roca en anzuelo legal",
+        "Un aparejo a mano: Decreto 41/2013 lo permite; no es nasa profesional",
+        "Prohibido: nasas, fisgas de mariscador profesional, redes"
+      ],
+      "tecnica": "Legal en Castellón (no como en el Mediterráneo andaluz recreativo). De día, grietas. Pesa 1 kg mínimo; suelta el resto. Irta y dársena: no."
     },
     "calamar": {
       "cana": "Eging 2,40–2,70 m",
       "carrete": "3000–4000",
       "linea": "PE 0,8–1.0 + bajo 0,35",
-      "senuelosCebos": ["Egi 3.0–3.5", "Egi con luz (última hora legal)"],
-      "tecnica": "Última luz, otoño, escollera de playa no muelle interior."
-    },
-    "pulpo": {
-      "cana": "Rockfishing corta o spinning 2,10 m",
-      "carrete": "3000",
-      "linea": "Nylon 0,30–0,40 mm (abrasión en roca)",
-      "senuelosCebos": ["Jig / pata", "Cangrejo de roca"],
-      "tecnica": "Grietas de día. 1 kg mínimo en Mediterráneo. Irta: no marisqueo de bivalvos."
+      "senuelosCebos": [
+        "Hasta 2 poteras/egi (Decreto 41/2013). Egi 3.0–3.5",
+        "Egi con luz solo en última hora legal, no de noche cerrada",
+        "No nasas"
+      ],
+      "tecnica": "Autorizado (Loligo spp. en RD 347/2011 anexo I). Última luz, otoño, escollera de playa no muelle interior. Máximo dos poteras."
     },
     "salmonete": {
       "cana": "Rockfishing / surf ligero",

@@ -12,7 +12,8 @@ import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo } from "../services/consultaPescaService";
-import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, PIN, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
+import LeyendaMapa from "../components/LeyendaMapa";
 
 interface Props {
   navigation: any;
@@ -219,7 +220,7 @@ export default function HomeScreen({ navigation }: Props) {
                 key={z.id}
                 coordinate={{ latitude: z.lat, longitude: z.lng }}
                 pinColor={colorAprovechamiento(z.aprovechamiento)}
-                identifier={z.aprovechamiento === "ZPL" ? "libre" : "coto"}
+                identifier={z.aprovechamiento === "ZPL" ? "libre" : z.aprovechamiento === "ZPC" ? "coto" : "vedado"}
                 title={`${z.aprovechamiento} · ${z.nombre}`}
                 onPress={() => {
                   if (z.fichaId) navigation.navigate("ZoneDetail", { zoneId: z.fichaId });
@@ -229,7 +230,7 @@ export default function HomeScreen({ navigation }: Props) {
             {ubicacion && (
               <Marker
                 coordinate={{ latitude: ubicacion.lat, longitude: ubicacion.lng }}
-                pinColor={COLORS.water}
+                pinColor={PIN.yo}
                 identifier="user"
                 title="Tú"
               />
@@ -237,28 +238,7 @@ export default function HomeScreen({ navigation }: Props) {
           </MapView>
           <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
         </View>
-        <View style={styles.legend}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: "#2f7d4a" }]} />
-            <Text style={styles.legendText}>Libre ZPL</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: "#c45c12" }]} />
-            <Text style={styles.legendText}>Coto ZPC</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: "#b42318" }]} />
-            <Text style={styles.legendText}>Vedado</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: "#5b4aa8" }]} />
-            <Text style={styles.legendText}>Reserva</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: COLORS.water }]} />
-            <Text style={styles.legendText}>Tú</Text>
-          </View>
-        </View>
+        <LeyendaMapa modo="continental" />
         <Text style={styles.mapHint}>Polígono ICV = límite oficial de coto/reserva. Círculo = tramo ZPL/VP del anexo (aprox.). Pulsa «Ir a mí» y consulta el veredicto grande.</Text>
       </View>
     </ScrollView>

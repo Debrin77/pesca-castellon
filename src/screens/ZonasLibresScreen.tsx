@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
@@ -20,8 +20,9 @@ import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
 import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
+import LeyendaMapa from "../components/LeyendaMapa";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
-import { COLORS, RADIUS, SHADOW } from "../theme";
+import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -49,6 +50,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [modo, setModo] = useState<"continental" | "costa">("continental");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [fichaAbierta, setFichaAbierta] = useState(false);
+  const mar = modo === "costa";
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: mar ? "Mapa · Costa" : "Mapa",
+      headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
+    });
+  }, [mar, navigation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -157,8 +166,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchBox}>
+    <View style={[styles.container, mar && styles.containerMar]}>
+      <View style={[styles.searchBox, mar && styles.searchBoxMar]}>
         <TextInput
           style={styles.searchInput}
           placeholder={
@@ -191,31 +200,51 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         )}
       </View>
 
-      <View style={styles.modoBar}>
+      <View style={[styles.modoBar, mar && styles.modoBarMar]}>
         <TouchableOpacity
-          style={[styles.modoBtn, modo === "continental" && styles.modoBtnOn]}
+          style={[styles.modoBtn, modo === "continental" && styles.modoBtnOnBosque]}
           onPress={() => cambiarModo("continental")}
+          accessibilityRole="button"
+          accessibilityLabel="Ríos y embalses"
         >
           <Text style={[styles.modoTxt, modo === "continental" && styles.modoTxtOn]}>Ríos y embalses</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.modoBtn, modo === "costa" && styles.modoBtnOn]}
+          style={[styles.modoBtn, modo === "costa" && styles.modoBtnOnMar]}
           onPress={() => cambiarModo("costa")}
+          accessibilityRole="button"
+          accessibilityLabel="Costa orilla"
         >
           <Text style={[styles.modoTxt, modo === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.layerBar} contentContainerStyle={{ paddingHorizontal: 12 }}>
-        <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipActive]} onPress={() => toggleCapa("zpl")}>
-          <Text style={[styles.layerChipText, capas.zpl && { color: "#2f7d4a" }]}>Libre ZPL</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
-          <Text style={[styles.layerChipText, capas.zpc && { color: "#c45c12" }]}>Coto ZPC</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
-          <Text style={[styles.layerChipText, capas.vedado && { color: "#b42318" }]}>Vedado / reserva</Text>
-        </TouchableOpacity>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12 }}>
+        {mar ? (
+          <>
+            <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipMar]} onPress={() => toggleCapa("zpl")}>
+              <Text style={[styles.layerChipText, capas.zpl && { color: PIN.playa }]}>Playa</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
+              <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
+              <Text style={[styles.layerChipText, capas.zpc && { color: PIN.puerto }]}>Puerto</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipActive]} onPress={() => toggleCapa("zpl")}>
+              <Text style={[styles.layerChipText, capas.zpl && { color: PIN.libre }]}>Libre</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
+              <Text style={[styles.layerChipText, capas.zpc && { color: PIN.coto }]}>Coto</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
+              <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
+            </TouchableOpacity>
+          </>
+        )}
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
         </TouchableOpacity>
@@ -226,32 +255,50 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           style={styles.map}
           initialRegion={CASTELLON_REGION}
           cameraTarget={camara}
+          accent={mar ? "mar" : "bosque"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
-          {modo === "costa" ? <CapaPuertos /> : null}
-          {modo === "costa" ? <CapaVedadosCosta /> : null}
-          {modo === "costa" &&
+          {mar && capas.zpc ? <CapaPuertos /> : null}
+          {mar && capas.vedado ? <CapaVedadosCosta /> : null}
+          {mar &&
+            capas.zpl &&
             playas.map((p) => (
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor="#2f7d4a"
-                identifier="libre"
+                pinColor={PIN.playa}
+                identifier="playa"
                 title={p.nombre}
                 onPress={() => evaluarPlaya(p.id)}
               />
             ))}
-          {modo === "costa" &&
-            [...todosLosPuertos(), ...todosLosVedadosCosta()].map((p) => {
+          {mar &&
+            capas.zpc &&
+            todosLosPuertos().map((p) => {
               const c = centroZona(p.anillo);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={p.tipo ? "#5b4aa8" : "#b42318"}
-                  identifier="coto"
+                  pinColor={PIN.puerto}
+                  identifier="puerto"
+                  title={p.nombre}
+                  onPress={() => evaluarPunto(c.lat, c.lng)}
+                />
+              );
+            })}
+          {mar &&
+            capas.vedado &&
+            todosLosVedadosCosta().map((p) => {
+              const c = centroZona(p.anillo);
+              return (
+                <Marker
+                  key={p.id}
+                  coordinate={{ latitude: c.lat, longitude: c.lng }}
+                  pinColor={PIN.vedado}
+                  identifier="vedado"
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -276,7 +323,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
               pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "coto"}
+              identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "vedado"}
               title={`${z.aprovechamiento} · ${z.nombre}`}
               onPress={() => evaluarTramo(z)}
             />
@@ -286,31 +333,32 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={COLORS.gold}
+                pinColor={PIN.spot}
                 identifier="spot"
                 title={p.nombre}
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
             ))}
           {yo && (
-            <Marker coordinate={yo} pinColor={COLORS.water} identifier="user" title="Tú" />
+            <Marker coordinate={yo} pinColor={PIN.yo} identifier="user" title="Tú" />
           )}
           {marcador && (!yo || marcador.latitude !== yo.latitude) && (
-            <Marker coordinate={marcador} pinColor={COLORS.water} identifier="user" title="Punto consultado" />
+            <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
           )}
         </MapView>
         <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
       </View>
 
-      <View style={styles.pieMapa}>
+      <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
+        <LeyendaMapa modo={mar ? "costa" : "continental"} />
         <Text style={styles.hint}>
-          {modo === "costa"
-            ? "Toca una playa o un pin. La ficha se abre a pantalla completa."
-            : "Toca el agua o un marcador. La ficha se abre a pantalla completa."}
+          {mar
+            ? "Pin de agua = playa. Rojo = vedado. Gris = puerto. La ficha se abre a pantalla completa."
+            : "Verde = libre. Ámbar = coto. Rojo = vedado. La ficha se abre a pantalla completa."}
         </Text>
         {consulta && !fichaAbierta ? (
-          <TouchableOpacity style={styles.reabrir} onPress={() => setFichaAbierta(true)}>
-            <Text style={styles.reabrirTxt}>Ver última consulta</Text>
+          <TouchableOpacity style={[styles.reabrir, mar && styles.reabrirMar]} onPress={() => setFichaAbierta(true)}>
+            <Text style={[styles.reabrirTxt, mar && { color: COLORS.waterDark }]}>Ver última consulta</Text>
           </TouchableOpacity>
         ) : null}
       </View>
@@ -319,6 +367,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         visible={fichaAbierta && !!consulta}
         titulo={consulta?.titulo ?? "Consulta de pesca"}
         onCerrar={() => setFichaAbierta(false)}
+        acento={consulta?.ambito === "maritimo" ? "mar" : "bosque"}
       >
         {consulta ? (
           <>
@@ -362,7 +411,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
+  containerMar: { backgroundColor: COLORS.waterLight },
   searchBox: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, backgroundColor: COLORS.surface, zIndex: 10 },
+  searchBoxMar: { backgroundColor: COLORS.waterLight },
   searchInput: {
     backgroundColor: COLORS.background,
     borderRadius: RADIUS.md,
@@ -392,6 +443,7 @@ const styles = StyleSheet.create({
   suggestionText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
   suggestionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700" },
   modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
+  modoBarMar: { backgroundColor: COLORS.waterLight },
   modoBtn: {
     flex: 1,
     minHeight: 44,
@@ -402,7 +454,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.background,
   },
-  modoBtnOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { flex: 1, position: "relative", minHeight: 220 },
@@ -418,6 +471,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   layerChipActive: { backgroundColor: COLORS.mist, borderColor: COLORS.primary },
+  layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
   layerChipText: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "700" },
   map: { flex: 1 },
@@ -429,6 +483,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
+  pieMapaMar: { backgroundColor: COLORS.waterLight, borderTopColor: "#b7d4de" },
   hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center" },
   reabrir: {
     marginTop: 8,
@@ -437,6 +492,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.md,
   },
+  reabrirMar: { backgroundColor: COLORS.waterLight },
   reabrirTxt: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 14 },
   saveSpotButton: {
     alignItems: "center",

@@ -69,5 +69,6 @@ export const TALLAS_OFICIALES: Record<string, string> = {
   lucio: "Invasora: captura fomentada, no devolver",
   siluro: "Invasora: no devolver, no transportar, notificar",
   carpa: "Sin talla mínima específica en la Orden (no está en la tabla de 2.2)",
+  mugilidos: "25 cm en río (Orden 30/2016). En mar: 16 cm (RD 560)",
   trucha_arcoiris: "Sin cupo ni talla; retención y sacrificio si se pesca fuera de tramo truchero",
 };

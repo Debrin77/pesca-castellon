@@ -15,9 +15,10 @@ type CameraTarget = {
 type Props = MapViewProps & {
   fitCoordinates?: { latitude: number; longitude: number }[];
   cameraTarget?: CameraTarget;
+  accent?: "bosque" | "mar";
 };
 
-export default function MapView({ fitCoordinates: _omit, cameraTarget, ...props }: Props) {
+export default function MapView({ fitCoordinates: _omit, cameraTarget, accent: _accent, ...props }: Props) {
   const ref = useRef<MapViewRN>(null);
 
   useEffect(() => {

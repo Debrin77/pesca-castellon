@@ -33,6 +33,9 @@ function inyectarCssMapa() {
       font-family: "Source Sans 3", system-ui, sans-serif;
       background: #d5e4d8;
     }
+    .pesca-map.pesca-map-mar .leaflet-container {
+      background: #c5dce6;
+    }
     .pesca-map .leaflet-control-zoom,
     .pesca-map .leaflet-control-layers,
     .pesca-map .leaflet-control-scale {
@@ -227,6 +230,7 @@ interface MapViewProps {
   children?: React.ReactNode;
   fitCoordinates?: { latitude: number; longitude: number }[];
   cameraTarget?: { latitude: number; longitude: number; zoom?: number; nonce: number };
+  accent?: "bosque" | "mar";
 }
 
 export default function MapView({
@@ -238,6 +242,7 @@ export default function MapView({
   children,
   fitCoordinates,
   cameraTarget,
+  accent = "bosque",
 }: MapViewProps) {
   inyectarCssMapa();
   const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
@@ -245,7 +250,7 @@ export default function MapView({
   return (
     <View style={[{ flex: 1 }, style]}>
       <MapContainer
-        className="pesca-map"
+        className={`pesca-map${accent === "mar" ? " pesca-map-mar" : ""}`}
         center={[inicio.latitude, inicio.longitude]}
         zoom={zoomDesdeDelta(inicio.latitudeDelta)}
         style={{ height: "100%", width: "100%" }}

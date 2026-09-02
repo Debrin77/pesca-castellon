@@ -7,10 +7,20 @@ type Props = {
   titulo?: string;
   onCerrar: () => void;
   children: React.ReactNode;
+  acento?: "bosque" | "mar";
 };
 
-export default function VentanaConsulta({ visible, titulo = "Consulta de pesca", onCerrar, children }: Props) {
+export default function VentanaConsulta({
+  visible,
+  titulo = "Consulta de pesca",
+  onCerrar,
+  children,
+  acento = "bosque",
+}: Props) {
   const tope = Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : Platform.OS === "web" ? 12 : 52;
+  const mar = acento === "mar";
+  const linea = mar ? COLORS.water : COLORS.primary;
+  const boton = mar ? COLORS.waterDark : COLORS.primaryDark;
 
   return (
     <Modal
@@ -20,14 +30,14 @@ export default function VentanaConsulta({ visible, titulo = "Consulta de pesca",
       onRequestClose={onCerrar}
       statusBarTranslucent
     >
-      <View style={[styles.pantalla, { paddingTop: tope }]}>
-        <View style={styles.cabecera}>
-          <Text style={styles.titulo} numberOfLines={2}>
+      <View style={[styles.pantalla, { paddingTop: tope, backgroundColor: mar ? COLORS.waterLight : COLORS.background }]}>
+        <View style={[styles.cabecera, { borderBottomColor: linea }]}>
+          <Text style={[styles.titulo, { color: mar ? COLORS.waterDark : COLORS.primaryDark }]} numberOfLines={2}>
             {titulo}
           </Text>
           <TouchableOpacity
             onPress={onCerrar}
-            style={styles.cerrar}
+            style={[styles.cerrar, { backgroundColor: boton }]}
             accessibilityRole="button"
             accessibilityLabel="Cerrar consulta"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}

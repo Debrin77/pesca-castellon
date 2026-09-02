@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import speciesCatalog from "../data/species.json";
@@ -8,9 +8,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import MejorHoraPesca from "../components/MejorHoraPesca";
+import SiluetaEspecie from "../components/SiluetaEspecie";
+import { tallaDestacada } from "../components/TarjetaEspecie";
 
 interface Props {
   route?: { params?: { especieId?: string } };
+  navigation?: any;
 }
 
 type Equipo = {
@@ -21,7 +24,7 @@ type Equipo = {
   tecnica: string;
 };
 
-export default function AparejosScreen({ route }: Props) {
+export default function AparejosScreen({ route, navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const costaLista = useMemo(
@@ -31,6 +34,13 @@ export default function AparejosScreen({ route }: Props) {
   const costaIds = useMemo(() => new Set(costaLista.map((s) => s.id)), [costaLista]);
   const [ambito, setAmbito] = useState<"rio" | "costa">("rio");
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
+
+  useLayoutEffect(() => {
+    navigation?.setOptions({
+      title: ambito === "costa" ? "Aparejos · Costa" : "Aparejos",
+      headerStyle: { backgroundColor: ambito === "costa" ? COLORS.waterDark : COLORS.primaryDark },
+    });
+  }, [ambito, navigation]);
 
   useEffect(() => {
     const id = route?.params?.especieId;
@@ -48,12 +58,14 @@ export default function AparejosScreen({ route }: Props) {
   const sp: any = lista.find((s: any) => s.id === seleccionada) ?? lista[0];
   const equipo: Equipo | undefined =
     ambito === "costa" ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id] : sp?.equipo;
+  const talla = sp ? tallaDestacada(sp) : null;
+  const mar = ambito === "costa";
 
   return (
     <View style={styles.container}>
       <View style={styles.modoBar}>
         <TouchableOpacity
-          style={[styles.modoBtn, ambito === "rio" && styles.modoBtnOn]}
+          style={[styles.modoBtn, ambito === "rio" && styles.modoBtnOnBosque]}
           onPress={() => {
             setAmbito("rio");
             setSeleccionada(speciesCatalog[0]?.id ?? null);
@@ -62,7 +74,7 @@ export default function AparejosScreen({ route }: Props) {
           <Text style={[styles.modoTxt, ambito === "rio" && styles.modoTxtOn]}>Ríos y embalses</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOn]}
+          style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOnMar]}
           onPress={() => {
             setAmbito("costa");
             setSeleccionada(costaLista[0]?.id ?? null);
@@ -81,7 +93,7 @@ export default function AparejosScreen({ route }: Props) {
         {lista.map((s: any) => (
           <TouchableOpacity
             key={s.id}
-            style={[styles.chip, seleccionada === s.id && styles.chipActive]}
+            style={[styles.chip, seleccionada === s.id && (mar ? styles.chipActiveMar : styles.chipActiveBosque)]}
             onPress={() => setSeleccionada(s.id)}
           >
             <Text style={[styles.chipText, seleccionada === s.id && styles.chipTextActive]}>
@@ -100,6 +112,21 @@ export default function AparejosScreen({ route }: Props) {
               style={styles.headerCard}
             >
               <Text style={styles.headerKicker}>{ambito === "costa" ? "Desde tierra · Mediterráneo" : "Continental · Castellón"}</Text>
+              <View style={styles.headerHero}>
+                <SiluetaEspecie id={sp.id} nombre={sp.nombre} color="#fff" size={64} />
+                {talla ? (
+                  <View>
+                    <Text style={styles.headerTallaKicker}>
+                      {talla.unidad === "kg" ? "Peso mínimo" : talla.unidad ? "Talla mínima" : "Régimen"}
+                    </Text>
+                    <Text style={styles.headerTalla}>
+                      {talla.valor}
+                      {talla.unidad ? <Text style={styles.headerTallaUnidad}> {talla.unidad}</Text> : null}
+                    </Text>
+                    <Text style={styles.headerTallaPie}>{talla.pie}</Text>
+                  </View>
+                ) : null}
+              </View>
               <Text style={styles.headerName}>{sp.nombre}</Text>
               <Text style={styles.headerScientific}>{sp.nombreCientifico}</Text>
               {(sp.invasora || sp.id === "cangrejo_azul") && (
@@ -107,17 +134,8 @@ export default function AparejosScreen({ route }: Props) {
               )}
             </LinearGradient>
 
-            {ambito === "costa" ? (
-              <Text style={styles.stat}>
-                Talla: {sp.tallaCm != null ? `${sp.tallaCm} cm` : sp.tallaOficial ?? "sin cifra en anexo II"}
-                {sp.tallaNota ? ` · ${sp.tallaNota}` : ""}
-              </Text>
-            ) : (
-              <>
-                {sp.tallaOficial ? <Text style={styles.stat}>Talla / régimen: {sp.tallaOficial}</Text> : null}
-                {sp.cupo ? <Text style={styles.stat}>Cupo: {sp.cupo}</Text> : null}
-              </>
-            )}
+            {talla ? <Text style={styles.stat}>{talla.pie}</Text> : null}
+            {ambito === "rio" && sp.cupo ? <Text style={styles.stat}>Cupo: {sp.cupo}</Text> : null}
 
             {sp.normativaResumen ? <Text style={styles.notes}>{sp.normativaResumen}</Text> : null}
             <Text style={styles.notes}>{sp.notas}</Text>
@@ -209,7 +227,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.background,
   },
-  modoBtnOn: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
+  modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
   modoTxtOn: { color: "#fff" },
   chipBar: { maxHeight: 56, backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border },
@@ -224,7 +243,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  chipActive: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
+  chipActiveBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  chipActiveMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   chipText: { fontSize: 13, color: COLORS.primaryDark, fontWeight: "600" },
   chipTextActive: { color: "#fff", fontWeight: "700" },
   content: { flex: 1 },
@@ -242,6 +262,17 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textTransform: "uppercase",
   },
+  headerHero: { flexDirection: "row", alignItems: "center", gap: 14, marginTop: 12 },
+  headerTallaKicker: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: "rgba(255,255,255,0.85)",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  headerTalla: { fontSize: 40, fontWeight: "800", color: "#fff", letterSpacing: -1, lineHeight: 44 },
+  headerTallaUnidad: { fontSize: 18, fontWeight: "700", color: "rgba(255,255,255,0.85)" },
+  headerTallaPie: { fontSize: 11, color: "rgba(255,255,255,0.8)", marginTop: 2, maxWidth: 180 },
   headerName: { fontSize: 24, fontWeight: "800", color: "#fff", marginTop: 8, letterSpacing: -0.4 },
   headerScientific: { fontSize: 13, color: "rgba(255,255,255,0.85)", fontStyle: "italic", marginTop: 4 },
   headerBadge: { fontSize: 11, color: "#fff", fontWeight: "800", marginTop: 10, letterSpacing: 0.6 },

@@ -5,8 +5,8 @@ import speciesCatalog from "../data/species.json";
 import { estaEnVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import LicenseBanner from "../components/LicenseBanner";
-import MejorHoraPesca from "../components/MejorHoraPesca";
 import SitiosOrientativos from "../components/SitiosOrientativos";
+import TarjetaEspecie from "../components/TarjetaEspecie";
 import { sitiosDeFicha } from "../services/sitiosComunidad";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
@@ -118,50 +118,34 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         const esBuenMes = mejoresMeses.includes(mesActual);
 
         return (
-          <View key={especieId} style={[styles.card, sp.invasora && styles.cardInvasora]}>
-            <Text style={styles.cardTitle}>
-              {sp.icono} {sp.nombre}{" "}
-              {sp.invasora && <Text style={styles.badgeInvasora}> INVASORA</Text>}
-            </Text>
-            <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-            <Text style={styles.cardText}>{sp.notas}</Text>
-            <MejorHoraPesca especie={sp} />
-
-            {sp.normativaEspecial && (
-              <View style={styles.avisoLegalBox}>
-                <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
-              </View>
-            )}
-
-            <Text style={[styles.cardText, { marginTop: 6 }]}>
-              Estado ahora:{" "}
-              <Text style={{ fontWeight: "bold", color: enVeda ? COLORS.danger : COLORS.success }}>
-                {enVeda ? "EN VEDA (no pescar)" : "Periodo hábil"}
-              </Text>
-            </Text>
-
-            {mejoresMeses.length > 0 && (
-              <Text style={styles.cardText}>
-                Mejores meses: {mejoresMeses.join(", ")}{" "}
-                {esBuenMes && <Text style={{ color: COLORS.success, fontWeight: "bold" }}>⭐ ¡Ahora es buena época!</Text>}
-              </Text>
-            )}
-
-            {sp.equipo && (
-              <View style={styles.equipoBox}>
-                <Text style={styles.equipoTitle}>🎣 Equipo recomendado</Text>
-                <Text style={styles.equipoItem}>Caña: {sp.equipo.cana}</Text>
-                <Text style={styles.equipoItem}>Carrete: {sp.equipo.carrete}</Text>
-                <Text style={styles.equipoItem}>Línea: {sp.equipo.linea}</Text>
-                {sp.equipo.senuelosCebos?.length > 0 && (
-                  <Text style={styles.equipoItem}>
-                    Señuelos/cebos: {sp.equipo.senuelosCebos.join(", ")}
+          <TarjetaEspecie
+            key={especieId}
+            sp={sp}
+            index={0}
+            enVeda={enVeda}
+            extra={
+              <>
+                {mejoresMeses.length > 0 && (
+                  <Text style={styles.cardText}>
+                    Mejores meses: {mejoresMeses.join(", ")}{" "}
+                    {esBuenMes ? <Text style={{ color: COLORS.success, fontWeight: "bold" }}>Ahora es buena época</Text> : null}
                   </Text>
                 )}
-                <Text style={styles.equipoItem}>Técnica: {sp.equipo.tecnica}</Text>
-              </View>
-            )}
-          </View>
+                {sp.equipo && (
+                  <View style={styles.equipoBox}>
+                    <Text style={styles.equipoTitle}>Equipo recomendado</Text>
+                    <Text style={styles.equipoItem}>Caña: {sp.equipo.cana}</Text>
+                    <Text style={styles.equipoItem}>Carrete: {sp.equipo.carrete}</Text>
+                    <Text style={styles.equipoItem}>Línea: {sp.equipo.linea}</Text>
+                    {sp.equipo.senuelosCebos?.length > 0 && (
+                      <Text style={styles.equipoItem}>Señuelos/cebos: {sp.equipo.senuelosCebos.join(", ")}</Text>
+                    )}
+                    <Text style={styles.equipoItem}>Técnica: {sp.equipo.tecnica}</Text>
+                  </View>
+                )}
+              </>
+            }
+          />
         );
       })}
     </ScrollView>

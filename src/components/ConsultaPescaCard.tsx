@@ -7,7 +7,8 @@ import { FUENTE_ICV } from "../services/geojsonHit";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import { avisoSitiosCosta } from "../services/consultaCostaService";
 import SitiosOrientativos from "./SitiosOrientativos";
-import ListaAnimada from "../components/ListaAnimada";
+import ListaAnimada from "./ListaAnimada";
+import SemaforoVeredicto from "./SemaforoVeredicto";
 import { COLORS, RADIUS } from "../theme";
 
 interface Props {
@@ -16,97 +17,80 @@ interface Props {
   onAparejos?: (especieId: string) => void;
 }
 
-function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
-  if (c.veredicto === "coto") return { texto: "COTO — HACE FALTA PERMISO", sub: "Hoy no es zona libre" };
-  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") {
-    return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
-  }
-  if (c.veredicto === "fuera_catalogo") return { texto: "SIN TRAMO", sub: "No está en el catálogo" };
-  if (c.sePuedePescarHoy) {
-    return {
-      texto: "HOY SÍ",
-      sub: c.ambito === "maritimo" ? "Orilla · licencia marítima" : "Zona libre · con licencia",
-    };
-  }
-  return { texto: "HOY NO", sub: "Restricción de día o temporada" };
-}
-
 export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Props) {
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
-  const hoy = etiquetaHoy(consulta);
+  const mar = consulta.ambito === "maritimo";
+  const acento = mar ? COLORS.water : COLORS.primary;
   return (
     <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
-    <View style={[styles.card, { borderLeftColor: consulta.color }]}>
-      <View style={[styles.veredicto, { backgroundColor: consulta.color }]}>
-        <Text style={styles.veredictoText}>{hoy.texto}</Text>
-        <Text style={styles.veredictoSub}>{hoy.sub}</Text>
-      </View>
-      <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? "#1a6f8a" : COLORS.textMuted }]}>
-        <Text style={styles.pillText}>
-          {consulta.ambito === "maritimo"
-            ? "Polígono de consulta (orientativo)"
-            : consulta.confianza === "oficial"
-              ? "Polígono ICV oficial"
-              : "Radio del anexo I (aprox.)"}
-        </Text>
-      </View>
-      <Text style={styles.title}>{consulta.titulo}</Text>
-      {consulta.tramo && (
-        <Text style={styles.meta}>
-          Tramo {consulta.tramo.codigo} · {consulta.tramo.rio} · {consulta.tramo.vocacion}
-        </Text>
-      )}
+      <View style={styles.card}>
+        <SemaforoVeredicto consulta={consulta} />
+        <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? COLORS.water : COLORS.textMuted }]}>
+          <Text style={styles.pillText}>
+            {mar
+              ? "Polígono de consulta (orientativo)"
+              : consulta.confianza === "oficial"
+                ? "Polígono ICV oficial"
+                : "Radio del anexo I (aprox.)"}
+          </Text>
+        </View>
+        <Text style={styles.title}>{consulta.titulo}</Text>
+        {consulta.tramo && (
+          <Text style={styles.meta}>
+            Tramo {consulta.tramo.codigo} · {consulta.tramo.rio} · {consulta.tramo.vocacion}
+          </Text>
+        )}
 
-      {consulta.permisos.map((p, i) => (
-        <Text key={`p-${i}`} style={styles.ok}>
-          {p}
-        </Text>
-      ))}
-      {consulta.restriccionesHoy.map((p, i) => (
-        <Text key={`r-${i}`} style={styles.warn}>
-          {p}
-        </Text>
-      ))}
+        {consulta.permisos.map((p, i) => (
+          <Text key={`p-${i}`} style={styles.ok}>
+            {p}
+          </Text>
+        ))}
+        {consulta.restriccionesHoy.map((p, i) => (
+          <Text key={`r-${i}`} style={styles.warn}>
+            {p}
+          </Text>
+        ))}
 
-      {consulta.especiesHabituales ? (
-        <Text style={styles.especies}>Especies habituales: {consulta.especiesHabituales}</Text>
-      ) : consulta.tramo?.especies?.length ? (
-        <Text style={styles.especies}>Especies habituales: {consulta.tramo.especies.join(" · ")}</Text>
-      ) : null}
-
-      {consulta.ambito === "maritimo" ? (
-        <SitiosOrientativos
-          sitios={consulta.sitiosCosta ?? []}
-          titulo="Dónde se pesca a caña (uso habitual)"
-          aviso={avisoSitiosCosta()}
-        />
-      ) : consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
-        <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
-      ) : null}
-
-      {consulta.ambito === "maritimo" ? (
-        <Text style={styles.fuente}>{FUENTE_MARITIMA.titulo}</Text>
-      ) : (
-        <>
-          <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
-          <Text style={styles.fuente}>{FUENTE_ICV}</Text>
-        </>
-      )}
-
-      <View style={styles.row}>
-        {consulta.tramo?.fichaId && onFicha ? (
-          <TouchableOpacity onPress={onFicha} style={styles.btn}>
-            <Text style={styles.btnText}>Ficha del agua</Text>
-          </TouchableOpacity>
+        {consulta.especiesHabituales ? (
+          <Text style={[styles.especies, { color: acento }]}>Especies habituales: {consulta.especiesHabituales}</Text>
+        ) : consulta.tramo?.especies?.length ? (
+          <Text style={[styles.especies, { color: acento }]}>Especies habituales: {consulta.tramo.especies.join(" · ")}</Text>
         ) : null}
-        {especieDestacada && onAparejos ? (
-          <TouchableOpacity onPress={() => onAparejos(especieDestacada)} style={styles.btnGhost}>
-            <Text style={styles.btnGhostText}>Aparejo</Text>
-          </TouchableOpacity>
+
+        {mar ? (
+          <SitiosOrientativos
+            sitios={consulta.sitiosCosta ?? []}
+            titulo="Dónde se pesca a caña (uso habitual)"
+            aviso={avisoSitiosCosta()}
+          />
+        ) : consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
+          <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
         ) : null}
+
+        {mar ? (
+          <Text style={styles.fuente}>{FUENTE_MARITIMA.titulo}</Text>
+        ) : (
+          <>
+            <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
+            <Text style={styles.fuente}>{FUENTE_ICV}</Text>
+          </>
+        )}
+
+        <View style={styles.row}>
+          {consulta.tramo?.fichaId && onFicha ? (
+            <TouchableOpacity onPress={onFicha} style={[styles.btn, { backgroundColor: acento }]}>
+              <Text style={styles.btnText}>Ficha del agua</Text>
+            </TouchableOpacity>
+          ) : null}
+          {especieDestacada && onAparejos ? (
+            <TouchableOpacity onPress={() => onAparejos(especieDestacada)} style={styles.btnGhost}>
+              <Text style={[styles.btnGhostText, { color: acento }]}>Aparejo</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
-    </View>
     </ListaAnimada>
   );
 }
@@ -116,25 +100,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
     padding: 14,
-    borderLeftWidth: 5,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  veredicto: {
-    borderRadius: RADIUS.md,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-  },
-  veredictoText: { color: "#fff", fontSize: 16, fontWeight: "800", letterSpacing: 0.4 },
-  veredictoSub: { color: "rgba(255,255,255,0.9)", fontSize: 12, fontWeight: "600", marginTop: 2 },
   pill: { alignSelf: "flex-start", borderRadius: RADIUS.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: 8 },
   pillText: { color: "#fff", fontSize: 10, fontWeight: "800", letterSpacing: 0.4, textTransform: "uppercase" },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
   meta: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 4, marginBottom: 8 },
   ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
   warn: { fontSize: 12.5, color: COLORS.danger, lineHeight: 18, marginBottom: 4, fontWeight: "600" },
-  especies: { fontSize: 12, color: COLORS.water, marginTop: 6, fontWeight: "600" },
+  especies: { fontSize: 12, marginTop: 6, fontWeight: "600" },
   fuente: { fontSize: 10, color: COLORS.textMuted, marginTop: 8, fontStyle: "italic" },
   row: { flexDirection: "row", gap: 8, marginTop: 12 },
   btn: { backgroundColor: COLORS.primary, borderRadius: RADIUS.sm, paddingHorizontal: 12, paddingVertical: 8 },

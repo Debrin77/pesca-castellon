@@ -13,6 +13,7 @@ import {
   PoligonoIcv,
   tramosConPoligono,
 } from "./geojsonHit";
+import { PIN, SEMAFORO } from "../theme";
 
 export interface TramoOficial {
   id: string;
@@ -57,12 +58,20 @@ export interface ConsultaPesca {
 }
 
 const COLORES: Record<VeredictoPesca, string> = {
-  libre: "#2f7d4a",
-  coto: "#c45c12",
-  vedado: "#b42318",
-  reserva_trucha: "#5b4aa8",
-  fuera_catalogo: "#4d5d54",
+  libre: SEMAFORO.si,
+  coto: SEMAFORO.coto,
+  vedado: SEMAFORO.no,
+  reserva_trucha: SEMAFORO.no,
+  fuera_catalogo: SEMAFORO.neutro,
 };
+
+export function colorSemaforo(c: Pick<ConsultaPesca, "veredicto" | "sePuedePescarHoy">): string {
+  if (c.veredicto === "coto") return SEMAFORO.coto;
+  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") return SEMAFORO.no;
+  if (c.veredicto === "fuera_catalogo") return SEMAFORO.neutro;
+  if (c.sePuedePescarHoy) return SEMAFORO.si;
+  return SEMAFORO.no;
+}
 
 function notaDias(nota: string | null | undefined): "ZPL1" | "ZPL2" | null {
   if (nota === "ZPL1" || nota === "ZPL2") return nota;
@@ -70,10 +79,9 @@ function notaDias(nota: string | null | undefined): "ZPL1" | "ZPL2" | null {
 }
 
 export function colorAprovechamiento(a: Aprovechamiento): string {
-  if (a === "ZPL") return COLORES.libre;
-  if (a === "ZPC") return COLORES.coto;
-  if (a === "ZRTC") return COLORES.reserva_trucha;
-  return COLORES.vedado;
+  if (a === "ZPL") return PIN.libre;
+  if (a === "ZPC") return PIN.coto;
+  return PIN.vedado;
 }
 
 export function etiquetaAprovechamiento(a: Aprovechamiento): string {
@@ -240,7 +248,10 @@ function evaluarTramo(
     ...base,
     veredicto: t.aprovechamiento === "ZPC" ? "coto" : "libre",
     titulo: `${etiquetaAprovechamiento(t.aprovechamiento)} · ${t.nombre}`,
-    color: colorAprovechamiento(t.aprovechamiento),
+    color: colorSemaforo({
+      veredicto: t.aprovechamiento === "ZPC" ? "coto" : "libre",
+      sePuedePescarHoy,
+    }),
     sePuedePescarHoy,
     restriccionesHoy: restricciones,
     permisos,

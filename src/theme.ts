@@ -22,6 +22,26 @@ export const COLORS = {
   textSecondary: "#4d5d54",
   textMuted: "#87948c",
   mist: "#f7faf7",
+  puerto: "#6b7280",
+};
+
+/** Semáforo legal: un verde, un rojo, un ámbar. */
+export const SEMAFORO = {
+  si: COLORS.success,
+  no: COLORS.danger,
+  coto: COLORS.warning,
+  neutro: COLORS.textSecondary,
+};
+
+/** Pines del mapa: tres significados + tú / mis puntos. */
+export const PIN = {
+  playa: COLORS.water,
+  libre: COLORS.success,
+  coto: COLORS.warning,
+  vedado: COLORS.danger,
+  puerto: COLORS.puerto,
+  yo: COLORS.water,
+  spot: COLORS.gold,
 };
 
 export const GRADIENTS = {

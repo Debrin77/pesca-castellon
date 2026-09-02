@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker, Circle } from "../components/map";
 import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
 import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
-import { consultarToqueMapa, avisoSitiosCosta } from "../services/consultaCostaService";
+import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
-import { COLORS, RADIUS, SHADOW } from "../theme";
+import { COLORS, PIN, RADIUS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
-import ListaAnimada from "../components/ListaAnimada";
+import CapaPuertos from "../components/CapaPuertos";
+import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import SitiosOrientativos from "../components/SitiosOrientativos";
 import VentanaConsulta from "../components/VentanaConsulta";
+import TarjetaEspecie from "../components/TarjetaEspecie";
+import SemaforoVeredicto from "../components/SemaforoVeredicto";
+import LeyendaMapa from "../components/LeyendaMapa";
+import ListaTallasMinimas from "../components/ListaTallasMinimas";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
-import MejorHoraPesca from "../components/MejorHoraPesca";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -29,72 +33,23 @@ const CASTELLON_REGION = {
   longitudeDelta: 1.25,
 };
 
-function TarjetaEspecie({
-  sp,
-  index,
-  enVeda,
-  onAparejos,
-  extra,
-}: {
-  sp: any;
-  index: number;
-  enVeda?: boolean;
-  onAparejos?: () => void;
-  extra?: React.ReactNode;
-}) {
-  return (
-    <ListaAnimada key={sp.id} index={index} replayKey={sp.id}>
-      <View style={[styles.card, (sp.invasora || sp.id === "cangrejo_azul") && styles.cardInvasora]}>
-        <Text style={styles.cardTitle}>
-          {sp.icono ? `${sp.icono} ` : ""}
-          {sp.nombre}{" "}
-          {(sp.invasora || sp.id === "cangrejo_azul") && <Text style={styles.badgeInvasora}>INVASORA</Text>}
-        </Text>
-        <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
-        {sp.tallaCm != null || sp.tallaNota ? (
-          <Text style={styles.cardStatus}>
-            Talla: {sp.tallaCm != null ? `${sp.tallaCm} cm` : "sin cifra en anexo II"}
-            {sp.tallaNota ? ` · ${sp.tallaNota}` : ""}
-          </Text>
-        ) : null}
-        {sp.tallaOficial ? <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text> : null}
-        <Text style={styles.cardText}>{sp.notas}</Text>
-        {sp.noConfundirCon ? <Text style={styles.cardText}>No lo confundas con: {sp.noConfundirCon}</Text> : null}
-        {sp.motivo ? <Text style={styles.avisoLegalText}>{sp.motivo}</Text> : null}
-        <MejorHoraPesca especie={sp} />
-        {sp.normativaEspecial && (
-          <View style={styles.avisoLegalBox}>
-            <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
-          </View>
-        )}
-        {enVeda != null && (
-          <Text style={styles.cardStatus}>
-            Estado ahora:{" "}
-            <Text style={{ fontWeight: "800", color: enVeda ? COLORS.danger : COLORS.success }}>
-              {enVeda ? "EN VEDA" : "Periodo hábil"}
-            </Text>
-          </Text>
-        )}
-        {extra}
-        {onAparejos ? (
-          <TouchableOpacity onPress={onAparejos} style={styles.gearBtn}>
-            <Text style={styles.gearLink}>Ver aparejos →</Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
-    </ListaAnimada>
-  );
-}
-
 export default function EspeciesScreen({ navigation }: Props) {
   const tramos = todosLosTramos();
+  const playas = todasLasPlayas();
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
-  const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no">("rio");
+  const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">("rio");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
+  const mar = consulta?.ambito === "maritimo" || catalogo === "mar";
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerStyle: { backgroundColor: mar && catalogoAbierto ? COLORS.waterDark : COLORS.primaryDark },
+    });
+  }, [mar, catalogoAbierto, navigation]);
 
   async function usarMiUbicacion() {
     setCargandoUbicacion(true);
@@ -147,6 +102,8 @@ export default function EspeciesScreen({ navigation }: Props) {
           speciesCatalog.find((s: any) => s.id === especieId)
         );
 
+  const costa = consulta?.ambito === "maritimo";
+
   return (
     <View style={styles.container}>
       <View style={styles.mapWrap}>
@@ -154,11 +111,54 @@ export default function EspeciesScreen({ navigation }: Props) {
           style={styles.map}
           initialRegion={CASTELLON_REGION}
           cameraTarget={camara}
+          accent={costa ? "mar" : "bosque"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           <CapaPoligonosIcv />
-          {tramos.filter(tramoUsaRadioAnexo).map((z) => (
+          {costa ? <CapaPuertos /> : null}
+          {costa ? <CapaVedadosCosta /> : null}
+          {costa &&
+            playas.map((p) => (
+              <Marker
+                key={p.id}
+                coordinate={{ latitude: p.lat, longitude: p.lng }}
+                pinColor={PIN.playa}
+                identifier="playa"
+                title={p.nombre}
+                onPress={() => evaluarPunto(p.lat, p.lng)}
+              />
+            ))}
+          {costa &&
+            todosLosPuertos().map((p) => {
+              const c = centroZona(p.anillo);
+              return (
+                <Marker
+                  key={p.id}
+                  coordinate={{ latitude: c.lat, longitude: c.lng }}
+                  pinColor={PIN.puerto}
+                  identifier="puerto"
+                  title={p.nombre}
+                  onPress={() => evaluarPunto(c.lat, c.lng)}
+                />
+              );
+            })}
+          {costa &&
+            todosLosVedadosCosta().map((p) => {
+              const c = centroZona(p.anillo);
+              return (
+                <Marker
+                  key={p.id}
+                  coordinate={{ latitude: c.lat, longitude: c.lng }}
+                  pinColor={PIN.vedado}
+                  identifier="vedado"
+                  title={p.nombre}
+                  onPress={() => evaluarPunto(c.lat, c.lng)}
+                />
+              );
+            })}
+          {!costa &&
+            tramos.filter(tramoUsaRadioAnexo).map((z) => (
             <Circle
               key={`r-${z.id}`}
               center={{ latitude: z.lat, longitude: z.lng }}
@@ -167,29 +167,26 @@ export default function EspeciesScreen({ navigation }: Props) {
               fillColor={colorAprovechamiento(z.aprovechamiento) + "33"}
             />
           ))}
-          {tramos.map((z) => (
+          {!costa &&
+            tramos.map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
               pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPL" ? "libre" : "coto"}
+              identifier={z.aprovechamiento === "ZPL" ? "libre" : z.aprovechamiento === "ZPC" ? "coto" : "vedado"}
               title={z.nombre}
               onPress={() => evaluarTramo(z)}
             />
           ))}
           {marcador && (
-            <Marker
-              coordinate={marcador}
-              pinColor={COLORS.water}
-              identifier="user"
-              title="Punto consultado"
-            />
+            <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
           )}
         </MapView>
         <BotonMiPosicion onPress={usarMiUbicacion} cargando={cargandoUbicacion} />
       </View>
 
       <View style={styles.pie}>
+        <LeyendaMapa modo={costa ? "costa" : "continental"} />
         <Text style={styles.hint}>Toca río o playa: las especies se abren a pantalla completa.</Text>
         <View style={styles.pieRow}>
           {consulta && !fichaAbierta ? (
@@ -197,7 +194,7 @@ export default function EspeciesScreen({ navigation }: Props) {
               <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
             </TouchableOpacity>
           ) : null}
-          <TouchableOpacity style={[styles.pieBtn, styles.pieBtnGhost]} onPress={() => setCatalogoAbierto(true)}>
+          <TouchableOpacity style={[styles.pieBtn, styles.pieBtnGhost]} onPress={() => setCatalogoAbierto(true)} accessibilityRole="button" accessibilityLabel="Catálogo">
             <Text style={styles.pieBtnGhostTxt}>Catálogo</Text>
           </TouchableOpacity>
         </View>
@@ -207,17 +204,17 @@ export default function EspeciesScreen({ navigation }: Props) {
         visible={fichaAbierta && !!consulta}
         titulo={consulta?.titulo ?? "Especies"}
         onCerrar={() => setFichaAbierta(false)}
+        acento={costa ? "mar" : "bosque"}
       >
         {consulta ? (
           <>
+            <SemaforoVeredicto consulta={consulta} />
             {consulta.restriccionesHoy.slice(0, 3).map((r, i) => (
               <Text key={i} style={styles.cardText}>
                 {r}
               </Text>
             ))}
-            {consulta.especiesHabituales ? (
-              <Text style={styles.lead}>{consulta.especiesHabituales}</Text>
-            ) : null}
+            {consulta.especiesHabituales ? <Text style={styles.lead}>{consulta.especiesHabituales}</Text> : null}
             {consulta.ambito === "maritimo" ? (
               <SitiosOrientativos
                 sitios={consulta.sitiosCosta ?? []}
@@ -244,15 +241,35 @@ export default function EspeciesScreen({ navigation }: Props) {
         ) : null}
       </VentanaConsulta>
 
-      <VentanaConsulta visible={catalogoAbierto} titulo="Catálogo de especies" onCerrar={() => setCatalogoAbierto(false)}>
+      <VentanaConsulta
+        visible={catalogoAbierto}
+        titulo="Catálogo de especies"
+        onCerrar={() => setCatalogoAbierto(false)}
+        acento={catalogo === "rio" || catalogo === "tallas" ? "bosque" : "mar"}
+      >
         <View style={styles.modoBar}>
-          <TouchableOpacity style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOn]} onPress={() => setCatalogo("rio")}>
+          <TouchableOpacity
+            style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOnBosque]}
+            onPress={() => setCatalogo("rio")}
+          >
             <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOn]} onPress={() => setCatalogo("mar")}>
+          <TouchableOpacity
+            style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOnMar]}
+            onPress={() => setCatalogo("mar")}
+          >
             <Text style={[styles.modoTxt, catalogo === "mar" && styles.modoTxtOn]}>Orilla mar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOn]} onPress={() => setCatalogo("no")}>
+          <TouchableOpacity
+            style={[styles.modoBtn, catalogo === "tallas" && styles.modoBtnOnMar]}
+            onPress={() => setCatalogo("tallas")}
+          >
+            <Text style={[styles.modoTxt, catalogo === "tallas" && styles.modoTxtOn]}>Tallas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOnMar]}
+            onPress={() => setCatalogo("no")}
+          >
             <Text style={[styles.modoTxt, catalogo === "no" && styles.modoTxtOn]}>No tocar</Text>
           </TouchableOpacity>
         </View>
@@ -271,6 +288,7 @@ export default function EspeciesScreen({ navigation }: Props) {
             ))}
           </>
         )}
+        {catalogo === "tallas" && <ListaTallasMinimas onEspecie={irAparejos} />}
         {catalogo === "no" && orilla.noCapturar.map((sp: any, i: number) => <TarjetaEspecie key={sp.id} sp={sp} index={i} />)}
       </VentanaConsulta>
     </View>
@@ -289,7 +307,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
-  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center" },
+  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center", marginTop: 6 },
   pieRow: { flexDirection: "row", gap: 8, marginTop: 10 },
   pieBtn: {
     flex: 1,
@@ -304,33 +322,8 @@ const styles = StyleSheet.create({
   pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },
   lead: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, marginBottom: 12, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 16, lineHeight: 20 },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    ...SHADOW,
-  },
-  cardInvasora: { borderColor: COLORS.warning, backgroundColor: "#fffaf3" },
-  cardTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -0.3 },
-  cardNote: { fontSize: 12, color: COLORS.textMuted, marginTop: 3, fontStyle: "italic" },
   cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
-  avisoLegalBox: {
-    marginTop: 10,
-    backgroundColor: COLORS.dangerLight,
-    borderRadius: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: COLORS.danger,
-  },
-  avisoLegalText: { fontSize: 13, color: "#7a1414", lineHeight: 19, fontWeight: "600", marginTop: 6 },
-  cardStatus: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, lineHeight: 20 },
-  badgeInvasora: { fontSize: 11, color: COLORS.warning, fontWeight: "800" },
-  gearBtn: { marginTop: 12, alignSelf: "flex-start" },
-  gearLink: { fontSize: 15, color: COLORS.water, fontWeight: "800" },
-  modoBar: { flexDirection: "row", gap: 6, marginBottom: 14 },
+  modoBar: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 14 },
   modoBtn: {
     flex: 1,
     minHeight: 44,
@@ -341,7 +334,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 4,
   },
-  modoBtnOn: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
+  modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
 });

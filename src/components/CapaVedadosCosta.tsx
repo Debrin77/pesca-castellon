@@ -1,5 +1,6 @@
 import React from "react";
 import { Polygon } from "./map";
+import { PIN } from "../theme";
 import { todosLosVedadosCosta } from "../services/consultaCostaService";
 
 export default function CapaVedadosCosta() {
@@ -9,8 +10,8 @@ export default function CapaVedadosCosta() {
         <Polygon
           key={z.id}
           coordinates={z.anillo.map((a) => ({ latitude: a.lat, longitude: a.lng }))}
-          strokeColor="#5b4aa8"
-          fillColor="#5b4aa8"
+          strokeColor={PIN.vedado}
+          fillColor={PIN.vedado}
           strokeWidth={2}
         />
       ))}
