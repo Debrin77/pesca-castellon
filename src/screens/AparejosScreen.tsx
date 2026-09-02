@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useScrollToTop } from "@react-navigation/native";
 import speciesCatalog from "../data/species.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function AparejosScreen({ route }: Props) {
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
 
   // Si venimos desde la pestaña de Especies con una especie concreta, la preseleccionamos
@@ -41,7 +44,7 @@ export default function AparejosScreen({ route }: Props) {
         ))}
       </ScrollView>
 
-      <ScrollView style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+      <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {sp && (
           <>
             <LinearGradient

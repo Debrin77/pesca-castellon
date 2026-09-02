@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import {
   consultarPuntoPesca,
@@ -12,6 +12,7 @@ import {
 import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import BotonMiPosicion from "../components/BotonMiPosicion";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -28,6 +29,8 @@ const CASTELLON_REGION = {
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
+  const resultRef = useRef<ScrollView>(null);
+  useScrollToTop(resultRef);
   const tramos = todosLosTramos();
   const [busqueda, setBusqueda] = useState("");
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
@@ -35,6 +38,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [yo, setYo] = useState<LatLng | null>(null);
   const [puntosPersonales, setPuntosPersonales] = useState<PuntoGuardado[]>([]);
   const [capas, setCapas] = useState({ zpl: true, zpc: true, vedado: true, misPuntos: true });
+  const [localizando, setLocalizando] = useState(false);
+  const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
 
   useFocusEffect(
     useCallback(() => {
@@ -85,9 +90,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setMarcador({ latitude: lat, longitude: lng });
   }
 
-  function irAMiPosicion() {
-    if (!yo) return;
-    evaluarPunto(yo.latitude, yo.longitude);
+  async function irAMiPosicion() {
+    setLocalizando(true);
+    const ok = await solicitarPermisoUbicacion();
+    const loc = ok ? await obtenerUbicacionActual() : null;
+    setLocalizando(false);
+    if (!loc) return;
+    const pos = { latitude: loc.lat, longitude: loc.lng };
+    setYo(pos);
+    evaluarPunto(loc.lat, loc.lng);
+    setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
   }
 
   return (
@@ -139,6 +151,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           style={styles.map}
           initialRegion={CASTELLON_REGION}
           fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
+          cameraTarget={camara}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           {tramosVisibles.map((z) => {
@@ -181,12 +194,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Marker coordinate={marcador} pinColor={COLORS.water} identifier="user" title="Punto consultado" />
           )}
         </MapView>
-        <TouchableOpacity style={styles.gpsBtn} onPress={irAMiPosicion}>
-          <Text style={styles.gpsBtnText}>Mi posición ahora</Text>
-        </TouchableOpacity>
+        <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
       </View>
 
-      <ScrollView style={styles.resultWrap} contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
+      <ScrollView ref={resultRef} style={styles.resultWrap} contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
         {consulta ? (
           <ConsultaPescaCard
             consulta={consulta}
@@ -195,7 +206,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })
                 : undefined
             }
-            onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+            onAparejos={(id) =>
+              navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } })
+            }
           />
         ) : (
           <Text style={styles.hint}>Pulsa el mapa (o un pin) sobre el agua. Te diremos si es libre, coto o vedado según el anexo de 2024, y si hoy puedes pescar.</Text>
@@ -254,7 +267,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
   suggestionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700" },
-  mapWrap: { height: 340 },
+  mapWrap: { height: 340, position: "relative" },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
     paddingHorizontal: 12,
@@ -270,17 +283,6 @@ const styles = StyleSheet.create({
   layerChipText: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "700" },
   map: { flex: 1 },
-  gpsBtn: {
-    position: "absolute",
-    right: 12,
-    bottom: 12,
-    backgroundColor: COLORS.surface,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: RADIUS.pill,
-    ...SHADOW,
-  },
-  gpsBtnText: { fontSize: 12, fontWeight: "800", color: COLORS.water },
   resultWrap: { flex: 1 },
   hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center", padding: 8 },
   saveSpotButton: {

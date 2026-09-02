@@ -22,6 +22,9 @@ const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const ZonasLibresStack = createNativeStackNavigator();
 const EspeciesStack = createNativeStackNavigator();
+const AparejosStack = createNativeStackNavigator();
+const PrevisionStack = createNativeStackNavigator();
+const CapturasStack = createNativeStackNavigator();
 
 const navTheme = {
   ...DefaultTheme,
@@ -41,7 +44,6 @@ function HomeStackScreen() {
       <HomeStack.Screen name="HomeMain" component={HomeScreen} options={{ title: "Pesca Castellón" }} />
       <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
-      <HomeStack.Screen name="MyCatches" component={MyCatchesScreen} options={{ title: "Mis puntos y capturas" }} />
     </HomeStack.Navigator>
   );
 }
@@ -49,7 +51,7 @@ function HomeStackScreen() {
 function ZonasLibresStackScreen() {
   return (
     <ZonasLibresStack.Navigator screenOptions={stackScreenOptions}>
-      <ZonasLibresStack.Screen name="ZonasLibresMain" component={ZonasLibresScreen} options={{ title: "Zonas libres" }} />
+      <ZonasLibresStack.Screen name="ZonasLibresMain" component={ZonasLibresScreen} options={{ title: "Mapa" }} />
       <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <ZonasLibresStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
     </ZonasLibresStack.Navigator>
@@ -66,13 +68,57 @@ function EspeciesStackScreen() {
   );
 }
 
+function AparejosStackScreen() {
+  return (
+    <AparejosStack.Navigator screenOptions={stackScreenOptions}>
+      <AparejosStack.Screen name="AparejosMain" component={AparejosScreen} options={{ title: "Aparejos" }} />
+    </AparejosStack.Navigator>
+  );
+}
+
+function PrevisionStackScreen() {
+  return (
+    <PrevisionStack.Navigator screenOptions={stackScreenOptions}>
+      <PrevisionStack.Screen name="PrevisionMain" component={PrevisionScreen} options={{ title: "Previsión" }} />
+    </PrevisionStack.Navigator>
+  );
+}
+
+function CapturasStackScreen() {
+  return (
+    <CapturasStack.Navigator screenOptions={stackScreenOptions}>
+      <CapturasStack.Screen name="CapturasMain" component={MyCatchesScreen} options={{ title: "Capturas" }} />
+    </CapturasStack.Navigator>
+  );
+}
+
 const ICONOS: Record<string, NombreIcono> = {
   Inicio: "home",
-  "Zonas libres": "water",
+  Mapa: "water",
   Especies: "fish",
   Aparejos: "construct",
   Previsión: "partly-sunny",
+  Capturas: "bookmark",
 };
+
+const TAB_RAIZ: Record<string, { stack: string; screen: string }> = {
+  Inicio: { stack: "Inicio", screen: "HomeMain" },
+  Mapa: { stack: "Mapa", screen: "ZonasLibresMain" },
+  Especies: { stack: "Especies", screen: "EspeciesMain" },
+  Aparejos: { stack: "Aparejos", screen: "AparejosMain" },
+  Previsión: { stack: "Previsión", screen: "PrevisionMain" },
+  Capturas: { stack: "Capturas", screen: "CapturasMain" },
+};
+
+function listenerIrArriba(nombreTab: string) {
+  return ({ navigation }: { navigation: any }) => ({
+    tabPress: () => {
+      const dest = TAB_RAIZ[nombreTab];
+      if (!dest) return;
+      navigation.navigate(dest.stack, { screen: dest.screen });
+    },
+  });
+}
 
 export default function App() {
   return (
@@ -83,34 +129,36 @@ export default function App() {
           headerShown: false,
           tabBarActiveTintColor: COLORS.primary,
           tabBarInactiveTintColor: COLORS.textMuted,
+          tabBarHideOnKeyboard: true,
           tabBarStyle: {
             position: "absolute",
-            left: 12,
-            right: 12,
-            bottom: 14,
-            height: 64,
-            borderRadius: 22,
+            left: 8,
+            right: 8,
+            bottom: 10,
+            height: 62,
+            borderRadius: 20,
             backgroundColor: COLORS.surface,
             borderTopWidth: 0,
-            paddingBottom: 8,
-            paddingTop: 8,
+            paddingBottom: 6,
+            paddingTop: 6,
             shadowColor: COLORS.primaryDark,
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.12,
-            shadowRadius: 20,
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.1,
+            shadowRadius: 16,
             elevation: 12,
           },
-          tabBarLabelStyle: { fontSize: 10, fontWeight: "700" as const, letterSpacing: 0.2 },
+          tabBarLabelStyle: { fontSize: 9, fontWeight: "700" as const, letterSpacing: 0.1 },
           tabBarIcon: ({ color, focused, size }) => (
-            <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size + 2 : size} color={color} />
+            <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size + 1 : size - 1} color={color} />
           ),
         })}
       >
-        <Tab.Screen name="Inicio" component={HomeStackScreen} />
-        <Tab.Screen name="Zonas libres" component={ZonasLibresStackScreen} />
-        <Tab.Screen name="Especies" component={EspeciesStackScreen} />
-        <Tab.Screen name="Aparejos" component={AparejosScreen} />
-        <Tab.Screen name="Previsión" component={PrevisionScreen} />
+        <Tab.Screen name="Inicio" component={HomeStackScreen} listeners={listenerIrArriba("Inicio")} />
+        <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} listeners={listenerIrArriba("Mapa")} />
+        <Tab.Screen name="Especies" component={EspeciesStackScreen} listeners={listenerIrArriba("Especies")} />
+        <Tab.Screen name="Aparejos" component={AparejosStackScreen} listeners={listenerIrArriba("Aparejos")} />
+        <Tab.Screen name="Previsión" component={PrevisionStackScreen} listeners={listenerIrArriba("Previsión")} />
+        <Tab.Screen name="Capturas" component={CapturasStackScreen} listeners={listenerIrArriba("Capturas")} />
       </Tab.Navigator>
     </NavigationContainer>
   );

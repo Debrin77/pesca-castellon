@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 
-export type NombreIcono = "home" | "water" | "fish" | "construct" | "partly-sunny";
+export type NombreIcono = "home" | "water" | "fish" | "construct" | "partly-sunny" | "bookmark";
 
 const MAPA: Record<NombreIcono, string> = {
   home: "⌂",
@@ -9,6 +9,7 @@ const MAPA: Record<NombreIcono, string> = {
   fish: "◉",
   construct: "⚒",
   "partly-sunny": "☀",
+  bookmark: "✦",
 };
 
 interface Props {

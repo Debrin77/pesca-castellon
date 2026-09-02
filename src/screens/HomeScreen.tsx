@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
@@ -8,6 +9,7 @@ import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import BotonMiPosicion from "../components/BotonMiPosicion";
 import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos } from "../services/consultaPescaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 
@@ -33,11 +35,15 @@ function fechaLegible(d: Date): string {
 }
 
 export default function HomeScreen({ navigation }: Props) {
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
   const [clima, setClima] = useState<ClimaActual | null>(null);
   const [indiceHoy, setIndiceHoy] = useState<IndicePescaDia | null>(null);
   const [cargando, setCargando] = useState(true);
   const [permisoDenegado, setPermisoDenegado] = useState(false);
+  const [localizando, setLocalizando] = useState(false);
+  const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
 
   async function cargar() {
     setCargando(true);
@@ -65,6 +71,27 @@ export default function HomeScreen({ navigation }: Props) {
     setCargando(false);
   }
 
+  async function irAMiPosicion() {
+    setLocalizando(true);
+    const ok = await solicitarPermisoUbicacion();
+    if (!ok) {
+      setPermisoDenegado(true);
+      setLocalizando(false);
+      return;
+    }
+    const loc = await obtenerUbicacionActual();
+    setLocalizando(false);
+    if (!loc) return;
+    setUbicacion(loc);
+    setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
+    const [c, indice] = await Promise.all([
+      obtenerClimaActual(loc.lat, loc.lng),
+      calcularIndicePesca(loc.lat, loc.lng, 3),
+    ]);
+    setClima(c);
+    if (indice.length > 0) setIndiceHoy(indice[0]);
+  }
+
   useEffect(() => {
     cargar();
   }, []);
@@ -76,7 +103,7 @@ export default function HomeScreen({ navigation }: Props) {
   const consultaViva = ubicacion ? consultarPuntoPesca(ubicacion.lat, ubicacion.lng) : null;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
       <LinearGradient colors={GRADIENTS.primary} style={styles.hero}>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
@@ -136,7 +163,7 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.body}>
         <LicenseBanner onPress={() => navigation.navigate("License")} />
 
-        <TouchableOpacity style={styles.myCatchesButton} onPress={() => navigation.navigate("MyCatches")}>
+        <TouchableOpacity style={styles.myCatchesButton} onPress={() => navigation.navigate("Capturas")}>
           <View style={styles.myCatchesGlyph}>
             <Text style={styles.myCatchesIcon}>●</Text>
           </View>
@@ -160,7 +187,9 @@ export default function HomeScreen({ navigation }: Props) {
                   ? () => navigation.navigate("ZoneDetail", { zoneId: consultaViva.tramo!.fichaId })
                   : undefined
               }
-              onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+              onAparejos={(id) =>
+                navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } })
+              }
             />
           </View>
         ) : null}
@@ -169,6 +198,7 @@ export default function HomeScreen({ navigation }: Props) {
             style={styles.map}
             initialRegion={CASTELLON_REGION}
             fitCoordinates={fitMapa}
+            cameraTarget={camara}
           >
             {tramos.map((z) => {
               const color = colorAprovechamiento(z.aprovechamiento);
@@ -203,6 +233,7 @@ export default function HomeScreen({ navigation }: Props) {
               />
             )}
           </MapView>
+          <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
         </View>
         <View style={styles.legend}>
           <View style={styles.legendItem}>
@@ -222,7 +253,7 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.legendText}>Tú</Text>
           </View>
         </View>
-        <Text style={styles.mapHint}>Verde libre · ámbar coto (permiso) · rojo vedado. En Zonas libres pulsa cualquier punto del agua para la norma de hoy.</Text>
+        <Text style={styles.mapHint}>Verde libre · ámbar coto · rojo vedado. Pulsa «Ir a mí» para centrar el mapa. En Mapa consulta cualquier punto.</Text>
       </View>
     </ScrollView>
   );
@@ -294,7 +325,7 @@ const styles = StyleSheet.create({
   sectionRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginTop: SPACING.lg, marginBottom: SPACING.sm },
   sectionTitle: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary },
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
-  mapWrap: { height: 420, borderRadius: RADIUS.lg, overflow: "hidden", borderWidth: 1, borderColor: COLORS.border, ...SHADOW },
+  mapWrap: { height: 420, borderRadius: RADIUS.lg, overflow: "hidden", borderWidth: 1, borderColor: COLORS.border, ...SHADOW, position: "relative" },
   map: { flex: 1 },
   legend: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 10, justifyContent: "center" },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },

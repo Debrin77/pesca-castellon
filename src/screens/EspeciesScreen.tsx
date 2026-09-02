@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 
 type LatLng = { latitude: number; longitude: number };
@@ -9,6 +10,7 @@ import { consultarPuntoPesca, ConsultaPesca } from "../services/consultaPescaSer
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
+import BotonMiPosicion from "../components/BotonMiPosicion";
 
 interface Props {
   navigation: any;
@@ -22,10 +24,13 @@ const CASTELLON_REGION = {
 };
 
 export default function EspeciesScreen({ navigation }: Props) {
+  const listRef = useRef<ScrollView>(null);
+  useScrollToTop(listRef);
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
   const [mostrarCatalogoCompleto, setMostrarCatalogoCompleto] = useState(false);
+  const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
 
   async function usarMiUbicacion() {
     setCargandoUbicacion(true);
@@ -36,6 +41,7 @@ export default function EspeciesScreen({ navigation }: Props) {
         const r = consultarPuntoPesca(loc.lat, loc.lng);
         setConsulta(r);
         setMarcador({ latitude: loc.lat, longitude: loc.lng });
+        setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
       }
     }
     setCargandoUbicacion(false);
@@ -58,6 +64,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           style={styles.map}
           initialRegion={CASTELLON_REGION}
           fitCoordinates={(zones as any[]).map((z: any) => ({ latitude: z.lat, longitude: z.lng }))}
+          cameraTarget={camara}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           {(zones as any[]).map((z) => (
@@ -88,12 +95,10 @@ export default function EspeciesScreen({ navigation }: Props) {
             />
           )}
         </MapView>
-        <TouchableOpacity style={styles.myLocationButton} onPress={usarMiUbicacion}>
-          <Text style={styles.myLocationButtonText}>📍 Usar mi ubicación</Text>
-        </TouchableOpacity>
+        <BotonMiPosicion onPress={usarMiUbicacion} cargando={cargandoUbicacion} />
       </View>
 
-      <ScrollView style={styles.listWrap} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+      <ScrollView ref={listRef} style={styles.listWrap} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {cargandoUbicacion && !consulta && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 20 }} />}
 
         {consulta ? (
@@ -125,7 +130,11 @@ export default function EspeciesScreen({ navigation }: Props) {
                       {enVeda ? "EN VEDA" : "Periodo hábil"}
                     </Text>
                   </Text>
-                  <TouchableOpacity onPress={() => navigation.navigate("Aparejos", { especieId })}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId } })
+                    }
+                  >
                     <Text style={styles.gearLink}>Ver aparejos recomendados →</Text>
                   </TouchableOpacity>
                 </View>
@@ -169,19 +178,8 @@ export default function EspeciesScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  mapWrap: { height: 280 },
+  mapWrap: { height: 280, position: "relative" },
   map: { flex: 1 },
-  myLocationButton: {
-    position: "absolute",
-    bottom: 10,
-    alignSelf: "center",
-    backgroundColor: COLORS.surface,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: RADIUS.md,
-    ...SHADOW,
-  },
-  myLocationButtonText: { fontSize: 12.5, fontWeight: "600", color: COLORS.primary },
   listWrap: { flex: 1 },
   zoneHeader: { fontSize: 15.5, fontWeight: "700", color: COLORS.textPrimary, marginBottom: 10 },
   emptyText: { fontSize: 13, color: COLORS.textMuted, fontStyle: "italic", textAlign: "center", marginTop: 20 },

@@ -206,6 +206,15 @@ function ManejadorClick({ onLongPress }: { onLongPress?: (e: any) => void }) {
   return null;
 }
 
+function VolarA({ target }: { target?: { latitude: number; longitude: number; zoom?: number; nonce: number } }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!target) return;
+    map.flyTo([target.latitude, target.longitude], target.zoom ?? 14, { duration: 0.7 });
+  }, [map, target?.nonce]);
+  return null;
+}
+
 interface MapViewProps {
   style?: any;
   region?: Region;
@@ -213,6 +222,7 @@ interface MapViewProps {
   onLongPress?: (e: any) => void;
   children?: React.ReactNode;
   fitCoordinates?: { latitude: number; longitude: number }[];
+  cameraTarget?: { latitude: number; longitude: number; zoom?: number; nonce: number };
 }
 
 export default function MapView({
@@ -222,6 +232,7 @@ export default function MapView({
   onLongPress,
   children,
   fitCoordinates,
+  cameraTarget,
 }: MapViewProps) {
   inyectarCssMapa();
   const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
@@ -262,8 +273,9 @@ export default function MapView({
         </LayersControl>
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
-        <SincronizarRegion region={region} disabled={!!fitCoordinates?.length} />
+        <SincronizarRegion region={region} disabled={!!fitCoordinates?.length || !!cameraTarget} />
         <EncajarCoordenadas coords={fitCoordinates} />
+        <VolarA target={cameraTarget} />
         {onLongPress && <ManejadorClick onLongPress={onLongPress} />}
         {children}
       </MapContainer>

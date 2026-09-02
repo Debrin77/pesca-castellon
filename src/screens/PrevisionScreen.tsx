@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, LayoutAnimation, Platform, UIManager } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScrollToTop } from "@react-navigation/native";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { obtenerPrevision, descripcionTiempo, detectarAlertas, PrevisionDia } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
@@ -20,6 +21,8 @@ function formatearDia(fechaIso: string, index: number): string {
 }
 
 export default function PrevisionScreen() {
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
   const [dias, setDias] = useState<PrevisionDia[]>([]);
   const [indice, setIndice] = useState<IndicePescaDia[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -57,7 +60,7 @@ export default function PrevisionScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: SPACING.lg, paddingBottom: 100 }}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ padding: SPACING.lg, paddingBottom: 100 }}>
       <Text style={styles.title}>Previsión de 7 días</Text>
       <Text style={styles.subtitle}>Clima + índice de pesca para planear tu próxima jornada</Text>
 

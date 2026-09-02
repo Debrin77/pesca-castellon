@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import speciesCatalog from "../data/species.json";
 import {
   PuntoGuardado,
@@ -26,6 +26,8 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 type Tab = "puntos" | "capturas";
 
 export default function MyCatchesScreen() {
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
   const [tab, setTab] = useState<Tab>("capturas");
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [capturas, setCapturas] = useState<Captura[]>([]);
@@ -95,7 +97,7 @@ export default function MyCatchesScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+      <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {tab === "capturas" && (
           <>
             {!mostrarFormulario ? (
