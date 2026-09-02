@@ -21,7 +21,12 @@ function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
     return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
   }
   if (c.veredicto === "fuera_catalogo") return { texto: "SIN TRAMO", sub: "No está en el catálogo" };
-  if (c.sePuedePescarHoy) return { texto: "HOY SÍ", sub: "Zona libre · con licencia" };
+  if (c.sePuedePescarHoy) {
+    return {
+      texto: "HOY SÍ",
+      sub: c.ambito === "maritimo" ? "Orilla · licencia marítima" : "Zona libre · con licencia",
+    };
+  }
   return { texto: "HOY NO", sub: "Restricción de día o temporada" };
 }
 
@@ -37,7 +42,11 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
       </View>
       <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? "#1a6f8a" : COLORS.textMuted }]}>
         <Text style={styles.pillText}>
-          {consulta.confianza === "oficial" ? "Polígono ICV oficial" : "Radio del anexo I (aprox.)"}
+          {consulta.ambito === "maritimo"
+            ? "Polígono de consulta (orientativo)"
+            : consulta.confianza === "oficial"
+              ? "Polígono ICV oficial"
+              : "Radio del anexo I (aprox.)"}
         </Text>
       </View>
       <Text style={styles.title}>{consulta.titulo}</Text>

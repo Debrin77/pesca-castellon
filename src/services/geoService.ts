@@ -19,6 +19,21 @@ export function distanciaKm(
   return R * c;
 }
 
+/** Ray casting. Anillo cerrado o abierto. */
+export function puntoEnPoligono(lat: number, lng: number, anillo: { lat: number; lng: number }[]): boolean {
+  if (anillo.length < 3) return false;
+  let dentro = false;
+  for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
+    const yi = anillo[i].lat;
+    const xi = anillo[i].lng;
+    const yj = anillo[j].lat;
+    const xj = anillo[j].lng;
+    const cruza = yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi + 1e-12) + xi;
+    if (cruza) dentro = !dentro;
+  }
+  return dentro;
+}
+
 export interface ResultadoUbicacion {
   zona: any | null;
   distanciaKm: number | null;

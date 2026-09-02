@@ -1,9 +1,72 @@
 [
-  { "id": "vinaros", "nombre": "Puerto de Vinaròs", "lat": 40.4665, "lng": 0.478, "radioM": 450 },
-  { "id": "benicarlo", "nombre": "Puerto de Benicarló", "lat": 40.4168, "lng": 0.4285, "radioM": 400 },
-  { "id": "peniscola", "nombre": "Puerto de Peñíscola", "lat": 40.3574, "lng": 0.4028, "radioM": 280 },
-  { "id": "alcossebre", "nombre": "Puerto de Alcossebre", "lat": 40.2405, "lng": 0.291, "radioM": 220 },
-  { "id": "orpesa", "nombre": "Puerto de Orpesa / Oropesa", "lat": 40.092, "lng": 0.139, "radioM": 280 },
-  { "id": "grao_cs", "nombre": "Puerto de Castellón (Grao)", "lat": 39.9695, "lng": 0.0215, "radioM": 1100 },
-  { "id": "burriana", "nombre": "Puerto de Burriana", "lat": 39.8568, "lng": -0.0665, "radioM": 550 }
+  {
+    "id": "vinaros",
+    "nombre": "Puerto de Vinaròs",
+    "anillo": [
+      { "lat": 40.472, "lng": 0.47 },
+      { "lat": 40.472, "lng": 0.488 },
+      { "lat": 40.46, "lng": 0.488 },
+      { "lat": 40.46, "lng": 0.47 }
+    ]
+  },
+  {
+    "id": "benicarlo",
+    "nombre": "Puerto de Benicarló",
+    "anillo": [
+      { "lat": 40.422, "lng": 0.42 },
+      { "lat": 40.422, "lng": 0.438 },
+      { "lat": 40.41, "lng": 0.438 },
+      { "lat": 40.41, "lng": 0.42 }
+    ]
+  },
+  {
+    "id": "peniscola",
+    "nombre": "Puerto de Peñíscola",
+    "anillo": [
+      { "lat": 40.362, "lng": 0.395 },
+      { "lat": 40.362, "lng": 0.41 },
+      { "lat": 40.352, "lng": 0.41 },
+      { "lat": 40.352, "lng": 0.395 }
+    ]
+  },
+  {
+    "id": "alcossebre",
+    "nombre": "Puerto de Alcossebre",
+    "anillo": [
+      { "lat": 40.246, "lng": 0.283 },
+      { "lat": 40.246, "lng": 0.3 },
+      { "lat": 40.235, "lng": 0.3 },
+      { "lat": 40.235, "lng": 0.283 }
+    ]
+  },
+  {
+    "id": "orpesa",
+    "nombre": "Puerto de Orpesa / Oropesa",
+    "anillo": [
+      { "lat": 40.098, "lng": 0.128 },
+      { "lat": 40.098, "lng": 0.15 },
+      { "lat": 40.085, "lng": 0.15 },
+      { "lat": 40.085, "lng": 0.128 }
+    ]
+  },
+  {
+    "id": "grao_cs",
+    "nombre": "Puerto de Castellón (Grao)",
+    "anillo": [
+      { "lat": 39.98, "lng": 0.002 },
+      { "lat": 39.98, "lng": 0.038 },
+      { "lat": 39.958, "lng": 0.038 },
+      { "lat": 39.958, "lng": 0.002 }
+    ]
+  },
+  {
+    "id": "burriana",
+    "nombre": "Puerto de Burriana",
+    "anillo": [
+      { "lat": 39.864, "lng": -0.08 },
+      { "lat": 39.864, "lng": -0.052 },
+      { "lat": 39.848, "lng": -0.052 },
+      { "lat": 39.848, "lng": -0.08 }
+    ]
+  }
 ]

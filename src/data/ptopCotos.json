@@ -1,0 +1,11 @@
+{
+  "avisoPtop": "El Plan Técnico de Ordenación Piscícola (PTOP) de cada coto lo aprueba la Dirección Territorial y dura 5 años (Orden 30/2016 art. 14). No está publicado como dato abierto. Cupos, días extra y sueltas salen de ese plan o del titular. Esta app no los inventa.",
+  "oficina": "Castellón / Segorbe: Av. Hermanos Bou, 47 · 12003 Castelló. Pregunta por la matrícula del coto.",
+  "cotos": {
+    "CS-008": { "nombre": "Teresa (Palancia)", "ptopPublico": false },
+    "CS-009": { "nombre": "Segorbe (Palancia)", "ptopPublico": false },
+    "CS-010": { "nombre": "Els Estanys / La Ponderosa (Almenara)", "ptopPublico": false },
+    "CS-011": { "nombre": "Villahermosa–Cedramán", "ptopPublico": false },
+    "CS-012": { "nombre": "ZPC Millars (Santa Quiteria–Almassora)", "ptopPublico": false }
+  }
+}

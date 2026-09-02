@@ -1,0 +1,50 @@
+[
+  {
+    "id": "irta",
+    "nombre": "Reserva marina Serra d'Irta (Cala Volante–Cala Mundina)",
+    "tipo": "reserva_marina",
+    "norma": "Decreto 163/2006: pesca recreativa a pie prohibida en todo el litoral de la reserva, de Cala Volante a Cala Mundina (ambas incluidas).",
+    "anillo": [
+      { "lat": 40.3322, "lng": 0.355 },
+      { "lat": 40.3322, "lng": 0.395 },
+      { "lat": 40.2615, "lng": 0.355 },
+      { "lat": 40.2615, "lng": 0.288 }
+    ]
+  },
+  {
+    "id": "prat_cabanes",
+    "nombre": "Parque natural Prat de Cabanes-Torreblanca",
+    "tipo": "humedal",
+    "norma": "Zona húmeda catalogada nº 2 / parque natural: pesca no, en la delimitación del paraje (catálogo ZH CV y señalización del parque).",
+    "anillo": [
+      { "lat": 40.225, "lng": 0.165 },
+      { "lat": 40.225, "lng": 0.225 },
+      { "lat": 40.155, "lng": 0.215 },
+      { "lat": 40.155, "lng": 0.155 }
+    ]
+  },
+  {
+    "id": "millars_gola",
+    "nombre": "Desembocadura del Millars / golas",
+    "tipo": "desembocadura",
+    "norma": "Anexo I: vedado continental de la desembocadura. Paisaje protegido: no uses artes ni lances en las golas. No es un atajo hacia el mar.",
+    "anillo": [
+      { "lat": 39.915, "lng": -0.055 },
+      { "lat": 39.915, "lng": 0.015 },
+      { "lat": 39.875, "lng": 0.015 },
+      { "lat": 39.875, "lng": -0.055 }
+    ]
+  },
+  {
+    "id": "almenara_marjal",
+    "nombre": "Marjal y Estanys d'Almenara (orilla)",
+    "tipo": "humedal",
+    "norma": "Aprovechamiento vedado (VP) salvo la ZPC CS-010 (Estanys/Ponderosa) con permiso de coto. El marjal no es playa libre.",
+    "anillo": [
+      { "lat": 39.78, "lng": -0.24 },
+      { "lat": 39.78, "lng": -0.18 },
+      { "lat": 39.72, "lng": -0.18 },
+      { "lat": 39.72, "lng": -0.24 }
+    ]
+  }
+]

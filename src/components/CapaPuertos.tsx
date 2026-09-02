@@ -1,18 +1,17 @@
 import React from "react";
-import { Circle } from "./map";
+import { Polygon } from "./map";
 import { todosLosPuertos } from "../services/consultaCostaService";
 
-/** Radios orientativos de aguas portuarias: no pescar desde tierra ahí. */
 export default function CapaPuertos() {
   return (
     <>
       {todosLosPuertos().map((p) => (
-        <Circle
+        <Polygon
           key={p.id}
-          center={{ latitude: p.lat, longitude: p.lng }}
-          radius={p.radioM}
+          coordinates={p.anillo.map((a) => ({ latitude: a.lat, longitude: a.lng }))}
           strokeColor="#b42318"
-          fillColor="#b4231833"
+          fillColor="#b42318"
+          strokeWidth={2}
         />
       ))}
     </>

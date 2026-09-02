@@ -1,4 +1,5 @@
 import tramos from "../data/tramosOficiales.json";
+import ptopCotos from "../data/ptopCotos.json";
 import {
   Aprovechamiento,
   diaHabilMijares,
@@ -183,6 +184,16 @@ function evaluarTramo(
       `Permiso de coto intransferible (${t.matriculaCoto ?? "ZPC"}). Lo expide el titular / servicios territoriales.`
     );
     restricciones.push("Sin ese permiso no es zona libre: es coto (zona de pesca controlada).");
+    restricciones.push(ptopCotos.avisoPtop);
+    {
+      const mat = t.matriculaCoto;
+      const ficha = mat ? (ptopCotos.cotos as Record<string, { nombre: string; ptopPublico: boolean }>)[mat] : undefined;
+      restricciones.push(
+        ficha
+          ? `${mat} · ${ficha.nombre}. Plan técnico no publicado aquí. ${ptopCotos.oficina}`
+          : `Pregunta por la matrícula del coto. ${ptopCotos.oficina}`
+      );
+    }
   } else {
     permisos.push("No hace falta permiso de coto: es zona de pesca libre (ZPL).");
   }

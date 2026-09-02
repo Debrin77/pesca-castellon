@@ -17,8 +17,9 @@ import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
+import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
-import { consultarCosta, todosLosPuertos } from "../services/consultaCostaService";
+import { consultarCosta, centroZona, todosLosPuertos, todosLosVedadosCosta } from "../services/consultaCostaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -202,17 +203,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         >
           <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
           {modo === "costa" ? <CapaPuertos /> : null}
+          {modo === "costa" ? <CapaVedadosCosta /> : null}
           {modo === "costa" &&
-            todosLosPuertos().map((p) => (
+            [...todosLosPuertos(), ...todosLosVedadosCosta()].map((p) => {
+              const c = centroZona(p.anillo);
+              return (
               <Marker
                 key={p.id}
-                coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor="#b42318"
+                coordinate={{ latitude: c.lat, longitude: c.lng }}
+                pinColor={p.tipo ? "#5b4aa8" : "#b42318"}
                 identifier="coto"
                 title={p.nombre}
-                onPress={() => evaluarPunto(p.lat, p.lng)}
+                onPress={() => evaluarPunto(c.lat, c.lng)}
               />
-            ))}
+            );
+            })}
           {modo === "continental" &&
             tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
             const color = colorAprovechamiento(z.aprovechamiento);
@@ -274,7 +279,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         ) : (
           <Text style={styles.hint}>
             {modo === "costa"
-              ? "Toca la orilla. Los círculos rojos son puertos (no pescar). En capas del mapa puedes activar profundidad EMODnet y carta IHM: no sirven para navegar. El Mediterráneo aquí casi no tiene marea."
+              ? "Toca la orilla. Rojo: puertos. Violeta: vedados (Irta, Prat, gola del Millars, marjal de Almenara). Capas: profundidad EMODnet y carta IHM (no navegar)."
               : "Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar."}
           </Text>
         )}

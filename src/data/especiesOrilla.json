@@ -1,0 +1,352 @@
+{
+  "fuenteTallas": "RD 560/1995 anexo II (caladero mediterráneo), texto consolidado BOE. Decreto 41/2013 remite al RD 347/2011 para especies autorizadas. Si hay norma autonómica más estricta o cartel, gana esa.",
+  "noCapturar": [
+    {
+      "id": "datil_mar",
+      "nombre": "Dátil de mar",
+      "nombreCientifico": "Lithophaga lithophaga",
+      "motivo": "Extracción prohibida (especie protegida). No lo saques de la roca."
+    },
+    {
+      "id": "nacra",
+      "nombre": "Nacra",
+      "nombreCientifico": "Pinna nobilis",
+      "motivo": "Bivalvo protegido y en grave declive. Ni tocarla."
+    },
+    {
+      "id": "caballito",
+      "nombre": "Caballito de mar",
+      "nombreCientifico": "Hippocampus spp.",
+      "motivo": "Protegido. Devuélvelo si engancha."
+    },
+    {
+      "id": "tortuga",
+      "nombre": "Tortuga marina",
+      "nombreCientifico": "Caretta caretta (y otras)",
+      "motivo": "Fauna protegida. Si engancha, corta el sedal cerca y avisa a 112 / CRFS."
+    },
+    {
+      "id": "mero_pequeno",
+      "nombre": "Mero (si es pequeño)",
+      "nombreCientifico": "Epinephelus spp.",
+      "motivo": "Talla mínima 45 cm (RD 560 anexo II). En orilla casi todos son juveniles: devuélvelo. No es una de las 20 de esta costa a pie."
+    }
+  ],
+  "invasorasOrilla": [
+    {
+      "id": "cangrejo_azul",
+      "nombre": "Cangrejo azul",
+      "nombreCientifico": "Callinectes sapidus",
+      "notas": "Invasor en el Mediterráneo (también RD 630/2013 en el ámbito que le aplique). No lo devuelvas al mar. No lo confundas con cangrejos nativos de roca.",
+      "tallaOficial": "Sin talla de retención (invasora: no se devuelve)",
+      "mejorHora": {
+        "resumen": "Más activo en desembocaduras y marjal con calor.",
+        "verano": "Atardecer en golas y canales, fuera de vedados.",
+        "invierno": "Poco activo.",
+        "noche": "La pesca de noche sigue prohibida salvo norma expresa."
+      }
+    }
+  ],
+  "pescablesOrilla": [
+    {
+      "id": "lubina",
+      "nombre": "Lubina",
+      "nombreCientifico": "Dicentrarchus labrax",
+      "tallaCm": 23,
+      "tallaNota": "Mediterráneo, RD 560/1995 anexo II",
+      "noConfundirCon": "Palometón joven (Lichia amia): hocico más puntiagudo y aleta anal larga.",
+      "notas": "La más buscada desde orilla en Castellón: rompiente, desembocaduras legales y estructura. Spinning y surfcasting.",
+      "mejorHora": {
+        "resumen": "Primera y última hora, con oleaje corto.",
+        "verano": "Amanecer y anochecer; mediodía flojo.",
+        "invierno": "Días de mar de fondo, casi todo el día en rompiente.",
+        "noche": "Caza de noche, pero la recreativa nocturna no está permitida: última hora de luz."
+      }
+    },
+    {
+      "id": "dorada",
+      "nombre": "Dorada",
+      "nombreCientifico": "Sparus aurata",
+      "tallaCm": 20,
+      "tallaNota": "Mediterráneo (anexo II / modificación del caladero). Mide de tenedor a cola.",
+      "noConfundirCon": "Sargo: la dorada tiene una mancha dorada entre los ojos y una negra en el opérculo.",
+      "notas": "Reina del surfcasting en playas de arena (Peñíscola, Benicàssim, Grao) con gusano o marisco.",
+      "mejorHora": {
+        "resumen": "Noche de orilla no; alba y atardecer en rompiente.",
+        "verano": "Madrugada y último cuarto de luz.",
+        "invierno": "Días suaves, todo el día en playa.",
+        "noche": "Come de noche; pesca de noche no."
+      }
+    },
+    {
+      "id": "sargo",
+      "nombre": "Sargo",
+      "nombreCientifico": "Diplodus sargus",
+      "tallaCm": 15,
+      "tallaNota": "Diplodus spp. 15 cm en Mediterráneo (RD 560 anexo II). Si un cartel o norma autonómica pide más, cumple esa.",
+      "noConfundirCon": "Mojarra (D. vulgaris, barras más regulares) y raspallón (D. annularis, punto negro en el pedúnculo).",
+      "notas": "Roca y escollera (fuera de puerto y de Irta). Fondo ligero con cangrejo o muergo.",
+      "mejorHora": {
+        "resumen": "Todo el año en roca; mejor con agua un poco picada.",
+        "verano": "Amanecer en la rompiente de piedra.",
+        "invierno": "Mediodía en solana de roca.",
+        "noche": "Poco de noche. No pesques de noche."
+      }
+    },
+    {
+      "id": "mojarra",
+      "nombre": "Mojarra",
+      "nombreCientifico": "Diplodus vulgaris",
+      "tallaCm": 15,
+      "tallaNota": "Dentro de Diplodus spp., 15 cm Mediterráneo",
+      "noConfundirCon": "Sargo (D. sargus): la mojarra tiene dos barras oscuras más marcadas, una en nuca y otra en pedúnculo.",
+      "notas": "Muy frecuente en rockfishing de Castellón, talla pequeña. Mide y suelta si no llega.",
+      "mejorHora": {
+        "resumen": "Casi todo el día en roca baja.",
+        "verano": "Mañana y atardecer.",
+        "invierno": "Horas de sol.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "herrera",
+      "nombre": "Herrera",
+      "nombreCientifico": "Lithognathus mormyrus",
+      "tallaCm": null,
+      "tallaNota": "Sin talla específica en el anexo II. Aplica sentido común: no te lleves alevines.",
+      "noConfundirCon": "Dorada joven: la herrera tiene barras verticales y hocico más largo.",
+      "notas": "Playas de arena a surfcasting, típica de la Plana.",
+      "mejorHora": {
+        "resumen": "Oleaje corto en playa.",
+        "verano": "Alba.",
+        "invierno": "Días de mar.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "oblada",
+      "nombre": "Oblada",
+      "nombreCientifico": "Oblada melanura",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II. Suelta los muy pequeños.",
+      "noConfundirCon": "Salema (Sarpa salpa): la oblada es plateada con punto negro en el arranque de la cola.",
+      "notas": "Cardúmenes junto a escolleras (fuera de dársena).",
+      "mejorHora": {
+        "resumen": "De día, a vista, pan o masa donde esté permitido el cebo.",
+        "verano": "Mañanas en superficie.",
+        "invierno": "Menos activa.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "salema",
+      "nombre": "Salema / salpa",
+      "nombreCientifico": "Sarpa salpa",
+      "tallaCm": 15,
+      "tallaNota": "RD 560 anexo II, 15 cm",
+      "noConfundirCon": "Oblada (sin las rayas doradas longitudinales de la salema).",
+      "notas": "Come algas en roca. Carne a veces amarga si ha pastado posidonia.",
+      "mejorHora": {
+        "resumen": "De día en orilla de piedra.",
+        "verano": "Mañana.",
+        "invierno": "Mediodía.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "llisa",
+      "nombre": "Llisa / lisa",
+      "nombreCientifico": "Mugil cephalus y afines",
+      "tallaCm": 16,
+      "tallaNota": "Lisa (Mugil spp.) 16 cm en Mediterráneo",
+      "noConfundirCon": "Otras mugilidas (mabra, galúa). Todas con 16 cm de referencia de grupo.",
+      "notas": "Playas y golas. No las pesques en marjal vedado ni en la gola del Millars.",
+      "mejorHora": {
+        "resumen": "Superficie a primeras horas.",
+        "verano": "Alba.",
+        "invierno": "Mediodía suave.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "mabra",
+      "nombre": "Mabra",
+      "nombreCientifico": "Chelon ramada",
+      "tallaCm": 16,
+      "tallaNota": "Como lisas, 16 cm Mediterráneo",
+      "noConfundirCon": "Llisa (Mugil cephalus), de cabeza más ancha.",
+      "notas": "Muy citada en surfcasting nocturno de Benicàssim/Alcossebre: recuerda que de noche no se pesca.",
+      "mejorHora": {
+        "resumen": "Atardecer en playa.",
+        "verano": "Última hora de luz.",
+        "invierno": "Días suaves.",
+        "noche": "Activa de noche; tú no puedes pescar de noche."
+      }
+    },
+    {
+      "id": "jurel",
+      "nombre": "Jurel / chicharro",
+      "nombreCientifico": "Trachurus spp.",
+      "tallaCm": 12,
+      "tallaNota": "Trachurus spp. 12 cm Mediterráneo",
+      "noConfundirCon": "Palometa o anjova joven.",
+      "notas": "Pasa a la orilla con agua fría y viento. Spinning ligero.",
+      "mejorHora": {
+        "resumen": "Pases de cardumen, a menudo mañana.",
+        "verano": "Amanecer.",
+        "invierno": "Más frecuente.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "caballa",
+      "nombre": "Caballa",
+      "nombreCientifico": "Scomber scombrus",
+      "tallaCm": 18,
+      "tallaNota": "18 cm Mediterráneo",
+      "noConfundirCon": "Estornino (Scomber colias), misma talla de referencia 18 cm en el anexo.",
+      "notas": "Pases primaverales frente a espigones legales (fuera de puerto).",
+      "mejorHora": {
+        "resumen": "Cuando hay pajarera vista desde tierra.",
+        "verano": "Amanecer.",
+        "invierno": "Menos.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "sepia",
+      "nombre": "Sepia / jibia",
+      "nombreCientifico": "Sepia officinalis",
+      "tallaCm": null,
+      "tallaNota": "Sin talla numérica en anexo II (jibias: por determinar). No te lleves crías.",
+      "noConfundirCon": "Calamar (cuerpo más alargado, aletas posteriores).",
+      "notas": "Eging desde orilla en otoño-invierno, fuera de dársena.",
+      "mejorHora": {
+        "resumen": "Atardecer en rompiente y roca.",
+        "verano": "Poco.",
+        "invierno": "Mejor temporada.",
+        "noche": "Activa al anochecer; no de noche cerrada."
+      }
+    },
+    {
+      "id": "calamar",
+      "nombre": "Calamar",
+      "nombreCientifico": "Loligo vulgaris",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II Mediterráneo. Suelta los muy pequeños.",
+      "noConfundirCon": "Sepia.",
+      "notas": "Eging al anochecer desde escollera legal, no desde el muelle interior.",
+      "mejorHora": {
+        "resumen": "Última luz, otoño.",
+        "verano": "Poco desde orilla.",
+        "invierno": "Buenos pases.",
+        "noche": "Pican de noche; tú hasta 1 h después del ocaso."
+      }
+    },
+    {
+      "id": "pulpo",
+      "nombre": "Pulpo",
+      "nombreCientifico": "Octopus vulgaris",
+      "tallaCm": null,
+      "tallaNota": "1 kg en Mediterráneo (RD 560 anexo II). No el de 200 g.",
+      "noConfundirCon": "No hay otro pulpo habitual en orilla. Prohibido el marisqueo de bivalvos a pie en Irta.",
+      "notas": "Roca. En la reserva de Irta el marisqueo de bivalvos está prohibido; el pulpo de orilla sigue las reglas generales y la señalización.",
+      "mejorHora": {
+        "resumen": "Agua clara, de día, en grietas.",
+        "verano": "Mañana.",
+        "invierno": "Mediodía.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "salmonete",
+      "nombre": "Salmonete",
+      "nombreCientifico": "Mullus spp.",
+      "tallaCm": 11,
+      "tallaNota": "11 cm Mediterráneo",
+      "noConfundirCon": "Salmonete de roca vs fango: ambos 11 cm.",
+      "notas": "Fondo de arena cerca de piedra.",
+      "mejorHora": {
+        "resumen": "De día, fondo.",
+        "verano": "Mañana.",
+        "invierno": "Mediodía.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "boga",
+      "nombre": "Boga",
+      "nombreCientifico": "Boops boops",
+      "tallaCm": 11,
+      "tallaNota": "11 cm en otros caladeros; en anexo II Med. la celda queda poco clara — no te lleves alevines. En Canarias/Atlántico figura 11 cm.",
+      "noConfundirCon": "Oblada.",
+      "notas": "Cardumen de orilla. Pesca menor.",
+      "mejorHora": {
+        "resumen": "De día.",
+        "verano": "Mañana.",
+        "invierno": "Sol.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "corvina",
+      "nombre": "Corvina",
+      "nombreCientifico": "Argyrosomus regius",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II. Especie de talla grande: no retengas juveniles de 20 cm.",
+      "noConfundirCon": "Lubina (la corvina tiene boca más baja y línea lateral muy marcada).",
+      "notas": "Entra a playas y golas con agua revuelta. Menos habitual que en el Júcar, pero se cita en Castellón.",
+      "mejorHora": {
+        "resumen": "Oleaje y atardecer.",
+        "verano": "Noche biológica; tú al anochecer.",
+        "invierno": "Menos.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "palometon",
+      "nombre": "Palometón",
+      "nombreCientifico": "Lichia amia",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II.",
+      "noConfundirCon": "Lubina. El palometón tiene aleta caudal muy ahorquillada y pedúnculo fino.",
+      "notas": "Pases desde espigones del Grao y Burriana (fuera de aguas portuarias).",
+      "mejorHora": {
+        "resumen": "Pases de caza a primera hora.",
+        "verano": "Amanecer.",
+        "invierno": "Menos.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "anjova",
+      "nombre": "Anjova / anjova",
+      "nombreCientifico": "Pomatomus saltatrix",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II.",
+      "noConfundirCon": "Jurel grande. La anjova tiene boca armada y dorso verdoso.",
+      "notas": "Citas en Irta: solo fuera de la reserva (Cala Volante–Cala Mundina es vedado de orilla).",
+      "mejorHora": {
+        "resumen": "Agua picada, spinning.",
+        "verano": "Amanecer.",
+        "invierno": "Mejor temporada en el norte de Castellón.",
+        "noche": "No."
+      }
+    },
+    {
+      "id": "espeton",
+      "nombre": "Espetón / barracuda mediterránea",
+      "nombreCientifico": "Sphyraena viridensis / S. sphyraena",
+      "tallaCm": null,
+      "tallaNota": "Sin talla en anexo II.",
+      "noConfundirCon": "No hay barracuda tropical aquí. Hocico de pico.",
+      "notas": "Vinaròs y roca norte, spinning. Fuera de puerto.",
+      "mejorHora": {
+        "resumen": "Agua clara y calor, a media agua.",
+        "verano": "Mañana y atardecer.",
+        "invierno": "Poco.",
+        "noche": "No."
+      }
+    }
+  ]
+}
