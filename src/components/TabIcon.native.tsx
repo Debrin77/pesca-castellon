@@ -10,7 +10,6 @@ interface Props {
   nombre: NombreIcono;
   size?: number;
   focused?: boolean;
-  /** @deprecated Ignorado: el color lo marca la pestaña. */
   color?: string;
 }
 
@@ -24,26 +23,33 @@ const ION: Record<NombreIcono, keyof typeof Ionicons.glyphMap> = {
   book: "library",
 };
 
-export default function TabIcon({ nombre, size = 26, focused }: Props) {
+export default function TabIcon({ nombre, size = 30, focused }: Props) {
   const tint = COLOR_TAB[nombre];
+  const box = size + 22;
   return (
     <View
       style={[
         styles.wrap,
         {
-          backgroundColor: focused ? tint : `${tint}22`,
-          borderColor: focused ? tint : `${tint}55`,
-          width: size + 18,
-          height: size + 18,
-          borderRadius: (size + 18) / 2.4,
+          backgroundColor: focused ? tint : tint,
+          opacity: focused ? 1 : 0.88,
+          borderColor: focused ? "#fff" : `${tint}aa`,
+          width: box,
+          height: box,
+          borderRadius: box / 2,
+          transform: [{ scale: focused ? 1.06 : 1 }],
         },
       ]}
     >
-      <Ionicons name={ION[nombre]} size={size} color={focused ? "#fff" : tint} />
+      <Ionicons name={ION[nombre]} size={size} color="#fff" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: "center", justifyContent: "center", borderWidth: 1.5 },
+  wrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+  },
 });

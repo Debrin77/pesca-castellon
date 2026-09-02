@@ -25,6 +25,26 @@ export function aplicarEstilosWeb() {
     #root input, #root textarea, #root button {
       font-family: inherit;
     }
+    /* Barra de tabs: forzar scroll horizontal visible en web */
+    #barra-tabs-scroll, #barra-tabs-scroll * {
+      scrollbar-width: thin;
+      scrollbar-color: #164a36 #e4efe8;
+    }
+    #barra-tabs-scroll div[style*="overflow"],
+    #barra-tabs-scroll [style*="overflow"] {
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      -webkit-overflow-scrolling: touch;
+    }
+    #barra-tabs-scroll::-webkit-scrollbar,
+    #barra-tabs-scroll *::-webkit-scrollbar {
+      height: 8px;
+    }
+    #barra-tabs-scroll::-webkit-scrollbar-thumb,
+    #barra-tabs-scroll *::-webkit-scrollbar-thumb {
+      background: #164a36;
+      border-radius: 8px;
+    }
   `;
   document.head.appendChild(style);
 }

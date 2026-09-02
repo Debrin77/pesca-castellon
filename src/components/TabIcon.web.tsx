@@ -9,42 +9,47 @@ interface Props {
   nombre: NombreIcono;
   size?: number;
   focused?: boolean;
-  /** @deprecated Ignorado: el color lo marca la pestaña. */
   color?: string;
 }
 
-const GLIFO: Record<NombreIcono, string> = {
-  home: "⌂",
-  water: "≋",
-  fish: "◉",
-  construct: "⚒",
-  "partly-sunny": "☀",
-  bookmark: "★",
-  book: "☰",
+/** Emojis a todo color: se identifican al instante en móvil/web. */
+const EMOJI: Record<NombreIcono, string> = {
+  home: "🏠",
+  water: "🗺️",
+  fish: "🐟",
+  construct: "🎣",
+  "partly-sunny": "⛅",
+  bookmark: "⭐",
+  book: "📖",
 };
 
-export default function TabIcon({ nombre, size = 26, focused }: Props) {
+export default function TabIcon({ nombre, size = 30, focused }: Props) {
   const tint = COLOR_TAB[nombre];
+  const box = size + 22;
   return (
     <View
       style={[
         styles.wrap,
         {
-          backgroundColor: focused ? tint : `${tint}22`,
-          borderColor: focused ? tint : `${tint}55`,
-          width: size + 18,
-          height: size + 18,
-          borderRadius: (size + 18) / 2.4,
+          backgroundColor: tint,
+          opacity: focused ? 1 : 0.9,
+          borderColor: focused ? "#ffffff" : `${tint}cc`,
+          width: box,
+          height: box,
+          borderRadius: box / 2,
+          transform: [{ scale: focused ? 1.08 : 1 }],
         },
       ]}
     >
-      <Text style={{ fontSize: size - 2, lineHeight: size, color: focused ? "#fff" : tint, fontWeight: "800" }}>
-        {GLIFO[nombre]}
-      </Text>
+      <Text style={{ fontSize: size - 4, lineHeight: size }}>{EMOJI[nombre]}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignItems: "center", justifyContent: "center", borderWidth: 1.5 },
+  wrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+  },
 });
