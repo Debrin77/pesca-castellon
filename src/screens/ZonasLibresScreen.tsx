@@ -1,15 +1,20 @@
-import React, { useMemo, useState, useCallback } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, FlatList } from "react-native";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
+import {
+  consultarPuntoPesca,
+  colorAprovechamiento,
+  todosLosTramos,
+  ConsultaPesca,
+  TramoOficial,
+} from "../services/consultaPescaService";
+import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
+import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
+import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
-import zones from "../data/zones.json";
-import { buscarZonaMasCercana, ResultadoUbicacion } from "../services/geoService";
-import { estaEnVeda } from "../services/vedaService";
-import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
-import LicenseBanner from "../components/LicenseBanner";
-import { COLORS, RADIUS, SHADOW } from "../theme";
 
 interface Props {
   navigation: any;
@@ -23,11 +28,13 @@ const CASTELLON_REGION = {
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
+  const tramos = todosLosTramos();
   const [busqueda, setBusqueda] = useState("");
-  const [resultado, setResultado] = useState<ResultadoUbicacion | null>(null);
+  const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
+  const [yo, setYo] = useState<LatLng | null>(null);
   const [puntosPersonales, setPuntosPersonales] = useState<PuntoGuardado[]>([]);
-  const [capas, setCapas] = useState({ cotos: true, libres: true, misPuntos: true });
+  const [capas, setCapas] = useState({ zpl: true, zpc: true, vedado: true, misPuntos: true });
 
   useFocusEffect(
     useCallback(() => {
@@ -35,48 +42,60 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }, [])
   );
 
+  useEffect(() => {
+    let cancelar: (() => void) | undefined;
+    (async () => {
+      const ok = await solicitarPermisoUbicacion();
+      if (!ok) return;
+      const loc = await obtenerUbicacionActual();
+      if (loc) {
+        const pos = { latitude: loc.lat, longitude: loc.lng };
+        setYo(pos);
+        const c = consultarPuntoPesca(loc.lat, loc.lng);
+        setConsulta(c);
+        setMarcador(pos);
+      }
+      cancelar = await suscribirseUbicacion((lat, lng) => {
+        setYo({ latitude: lat, longitude: lng });
+      });
+    })();
+    return () => cancelar?.();
+  }, []);
+
   function toggleCapa(capa: keyof typeof capas) {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
   }
 
-  const zonasVisibles = useMemo(() => {
-    return (zones as any[]).filter((z) => {
-      if (z.estadoZona === "libre_sin_muerte") return capas.libres;
-      return capas.cotos;
+  const tramosVisibles = useMemo(() => {
+    return tramos.filter((t) => {
+      if (t.aprovechamiento === "ZPL") return capas.zpl;
+      if (t.aprovechamiento === "ZPC") return capas.zpc;
+      return capas.vedado;
     });
-  }, [capas]);
+  }, [tramos, capas]);
 
   const sugerencias = useMemo(() => {
     if (!busqueda.trim()) return [];
     const q = busqueda.toLowerCase();
-    return (zones as any[]).filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
-  }, [busqueda]);
+    return tramos.filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
+  }, [busqueda, tramos]);
 
   function evaluarPunto(lat: number, lng: number) {
-    const r = buscarZonaMasCercana(lat, lng);
-    setResultado(r);
+    setConsulta(consultarPuntoPesca(lat, lng));
     setMarcador({ latitude: lat, longitude: lng });
   }
 
-  function seleccionarSugerencia(zona: any) {
-    setBusqueda(zona.nombre);
-    evaluarPunto(zona.lat, zona.lng);
+  function irAMiPosicion() {
+    if (!yo) return;
+    evaluarPunto(yo.latitude, yo.longitude);
   }
-
-  const estado: "adecuada" | "libre_desconocida" | "vedada_ahora" | null = resultado
-    ? resultado.dentroDelRadio
-      ? (resultado.zona.especies as string[]).every((e: string) => estaEnVeda(e))
-        ? "vedada_ahora"
-        : "adecuada"
-      : "libre_desconocida"
-    : null;
 
   return (
     <View style={styles.container}>
       <View style={styles.searchBox}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Busca una zona (ej. Arenós, Palancia, Teresa...)"
+          placeholder="Busca un tramo (Arenós, Palancia, Teresa, Sitjar...)"
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}
@@ -84,9 +103,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         {sugerencias.length > 0 && (
           <View style={styles.suggestionsBox}>
             {sugerencias.map((z) => (
-              <TouchableOpacity key={z.id} style={styles.suggestionRow} onPress={() => seleccionarSugerencia(z)}>
+              <TouchableOpacity
+                key={z.id}
+                style={styles.suggestionRow}
+                onPress={() => {
+                  setBusqueda(z.nombre);
+                  evaluarPunto(z.lat, z.lng);
+                }}
+              >
                 <Text style={styles.suggestionText}>{z.nombre}</Text>
-                <Text style={styles.suggestionMeta}>{z.estadoZona === "libre_sin_muerte" ? "🟢 Libre" : "🔵 Coto"}</Text>
+                <Text style={styles.suggestionMeta}>{z.aprovechamiento}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -94,14 +120,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.layerBar} contentContainerStyle={{ paddingHorizontal: 12 }}>
-        <TouchableOpacity style={[styles.layerChip, capas.cotos && styles.layerChipActive]} onPress={() => toggleCapa("cotos")}>
-          <Text style={[styles.layerChipText, capas.cotos && styles.layerChipTextActive]}>🔵 Cotos</Text>
+        <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipActive]} onPress={() => toggleCapa("zpl")}>
+          <Text style={[styles.layerChipText, capas.zpl && { color: "#2f7d4a" }]}>Libre ZPL</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.layerChip, capas.libres && styles.layerChipActive]} onPress={() => toggleCapa("libres")}>
-          <Text style={[styles.layerChipText, capas.libres && styles.layerChipTextActive]}>🟢 Libres</Text>
+        <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
+          <Text style={[styles.layerChipText, capas.zpc && { color: "#c45c12" }]}>Coto ZPC</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
+          <Text style={[styles.layerChipText, capas.vedado && { color: "#b42318" }]}>Vedado / reserva</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
-          <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>⭐ Mis puntos</Text>
+          <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -109,25 +138,28 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
-          fitCoordinates={(zones as any[]).map((z: any) => ({ latitude: z.lat, longitude: z.lng }))}
+          fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          {zonasVisibles.map((z) => (
-            <Circle
-              key={`r-${z.id}`}
-              center={{ latitude: z.lat, longitude: z.lng }}
-              radius={(z.radioAproxKm || 1.2) * 1000}
-              strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-              fillColor={z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"}
-            />
-          ))}
-          {zonasVisibles.map((z) => (
+          {tramosVisibles.map((z) => {
+            const color = colorAprovechamiento(z.aprovechamiento);
+            return (
+              <Circle
+                key={`r-${z.id}`}
+                center={{ latitude: z.lat, longitude: z.lng }}
+                radius={z.radioKm * 1000}
+                strokeColor={color}
+                fillColor={color + "33"}
+              />
+            );
+          })}
+          {tramosVisibles.map((z) => (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-              identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
-              title={z.nombre}
+              pinColor={colorAprovechamiento(z.aprovechamiento)}
+              identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "coto"}
+              title={`${z.aprovechamiento} · ${z.nombre}`}
               onPress={() => evaluarPunto(z.lat, z.lng)}
             />
           ))}
@@ -142,82 +174,50 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
             ))}
-          {marcador && (
-            <Marker
-              coordinate={marcador}
-              pinColor={COLORS.water}
-              identifier="user"
-              title="Tu punto marcado"
-            />
+          {yo && (
+            <Marker coordinate={yo} pinColor={COLORS.water} identifier="user" title="Tú" />
+          )}
+          {marcador && (!yo || marcador.latitude !== yo.latitude) && (
+            <Marker coordinate={marcador} pinColor={COLORS.water} identifier="user" title="Punto consultado" />
           )}
         </MapView>
-        <Text style={styles.mapHint}>Mantén pulsado el mapa para chequear cualquier punto</Text>
+        <TouchableOpacity style={styles.gpsBtn} onPress={irAMiPosicion}>
+          <Text style={styles.gpsBtnText}>Mi posición ahora</Text>
+        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.resultWrap} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <LicenseBanner onPress={() => navigation.navigate("License")} />
+      <ScrollView style={styles.resultWrap} contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
+        {consulta ? (
+          <ConsultaPescaCard
+            consulta={consulta}
+            onFicha={
+              consulta.tramo?.fichaId
+                ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })
+                : undefined
+            }
+            onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+          />
+        ) : (
+          <Text style={styles.hint}>Pulsa el mapa (o un pin) sobre el agua. Te diremos si es libre, coto o vedado según el anexo de 2024, y si hoy puedes pescar.</Text>
+        )}
 
-        {estado && resultado?.zona && (
-          <View
-            style={[
-              styles.statusCard,
-              estado === "adecuada" && { backgroundColor: COLORS.primaryLight, borderColor: COLORS.success },
-              estado === "vedada_ahora" && { backgroundColor: COLORS.dangerLight, borderColor: COLORS.danger },
-              estado === "libre_desconocida" && { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
-            ]}
+        {consulta?.tramo && (
+          <TouchableOpacity
+            style={styles.saveSpotButton}
+            onPress={async () => {
+              const t = consulta.tramo as TramoOficial;
+              await guardarPunto({
+                nombre: t.nombre,
+                lat: marcador?.latitude ?? t.lat,
+                lng: marcador?.longitude ?? t.lng,
+                zonaRelacionadaId: t.fichaId ?? t.id,
+              });
+              setPuntosPersonales(await obtenerPuntosGuardados());
+            }}
           >
-            <Text style={styles.statusIcon}>
-              {estado === "adecuada" ? "✅" : estado === "vedada_ahora" ? "⛔" : "🌊"}
-            </Text>
-            <Text style={styles.statusTitle}>
-              {estado === "adecuada" && `Zona adecuada: ${resultado.zona.nombre}`}
-              {estado === "vedada_ahora" && `Vedada ahora: ${resultado.zona.nombre}`}
-              {estado === "libre_desconocida" &&
-                `Fuera de coto conocido (el más cercano es ${resultado.zona.nombre}, a ${resultado.distanciaKm?.toFixed(1)} km)`}
-            </Text>
-            {estado === "libre_desconocida" && (
-              <Text style={styles.statusSubtitle}>
-                Puede ser agua libre, pero revisa la normativa general y la señalización del lugar.
-              </Text>
-            )}
-          </View>
+            <Text style={styles.saveSpotButtonText}>Guardar este punto</Text>
+          </TouchableOpacity>
         )}
-
-        {resultado?.zona && (
-          <>
-            <TouchableOpacity
-              style={styles.detailButton}
-              onPress={() => navigation.navigate("ZoneDetail", { zoneId: resultado.zona.id })}
-            >
-              <Text style={styles.detailButtonText}>Ver ficha completa de {resultado.zona.nombre} →</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.saveSpotButton}
-              onPress={async () => {
-                await guardarPunto({
-                  nombre: resultado.zona.nombre,
-                  lat: resultado.zona.lat,
-                  lng: resultado.zona.lng,
-                  zonaRelacionadaId: resultado.zona.id,
-                });
-                const actualizados = await obtenerPuntosGuardados();
-                setPuntosPersonales(actualizados);
-              }}
-            >
-              <Text style={styles.saveSpotButtonText}>⭐ Guardar como punto favorito</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        <Text style={styles.sectionTitle}>🌊 Todas las zonas libres registradas</Text>
-        {(zones as any[])
-          .filter((z) => z.estadoZona === "libre_sin_muerte")
-          .map((z) => (
-            <TouchableOpacity key={z.id} style={styles.zoneRow} onPress={() => evaluarPunto(z.lat, z.lng)}>
-              <Text style={styles.zoneRowName}>{z.nombre}</Text>
-              <Text style={styles.zoneRowMeta}>{z.rio}</Text>
-            </TouchableOpacity>
-          ))}
       </ScrollView>
     </View>
   );
@@ -252,9 +252,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  suggestionText: { fontSize: 13, color: COLORS.textPrimary },
-  suggestionMeta: { fontSize: 11, color: COLORS.textMuted },
-  mapWrap: { height: 300 },
+  suggestionText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
+  suggestionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700" },
+  mapWrap: { height: 340 },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
     paddingHorizontal: 12,
@@ -266,44 +266,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  layerChipActive: { backgroundColor: COLORS.primaryLight, borderColor: COLORS.primary },
-  layerChipText: { fontSize: 12, color: COLORS.textMuted },
+  layerChipActive: { backgroundColor: COLORS.mist, borderColor: COLORS.primary },
+  layerChipText: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "700" },
   map: { flex: 1 },
-  mapHint: { fontSize: 10.5, color: COLORS.textMuted, textAlign: "center", paddingVertical: 4, backgroundColor: COLORS.surface },
-  resultWrap: { flex: 1 },
-  statusCard: {
-    borderRadius: RADIUS.lg,
-    padding: 14,
-    borderWidth: 1.5,
-    alignItems: "center",
-    marginBottom: 10,
+  gpsBtn: {
+    position: "absolute",
+    right: 12,
+    bottom: 12,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.pill,
     ...SHADOW,
   },
-  statusIcon: { fontSize: 26, marginBottom: 4 },
-  statusTitle: { fontSize: 13.5, fontWeight: "700", textAlign: "center", color: COLORS.textPrimary },
-  statusSubtitle: { fontSize: 12, color: COLORS.textSecondary, marginTop: 6, textAlign: "center" },
-  detailButton: { alignItems: "center", paddingVertical: 10, marginBottom: 6 },
-  detailButtonText: { color: COLORS.water, fontWeight: "600", fontSize: 13 },
+  gpsBtnText: { fontSize: 12, fontWeight: "800", color: COLORS.water },
+  resultWrap: { flex: 1 },
+  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center", padding: 8 },
   saveSpotButton: {
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.md,
-    marginBottom: 10,
+    marginTop: 10,
   },
   saveSpotButtonText: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 13 },
-  sectionTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary, marginTop: 14, marginBottom: 8 },
-  zoneRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
-    padding: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  zoneRowName: { fontSize: 13.5, fontWeight: "600", color: COLORS.textPrimary },
-  zoneRowMeta: { fontSize: 12, color: COLORS.textSecondary },
 });

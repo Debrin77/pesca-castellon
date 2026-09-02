@@ -6,8 +6,9 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
-import zones from "../data/zones.json";
 import LicenseBanner from "../components/LicenseBanner";
+import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos } from "../services/consultaPescaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 
 interface Props {
@@ -70,8 +71,9 @@ export default function HomeScreen({ navigation }: Props) {
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
-  const zonas = zones as any[];
-  const fitMapa = zonas.map((z: any) => ({ latitude: z.lat, longitude: z.lng }));
+  const tramos = todosLosTramos();
+  const fitMapa = tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }));
+  const consultaViva = ubicacion ? consultarPuntoPesca(ubicacion.lat, ubicacion.lng) : null;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
@@ -146,30 +148,50 @@ export default function HomeScreen({ navigation }: Props) {
         </TouchableOpacity>
 
         <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>Mapa de la provincia</Text>
-          <Text style={styles.sectionMeta}>capas · zoom · satélite</Text>
+          <Text style={styles.sectionTitle}>Dónde estás ahora</Text>
+          <Text style={styles.sectionMeta}>anexo I 2024 · pulsa un tramo</Text>
         </View>
+        {consultaViva ? (
+          <View style={{ marginBottom: 12 }}>
+            <ConsultaPescaCard
+              consulta={consultaViva}
+              onFicha={
+                consultaViva.tramo?.fichaId
+                  ? () => navigation.navigate("ZoneDetail", { zoneId: consultaViva.tramo!.fichaId })
+                  : undefined
+              }
+              onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+            />
+          </View>
+        ) : null}
         <View style={styles.mapWrap}>
-          <MapView style={styles.map} initialRegion={CASTELLON_REGION} fitCoordinates={fitMapa}>
-            {zonas.map((z: any) => (
-              <Circle
-                key={`r-${z.id}`}
-                center={{ latitude: z.lat, longitude: z.lng }}
-                radius={(z.radioAproxKm || 1.2) * 1000}
-                strokeColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-                fillColor={
-                  z.estadoZona === "libre_sin_muerte" ? "rgba(47,125,74,0.16)" : "rgba(22,74,54,0.12)"
-                }
-              />
-            ))}
-            {zonas.map((z: any) => (
+          <MapView
+            style={styles.map}
+            initialRegion={CASTELLON_REGION}
+            fitCoordinates={fitMapa}
+          >
+            {tramos.map((z) => {
+              const color = colorAprovechamiento(z.aprovechamiento);
+              return (
+                <Circle
+                  key={`r-${z.id}`}
+                  center={{ latitude: z.lat, longitude: z.lng }}
+                  radius={z.radioKm * 1000}
+                  strokeColor={color}
+                  fillColor={color + "33"}
+                />
+              );
+            })}
+            {tramos.map((z) => (
               <Marker
                 key={z.id}
                 coordinate={{ latitude: z.lat, longitude: z.lng }}
-                pinColor={z.estadoZona === "libre_sin_muerte" ? COLORS.success : COLORS.primary}
-                identifier={z.estadoZona === "libre_sin_muerte" ? "libre" : "coto"}
-                title={z.nombre}
-                onPress={() => navigation.navigate("ZoneDetail", { zoneId: z.id })}
+                pinColor={colorAprovechamiento(z.aprovechamiento)}
+                identifier={z.aprovechamiento === "ZPL" ? "libre" : "coto"}
+                title={`${z.aprovechamiento} · ${z.nombre}`}
+                onPress={() => {
+                  if (z.fichaId) navigation.navigate("ZoneDetail", { zoneId: z.fichaId });
+                }}
               />
             ))}
             {ubicacion && (
@@ -184,19 +206,23 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: COLORS.primary }]} />
-            <Text style={styles.legendText}>Coto / controlada</Text>
+            <View style={[styles.legendDot, { backgroundColor: "#2f7d4a" }]} />
+            <Text style={styles.legendText}>Libre ZPL</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: COLORS.success }]} />
-            <Text style={styles.legendText}>Libre sin muerte</Text>
+            <View style={[styles.legendDot, { backgroundColor: "#c45c12" }]} />
+            <Text style={styles.legendText}>Coto ZPC</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: "#b42318" }]} />
+            <Text style={styles.legendText}>Vedado</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: COLORS.water }]} />
-            <Text style={styles.legendText}>Tu posición</Text>
+            <Text style={styles.legendText}>Tú</Text>
           </View>
         </View>
-        <Text style={styles.mapHint}>Toca un pin para abrir la ficha. Arriba a la derecha: mapa, relieve o satélite.</Text>
+        <Text style={styles.mapHint}>Verde libre · ámbar coto (permiso) · rojo vedado. En Zonas libres pulsa cualquier punto del agua para la norma de hoy.</Text>
       </View>
     </ScrollView>
   );

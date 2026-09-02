@@ -67,7 +67,10 @@ export const PERIODOS_HABILES: PeriodoHabil[] = [
   },
 ];
 
+import { temporadaTruchaAbierta } from "../data/normativa2026";
+
 export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean {
+  if (especieId === "trucha_comun") return !temporadaTruchaAbierta(fecha);
   const periodo = PERIODOS_HABILES.find((p) => p.especieId === especieId);
   if (!periodo) return false; // sin dato = no bloqueamos, pero habría que avisar
   if (periodo.todoElAnio) return false;

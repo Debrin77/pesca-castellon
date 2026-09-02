@@ -54,7 +54,32 @@ export default function AparejosScreen({ route }: Props) {
               {sp.invasora && <Text style={styles.headerBadge}>ESPECIE INVASORA</Text>}
             </LinearGradient>
 
+            {sp.tallaOficial ? <Text style={styles.stat}>Talla / régimen: {sp.tallaOficial}</Text> : null}
+            {sp.cupo ? <Text style={styles.stat}>Cupo: {sp.cupo}</Text> : null}
+            {sp.normativaResumen ? <Text style={styles.notes}>{sp.normativaResumen}</Text> : null}
+
             <Text style={styles.notes}>{sp.notas}</Text>
+
+            {sp.ventanas ? (
+              <View style={styles.gearCard}>
+                <Text style={styles.gearRowLabel}>Cuándo</Text>
+                <Text style={styles.gearRowValue}>{sp.ventanas}</Text>
+                {sp.habitats ? (
+                  <>
+                    <Text style={styles.gearRowLabel}>Dónde en Castellón</Text>
+                    <Text style={styles.gearRowValue}>{sp.habitats}</Text>
+                  </>
+                ) : null}
+                {sp.senuelosClave?.length > 0 && (
+                  <>
+                    <Text style={styles.gearRowLabel}>Señuelos que más funcionan</Text>
+                    {sp.senuelosClave.map((s: string, i: number) => (
+                      <Text key={i} style={styles.gearBullet}>• {s}</Text>
+                    ))}
+                  </>
+                )}
+              </View>
+            ) : null}
 
             {sp.normativaEspecial && (
               <View style={styles.avisoLegalBox}>
@@ -123,6 +148,7 @@ const styles = StyleSheet.create({
   headerScientific: { fontSize: 12.5, color: "#e3f2fd", fontStyle: "italic", marginTop: 2 },
   headerBadge: { fontSize: 11, color: "#fff", fontWeight: "700", marginTop: 8, letterSpacing: 0.5 },
   notes: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 12, lineHeight: 19 },
+  stat: { fontSize: 13, fontWeight: "700", color: COLORS.primary, marginBottom: 6 },
   avisoLegalBox: {
     marginBottom: 12,
     backgroundColor: COLORS.dangerLight,

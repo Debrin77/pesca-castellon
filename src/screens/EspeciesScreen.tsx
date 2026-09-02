@@ -5,7 +5,7 @@ import MapView, { Marker, Circle } from "../components/map";
 type LatLng = { latitude: number; longitude: number };
 import zones from "../data/zones.json";
 import speciesCatalog from "../data/species.json";
-import { buscarZonaMasCercana, ResultadoUbicacion } from "../services/geoService";
+import { consultarPuntoPesca, ConsultaPesca } from "../services/consultaPescaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
@@ -22,7 +22,7 @@ const CASTELLON_REGION = {
 };
 
 export default function EspeciesScreen({ navigation }: Props) {
-  const [resultado, setResultado] = useState<ResultadoUbicacion | null>(null);
+  const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
   const [mostrarCatalogoCompleto, setMostrarCatalogoCompleto] = useState(false);
@@ -33,8 +33,8 @@ export default function EspeciesScreen({ navigation }: Props) {
     if (ok) {
       const loc = await obtenerUbicacionActual();
       if (loc) {
-        const r = buscarZonaMasCercana(loc.lat, loc.lng);
-        setResultado(r);
+        const r = consultarPuntoPesca(loc.lat, loc.lng);
+        setConsulta(r);
         setMarcador({ latitude: loc.lat, longitude: loc.lng });
       }
     }
@@ -46,8 +46,8 @@ export default function EspeciesScreen({ navigation }: Props) {
   }, []);
 
   function evaluarPunto(lat: number, lng: number) {
-    const r = buscarZonaMasCercana(lat, lng);
-    setResultado(r);
+    const r = consultarPuntoPesca(lat, lng);
+    setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
   }
 
@@ -94,25 +94,26 @@ export default function EspeciesScreen({ navigation }: Props) {
       </View>
 
       <ScrollView style={styles.listWrap} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        {cargandoUbicacion && !resultado && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 20 }} />}
+        {cargandoUbicacion && !consulta && <ActivityIndicator color={COLORS.primary} style={{ marginTop: 20 }} />}
 
-        {resultado?.zona ? (
+        {consulta ? (
           <>
-            <Text style={styles.zoneHeader}>
-              Especies en {resultado.zona.nombre}
-              {resultado.dentroDelRadio ? "" : ` (zona más cercana, a ${resultado.distanciaKm?.toFixed(1)} km)`}
-            </Text>
-            {resultado.zona.especies.map((especieId: string) => {
+            <Text style={styles.zoneHeader}>{consulta.titulo}</Text>
+            {consulta.restriccionesHoy.slice(0, 2).map((r, i) => (
+              <Text key={i} style={styles.cardText}>{r}</Text>
+            ))}
+            {(consulta.tramo?.especies ?? []).map((especieId: string) => {
               const sp = speciesCatalog.find((s: any) => s.id === especieId);
               if (!sp) return null;
               const enVeda = estaEnVeda(especieId);
               return (
                 <View key={especieId} style={[styles.card, sp.invasora && styles.cardInvasora]}>
                   <Text style={styles.cardTitle}>
-                    {sp.icono} {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
+                    {sp.nombre} {sp.invasora && <Text style={styles.badgeInvasora}>INVASORA</Text>}
                   </Text>
                   <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
                   <Text style={styles.cardText}>{sp.notas}</Text>
+                  {sp.tallaOficial ? <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text> : null}
                   {sp.normativaEspecial && (
                     <View style={styles.avisoLegalBox}>
                       <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>
