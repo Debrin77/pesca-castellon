@@ -12,7 +12,12 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": "embalse_ulldecona",
-    "especies": []
+    "especies": [],
+    "cuenca": "Sénia",
+    "municipios": [
+      "La Pobla de Benifassà",
+      "Ulldecona"
+    ]
   },
   {
     "id": "s2.2",
@@ -27,7 +32,16 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_ulldecona",
-    "especies": ["carpa", "black_bass", "barbo"]
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo"
+    ],
+    "cuenca": "Sénia",
+    "municipios": [
+      "La Pobla de Benifassà",
+      "Ulldecona"
+    ]
   },
   {
     "id": "s2.3",
@@ -42,7 +56,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_ulldecona",
-    "especies": ["carpa", "barbo"]
+    "especies": [
+      "carpa",
+      "barbo"
+    ],
+    "cuenca": "Sénia",
+    "municipios": [
+      "La Pobla de Benifassà",
+      "Ulldecona"
+    ]
   },
   {
     "id": "m10.1",
@@ -57,7 +79,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": "ZPL1",
     "fichaId": "rio_mijares_puebla_arenoso_libre",
-    "especies": ["trucha_comun", "trucha_arcoiris"]
+    "especies": [
+      "trucha_comun",
+      "trucha_arcoiris"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "m10.2",
@@ -72,7 +101,16 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": "ZPL1",
     "fichaId": "embalse_arenos",
-    "especies": ["trucha_comun", "trucha_arcoiris", "black_bass"]
+    "especies": [
+      "trucha_comun",
+      "trucha_arcoiris",
+      "black_bass"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Montanejos",
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "m10.3",
@@ -87,7 +125,17 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_arenos",
-    "especies": ["black_bass", "barbo", "carpa", "lucio"]
+    "especies": [
+      "black_bass",
+      "barbo",
+      "carpa",
+      "lucio"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Montanejos",
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "m10.4",
@@ -102,7 +150,12 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": "embalse_arenos",
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Montanejos",
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "m10.5",
@@ -117,7 +170,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": "ZPL2",
     "fichaId": "rio_mijares_puebla_arenoso_libre",
-    "especies": ["trucha_comun", "trucha_arcoiris"]
+    "especies": [
+      "trucha_comun",
+      "trucha_arcoiris"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "m10.6",
@@ -132,7 +192,9 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": []
   },
   {
     "id": "m10.7",
@@ -147,7 +209,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa", "black_bass"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "black_bass"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Vallat"
+    ]
   },
   {
     "id": "m10.8",
@@ -162,7 +232,16 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_sichar",
-    "especies": ["barbo", "carpa", "black_bass"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "black_bass"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Onda",
+      "Vallat"
+    ]
   },
   {
     "id": "m10.9",
@@ -177,7 +256,16 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_sichar",
-    "especies": ["black_bass", "carpa", "barbo", "siluro"]
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo",
+      "siluro"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Onda"
+    ]
   },
   {
     "id": "m10.10",
@@ -192,7 +280,11 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": "embalse_sichar",
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Onda"
+    ]
   },
   {
     "id": "m10.11",
@@ -207,7 +299,9 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": []
   },
   {
     "id": "m10.12",
@@ -223,7 +317,16 @@
     "matriculaCoto": "CS-012",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa", "anguila", "mugilidos"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "anguila",
+      "mugilidos"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Almassora"
+    ]
   },
   {
     "id": "m10.13",
@@ -238,7 +341,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa", "mugilidos"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "mugilidos"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Almassora"
+    ]
   },
   {
     "id": "m10.14",
@@ -253,7 +364,9 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": []
   },
   {
     "id": "v10.19",
@@ -268,7 +381,14 @@
     "aprovechamiento": "ZRTC",
     "notaAnexo": null,
     "fichaId": "rio_villahermosa_alto",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Benagés",
+      "Ludiente"
+    ]
   },
   {
     "id": "v10.20",
@@ -283,7 +403,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "rio_villahermosa_alto",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Benagés",
+      "Ludiente"
+    ]
   },
   {
     "id": "v10.21",
@@ -299,7 +426,14 @@
     "matriculaCoto": "CS-011",
     "notaAnexo": null,
     "fichaId": "rio_villahermosa_alto",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Benagés",
+      "Ludiente"
+    ]
   },
   {
     "id": "v10.22",
@@ -314,7 +448,12 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": "rio_villahermosa_alto",
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Benagés",
+      "Ludiente"
+    ]
   },
   {
     "id": "v10.23",
@@ -329,7 +468,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_arenos",
-    "especies": ["trucha_comun", "barbo"]
+    "especies": [
+      "trucha_comun",
+      "barbo"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Montanejos",
+      "Puebla de Arenoso"
+    ]
   },
   {
     "id": "r10.25",
@@ -344,7 +491,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_maria_cristina",
-    "especies": ["barbo", "carpa"]
+    "especies": [
+      "barbo",
+      "carpa"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Alcora"
+    ]
   },
   {
     "id": "r10.26",
@@ -359,7 +513,16 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_maria_cristina",
-    "especies": ["carpa", "black_bass", "lucio", "siluro"]
+    "especies": [
+      "carpa",
+      "black_bass",
+      "lucio",
+      "siluro"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Alcora"
+    ]
   },
   {
     "id": "r10.27",
@@ -374,7 +537,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_maria_cristina",
-    "especies": ["barbo", "carpa"]
+    "especies": [
+      "barbo",
+      "carpa"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Alcora"
+    ]
   },
   {
     "id": "l10.32",
@@ -389,7 +559,14 @@
     "aprovechamiento": "VP",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": []
+    "especies": [],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Alcora",
+      "Figueroles",
+      "Llucena",
+      "l'Alcora"
+    ]
   },
   {
     "id": "b9.1",
@@ -404,7 +581,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa"]
+    "especies": [
+      "barbo",
+      "carpa"
+    ],
+    "cuenca": "Mijares",
+    "municipios": [
+      "Borriol",
+      "Castelló"
+    ]
   },
   {
     "id": "p17.1",
@@ -419,7 +604,14 @@
     "aprovechamiento": "ZRTC",
     "notaAnexo": null,
     "fichaId": "rio_palancia_teresa_bejis_libre",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Bejís",
+      "Teresa"
+    ]
   },
   {
     "id": "p17.2",
@@ -434,7 +626,14 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "rio_palancia_teresa_bejis_libre",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Bejís",
+      "Teresa"
+    ]
   },
   {
     "id": "p17.3",
@@ -450,7 +649,13 @@
     "matriculaCoto": "CS-008",
     "notaAnexo": null,
     "fichaId": "rio_palancia_teresa_libre",
-    "especies": ["trucha_comun"]
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Teresa"
+    ]
   },
   {
     "id": "p17.4",
@@ -465,7 +670,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_regajo_libre",
-    "especies": ["trucha_comun", "black_bass"]
+    "especies": [
+      "trucha_comun",
+      "black_bass"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Jérica",
+      "Teresa"
+    ]
   },
   {
     "id": "p17.5",
@@ -480,7 +693,15 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "embalse_regajo_libre",
-    "especies": ["trucha_comun", "black_bass", "barbo"]
+    "especies": [
+      "trucha_comun",
+      "black_bass",
+      "barbo"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Jérica"
+    ]
   },
   {
     "id": "p17.6",
@@ -495,7 +716,17 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": "rio_palancia_regajo",
-    "especies": ["barbo", "carpa", "black_bass"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "black_bass"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Jérica",
+      "Segorbe",
+      "Teresa"
+    ]
   },
   {
     "id": "p17.7",
@@ -511,7 +742,16 @@
     "matriculaCoto": "CS-009",
     "notaAnexo": null,
     "fichaId": "rio_palancia_regajo",
-    "especies": ["barbo", "carpa"]
+    "especies": [
+      "barbo",
+      "carpa"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Jérica",
+      "Segorbe",
+      "Teresa"
+    ]
   },
   {
     "id": "p17.8",
@@ -526,7 +766,12 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa"]
+    "especies": [
+      "barbo",
+      "carpa"
+    ],
+    "cuenca": "Palancia",
+    "municipios": []
   },
   {
     "id": "p17.9",
@@ -541,7 +786,13 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["carpa", "black_bass", "barbo"]
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo"
+    ],
+    "cuenca": "Palancia",
+    "municipios": []
   },
   {
     "id": "p17.10",
@@ -556,7 +807,13 @@
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "fichaId": null,
-    "especies": ["barbo", "carpa", "mugilidos"]
+    "especies": [
+      "barbo",
+      "carpa",
+      "mugilidos"
+    ],
+    "cuenca": "Palancia",
+    "municipios": []
   },
   {
     "id": "al15.1",
@@ -571,7 +828,11 @@
     "aprovechamiento": "VP",
     "notaAnexo": "VP3",
     "fichaId": null,
-    "especies": []
+    "especies": [],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Almenara"
+    ]
   },
   {
     "id": "al15.zpc",
@@ -587,6 +848,14 @@
     "matriculaCoto": "CS-010",
     "notaAnexo": "VP3",
     "fichaId": null,
-    "especies": ["carpa", "black_bass", "anguila"]
+    "especies": [
+      "carpa",
+      "black_bass",
+      "anguila"
+    ],
+    "cuenca": "Palancia",
+    "municipios": [
+      "Almenara"
+    ]
   }
 ]

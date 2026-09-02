@@ -1,7 +1,14 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-export type NombreIcono = "home" | "water" | "fish" | "construct" | "partly-sunny" | "bookmark";
+export type NombreIcono =
+  | "home"
+  | "water"
+  | "fish"
+  | "construct"
+  | "partly-sunny"
+  | "bookmark"
+  | "book";
 
 const MAPA: Record<NombreIcono, keyof typeof Ionicons.glyphMap> = {
   home: "home",
@@ -10,6 +17,7 @@ const MAPA: Record<NombreIcono, keyof typeof Ionicons.glyphMap> = {
   construct: "construct",
   "partly-sunny": "partly-sunny",
   bookmark: "bookmark",
+  book: "book",
 };
 
 interface Props {

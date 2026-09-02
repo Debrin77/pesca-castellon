@@ -30,6 +30,10 @@ export interface TramoOficial {
   matriculaCoto?: string;
   fichaId?: string | null;
   especies: string[];
+  /** Cuenca hidrológica orientativa (Mijares, Palancia, Sénia…). */
+  cuenca?: string;
+  /** Municipios asociados para el buscador. */
+  municipios?: string[];
 }
 
 export type VeredictoPesca =

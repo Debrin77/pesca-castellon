@@ -72,3 +72,17 @@ export const TALLAS_OFICIALES: Record<string, string> = {
   mugilidos: "25 cm en río (Orden 30/2016). En mar: 16 cm (RD 560)",
   trucha_arcoiris: "Sin cupo ni talla; retención y sacrificio si se pesca fuera de tramo truchero",
 };
+
+/** Recordatorio de temporada para banners de la app. */
+export function textoVigenciaNormativa(): string {
+  return `${FUENTE_NORMATIVA.titulo}. ${FUENTE_NORMATIVA.vigenciaNota}`;
+}
+
+export const CHECKLIST_ANTES_DE_PESCAR = [
+  "Licencia GVA en vigor (continental y/o marítima según el agua).",
+  "Si es ZPC: permiso del coto / PTOP del día.",
+  "Comprobar veda de trucha y días hábiles del tramo (anexo Mijares).",
+  "Revisar cebos permitidos (nada de pez vivo / huevas / cangrejo).",
+  "Horario legal: 1 h antes del orto → 1 h después del ocaso.",
+  "Invasoras: no devolver; siluro no se transporta — avisar a agentes.",
+];
