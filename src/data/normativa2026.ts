@@ -46,6 +46,10 @@ export function diaHabilMijares(nota: "ZPL1" | "ZPL2" | null, fecha: Date = new 
   return true;
 }
 
+/** Horario legal de pesca continental en la Comunitat Valenciana (Orden 30/2016). */
+export const HORARIO_LEGAL_PESCA =
+  "Legal: se pesca de 1 hora antes del amanecer a 1 hora después del anochecer. De noche está prohibido, salvo molinà de anguila expresamente autorizada.";
+
 export const REGLAS_GENERALES = [
   "Licencia de pesca continental de la GVA obligatoria en todos los tramos.",
   "Horario: de 1 h antes del orto a 1 h después del ocaso. Pesca nocturna prohibida salvo molinà de anguila autorizada.",

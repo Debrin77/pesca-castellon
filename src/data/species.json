@@ -11,6 +11,12 @@
     "cupo": "No se retiene ningún ejemplar",
     "mejoresMeses": ["abril", "mayo", "junio"],
     "ventanas": "Amanecer y atardecer; ninfas a media agua al mediodía",
+    "mejorHora": {
+      "resumen": "Más probable al amanecer y al atardecer. A mediodía muerde peor, salvo ninfas a media agua en corriente.",
+      "verano": "Aprox. 6:00–10:00 y 18:30–21:30. De 11:00 a 16:00: ninfas en pozas sombreadas.",
+      "invierno": "Fuera de temporada salmonícola no se pesca. En marzo–abril, mejor 8:00–11:30 y 16:00–19:00.",
+      "noche": "Poco activa de noche. No se pesca de noche."
+    },
     "habitats": "Pozas oxigenadas, colas de tabla, sombras de ribera en Palancia y Villahermosa altos",
     "senuelosClave": ["Ninfa pheasant tail / hare's ear #14-18", "Cucharilla n.º 0-1 plateada o cobriza", "Seca caddis al atardecer"],
     "normativaResumen": "Solo mosca o cucharilla, un anzuelo sin arpón, una caña sin abandono. Prohibido cebar.",
@@ -34,6 +40,12 @@
     "cupo": "Sin límite en tramos donde está autorizada",
     "mejoresMeses": ["abril", "mayo", "junio", "julio"],
     "ventanas": "Todo el día en tramos de suelta; mejor con agua algo turbia",
+    "mejorHora": {
+      "resumen": "En tramos de suelta pica casi todo el día; un poco mejor a primera hora y con agua algo turbia.",
+      "verano": "Aprox. 7:00–12:00 y 17:00–20:30. Mediodía también, sobre todo tras una suelta.",
+      "invierno": "Si hay ejemplares, 9:00–16:00 (horas más templadas).",
+      "noche": "No es un pez de noche. No se pesca de noche."
+    },
     "habitats": "Tramos de suelta y colas de embalse salmonícolas",
     "senuelosClave": ["Cucharilla giratoria n.º 1-2", "Streamer tipo woolly bugger"],
     "normativaResumen": "Mosca o cucharilla, anzuelo sin arpón en tramos salmonícolas.",
@@ -57,6 +69,12 @@
     "cupo": "Sin cupo; captura fomentada",
     "mejoresMeses": ["marzo", "abril", "mayo", "septiembre", "octubre"],
     "ventanas": "Amanecer y atardecer; mediodía solo en profundidad o sombra de cañón",
+    "mejorHora": {
+      "resumen": "Más probable al amanecer y al atardecer. A mediodía solo en profundidad o a la sombra del cañón.",
+      "verano": "Aprox. 6:00–9:30 y 19:00–21:30. De 12:00 a 16:00: drop shot o jig en puntas profundas.",
+      "invierno": "Más de día, cuando el agua se templa: aprox. 10:00–16:00.",
+      "noche": "Puede cazar en orilla al anochecer, pero la pesca de noche no está permitida: úsala la última hora de luz."
+    },
     "habitats": "Cola del Villahermosa en Arenós, cobertura, puntas con caída, brazos laterales",
     "senuelosClave": [
       "Texas rig creature 4\" green pumpkin / watermelon",
@@ -86,6 +104,12 @@
     "cupo": "Sin cupo",
     "mejoresMeses": ["marzo", "abril", "octubre", "noviembre"],
     "ventanas": "Primeras y últimas horas; agua fría a media cota",
+    "mejorHora": {
+      "resumen": "Más probable a primera y última hora de luz. Con agua fría también pica a media mañana.",
+      "verano": "Aprox. 6:00–9:00 y 18:30–21:00 (busca sombra y profundidad al calor).",
+      "invierno": "Aprox. 10:00–15:00, a media cota, cuando el agua está un poco más templada.",
+      "noche": "Caza al anochecer, pero no se pesca de noche: última hora de luz."
+    },
     "habitats": "Orillas con cañas, entradas de rambla, estructuras sumergidas",
     "senuelosClave": ["Jerkbait suspendido", "Swimbait 12-18 cm", "Cuchara ondulante grande", "Bajo de acero o fluoro grueso"],
     "normativaResumen": "Invasora: no devolver. Imprescindible bajo anticorte: tiene dientes.",
@@ -109,6 +133,12 @@
     "cupo": "Sin cupo general; en ZPL se aplica normativa de aguas no trucheras",
     "mejoresMeses": ["mayo", "junio", "septiembre"],
     "ventanas": "Noche y amanecer en verano; días suaves de primavera",
+    "mejorHora": {
+      "resumen": "En verano come sobre todo de madrugada y al anochecer. En primavera, días suaves casi todo el día.",
+      "verano": "Aprox. 5:30–10:00 y 18:30 hasta 1 hora después del anochecer. Evita el mediodía de calor.",
+      "invierno": "Días suaves, aprox. 10:00–16:00, en orillas que den el sol.",
+      "noche": "Biológicamente es pez de noche, pero la pesca recreativa nocturna está prohibida. Lo más cercano: 1 hora antes del amanecer y la última hora de luz."
+    },
     "habitats": "Colas limosas, desembocaduras de rambla, mesetas de 2-4 m",
     "senuelosClave": ["Boilie frutal 15-20 mm", "Maíz dulce en hair", "Pellets con PVA", "Method feeder en orilla"],
     "normativaResumen": "Cebo natural (maíz, lombriz) solo fuera de tramos trucheros. Prohibido pescar de noche salvo autorización.",
@@ -132,6 +162,12 @@
     "cupo": "Devolución inmediata de todos los ejemplares",
     "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
     "ventanas": "Mañanas de corriente; pico con agua algo teñida tras lluvias",
+    "mejorHora": {
+      "resumen": "Más probable por la mañana en corriente. Pico extra si el agua va un poco teñida tras lluvias.",
+      "verano": "Aprox. 7:00–12:00 y segundo pico 17:00–20:00.",
+      "invierno": "Aprox. 10:00–15:00, en tablas que dé el sol.",
+      "noche": "Poco activo de noche. No se pesca de noche."
+    },
     "habitats": "Tablas de corriente, colas de embalse, azudes",
     "senuelosClave": ["Pasta de barbo", "Maíz en corriente", "Ninfa pesada a correlona", "Cucharilla pequeña si el tramo lo permite"],
     "normativaResumen": "Autóctono: sin muerte. Lombriz solo en aguas no trucheras.",
@@ -155,6 +191,12 @@
     "cupo": "Prohibida tenencia y transporte vivo o muerto",
     "mejoresMeses": ["mayo", "junio", "julio", "agosto", "septiembre"],
     "ventanas": "Atardecer; actividad crepuscular. La pesca nocturna recreativa está prohibida.",
+    "mejorHora": {
+      "resumen": "Más probable al atardecer y al anochecer (crepúsculo). De día, en verano, suele estar parado en hoyos.",
+      "verano": "Aprox. 18:00 hasta 1 hora después del anochecer. Mañana temprano (6:00–8:00) es el segundo mejor tramo.",
+      "invierno": "Poco activo; si pica, suele ser de 12:00 a 16:00 en zonas profundas.",
+      "noche": "Es un cazador nocturno, pero la pesca recreativa de noche está prohibida. No se puede esperar a las 23:00: usa el crepúsculo legal."
+    },
     "habitats": "Hoyos junto a presa, puentes, orillas socavadas",
     "senuelosClave": ["Swimbait grande", "Vinilo shad 15-20 cm", "Montaje a fondo con pellet (sin pez vivo)"],
     "normativaResumen": "Notificar a agentes medioambientales. No devolver. No llevarse el ejemplar.",
@@ -175,6 +217,13 @@
     "invasora": true,
     "icono": "🦞",
     "notas": "Especie invasora. Su captura suele estar permitida y recomendada, revisar normativa local.",
+    "ventanas": "Atardecer y primera hora de la mañana",
+    "mejorHora": {
+      "resumen": "Más se mueve al atardecer y al alba. De día se esconde en orilla y cubiertas.",
+      "verano": "Aprox. 19:00–21:30 y 6:00–9:00. Nasas: colocar al atardecer y revisar al amanecer, solo si el arte está permitido.",
+      "invierno": "Menos activo; mejor 10:00–16:00 en orillas soleadas.",
+      "noche": "Muy activo de noche, pero la pesca con caña de noche no está autorizada. Las nasas tienen normas propias: comprueba el tramo."
+    },
     "equipo": {
       "cana": "No requiere caña: se captura con reteles/nasas o a mano en orilla (verificar normativa local sobre artes permitidas)",
       "carrete": "No aplica",
@@ -191,6 +240,13 @@
     "invasora": true,
     "icono": "🐠",
     "notas": "Pez invasor de pequeño tamaño, compite con especies autóctonas amenazadas.",
+    "ventanas": "Horas de sol en orilla",
+    "mejorHora": {
+      "resumen": "Activa de día en orillas someras. No es una especie objetivo de pesca recreativa.",
+      "verano": "Aprox. 9:00–18:00, en superficie y vegetación.",
+      "invierno": "Aprox. 11:00–16:00, si hay sol.",
+      "noche": "Poco visible de noche. No se pesca de noche."
+    },
     "tallaOficial": "Invasora",
     "cupo": "No devolver",
     "equipo": {
@@ -213,6 +269,12 @@
     "cupo": "4 ud o 1 kg/día en aguas libres",
     "mejoresMeses": ["septiembre", "octubre", "noviembre"],
     "ventanas": "Crepúsculo; molinà solo donde esté expresamente autorizada",
+    "mejorHora": {
+      "resumen": "Más probable al crepúsculo (última hora de luz). De noche solo con molinà y solo donde esté autorizada.",
+      "verano": "Aprox. 19:00–21:30. Evita el mediodía de calor.",
+      "invierno": "Aprox. 16:00–18:00, en tramos bajos no vedados.",
+      "noche": "Es pez nocturno, pero la molinà de noche solo es legal en tramos expresamente autorizados. En el resto, última hora de luz."
+    },
     "habitats": "Tramos bajos del Mijares y Palancia, marjales (muchos vedados)",
     "senuelosClave": ["Lombriz en aguas no trucheras", "Montaje de fondo discreto"],
     "normativaResumen": "Zonas de reserva de anguila: pesca prohibida. Desembocaduras a menudo VP.",
@@ -236,6 +298,12 @@
     "cupo": "Sin cupo general en la Orden",
     "mejoresMeses": ["abril", "mayo", "junio"],
     "ventanas": "Mañanas cálidas en orilla",
+    "mejorHora": {
+      "resumen": "Más probable en mañanas cálidas, pegado a la orilla y a la vegetación.",
+      "verano": "Aprox. 7:00–11:00. Por la tarde, 17:00–20:00 si no aprieta el sol.",
+      "invierno": "Aprox. 10:00–14:00, en orillas que den el sol.",
+      "noche": "Poco activo de noche. No se pesca de noche."
+    },
     "habitats": "Orillas someras, ramblas remansadas",
     "senuelosClave": ["Maíz", "Masa dulce", "Gusano en aguas no trucheras"],
     "normativaResumen": "Devolver si mide menos de 8 cm.",
@@ -259,6 +327,12 @@
     "cupo": "Sin cupo general en la Orden",
     "mejoresMeses": ["mayo", "junio", "julio"],
     "ventanas": "Amanecer en orillas cubiertas",
+    "mejorHora": {
+      "resumen": "Más probable al amanecer, en orillas con vegetación y fondo blando.",
+      "verano": "Aprox. 6:00–9:30. El mediodía suele ser flojo.",
+      "invierno": "Aprox. 9:00–13:00, si el día es suave.",
+      "noche": "Puede alimentarse de noche, pero no se pesca de noche: ve al alba."
+    },
     "habitats": "Tablas con nenúfar y fondos blandos",
     "senuelosClave": ["Lombriz (aguas no trucheras)", "Maíz", "Pellets pequeños"],
     "normativaResumen": "Devolver por debajo de 25 cm.",
@@ -282,6 +356,12 @@
     "cupo": "Según normativa de pesca marítima de recreo si el tramo se considera marítimo",
     "mejoresMeses": ["mayo", "junio", "septiembre"],
     "ventanas": "Mareas y primeras horas",
+    "mejorHora": {
+      "resumen": "Más probable a primeras horas y con la subida de marea o de caudal, pastando en superficie.",
+      "verano": "Aprox. 7:00–11:00 y otra vez al atardecer (18:30–20:30).",
+      "invierno": "Aprox. 9:00–14:00 en azudes bajos no vedados.",
+      "noche": "Poco habitual de noche. No se pesca de noche. Muchas desembocaduras son vedado (VP)."
+    },
     "habitats": "Azudes bajos del Palancia y Mijares, siempre que el tramo sea ZPL y no VP",
     "senuelosClave": ["Pan", "Masa", "Mosca de sargazo en superficie"],
     "normativaResumen": "Si el punto es desembocadura catalogada VP, no se pesca. En mar, licencia y tallas marítimas.",

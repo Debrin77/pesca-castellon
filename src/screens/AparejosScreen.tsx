@@ -5,6 +5,7 @@ import speciesCatalog from "../data/species.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
+import MejorHoraPesca from "../components/MejorHoraPesca";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -64,10 +65,10 @@ export default function AparejosScreen({ route }: Props) {
 
             <Text style={styles.notes}>{sp.notas}</Text>
 
-            {sp.ventanas ? (
-              <View style={styles.gearCard}>
-                <Text style={styles.gearRowLabel}>Cuándo</Text>
-                <Text style={styles.gearRowValue}>{sp.ventanas}</Text>
+            <MejorHoraPesca especie={sp} />
+
+            {sp.habitats || sp.senuelosClave?.length ? (
+              <View style={[styles.gearCard, { marginTop: 12 }]}>
                 {sp.habitats ? (
                   <>
                     <Text style={styles.gearRowLabel}>Dónde en Castellón</Text>

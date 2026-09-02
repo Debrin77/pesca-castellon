@@ -10,6 +10,7 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import ListaAnimada from "../components/ListaAnimada";
+import MejorHoraPesca from "../components/MejorHoraPesca";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -127,6 +128,7 @@ export default function EspeciesScreen({ navigation }: Props) {
                   </Text>
                   <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
                   <Text style={styles.cardText}>{sp.notas}</Text>
+                  <MejorHoraPesca especie={sp} />
                   {sp.tallaOficial ? <Text style={styles.cardStatus}>Régimen: {sp.tallaOficial}</Text> : null}
                   {sp.normativaEspecial && (
                     <View style={styles.avisoLegalBox}>
@@ -175,6 +177,7 @@ export default function EspeciesScreen({ navigation }: Props) {
               </Text>
               <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
               <Text style={styles.cardText}>{sp.notas}</Text>
+              <MejorHoraPesca especie={sp} />
               {sp.normativaEspecial && (
                 <View style={styles.avisoLegalBox}>
                   <Text style={styles.avisoLegalText}>{sp.normativaEspecial}</Text>

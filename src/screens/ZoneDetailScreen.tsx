@@ -5,6 +5,7 @@ import speciesCatalog from "../data/species.json";
 import { estaEnVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import LicenseBanner from "../components/LicenseBanner";
+import MejorHoraPesca from "../components/MejorHoraPesca";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 
@@ -114,6 +115,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             </Text>
             <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
             <Text style={styles.cardText}>{sp.notas}</Text>
+            <MejorHoraPesca especie={sp} />
 
             {sp.normativaEspecial && (
               <View style={styles.avisoLegalBox}>
