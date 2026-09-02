@@ -312,7 +312,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         ) : (
           <Text style={styles.hint}>
             {modo === "costa"
-              ? "Toca la playa o un pin verde. Te dice si se puede, especies y los espigones donde más se pesca (uso habitual, no ranking). Rojo: puerto. Violeta: vedado."
+              ? "Toca esa playa (o su pin). El nombre es solo la que pulsas, no las de al lado. Rojo: puerto. Violeta: vedado."
               : "Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar."}
           </Text>
         )}

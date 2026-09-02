@@ -1,5 +1,5 @@
 {
-  "aviso": "Playas y espigones donde se pesca a caña desde tierra en Castellón, según uso habitual (foros, clubs, paseo). No es un ranking oficial ni un GPS secreto. La dársena del puerto está prohibida (Decreto 41/2013). En temporada, 100 m de bañistas. De noche no. El cartel manda.",
+  "aviso": "Cada toque nombra solo esa playa. Los espigones son los de ese arenal, no los del pueblo entero. Uso habitual, no ranking oficial. Dársena prohibida. 100 m de bañistas. De noche no.",
   "kmOrilla": 2.4,
   "lineaCosta": [
     { "lat": 40.525, "lng": 0.518 },
@@ -21,48 +21,102 @@
     { "lat": 39.75, "lng": -0.195 },
     { "lat": 39.705, "lng": -0.225 }
   ],
-  "especiesPorDefecto": "Lubina, dorada, sargo, mojarra, lisas/mabra, sepia, calamar (eging), pulpo, jurel, salmonete",
+  "especiesPorDefecto": "Lubina, dorada, sargo, mojarra, lisas/mabra, sepia, calamar, pulpo, jurel, salmonete",
   "playas": [
     {
-      "id": "vinaros_norte",
-      "nombre": "Playas de Vinaròs (Fortí / norte)",
-      "lat": 40.475,
-      "lng": 0.482,
-      "radioKm": 0.9,
+      "id": "vinaros_forti",
+      "nombre": "Playa del Fortí (Vinaròs)",
+      "lat": 40.479,
+      "lng": 0.486,
+      "anchoKm": 0.32,
+      "tramo": [
+        { "lat": 40.484, "lng": 0.492 },
+        { "lat": 40.475, "lng": 0.48 }
+      ],
       "especies": "Lubina, sargo, dorada, sepia, espetón (verano)",
       "especiesIds": ["lubina", "sargo", "dorada", "sepia", "espeton"],
       "sitios": [
         {
-          "nombre": "Roca del Fortí y espigones de playa",
+          "nombre": "Roca y espigones del Fortí",
           "especies": "Sargo, lubina, espetón",
           "cuando": "Amanecer; agua clara",
-          "detalle": "Los espigones de la playa, no la dársena del puerto. Spinning y fondo. Cara al mar."
+          "detalle": "Solo este tramo. No es el puerto ni la playa del Clot."
         }
       ]
     },
     {
-      "id": "benicarlo",
-      "nombre": "Playa de Benicarló",
-      "lat": 40.414,
-      "lng": 0.425,
-      "radioKm": 0.8,
+      "id": "vinaros_clot",
+      "nombre": "Playa del Clot (Vinaròs)",
+      "lat": 40.47,
+      "lng": 0.478,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.474, "lng": 0.48 },
+        { "lat": 40.466, "lng": 0.475 }
+      ],
       "especies": "Dorada, lisas, sargo, lubina",
       "especiesIds": ["dorada", "llisa", "sargo", "lubina"],
       "sitios": [
         {
-          "nombre": "Espigones del paseo (fuera del puerto)",
+          "nombre": "Espigones del Clot",
           "especies": "Dorada, lisa, sargo",
           "cuando": "Alba y atardecer",
-          "detalle": "Surfcasting desde arena y cabeza de espigón de playa. El puerto comercial no."
+          "detalle": "Arena urbana de Vinaròs, no la dársena."
+        }
+      ]
+    },
+    {
+      "id": "benicarlo_norte",
+      "nombre": "Playa Norte / Morrongo (Benicarló)",
+      "lat": 40.42,
+      "lng": 0.429,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.424, "lng": 0.432 },
+        { "lat": 40.416, "lng": 0.426 }
+      ],
+      "especies": "Dorada, lisas, sargo, lubina",
+      "especiesIds": ["dorada", "llisa", "sargo", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Espigones de Morrongo",
+          "especies": "Dorada, lisa, sargo",
+          "cuando": "Alba",
+          "detalle": "Esta playa, al norte del puerto. El puerto no."
+        }
+      ]
+    },
+    {
+      "id": "benicarlo_sur",
+      "nombre": "Playa Sur de Benicarló",
+      "lat": 40.41,
+      "lng": 0.422,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.414, "lng": 0.425 },
+        { "lat": 40.406, "lng": 0.419 }
+      ],
+      "especies": "Dorada, lisas, sargo",
+      "especiesIds": ["dorada", "llisa", "sargo"],
+      "sitios": [
+        {
+          "nombre": "Espigones de la playa sur",
+          "especies": "Dorada, lisa",
+          "cuando": "Atardecer",
+          "detalle": "Al sur del puerto de Benicarló, no la dársena."
         }
       ]
     },
     {
       "id": "peniscola_norte",
       "nombre": "Playa Norte de Peñíscola",
-      "lat": 40.368,
-      "lng": 0.408,
-      "radioKm": 0.85,
+      "lat": 40.369,
+      "lng": 0.409,
+      "anchoKm": 0.32,
+      "tramo": [
+        { "lat": 40.376, "lng": 0.412 },
+        { "lat": 40.362, "lng": 0.406 }
+      ],
       "especies": "Dorada, lubina, sargo, sepia",
       "especiesIds": ["dorada", "lubina", "sargo", "sepia"],
       "sitios": [
@@ -70,227 +124,545 @@
           "nombre": "Espigones de Playa Norte",
           "especies": "Dorada, lubina, sargo",
           "cuando": "Oleaje corto; primera y última hora",
-          "detalle": "Los más pescados del pueblo, lejos del puerto de la Sur. En verano respeta el baño."
+          "detalle": "Solo Playa Norte. No es la Sur ni el puerto."
         }
       ]
     },
     {
       "id": "peniscola_sur",
       "nombre": "Playa Sur de Peñíscola",
-      "lat": 40.348,
-      "lng": 0.399,
-      "radioKm": 0.7,
+      "lat": 40.347,
+      "lng": 0.398,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.353, "lng": 0.401 },
+        { "lat": 40.341, "lng": 0.395 }
+      ],
       "especies": "Dorada, lisas, sargo",
       "especiesIds": ["dorada", "llisa", "sargo"],
       "sitios": [
         {
-          "nombre": "Arena y espigón de playa (no dársena)",
+          "nombre": "Espigones de Playa Sur",
           "especies": "Dorada, lisa",
           "cuando": "Atardecer",
-          "detalle": "Surfcasting. No entres al recinto del puerto."
+          "detalle": "Solo la Sur. No entres al puerto."
         }
       ]
     },
     {
-      "id": "alcossebre",
-      "nombre": "Playas de Alcossebre (Carregador / Romana / Manyetes)",
-      "lat": 40.246,
-      "lng": 0.288,
-      "radioKm": 1.1,
-      "especies": "Sargo, lubina, dorada, sepia, anjova (pases)",
-      "especiesIds": ["sargo", "lubina", "dorada", "sepia", "anjova"],
+      "id": "alcossebre_carregador",
+      "nombre": "Playa del Carregador (Alcossebre)",
+      "lat": 40.251,
+      "lng": 0.293,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.255, "lng": 0.296 },
+        { "lat": 40.247, "lng": 0.29 }
+      ],
+      "especies": "Sargo, lubina, dorada, sepia",
+      "especiesIds": ["sargo", "lubina", "dorada", "sepia"],
       "sitios": [
         {
           "nombre": "Espigón del Carregador",
           "especies": "Sargo, lubina, sepia",
           "cuando": "Amanecer; mar picada corta",
-          "detalle": "El de más uso a pie. Cabeza del espigón de playa, no el puerto deportivo interior."
-        },
-        {
-          "nombre": "Roca de Manyetes / Tropicana (fuera de Irta)",
-          "especies": "Sargo, lubina, anjova",
-          "cuando": "Agua clara; spinning",
-          "detalle": "Hacia el sur empieza la reserva de Irta: no pases Cala Volante–Mundina."
+          "detalle": "Cabeza del espigón de esta playa, no el puerto deportivo."
         }
       ]
     },
     {
-      "id": "torreblanca",
-      "nombre": "Playa de Torreblanca",
-      "lat": 40.205,
-      "lng": 0.218,
-      "radioKm": 0.7,
+      "id": "alcossebre_romana",
+      "nombre": "Playa Romana (Alcossebre)",
+      "lat": 40.244,
+      "lng": 0.287,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.247, "lng": 0.29 },
+        { "lat": 40.24, "lng": 0.284 }
+      ],
+      "especies": "Dorada, sargo, lisas, lubina",
+      "especiesIds": ["dorada", "sargo", "llisa", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Espigones de la Romana",
+          "especies": "Dorada, sargo, lisa",
+          "cuando": "Alba",
+          "detalle": "Solo Romana. No es Carregador ni Manyetes."
+        }
+      ]
+    },
+    {
+      "id": "alcossebre_fuentes",
+      "nombre": "Playa de las Fuentes (Alcossebre)",
+      "lat": 40.238,
+      "lng": 0.283,
+      "anchoKm": 0.26,
+      "tramo": [
+        { "lat": 40.241, "lng": 0.285 },
+        { "lat": 40.235, "lng": 0.28 }
+      ],
+      "especies": "Sargo, lubina, dorada",
+      "especiesIds": ["sargo", "lubina", "dorada"],
+      "sitios": [
+        {
+          "nombre": "Roca y espigones de las Fuentes",
+          "especies": "Sargo, lubina",
+          "cuando": "Agua clara",
+          "detalle": "Este arenal, entre Romana y Manyetes."
+        }
+      ]
+    },
+    {
+      "id": "alcossebre_manyetes",
+      "nombre": "Playa Manyetes (Alcossebre)",
+      "lat": 40.231,
+      "lng": 0.278,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.235, "lng": 0.28 },
+        { "lat": 40.226, "lng": 0.274 }
+      ],
+      "especies": "Sargo, lubina, anjova (pases)",
+      "especiesIds": ["sargo", "lubina", "anjova"],
+      "sitios": [
+        {
+          "nombre": "Roca de Manyetes",
+          "especies": "Sargo, lubina, anjova",
+          "cuando": "Agua clara; spinning",
+          "detalle": "Al sur empieza Irta: no pases a Cala Volante–Mundina."
+        }
+      ]
+    },
+    {
+      "id": "torreblanca_norte",
+      "nombre": "Playa Norte de Torreblanca",
+      "lat": 40.211,
+      "lng": 0.221,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.216, "lng": 0.224 },
+        { "lat": 40.206, "lng": 0.218 }
+      ],
       "especies": "Dorada, lisas, lubina, herrera",
       "especiesIds": ["dorada", "llisa", "lubina", "herrera"],
       "sitios": [
         {
-          "nombre": "Espigones urbanos de Torreblanca",
+          "nombre": "Espigones de Torreblanca Norte",
           "especies": "Dorada, lisa, lubina",
           "cuando": "Alba",
-          "detalle": "La arena y los espigones del pueblo. El Prat (humedal a tu espalda) está vedado: no lances al marjal."
+          "detalle": "Esta playa. El Prat (tierra adentro) está vedado."
+        }
+      ]
+    },
+    {
+      "id": "torreblanca_sur",
+      "nombre": "Playa Sur de Torreblanca",
+      "lat": 40.198,
+      "lng": 0.214,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.205, "lng": 0.217 },
+        { "lat": 40.191, "lng": 0.211 }
+      ],
+      "especies": "Dorada, lisas, herrera, lubina",
+      "especiesIds": ["dorada", "llisa", "herrera", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Espigones de Torreblanca Sur",
+          "especies": "Dorada, lisa",
+          "cuando": "Alba",
+          "detalle": "Solo la Sur. No es Torre la Sal."
         }
       ]
     },
     {
       "id": "torre_la_sal",
-      "nombre": "Torre la Sal (Cabanes)",
+      "nombre": "Playa de Torre la Sal (Cabanes)",
       "lat": 40.138,
       "lng": 0.17,
-      "radioKm": 0.7,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.144, "lng": 0.174 },
+        { "lat": 40.132, "lng": 0.166 }
+      ],
       "especies": "Lubina, sargo, dorada, sepia",
       "especiesIds": ["lubina", "sargo", "dorada", "sepia"],
       "sitios": [
         {
-          "nombre": "Espigón y roca de Torre la Sal",
+          "nombre": "Espigón de Torre la Sal",
           "especies": "Lubina, sargo, sepia",
           "cuando": "Mar de fondo; amanecer",
-          "detalle": "Clásico de spinning y eging. El Prat queda al norte: no entres al paraje."
+          "detalle": "Solo Torre la Sal. El Prat queda al norte."
         }
       ]
     },
     {
-      "id": "orpesa",
-      "nombre": "Playas de Orpesa / Oropesa (Concha / Amplàries)",
-      "lat": 40.09,
-      "lng": 0.135,
-      "radioKm": 1.0,
-      "especies": "Dorada, sargo, lubina, sepia, lisas",
-      "especiesIds": ["dorada", "sargo", "lubina", "sepia", "llisa"],
+      "id": "orpesa_amplaries",
+      "nombre": "Playa de Les Amplàries (Orpesa)",
+      "lat": 40.098,
+      "lng": 0.146,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 40.103, "lng": 0.152 },
+        { "lat": 40.093, "lng": 0.14 }
+      ],
+      "especies": "Dorada, lubina, sargo, sepia",
+      "especiesIds": ["dorada", "lubina", "sargo", "sepia"],
       "sitios": [
         {
           "nombre": "Espigón de Les Amplàries",
           "especies": "Dorada, lubina, sargo, sepia",
-          "cuando": "Todo el año; mejor con oleaje corto",
-          "detalle": "Uno de los más pescados de la Plana. Cara al mar, no la dársena del puerto de Oropesa."
-        },
+          "cuando": "Oleaje corto",
+          "detalle": "Solo Amplàries. No es La Concha ni el puerto."
+        }
+      ]
+    },
+    {
+      "id": "orpesa_concha",
+      "nombre": "Playa de La Concha (Orpesa)",
+      "lat": 40.089,
+      "lng": 0.133,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.093, "lng": 0.138 },
+        { "lat": 40.085, "lng": 0.128 }
+      ],
+      "especies": "Sargo, mojarra, lubina, dorada",
+      "especiesIds": ["sargo", "mojarra", "lubina", "dorada"],
+      "sitios": [
         {
           "nombre": "Espigones de La Concha",
           "especies": "Sargo, mojarra, lubina",
           "cuando": "Mañana",
-          "detalle": "Rockfishing y spinning ligero entre espigones de playa."
+          "detalle": "Solo La Concha. No es Amplàries."
         }
       ]
     },
     {
-      "id": "benicassim",
-      "nombre": "Playas de Benicàssim (Voramar / Torreón / Heliópolis / Almadraba)",
-      "lat": 40.055,
-      "lng": 0.075,
-      "radioKm": 1.4,
-      "especies": "Dorada, lubina, sargo, lisas, sepia, calamar",
-      "especiesIds": ["dorada", "lubina", "sargo", "llisa", "sepia", "calamar"],
+      "id": "orpesa_morro_gos",
+      "nombre": "Playa del Morro de Gos (Orpesa)",
+      "lat": 40.08,
+      "lng": 0.122,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.085, "lng": 0.127 },
+        { "lat": 40.075, "lng": 0.116 }
+      ],
+      "especies": "Sargo, lubina, dorada, sepia",
+      "especiesIds": ["sargo", "lubina", "dorada", "sepia"],
       "sitios": [
         {
-          "nombre": "Espigones de Voramar y Torreón",
+          "nombre": "Roca y espigones del Morro de Gos",
           "especies": "Sargo, lubina, sepia",
-          "cuando": "Amanecer y anochecer legal",
-          "detalle": "Los más citados a pie. Cabeza de espigón de playa, no un caladero secreto."
-        },
-        {
-          "nombre": "Heliópolis / Almadraba (surfcasting)",
-          "especies": "Dorada, lisa, mabra, herrera",
-          "cuando": "Alba; arena",
-          "detalle": "Lances largos a rompiente. En verano 100 m de los bañistas."
+          "cuando": "Agua picada corta",
+          "detalle": "Esta playa, hacia Benicàssim. No es La Concha."
         }
       ]
     },
     {
-      "id": "grao_norte",
-      "nombre": "Grao de Castellón · Serradal / Gurugú / Pilar",
-      "lat": 39.985,
-      "lng": 0.025,
-      "radioKm": 1.0,
-      "especies": "Lubina, dorada, palometón, sargo, sepia, lisas",
-      "especiesIds": ["lubina", "dorada", "palometon", "sargo", "sepia", "llisa"],
+      "id": "benicassim_voramar",
+      "nombre": "Playa de Voramar (Benicàssim)",
+      "lat": 40.063,
+      "lng": 0.09,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.068, "lng": 0.098 },
+        { "lat": 40.059, "lng": 0.084 }
+      ],
+      "especies": "Sargo, lubina, sepia, dorada",
+      "especiesIds": ["sargo", "lubina", "sepia", "dorada"],
       "sitios": [
         {
-          "nombre": "Cara exterior del espigón norte (no dársena)",
-          "especies": "Lubina, palometón, dorada, sepia",
-          "cuando": "Pases al amanecer; mar de fondo",
-          "detalle": "El sitio más pescado de la capital. Solo la cara al mar. Interior del puerto: prohibido. Si hay valla o policía portuaria, te vas."
-        },
-        {
-          "nombre": "Playa del Pilar y Gurugú",
-          "especies": "Dorada, lisa, lubina",
-          "cuando": "Surfcasting alba",
-          "detalle": "Arena al norte del puerto. No lances dentro de la bocana."
+          "nombre": "Espigones de Voramar",
+          "especies": "Sargo, lubina, sepia",
+          "cuando": "Amanecer",
+          "detalle": "Solo Voramar. No es el Torreón ni Heliópolis."
         }
       ]
     },
     {
-      "id": "grao_sur",
-      "nombre": "Grao de Castellón · playa sur / Pinar",
-      "lat": 39.958,
-      "lng": 0.005,
-      "radioKm": 0.8,
-      "especies": "Dorada, lisas, lubina, sargo",
-      "especiesIds": ["dorada", "llisa", "lubina", "sargo"],
+      "id": "benicassim_torreon",
+      "nombre": "Playa del Torreón (Benicàssim)",
+      "lat": 40.057,
+      "lng": 0.08,
+      "anchoKm": 0.26,
+      "tramo": [
+        { "lat": 40.06, "lng": 0.084 },
+        { "lat": 40.054, "lng": 0.076 }
+      ],
+      "especies": "Sargo, lubina, sepia, dorada",
+      "especiesIds": ["sargo", "lubina", "sepia", "dorada"],
       "sitios": [
         {
-          "nombre": "Espigones de la playa sur (fuera de muelles)",
-          "especies": "Dorada, sargo, lubina",
-          "cuando": "Atardecer",
-          "detalle": "Espigones de paseo, no grúas ni dársena. Hacia el sur, no uses la gola del Millars."
+          "nombre": "Espigones del Torreón",
+          "especies": "Sargo, lubina, sepia",
+          "cuando": "Amanecer y última luz",
+          "detalle": "Solo el Torreón."
         }
       ]
     },
     {
-      "id": "burriana",
-      "nombre": "Playa de Burriana / Arenal",
-      "lat": 39.848,
-      "lng": -0.068,
-      "radioKm": 0.9,
-      "especies": "Dorada, lubina, palometón, lisas, sargo",
-      "especiesIds": ["dorada", "lubina", "palometon", "llisa", "sargo"],
-      "sitios": [
-        {
-          "nombre": "Espigones del Arenal (no puerto)",
-          "especies": "Dorada, lubina, palometón",
-          "cuando": "Amanecer; pases",
-          "detalle": "Los de más uso a pie. La dársena de Burriana no. Spinning y surfcasting."
-        }
-      ]
-    },
-    {
-      "id": "nules",
-      "nombre": "Playa de Nules / El Palmeral",
-      "lat": 39.821,
-      "lng": -0.112,
-      "radioKm": 0.8,
+      "id": "benicassim_heliopolis",
+      "nombre": "Playa de Heliópolis (Benicàssim)",
+      "lat": 40.05,
+      "lng": 0.07,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.054, "lng": 0.076 },
+        { "lat": 40.046, "lng": 0.064 }
+      ],
       "especies": "Dorada, lisas, herrera, lubina",
       "especiesIds": ["dorada", "llisa", "herrera", "lubina"],
       "sitios": [
         {
-          "nombre": "Espigones de Nules",
-          "especies": "Dorada, lisa, lubina",
-          "cuando": "Alba; arena",
-          "detalle": "Surfcasting y cabeza de espigón de playa. Sitio de mucha caña los fines de semana."
+          "nombre": "Arena y espigones de Heliópolis",
+          "especies": "Dorada, lisa, herrera",
+          "cuando": "Alba; surfcasting",
+          "detalle": "Solo Heliópolis. En verano, 100 m de bañistas."
         }
       ]
     },
     {
-      "id": "moncofa",
-      "nombre": "Playas de Moncofa (Estany / Grao)",
-      "lat": 39.802,
-      "lng": -0.135,
-      "radioKm": 0.9,
+      "id": "benicassim_almadraba",
+      "nombre": "Playa de la Almadraba (Benicàssim)",
+      "lat": 40.044,
+      "lng": 0.06,
+      "anchoKm": 0.26,
+      "tramo": [
+        { "lat": 40.047, "lng": 0.064 },
+        { "lat": 40.04, "lng": 0.054 }
+      ],
+      "especies": "Dorada, lisas, mabra, herrera, lubina",
+      "especiesIds": ["dorada", "llisa", "mabra", "herrera", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Surfcasting de la Almadraba",
+          "especies": "Dorada, lisa, mabra",
+          "cuando": "Alba",
+          "detalle": "Solo la Almadraba. No es Heliópolis ni Els Terrers."
+        }
+      ]
+    },
+    {
+      "id": "benicassim_terrers",
+      "nombre": "Playa d'Els Terrers (Benicàssim)",
+      "lat": 40.036,
+      "lng": 0.05,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.04, "lng": 0.054 },
+        { "lat": 40.031, "lng": 0.044 }
+      ],
+      "especies": "Sargo, lubina, dorada, sepia",
+      "especiesIds": ["sargo", "lubina", "dorada", "sepia"],
+      "sitios": [
+        {
+          "nombre": "Roca d'Els Terrers",
+          "especies": "Sargo, lubina, sepia",
+          "cuando": "Agua picada corta",
+          "detalle": "Solo Els Terrers, hacia el Grao. No es la Almadraba."
+        }
+      ]
+    },
+    {
+      "id": "grao_serradal",
+      "nombre": "Playa del Serradal (Grao de Castellón)",
+      "lat": 39.998,
+      "lng": 0.033,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 40.004, "lng": 0.038 },
+        { "lat": 39.992, "lng": 0.028 }
+      ],
+      "especies": "Dorada, lubina, lisas, sargo",
+      "especiesIds": ["dorada", "lubina", "llisa", "sargo"],
+      "sitios": [
+        {
+          "nombre": "Espigones del Serradal",
+          "especies": "Dorada, lubina, lisa",
+          "cuando": "Alba",
+          "detalle": "Solo Serradal. No es Gurugú ni el puerto."
+        }
+      ]
+    },
+    {
+      "id": "grao_gurugu",
+      "nombre": "Playa del Gurugú (Grao de Castellón)",
+      "lat": 39.988,
+      "lng": 0.026,
+      "anchoKm": 0.26,
+      "tramo": [
+        { "lat": 39.992, "lng": 0.028 },
+        { "lat": 39.983, "lng": 0.022 }
+      ],
+      "especies": "Dorada, lisas, lubina",
+      "especiesIds": ["dorada", "llisa", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Arena del Gurugú",
+          "especies": "Dorada, lisa, lubina",
+          "cuando": "Surfcasting alba",
+          "detalle": "Solo Gurugú. El Pilar queda más al sur, junto al puerto."
+        }
+      ]
+    },
+    {
+      "id": "grao_pilar",
+      "nombre": "Playa del Pilar (Grao de Castellón)",
+      "lat": 39.978,
+      "lng": 0.018,
+      "anchoKm": 0.25,
+      "tramo": [
+        { "lat": 39.983, "lng": 0.022 },
+        { "lat": 39.974, "lng": 0.014 }
+      ],
+      "especies": "Lubina, dorada, palometón, sepia, lisas",
+      "especiesIds": ["lubina", "dorada", "palometon", "sepia", "llisa"],
+      "sitios": [
+        {
+          "nombre": "Cara exterior del espigón norte (no dársena)",
+          "especies": "Lubina, palometón, dorada, sepia",
+          "cuando": "Pases al amanecer",
+          "detalle": "Esta playa, junto al puerto. Solo cara al mar. Interior del puerto: prohibido."
+        }
+      ]
+    },
+    {
+      "id": "grao_pinar",
+      "nombre": "Playa del Pinar (Grao de Castellón)",
+      "lat": 39.956,
+      "lng": 0.002,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 39.962, "lng": 0.008 },
+        { "lat": 39.948, "lng": -0.006 }
+      ],
+      "especies": "Dorada, lisas, lubina, sargo",
+      "especiesIds": ["dorada", "llisa", "lubina", "sargo"],
+      "sitios": [
+        {
+          "nombre": "Espigones del Pinar",
+          "especies": "Dorada, sargo, lubina",
+          "cuando": "Atardecer",
+          "detalle": "Playa sur del Grao. No es el puerto ni la gola del Millars."
+        }
+      ]
+    },
+    {
+      "id": "burriana_arenal",
+      "nombre": "Playa del Arenal (Burriana)",
+      "lat": 39.849,
+      "lng": -0.064,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 39.853, "lng": -0.058 },
+        { "lat": 39.845, "lng": -0.07 }
+      ],
+      "especies": "Dorada, lubina, palometón, lisas, sargo",
+      "especiesIds": ["dorada", "lubina", "palometon", "llisa", "sargo"],
+      "sitios": [
+        {
+          "nombre": "Espigones del Arenal",
+          "especies": "Dorada, lubina, palometón",
+          "cuando": "Amanecer; pases",
+          "detalle": "Solo el Arenal. La dársena de Burriana no."
+        }
+      ]
+    },
+    {
+      "id": "burriana_grao",
+      "nombre": "Playa del Grao / Malva-rosa (Burriana)",
+      "lat": 39.844,
+      "lng": -0.076,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 39.847, "lng": -0.07 },
+        { "lat": 39.84, "lng": -0.082 }
+      ],
+      "especies": "Dorada, lisas, lubina, sargo",
+      "especiesIds": ["dorada", "llisa", "lubina", "sargo"],
+      "sitios": [
+        {
+          "nombre": "Espigones de la playa del Grao de Burriana",
+          "especies": "Dorada, lisa, lubina",
+          "cuando": "Alba",
+          "detalle": "Esta playa, al sur del Arenal. No es Nules."
+        }
+      ]
+    },
+    {
+      "id": "nules_palmeral",
+      "nombre": "Playa del Palmeral (Nules)",
+      "lat": 39.821,
+      "lng": -0.112,
+      "anchoKm": 0.3,
+      "tramo": [
+        { "lat": 39.826, "lng": -0.104 },
+        { "lat": 39.816, "lng": -0.12 }
+      ],
+      "especies": "Dorada, lisas, herrera, lubina",
+      "especiesIds": ["dorada", "llisa", "herrera", "lubina"],
+      "sitios": [
+        {
+          "nombre": "Espigones del Palmeral",
+          "especies": "Dorada, lisa, lubina",
+          "cuando": "Alba",
+          "detalle": "Solo Nules-Palmeral. No es Moncofa."
+        }
+      ]
+    },
+    {
+      "id": "moncofa_estany",
+      "nombre": "Playa de l'Estany (Moncofa)",
+      "lat": 39.808,
+      "lng": -0.129,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 39.813, "lng": -0.122 },
+        { "lat": 39.803, "lng": -0.135 }
+      ],
       "especies": "Dorada, lisas, lubina, herrera",
       "especiesIds": ["dorada", "llisa", "lubina", "herrera"],
       "sitios": [
         {
-          "nombre": "Espigones de Moncofa",
+          "nombre": "Espigones de l'Estany",
           "especies": "Dorada, lisa, lubina",
           "cuando": "Primera hora",
-          "detalle": "Varios espigones de playa muy pescados. No el interior de ninguna dársena."
+          "detalle": "Solo l'Estany. No es el Grao de Moncofa."
+        }
+      ]
+    },
+    {
+      "id": "moncofa_grao",
+      "nombre": "Playa del Grao de Moncofa",
+      "lat": 39.795,
+      "lng": -0.141,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 39.801, "lng": -0.135 },
+        { "lat": 39.789, "lng": -0.147 }
+      ],
+      "especies": "Dorada, lisas, lubina, herrera",
+      "especiesIds": ["dorada", "llisa", "lubina", "herrera"],
+      "sitios": [
+        {
+          "nombre": "Espigones del Grao de Moncofa",
+          "especies": "Dorada, lisa, lubina",
+          "cuando": "Primera hora",
+          "detalle": "Solo esta playa de Moncofa."
         }
       ]
     },
     {
       "id": "xilxes",
-      "nombre": "Playa de Xilxes / Chilches",
+      "nombre": "Playa de Xilxes",
       "lat": 39.778,
       "lng": -0.158,
-      "radioKm": 0.7,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 39.783, "lng": -0.152 },
+        { "lat": 39.773, "lng": -0.164 }
+      ],
       "especies": "Dorada, lisas, lubina",
       "especiesIds": ["dorada", "llisa", "lubina"],
       "sitios": [
@@ -298,7 +670,7 @@
           "nombre": "Espigones de Xilxes",
           "especies": "Dorada, lisa",
           "cuando": "Alba",
-          "detalle": "Paseo y espigones. En verano, lejos de los bañistas."
+          "detalle": "Solo Xilxes. No es La Llosa."
         }
       ]
     },
@@ -307,7 +679,11 @@
       "nombre": "Playa de La Llosa",
       "lat": 39.765,
       "lng": -0.175,
-      "radioKm": 0.55,
+      "anchoKm": 0.26,
+      "tramo": [
+        { "lat": 39.77, "lng": -0.168 },
+        { "lat": 39.76, "lng": -0.182 }
+      ],
       "especies": "Dorada, lisas, lubina",
       "especiesIds": ["dorada", "llisa", "lubina"],
       "sitios": [
@@ -315,7 +691,7 @@
           "nombre": "Espigón de La Llosa",
           "especies": "Dorada, lisa, lubina",
           "cuando": "Atardecer",
-          "detalle": "Espigón de playa. El marjal de Almenara, tierra adentro, no es orilla libre."
+          "detalle": "Solo La Llosa. El marjal de Almenara no es esta playa."
         }
       ]
     },
@@ -324,15 +700,19 @@
       "nombre": "Playa de Almenara",
       "lat": 39.748,
       "lng": -0.198,
-      "radioKm": 0.6,
+      "anchoKm": 0.28,
+      "tramo": [
+        { "lat": 39.754, "lng": -0.19 },
+        { "lat": 39.742, "lng": -0.206 }
+      ],
       "especies": "Dorada, lisas, lubina, cangrejo azul (invasor: no se devuelve)",
       "especiesIds": ["dorada", "llisa", "lubina", "cangrejo_azul"],
       "sitios": [
         {
-          "nombre": "Arena y espigones de la playa",
+          "nombre": "Espigones de la playa de Almenara",
           "especies": "Dorada, lisa, lubina",
           "cuando": "Alba",
-          "detalle": "Solo la playa abierta al mar. Estanys/marjal: vedado o coto CS-010, no es surfcasting."
+          "detalle": "Solo la playa al mar. Los Estanys no son esta orilla."
         }
       ]
     }

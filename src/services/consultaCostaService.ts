@@ -1,7 +1,7 @@
 import puertos from "../data/puertosCastellon.json";
 import vedados from "../data/vedadosCosta.json";
 import playasData from "../data/playasEspigonesCosta.json";
-import { puntoEnPoligono, distanciaKm, distanciaAPolylineKm } from "./geoService";
+import { puntoEnPoligono, distanciaAPolylineKm } from "./geoService";
 import { ConsultaPesca, consultarPuntoPesca } from "./consultaPescaService";
 import { FUENTE_MARITIMA, REGLAS_ORILLA_MAR } from "../data/normativaMaritima";
 
@@ -20,7 +20,8 @@ export type PlayaCosta = {
   nombre: string;
   lat: number;
   lng: number;
-  radioKm: number;
+  anchoKm: number;
+  tramo: { lat: number; lng: number }[];
   especies: string;
   especiesIds: string[];
   sitios: { nombre: string; especies: string; cuando: string; detalle: string }[];
@@ -54,12 +55,12 @@ function busca(lat: number, lng: number, zonas: ZonaCosta[]): ZonaCosta | null {
   return zonas.find((z) => puntoEnPoligono(lat, lng, z.anillo)) ?? null;
 }
 
-export function playaMasCercana(lat: number, lng: number): { playa: PlayaCosta; km: number } | null {
+export function playaPulsada(lat: number, lng: number): { playa: PlayaCosta; km: number } | null {
   let mejor: PlayaCosta | null = null;
   let dMin = Infinity;
   for (const p of todasLasPlayas()) {
-    const d = distanciaKm(lat, lng, p.lat, p.lng);
-    if (d < dMin) {
+    const d = distanciaAPolylineKm(lat, lng, p.tramo);
+    if (d <= p.anchoKm && d < dMin) {
       dMin = d;
       mejor = p;
     }
@@ -75,14 +76,6 @@ const COLORES = { libre: "#2f7d4a", vedado: "#b42318", fuera: "#4d5d54" };
 
 function baseMar(): Pick<ConsultaPesca, "tramo" | "fuenteGeometria" | "confianza" | "ambito"> {
   return { tramo: null, fuenteGeometria: "ninguna", confianza: "aproximada", ambito: "maritimo" };
-}
-
-function fichaPlaya(lat: number, lng: number): PlayaCosta | null {
-  const c = playaMasCercana(lat, lng);
-  if (!c) return null;
-  if (c.km <= c.playa.radioKm) return c.playa;
-  if (c.km <= 1.6) return c.playa;
-  return null;
 }
 
 export function consultarCosta(lat: number, lng: number): ConsultaPesca {
@@ -106,7 +99,6 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
 
   const puerto = busca(lat, lng, todosLosPuertos());
   if (puerto) {
-    const cerca = playaMasCercana(lat, lng);
     return {
       ...baseMar(),
       veredicto: "vedado",
@@ -117,9 +109,7 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
       sePuedePescarHoy: false,
       restriccionesHoy: [
         "Decreto 41/2013: prohibido en dársena, fondeo y varada, salvo autorización del puerto.",
-        cerca
-          ? `La pesca a pie se hace en la playa de al lado (${cerca.playa.nombre}), cara al mar, no aquí dentro.`
-          : "Sal de la dársena y consulta la playa contigua.",
+        "Pulsa la playa concreta junto al puerto, no este recinto.",
       ],
       permisos: ["Modalidad: pesca marítima desde tierra, no desde barco."],
     };
@@ -142,13 +132,14 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
     };
   }
 
-  const playa = fichaPlaya(lat, lng);
+  const hit = playaPulsada(lat, lng);
+  const playa = hit?.playa ?? null;
   return {
     ...baseMar(),
     veredicto: "libre",
-    titulo: playa ? playa.nombre : "Orilla de Castellón · playa o rompiente",
+    titulo: playa ? playa.nombre : "Orilla sin nombre de playa en el catálogo",
     color: COLORES.libre,
-    distanciaKm: playa ? distanciaKm(lat, lng, playa.lat, playa.lng) : null,
+    distanciaKm: hit?.km ?? null,
     dentroDelRadio: true,
     sePuedePescarHoy: true,
     especiesHabituales: playa?.especies ?? playasData.especiesPorDefecto,
@@ -156,14 +147,16 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
     sitiosCosta: playa?.sitios ?? [],
     restriccionesHoy: [
       ...REGLAS_ORILLA_MAR.slice(1),
-      "Identifica la especie: catálogo Orilla mar (tallas BOE) y pestaña No tocar.",
+      playa
+        ? "Identifica la especie: catálogo Orilla mar (tallas BOE) y pestaña No tocar."
+        : "Este toque no cae en una playa fichada. No te asignamos la de al lado: pulsa el arenal concreto (pin verde).",
     ],
     permisos: [
       FUENTE_MARITIMA.titulo,
       REGLAS_ORILLA_MAR[0],
       playa
-        ? "Sí se pesca aquí a caña desde tierra (uso habitual). No es un permiso extra ni un ranking oficial."
-        : "Orilla abierta a consulta: licencia marítima desde tierra y las reglas de abajo.",
+        ? "Sí se pesca en esta playa a caña desde tierra (uso habitual)."
+        : "Orilla abierta a consulta legal, pero sin ficha de playa hasta que pulses una nombrada.",
       "Tallas: RD 560/1995 anexo II (Mediterráneo). Especies autorizadas: RD 347/2011.",
     ],
   };
