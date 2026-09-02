@@ -14,7 +14,12 @@ import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import TemporadaBanner from "../components/TemporadaBanner";
+import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo } from "../services/consultaPescaService";
+import {
+  AvisoSeguridad,
+  obtenerAvisosSeguridadPesca,
+} from "../services/avisosSeguridadService";
 import { COLORS, PIN, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 import LeyendaMapa from "../components/LeyendaMapa";
 
@@ -60,6 +65,9 @@ export default function HomeScreen({ navigation }: Props) {
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [saihPanel, setSaihPanel] = useState<{ etiqueta: string; zoneId: string; pct: number | null; fuente: string }[]>([]);
+  const [avisosSeguridad, setAvisosSeguridad] = useState<AvisoSeguridad[]>([]);
+  const [avisosCargando, setAvisosCargando] = useState(true);
+  const [avisosError, setAvisosError] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -67,6 +75,27 @@ export default function HomeScreen({ navigation }: Props) {
       obtenerPuntosGuardados().then(setPuntos);
     }, [])
   );
+
+  useEffect(() => {
+    let vivo = true;
+    setAvisosCargando(true);
+    obtenerAvisosSeguridadPesca()
+      .then((lista) => {
+        if (!vivo) return;
+        setAvisosSeguridad(lista);
+        setAvisosError(null);
+      })
+      .catch(() => {
+        if (!vivo) return;
+        setAvisosError("No se pudieron cargar los avisos");
+      })
+      .finally(() => {
+        if (vivo) setAvisosCargando(false);
+      });
+    return () => {
+      vivo = false;
+    };
+  }, []);
 
   useEffect(() => {
     getResumenEmbalsesCastellon(EMBALSES_PANEL).then((rows) => {
@@ -201,6 +230,7 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={styles.body}>
         <TemporadaBanner />
+        <PanelAvisosSeguridad avisos={avisosSeguridad} cargando={avisosCargando} error={avisosError} />
         <LicenseBanner onPress={() => navigation.navigate("License")} />
 
         {saihPanel.length > 0 && (

@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { aplicarEstilosWeb } from "./src/webChrome";
-import TabIcon, { NombreIcono } from "./src/components/TabIcon";
+import BarraTabsScroll from "./src/components/BarraTabsScroll";
 
 aplicarEstilosWeb();
 
@@ -103,16 +103,6 @@ function CapturasStackScreen() {
   );
 }
 
-const ICONOS: Record<string, NombreIcono> = {
-  Inicio: "home",
-  Mapa: "water",
-  Especies: "fish",
-  Aparejos: "construct",
-  Consejos: "book",
-  Previsión: "partly-sunny",
-  Capturas: "bookmark",
-};
-
 const TAB_RAIZ: Record<string, { stack: string; screen: string }> = {
   Inicio: { stack: "Inicio", screen: "HomeMain" },
   Mapa: { stack: "Mapa", screen: "ZonasLibresMain" },
@@ -138,41 +128,19 @@ export default function App() {
     <NavigationContainer theme={navTheme}>
       <StatusBar style="light" />
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        tabBar={(props) => <BarraTabsScroll {...props} />}
+        screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: COLORS.primary,
-          tabBarInactiveTintColor: COLORS.textMuted,
           tabBarHideOnKeyboard: true,
-          tabBarStyle: {
-            position: "absolute",
-            left: 6,
-            right: 6,
-            bottom: 8,
-            height: 60,
-            borderRadius: 18,
-            backgroundColor: COLORS.surface,
-            borderTopWidth: 0,
-            paddingBottom: 5,
-            paddingTop: 5,
-            shadowColor: COLORS.primaryDark,
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.1,
-            shadowRadius: 16,
-            elevation: 12,
-          },
-          tabBarLabelStyle: { fontSize: 8, fontWeight: "700" as const, letterSpacing: 0 },
-          tabBarIcon: ({ color, focused, size }) => (
-            <TabIcon nombre={ICONOS[route.name] ?? "home"} size={focused ? size : size - 2} color={color} />
-          ),
-        })}
+        }}
       >
-        <Tab.Screen name="Inicio" component={HomeStackScreen} listeners={listenerIrArriba("Inicio")} />
-        <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} listeners={listenerIrArriba("Mapa")} />
-        <Tab.Screen name="Especies" component={EspeciesStackScreen} listeners={listenerIrArriba("Especies")} />
-        <Tab.Screen name="Aparejos" component={AparejosStackScreen} listeners={listenerIrArriba("Aparejos")} />
-        <Tab.Screen name="Consejos" component={ConsejosStackScreen} listeners={listenerIrArriba("Consejos")} />
-        <Tab.Screen name="Previsión" component={PrevisionStackScreen} listeners={listenerIrArriba("Previsión")} />
-        <Tab.Screen name="Capturas" component={CapturasStackScreen} listeners={listenerIrArriba("Capturas")} />
+        <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
+        <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
+        <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
+        <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
+        <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
+        <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
+        <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
       </Tab.Navigator>
     </NavigationContainer>
   );
