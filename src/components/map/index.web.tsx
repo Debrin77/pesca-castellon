@@ -223,6 +223,7 @@ interface MapViewProps {
   region?: Region;
   initialRegion?: Region;
   onLongPress?: (e: any) => void;
+  onPress?: (e: any) => void;
   children?: React.ReactNode;
   fitCoordinates?: { latitude: number; longitude: number }[];
   cameraTarget?: { latitude: number; longitude: number; zoom?: number; nonce: number };
@@ -233,6 +234,7 @@ export default function MapView({
   region,
   initialRegion,
   onLongPress,
+  onPress,
   children,
   fitCoordinates,
   cameraTarget,
@@ -318,7 +320,7 @@ export default function MapView({
         <SincronizarRegion region={region} disabled={!!fitCoordinates?.length || !!cameraTarget} />
         <EncajarCoordenadas coords={fitCoordinates} />
         <VolarA target={cameraTarget} />
-        {onLongPress && <ManejadorClick onLongPress={onLongPress} />}
+        {(onPress || onLongPress) && <ManejadorClick onLongPress={onPress || onLongPress} />}
         {children}
       </MapContainer>
     </View>
@@ -409,6 +411,7 @@ export function Polygon({
         weight: strokeWidth,
         opacity: 0.95,
         fillOpacity: strokeWidth >= 4 ? 0.4 : 0.28,
+        interactive: false,
       }}
     />
   );

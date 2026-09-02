@@ -19,6 +19,41 @@ export function distanciaKm(
   return R * c;
 }
 
+/** Distancia en km de un punto al segmento AB (aprox. local). */
+export function distanciaPuntoASegmentoKm(
+  lat: number,
+  lng: number,
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number }
+): number {
+  const toXY = (p: { lat: number; lng: number }) => ({
+    x: ((p.lng - lng) * Math.PI / 180) * Math.cos((lat * Math.PI) / 180) * 6371,
+    y: ((p.lat - lat) * Math.PI / 180) * 6371,
+  });
+  const A = toXY(a);
+  const B = toXY(b);
+  const vx = B.x - A.x;
+  const vy = B.y - A.y;
+  const len2 = vx * vx + vy * vy;
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, (-A.x * vx - A.y * vy) / len2));
+  const dx = A.x + t * vx;
+  const dy = A.y + t * vy;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+export function distanciaAPolylineKm(
+  lat: number,
+  lng: number,
+  linea: { lat: number; lng: number }[]
+): number {
+  if (linea.length === 1) return distanciaKm(lat, lng, linea[0].lat, linea[0].lng);
+  let mejor = Infinity;
+  for (let i = 0; i < linea.length - 1; i++) {
+    mejor = Math.min(mejor, distanciaPuntoASegmentoKm(lat, lng, linea[i], linea[i + 1]));
+  }
+  return mejor;
+}
+
 /** Ray casting. Anillo cerrado o abierto. */
 export function puntoEnPoligono(lat: number, lng: number, anillo: { lat: number; lng: number }[]): boolean {
   if (anillo.length < 3) return false;

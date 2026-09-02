@@ -4,7 +4,8 @@ import { useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
-import { consultarPuntoPesca, consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
+import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
+import { consultarToqueMapa, avisoSitiosCosta } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
@@ -45,8 +46,9 @@ export default function EspeciesScreen({ navigation }: Props) {
     if (ok) {
       const loc = await obtenerUbicacionActual();
       if (loc) {
-        const r = consultarPuntoPesca(loc.lat, loc.lng);
+        const r = consultarToqueMapa(loc.lat, loc.lng);
         setConsulta(r);
+        if (r.ambito === "maritimo") setCatalogo("mar");
         setMarcador({ latitude: loc.lat, longitude: loc.lng });
         setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
       }
@@ -59,9 +61,10 @@ export default function EspeciesScreen({ navigation }: Props) {
   }, []);
 
   function evaluarPunto(lat: number, lng: number) {
-    const r = consultarPuntoPesca(lat, lng);
+    const r = consultarToqueMapa(lat, lng);
     setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
+    if (r.ambito === "maritimo") setCatalogo("mar");
   }
 
   function evaluarTramo(z: TramoOficial) {
@@ -77,6 +80,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           initialRegion={CASTELLON_REGION}
           fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
           cameraTarget={camara}
+          onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           <CapaPoligonosIcv />
@@ -120,13 +124,30 @@ export default function EspeciesScreen({ navigation }: Props) {
             {consulta.restriccionesHoy.slice(0, 2).map((r, i) => (
               <Text key={i} style={styles.cardText}>{r}</Text>
             ))}
-            {consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
+            {consulta.especiesHabituales ? (
+              <Text style={styles.cardText}>Especies habituales: {consulta.especiesHabituales}</Text>
+            ) : null}
+            {consulta.ambito === "maritimo" ? (
+              <SitiosOrientativos
+                sitios={consulta.sitiosCosta ?? []}
+                titulo="Dónde se pesca a caña (uso habitual)"
+                aviso={avisoSitiosCosta()}
+              />
+            ) : consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
               <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
             ) : null}
-            {(consulta.tramo?.especies ?? []).map((especieId: string, i: number) => {
-              const sp = speciesCatalog.find((s: any) => s.id === especieId);
-              if (!sp) return null;
-              const enVeda = estaEnVeda(especieId);
+            {(consulta.ambito === "maritimo"
+              ? (consulta.especiesIds ?? []).map((id) =>
+                  [...(orilla.pescablesOrilla as any[]), ...(orilla.invasorasOrilla as any[])].find((s) => s.id === id)
+                )
+              : (consulta.tramo?.especies ?? []).map((especieId: string) =>
+                  speciesCatalog.find((s: any) => s.id === especieId)
+                )
+            )
+              .filter(Boolean)
+              .map((sp: any, i: number) => {
+              const especieId = sp.id;
+              const enVeda = consulta.ambito === "maritimo" ? false : estaEnVeda(especieId);
               return (
                 <ListaAnimada key={especieId} index={i}>
                 <View style={[styles.card, sp.invasora && styles.cardInvasora]}>

@@ -3,70 +3,70 @@
     "id": "vinaros",
     "nombre": "Puerto de Vinaròs",
     "anillo": [
-      { "lat": 40.472, "lng": 0.47 },
-      { "lat": 40.472, "lng": 0.488 },
-      { "lat": 40.46, "lng": 0.488 },
-      { "lat": 40.46, "lng": 0.47 }
+      { "lat": 40.4692, "lng": 0.4738 },
+      { "lat": 40.4692, "lng": 0.4815 },
+      { "lat": 40.4638, "lng": 0.4815 },
+      { "lat": 40.4638, "lng": 0.4738 }
     ]
   },
   {
     "id": "benicarlo",
     "nombre": "Puerto de Benicarló",
     "anillo": [
-      { "lat": 40.422, "lng": 0.42 },
-      { "lat": 40.422, "lng": 0.438 },
-      { "lat": 40.41, "lng": 0.438 },
-      { "lat": 40.41, "lng": 0.42 }
+      { "lat": 40.4192, "lng": 0.4255 },
+      { "lat": 40.4192, "lng": 0.432 },
+      { "lat": 40.4145, "lng": 0.432 },
+      { "lat": 40.4145, "lng": 0.4255 }
     ]
   },
   {
     "id": "peniscola",
     "nombre": "Puerto de Peñíscola",
     "anillo": [
-      { "lat": 40.362, "lng": 0.395 },
-      { "lat": 40.362, "lng": 0.41 },
-      { "lat": 40.352, "lng": 0.41 },
-      { "lat": 40.352, "lng": 0.395 }
+      { "lat": 40.3588, "lng": 0.4005 },
+      { "lat": 40.3588, "lng": 0.4065 },
+      { "lat": 40.3548, "lng": 0.4065 },
+      { "lat": 40.3548, "lng": 0.4005 }
     ]
   },
   {
     "id": "alcossebre",
     "nombre": "Puerto de Alcossebre",
     "anillo": [
-      { "lat": 40.246, "lng": 0.283 },
-      { "lat": 40.246, "lng": 0.3 },
-      { "lat": 40.235, "lng": 0.3 },
-      { "lat": 40.235, "lng": 0.283 }
+      { "lat": 40.2428, "lng": 0.2875 },
+      { "lat": 40.2428, "lng": 0.2935 },
+      { "lat": 40.2388, "lng": 0.2935 },
+      { "lat": 40.2388, "lng": 0.2875 }
     ]
   },
   {
     "id": "orpesa",
     "nombre": "Puerto de Orpesa / Oropesa",
     "anillo": [
-      { "lat": 40.098, "lng": 0.128 },
-      { "lat": 40.098, "lng": 0.15 },
-      { "lat": 40.085, "lng": 0.15 },
-      { "lat": 40.085, "lng": 0.128 }
+      { "lat": 40.0945, "lng": 0.1345 },
+      { "lat": 40.0945, "lng": 0.142 },
+      { "lat": 40.0895, "lng": 0.142 },
+      { "lat": 40.0895, "lng": 0.1345 }
     ]
   },
   {
     "id": "grao_cs",
-    "nombre": "Puerto de Castellón (Grao)",
+    "nombre": "Puerto de Castellón (dársena)",
     "anillo": [
-      { "lat": 39.98, "lng": 0.002 },
-      { "lat": 39.98, "lng": 0.038 },
-      { "lat": 39.958, "lng": 0.038 },
-      { "lat": 39.958, "lng": 0.002 }
+      { "lat": 39.9735, "lng": 0.016 },
+      { "lat": 39.9735, "lng": 0.03 },
+      { "lat": 39.9655, "lng": 0.03 },
+      { "lat": 39.9655, "lng": 0.016 }
     ]
   },
   {
     "id": "burriana",
     "nombre": "Puerto de Burriana",
     "anillo": [
-      { "lat": 39.864, "lng": -0.08 },
-      { "lat": 39.864, "lng": -0.052 },
-      { "lat": 39.848, "lng": -0.052 },
-      { "lat": 39.848, "lng": -0.08 }
+      { "lat": 39.8578, "lng": -0.0685 },
+      { "lat": 39.8578, "lng": -0.059 },
+      { "lat": 39.8525, "lng": -0.059 },
+      { "lat": 39.8525, "lng": -0.0685 }
     ]
   }
 ]

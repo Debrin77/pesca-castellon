@@ -19,7 +19,7 @@ import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
 import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
-import { consultarCosta, centroZona, todosLosPuertos, todosLosVedadosCosta } from "../services/consultaCostaService";
+import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -29,16 +29,17 @@ interface Props {
 }
 
 const CASTELLON_REGION = {
-  latitude: 40.12,
-  longitude: -0.38,
-  latitudeDelta: 1.15,
-  longitudeDelta: 1.15,
+  latitude: 40.05,
+  longitude: -0.02,
+  latitudeDelta: 1.25,
+  longitudeDelta: 1.25,
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
   const resultRef = useRef<ScrollView>(null);
   useScrollToTop(resultRef);
   const tramos = todosLosTramos();
+  const playas = todasLasPlayas();
   const [busqueda, setBusqueda] = useState("");
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
@@ -64,8 +65,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       if (loc) {
         const pos = { latitude: loc.lat, longitude: loc.lng };
         setYo(pos);
-        const c = consultarPuntoPesca(loc.lat, loc.lng);
+        const c = consultarToqueMapa(loc.lat, loc.lng);
         setConsulta(c);
+        if (c.ambito === "maritimo") setModo("costa");
         setMarcador(pos);
       }
       cancelar = await suscribirseUbicacion((lat, lng) => {
@@ -90,8 +92,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const sugerencias = useMemo(() => {
     if (!busqueda.trim()) return [];
     const q = busqueda.toLowerCase();
+    if (modo === "costa") {
+      return playas.filter((p) => p.nombre.toLowerCase().includes(q)).slice(0, 8);
+    }
     return tramos.filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
-  }, [busqueda, tramos]);
+  }, [busqueda, tramos, playas, modo]);
 
   function evaluarTramo(z: TramoOficial) {
     setModo("continental");
@@ -103,8 +108,24 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   function evaluarPunto(lat: number, lng: number) {
-    setConsulta(modo === "costa" ? consultarCosta(lat, lng) : consultarPuntoPesca(lat, lng));
+    const r = consultarToqueMapa(lat, lng);
+    if (r.ambito === "maritimo") {
+      setModo("costa");
+      setCamara({ latitude: lat, longitude: lng, zoom: 14, nonce: Date.now() });
+    } else {
+      setModo("continental");
+    }
+    setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
+  }
+
+  function evaluarPlaya(id: string) {
+    const p = playas.find((x) => x.id === id);
+    if (!p) return;
+    setModo("costa");
+    setConsulta(consultarCosta(p.lat, p.lng));
+    setMarcador({ latitude: p.lat, longitude: p.lng });
+    setCamara({ latitude: p.lat, longitude: p.lng, zoom: 14, nonce: Date.now() });
   }
 
   function cambiarModo(siguiente: "continental" | "costa") {
@@ -136,7 +157,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           style={styles.searchInput}
           placeholder={
             modo === "costa"
-              ? "Toca la orilla o un puerto (pesca desde tierra)"
+              ? "Busca playa (Benicàssim, Grao, Nules, Alcossebre...)"
               : "Busca un tramo (Arenós, Palancia, Teresa, Sitjar...)"
           }
           placeholderTextColor={COLORS.textMuted}
@@ -145,17 +166,18 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         />
         {sugerencias.length > 0 && (
           <View style={styles.suggestionsBox}>
-            {sugerencias.map((z, i) => (
+            {sugerencias.map((z: any, i) => (
               <ListaAnimada key={z.id} index={i} replayKey={busqueda}>
               <TouchableOpacity
                 style={styles.suggestionRow}
                 onPress={() => {
                   setBusqueda(z.nombre);
-                  evaluarTramo(z);
+                  if (modo === "costa") evaluarPlaya(z.id);
+                  else evaluarTramo(z);
                 }}
               >
                 <Text style={styles.suggestionText}>{z.nombre}</Text>
-                <Text style={styles.suggestionMeta}>{z.aprovechamiento}</Text>
+                <Text style={styles.suggestionMeta}>{z.aprovechamiento ?? "playa"}</Text>
               </TouchableOpacity>
               </ListaAnimada>
             ))}
@@ -197,26 +219,37 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <MapView
           style={styles.map}
           initialRegion={CASTELLON_REGION}
-          fitCoordinates={tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }))}
           cameraTarget={camara}
+          onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
           {modo === "costa" ? <CapaPuertos /> : null}
           {modo === "costa" ? <CapaVedadosCosta /> : null}
           {modo === "costa" &&
+            playas.map((p) => (
+              <Marker
+                key={p.id}
+                coordinate={{ latitude: p.lat, longitude: p.lng }}
+                pinColor="#2f7d4a"
+                identifier="libre"
+                title={p.nombre}
+                onPress={() => evaluarPlaya(p.id)}
+              />
+            ))}
+          {modo === "costa" &&
             [...todosLosPuertos(), ...todosLosVedadosCosta()].map((p) => {
               const c = centroZona(p.anillo);
               return (
-              <Marker
-                key={p.id}
-                coordinate={{ latitude: c.lat, longitude: c.lng }}
-                pinColor={p.tipo ? "#5b4aa8" : "#b42318"}
-                identifier="coto"
-                title={p.nombre}
-                onPress={() => evaluarPunto(c.lat, c.lng)}
-              />
-            );
+                <Marker
+                  key={p.id}
+                  coordinate={{ latitude: c.lat, longitude: c.lng }}
+                  pinColor={p.tipo ? "#5b4aa8" : "#b42318"}
+                  identifier="coto"
+                  title={p.nombre}
+                  onPress={() => evaluarPunto(c.lat, c.lng)}
+                />
+              );
             })}
           {modo === "continental" &&
             tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
@@ -279,21 +312,20 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         ) : (
           <Text style={styles.hint}>
             {modo === "costa"
-              ? "Toca la orilla. Rojo: puertos. Violeta: vedados (Irta, Prat, gola del Millars, marjal de Almenara). Capas: profundidad EMODnet y carta IHM (no navegar)."
+              ? "Toca la playa o un pin verde. Te dice si se puede, especies y los espigones donde más se pesca (uso habitual, no ranking). Rojo: puerto. Violeta: vedado."
               : "Pulsa el agua. Cotos y reservas usan el polígono ICV; el resto, el radio del anexo. El recuadro grande te dice si hoy puedes pescar."}
           </Text>
         )}
 
-        {consulta?.tramo && (
+        {(consulta?.tramo || consulta?.ambito === "maritimo") && (
           <TouchableOpacity
             style={styles.saveSpotButton}
             onPress={async () => {
-              const t = consulta.tramo as TramoOficial;
               await guardarPunto({
-                nombre: t.nombre,
-                lat: marcador?.latitude ?? t.lat,
-                lng: marcador?.longitude ?? t.lng,
-                zonaRelacionadaId: t.fichaId ?? t.id,
+                nombre: consulta.titulo,
+                lat: marcador?.latitude ?? 0,
+                lng: marcador?.longitude ?? 0,
+                zonaRelacionadaId: consulta.tramo?.fichaId ?? consulta.tramo?.id,
               });
               setPuntosPersonales(await obtenerPuntosGuardados());
             }}

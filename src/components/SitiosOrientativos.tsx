@@ -6,9 +6,11 @@ import { COLORS, RADIUS } from "../theme";
 export default function SitiosOrientativos({
   sitios,
   titulo,
+  aviso,
 }: {
   sitios: SitioOrientativo[];
   titulo?: string;
+  aviso?: string;
 }) {
   if (!sitios.length) return null;
   return (
@@ -23,7 +25,7 @@ export default function SitiosOrientativos({
           <Text style={styles.detalle}>{s.detalle}</Text>
         </View>
       ))}
-      <Text style={styles.aviso}>{AVISO_SITIOS_COMUNIDAD}</Text>
+      <Text style={styles.aviso}>{aviso ?? AVISO_SITIOS_COMUNIDAD}</Text>
     </View>
   );
 }

@@ -5,6 +5,7 @@ import { FUENTE_NORMATIVA } from "../data/normativa2026";
 import { FUENTE_MARITIMA } from "../data/normativaMaritima";
 import { FUENTE_ICV } from "../services/geojsonHit";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
+import { avisoSitiosCosta } from "../services/consultaCostaService";
 import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "../components/ListaAnimada";
 import { COLORS, RADIUS } from "../theme";
@@ -67,11 +68,19 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
         </Text>
       ))}
 
-      {consulta.tramo?.especies?.length ? (
+      {consulta.especiesHabituales ? (
+        <Text style={styles.especies}>Especies habituales: {consulta.especiesHabituales}</Text>
+      ) : consulta.tramo?.especies?.length ? (
         <Text style={styles.especies}>Especies habituales: {consulta.tramo.especies.join(" · ")}</Text>
       ) : null}
 
-      {consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
+      {consulta.ambito === "maritimo" ? (
+        <SitiosOrientativos
+          sitios={consulta.sitiosCosta ?? []}
+          titulo="Dónde se pesca a caña (uso habitual)"
+          aviso={avisoSitiosCosta()}
+        />
+      ) : consulta.tramo && consulta.veredicto !== "vedado" && consulta.veredicto !== "reserva_trucha" ? (
         <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
       ) : null}
 
