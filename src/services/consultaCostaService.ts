@@ -25,6 +25,8 @@ export type PlayaCosta = {
   especies: string;
   especiesIds: string[];
   sitios: { nombre: string; especies: string; cuando: string; detalle: string }[];
+  vedaOrilla?: boolean;
+  normaVeda?: string;
 };
 
 export function todosLosPuertos(): ZonaCosta[] {
@@ -115,6 +117,24 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
     };
   }
 
+  const hit = playaPulsada(lat, lng);
+  if (hit?.playa.vedaOrilla) {
+    return {
+      ...baseMar(),
+      veredicto: "vedado",
+      titulo: `Vedado de orilla · ${hit.playa.nombre}`,
+      color: COLORES.vedado,
+      distanciaKm: hit.km,
+      dentroDelRadio: true,
+      sePuedePescarHoy: false,
+      restriccionesHoy: [
+        hit.playa.normaVeda ?? "Pesca recreativa a pie prohibida en este tramo.",
+        "El cartel del paraje manda.",
+      ],
+      permisos: ["Modalidad: pesca marítima desde tierra, no desde barco."],
+    };
+  }
+
   if (!esFranjaCosteraCastellon(lat, lng)) {
     return {
       ...baseMar(),
@@ -132,7 +152,6 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
     };
   }
 
-  const hit = playaPulsada(lat, lng);
   const playa = hit?.playa ?? null;
   return {
     ...baseMar(),
