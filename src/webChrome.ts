@@ -17,6 +17,9 @@ export function aplicarEstilosWeb() {
     html, body, #root {
       font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
       background: #eef2ee;
+      font-size: 16px;
+      line-height: 1.45;
+      color: #122018;
     }
     * { -webkit-tap-highlight-color: transparent; }
     #root input, #root textarea, #root button {

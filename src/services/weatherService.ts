@@ -115,6 +115,37 @@ export function detectarAlertas(datos: {
   return alertas;
 }
 
+export interface PrevisionHora {
+  fecha: string;
+  hora: string;
+  codigoTiempo: number;
+  temperatura: number;
+  probabilidadLluvia: number | null;
+}
+
+export async function obtenerHorario(lat: number, lng: number, dias: number = 7): Promise<PrevisionHora[]> {
+  try {
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
+      `&hourly=temperature_2m,weathercode,precipitation_probability` +
+      `&timezone=auto&forecast_days=${dias}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
+    const data = await res.json();
+    const h = data.hourly;
+    return h.time.map((iso: string, i: number) => ({
+      fecha: iso.slice(0, 10),
+      hora: iso.slice(11, 16),
+      codigoTiempo: h.weathercode[i],
+      temperatura: h.temperature_2m[i],
+      probabilidadLluvia: h.precipitation_probability?.[i] ?? null,
+    }));
+  } catch (err) {
+    console.warn("Error obteniendo horario:", err);
+    return [];
+  }
+}
+
 export async function obtenerPrevision(lat: number, lng: number, dias: number = 7): Promise<PrevisionDia[]> {
   try {
     const url =

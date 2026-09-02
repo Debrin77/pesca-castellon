@@ -175,9 +175,12 @@ export async function calcularIndicePesca(lat: number, lng: number, dias: number
   }
 }
 
-export const CATEGORIA_INFO: Record<CategoriaPesca, { icono: string; texto: string; color: string }> = {
-  excelente: { icono: "🟢", texto: "Excelente", color: "#2e7d32" },
-  buena: { icono: "🟡", texto: "Buena", color: "#f9a825" },
-  regular: { icono: "🟠", texto: "Regular", color: "#ef6c00" },
-  mala: { icono: "🔴", texto: "Mala", color: "#c62828" },
+export const CATEGORIA_INFO: Record<
+  CategoriaPesca,
+  { icono: string; texto: string; color: string; fondo: string }
+> = {
+  excelente: { icono: "●", texto: "Excelente", color: "#146c2e", fondo: "#d8f0e0" },
+  buena: { icono: "●", texto: "Buena", color: "#7a4e00", fondo: "#f6e7b8" },
+  regular: { icono: "●", texto: "Regular", color: "#9a3412", fondo: "#fde8d4" },
+  mala: { icono: "●", texto: "Mala", color: "#9f1239", fondo: "#fad4d8" },
 };

@@ -135,7 +135,7 @@ export default function HomeScreen({ navigation }: Props) {
               <View style={styles.indexCard}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.indexLabel}>Índice de pesca hoy</Text>
-                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
+                  <Text style={[styles.indexCategoria, { color: catInfo.color, backgroundColor: catInfo.fondo }]}>
                     {catInfo.icono} {catInfo.texto} · {indiceHoy.puntuacion}/100
                   </Text>
                 </View>
