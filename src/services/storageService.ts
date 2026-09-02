@@ -22,8 +22,15 @@ export interface Captura {
   notas?: string;
 }
 
+export interface FavoritoZona {
+  zonaId: string;
+  nombre: string;
+  creadoEn: string;
+}
+
 const CLAVE_PUNTOS = "@pesca_castellon/puntos_guardados";
 const CLAVE_CAPTURAS = "@pesca_castellon/capturas";
+const CLAVE_FAVORITOS = "@pesca_castellon/favoritos_zonas";
 
 function generarId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -75,4 +82,39 @@ export async function guardarCaptura(captura: Omit<Captura, "id">): Promise<Capt
 export async function eliminarCaptura(id: string): Promise<void> {
   const capturas = await obtenerCapturas();
   await AsyncStorage.setItem(CLAVE_CAPTURAS, JSON.stringify(capturas.filter((c) => c.id !== id)));
+}
+
+// --- Favoritos de fichas / zonas ---
+
+export async function obtenerFavoritos(): Promise<FavoritoZona[]> {
+  try {
+    const raw = await AsyncStorage.getItem(CLAVE_FAVORITOS);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.warn("Error leyendo favoritos:", err);
+    return [];
+  }
+}
+
+export async function esFavorito(zonaId: string): Promise<boolean> {
+  const favs = await obtenerFavoritos();
+  return favs.some((f) => f.zonaId === zonaId);
+}
+
+export async function alternarFavorito(zonaId: string, nombre: string): Promise<boolean> {
+  const favs = await obtenerFavoritos();
+  const existe = favs.find((f) => f.zonaId === zonaId);
+  let siguiente: FavoritoZona[];
+  if (existe) {
+    siguiente = favs.filter((f) => f.zonaId !== zonaId);
+  } else {
+    siguiente = [{ zonaId, nombre, creadoEn: new Date().toISOString() }, ...favs];
+  }
+  await AsyncStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(siguiente));
+  return !existe;
+}
+
+export async function eliminarFavorito(zonaId: string): Promise<void> {
+  const favs = await obtenerFavoritos();
+  await AsyncStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favs.filter((f) => f.zonaId !== zonaId)));
 }

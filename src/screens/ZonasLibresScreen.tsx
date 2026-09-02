@@ -22,6 +22,7 @@ import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
+import { buscarZonas, CUENCAS, SugerenciaBusqueda } from "../services/busquedaService";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -50,6 +51,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [modo, setModo] = useState<"continental" | "costa">("continental");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [fichaAbierta, setFichaAbierta] = useState(false);
+  const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
   const mar = modo === "costa";
 
   useLayoutEffect(() => {
@@ -99,13 +101,34 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [tramos, capas]);
 
   const sugerencias = useMemo(() => {
-    if (!busqueda.trim()) return [];
-    const q = busqueda.toLowerCase();
-    if (modo === "costa") {
-      return playas.filter((p) => p.nombre.toLowerCase().includes(q)).slice(0, 8);
+    if (!busqueda.trim() && !cuencaFiltro) return [];
+    return buscarZonas(busqueda, {
+      modo,
+      cuenca: modo === "continental" ? cuencaFiltro : null,
+      limite: 10,
+    });
+  }, [busqueda, modo, cuencaFiltro]);
+
+  function aplicarSugerencia(s: SugerenciaBusqueda) {
+    setBusqueda(s.titulo);
+    if (s.tipo === "playa" && s.playaId) {
+      evaluarPlaya(s.playaId);
+      return;
     }
-    return tramos.filter((z) => z.nombre.toLowerCase().includes(q) || z.rio.toLowerCase().includes(q)).slice(0, 6);
-  }, [busqueda, tramos, playas, modo]);
+    if (s.tramoId) {
+      const z = tramos.find((t) => t.id === s.tramoId);
+      if (z) {
+        evaluarTramo(z);
+        return;
+      }
+    }
+    if (s.fichaId) {
+      navigation.navigate("ZoneDetail", { zoneId: s.fichaId });
+      setBusqueda("");
+      return;
+    }
+    if (s.lat != null && s.lng != null) evaluarPunto(s.lat, s.lng);
+  }
 
   function mostrarFicha(c: ConsultaPesca) {
     setConsulta(c);
@@ -172,28 +195,43 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           style={styles.searchInput}
           placeholder={
             modo === "costa"
-              ? "Busca playa (Benicàssim, Grao, Nules, Alcossebre...)"
-              : "Busca un tramo (Arenós, Palancia, Teresa, Sitjar...)"
+              ? "Busca playa o municipio (Benicàssim, Grao, Nules…)"
+              : "Busca tramo, municipio o cuenca (Onda, Palancia, Teresa…)"
           }
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}
         />
+        {!mar && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cuencaRow}>
+            <TouchableOpacity
+              style={[styles.cuencaChip, !cuencaFiltro && styles.cuencaChipOn]}
+              onPress={() => setCuencaFiltro(null)}
+            >
+              <Text style={[styles.cuencaTxt, !cuencaFiltro && styles.cuencaTxtOn]}>Todas</Text>
+            </TouchableOpacity>
+            {CUENCAS.filter((c) => c !== "Otras").map((c) => (
+              <TouchableOpacity
+                key={c}
+                style={[styles.cuencaChip, cuencaFiltro === c && styles.cuencaChipOn]}
+                onPress={() => setCuencaFiltro(cuencaFiltro === c ? null : c)}
+              >
+                <Text style={[styles.cuencaTxt, cuencaFiltro === c && styles.cuencaTxtOn]}>{c}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
         {sugerencias.length > 0 && (
           <View style={styles.suggestionsBox}>
-            {sugerencias.map((z: any, i) => (
-              <ListaAnimada key={z.id} index={i} replayKey={busqueda}>
-              <TouchableOpacity
-                style={styles.suggestionRow}
-                onPress={() => {
-                  setBusqueda(z.nombre);
-                  if (modo === "costa") evaluarPlaya(z.id);
-                  else evaluarTramo(z);
-                }}
-              >
-                <Text style={styles.suggestionText}>{z.nombre}</Text>
-                <Text style={styles.suggestionMeta}>{z.aprovechamiento ?? "playa"}</Text>
-              </TouchableOpacity>
+            {sugerencias.map((z, i) => (
+              <ListaAnimada key={z.id} index={i} replayKey={`${busqueda}-${cuencaFiltro}`}>
+                <TouchableOpacity style={styles.suggestionRow} onPress={() => aplicarSugerencia(z)}>
+                  <View style={{ flex: 1, paddingRight: 8 }}>
+                    <Text style={styles.suggestionText}>{z.titulo}</Text>
+                    <Text style={styles.suggestionSub}>{z.meta}</Text>
+                  </View>
+                  <Text style={styles.suggestionMeta}>{z.tipo}</Text>
+                </TouchableOpacity>
               </ListaAnimada>
             ))}
           </View>
@@ -440,8 +478,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  suggestionText: { fontSize: 13, color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
-  suggestionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "700" },
+  suggestionText: { fontSize: 13, color: COLORS.textPrimary, fontWeight: "600" },
+  suggestionSub: { fontSize: 11, color: COLORS.textMuted, marginTop: 2 },
+  suggestionMeta: { fontSize: 10, color: COLORS.textMuted, fontWeight: "700", textTransform: "uppercase" },
+  cuencaRow: { paddingTop: 8, paddingBottom: 2, gap: 6 },
+  cuencaChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginRight: 6,
+  },
+  cuencaChipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textSecondary },
+  cuencaTxtOn: { color: "#fff" },
   modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
   modoBarMar: { backgroundColor: COLORS.waterLight },
   modoBtn: {

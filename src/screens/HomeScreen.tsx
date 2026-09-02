@@ -1,19 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useScrollToTop } from "@react-navigation/native";
+import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
+import { getResumenEmbalsesCastellon } from "../services/saihService";
+import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
+import TemporadaBanner from "../components/TemporadaBanner";
 import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo } from "../services/consultaPescaService";
 import { COLORS, PIN, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 import LeyendaMapa from "../components/LeyendaMapa";
+
+const EMBALSES_PANEL = [
+  { nombre: "EMBALSE DE ARENÓS", fichaId: 266, etiqueta: "Arenós", zoneId: "embalse_arenos" },
+  { nombre: "EMBALSE DE SICHAR", fichaId: 247, etiqueta: "Sichar", zoneId: "embalse_sichar" },
+  { nombre: "EMBALSE DE MARÍA CRISTINA", fichaId: 248, etiqueta: "M. Cristina", zoneId: "embalse_maria_cristina" },
+  { nombre: "EMBALSE DE REGAJO", fichaId: 221, etiqueta: "Regajo", zoneId: "rio_palancia_regajo" },
+  { nombre: "EMBALSE DE ULLDECONA", fichaId: 243, etiqueta: "Ulldecona", zoneId: "embalse_ulldecona" },
+];
 
 interface Props {
   navigation: any;
@@ -46,6 +57,32 @@ export default function HomeScreen({ navigation }: Props) {
   const [permisoDenegado, setPermisoDenegado] = useState(false);
   const [localizando, setLocalizando] = useState(false);
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
+  const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
+  const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
+  const [saihPanel, setSaihPanel] = useState<{ etiqueta: string; zoneId: string; pct: number | null; fuente: string }[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      obtenerFavoritos().then(setFavoritos);
+      obtenerPuntosGuardados().then(setPuntos);
+    }, [])
+  );
+
+  useEffect(() => {
+    getResumenEmbalsesCastellon(EMBALSES_PANEL).then((rows) => {
+      setSaihPanel(
+        rows.map((r) => {
+          const meta = EMBALSES_PANEL.find((e) => e.nombre === r.nombre) ?? EMBALSES_PANEL.find((e) => e.etiqueta === r.etiqueta)!;
+          return {
+            etiqueta: r.etiqueta,
+            zoneId: meta.zoneId,
+            pct: r.estacion.porcentajeLleno,
+            fuente: r.estacion.fuente,
+          };
+        })
+      );
+    });
+  }, []);
 
   async function cargar() {
     setCargando(true);
@@ -163,16 +200,91 @@ export default function HomeScreen({ navigation }: Props) {
       </LinearGradient>
 
       <View style={styles.body}>
+        <TemporadaBanner />
         <LicenseBanner onPress={() => navigation.navigate("License")} />
+
+        {saihPanel.length > 0 && (
+          <View style={{ marginBottom: 12 }}>
+            <View style={styles.sectionRow}>
+              <Text style={styles.sectionTitle}>Embalses SAIH</Text>
+              <Text style={styles.sectionMeta}>
+                {saihPanel.some((s) => s.fuente === "saih_chj") ? "en vivo" : "ejemplo / reintentar"}
+              </Text>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+              {saihPanel.map((s) => (
+                <TouchableOpacity
+                  key={s.zoneId}
+                  style={styles.saihChip}
+                  onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
+                >
+                  <Text style={styles.saihName}>{s.etiqueta}</Text>
+                  <Text style={styles.saihPct}>{s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {(favoritos.length > 0 || puntos.length > 0) && (
+          <View style={{ marginBottom: 8 }}>
+            <View style={styles.sectionRow}>
+              <Text style={styles.sectionTitle}>Tus favoritos</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Capturas")}>
+                <Text style={styles.linkMini}>Ver todo</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 4 }}>
+              {favoritos.map((f) => (
+                <TouchableOpacity
+                  key={f.zonaId}
+                  style={styles.favChip}
+                  onPress={() => navigation.navigate("ZoneDetail", { zoneId: f.zonaId })}
+                >
+                  <Text style={styles.favChipStar}>★</Text>
+                  <Text style={styles.favChipTxt} numberOfLines={2}>
+                    {f.nombre}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+              {puntos.slice(0, 6).map((p) => (
+                <TouchableOpacity
+                  key={p.id}
+                  style={styles.puntoChip}
+                  onPress={() =>
+                    navigation.navigate("Mapa", {
+                      screen: "ZonasLibresMain",
+                    })
+                  }
+                >
+                  <Text style={styles.favChipStar}>●</Text>
+                  <Text style={styles.favChipTxt} numberOfLines={2}>
+                    {p.nombre}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.myCatchesButton} onPress={() => navigation.navigate("Capturas")}>
           <View style={styles.myCatchesGlyph}>
-            <Text style={styles.myCatchesIcon}>●</Text>
+            <Text style={styles.myCatchesIcon}>★</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.myCatchesTitle}>Mis puntos y capturas</Text>
-            <Text style={styles.myCatchesSubtitle}>Sitios guardados y registro de lo que pescas</Text>
+            <Text style={styles.myCatchesTitle}>Favoritos, puntos y capturas</Text>
+            <Text style={styles.myCatchesSubtitle}>
+              {favoritos.length} zonas · {puntos.length} puntos · toca para gestionar
+            </Text>
           </View>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.consejosButton}
+          onPress={() => navigation.navigate("Consejos")}
+        >
+          <Text style={styles.consejosTitle}>Consejos · nudos, anzuelos y vocabulario</Text>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
 
@@ -304,10 +416,55 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 12,
   },
-  myCatchesIcon: { fontSize: 10, color: COLORS.primary, fontWeight: "800" },
+  myCatchesIcon: { fontSize: 16, color: COLORS.gold, fontWeight: "800" },
   myCatchesTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   myCatchesSubtitle: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 2 },
   chevron: { fontSize: 22, color: COLORS.textMuted },
+  consejosButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    marginTop: 8,
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: "#b7d4de",
+  },
+  consejosTitle: { flex: 1, fontSize: 13, fontWeight: "700", color: COLORS.waterDark },
+  linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
+  saihChip: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    minWidth: 88,
+    ...SHADOW_SOFT,
+  },
+  saihName: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
+  saihPct: { fontSize: 18, fontWeight: "800", color: COLORS.waterDark, marginTop: 2 },
+  favChip: {
+    width: 130,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#e8d9a8",
+    ...SHADOW_SOFT,
+  },
+  puntoChip: {
+    width: 130,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW_SOFT,
+  },
+  favChipStar: { color: COLORS.gold, fontWeight: "800", marginBottom: 4 },
+  favChipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 16 },
   sectionRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginTop: SPACING.lg, marginBottom: SPACING.sm },
   sectionTitle: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary },
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },

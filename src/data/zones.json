@@ -32,7 +32,8 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE ARENÓS",
-    "saihFichaId": 266
+    "saihFichaId": 266,
+    "cuenca": "Mijares"
   },
   {
     "id": "embalse_sichar",
@@ -73,7 +74,8 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE SICHAR",
-    "saihFichaId": 247
+    "saihFichaId": 247,
+    "cuenca": "Mijares"
   },
   {
     "id": "embalse_maria_cristina",
@@ -114,7 +116,8 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE MARÍA CRISTINA",
-    "saihFichaId": 248
+    "saihFichaId": 248,
+    "cuenca": "Mijares"
   },
   {
     "id": "rio_villahermosa_alto",
@@ -138,7 +141,8 @@
         "junio"
       ]
     },
-    "saihEstacion": null
+    "saihEstacion": null,
+    "cuenca": "Mijares"
   },
   {
     "id": "rio_palancia_regajo",
@@ -171,7 +175,8 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE REGAJO",
-    "saihFichaId": 221
+    "saihFichaId": 221,
+    "cuenca": "Palancia"
   },
   {
     "id": "rio_mijares_puebla_arenoso_libre",
@@ -195,7 +200,8 @@
         "junio"
       ]
     },
-    "saihEstacion": null
+    "saihEstacion": null,
+    "cuenca": "Mijares"
   },
   {
     "id": "rio_palancia_teresa_libre",
@@ -219,7 +225,8 @@
         "mayo"
       ]
     },
-    "saihEstacion": null
+    "saihEstacion": null,
+    "cuenca": "Palancia"
   },
   {
     "id": "rio_palancia_teresa_bejis_libre",
@@ -243,7 +250,8 @@
         "mayo"
       ]
     },
-    "saihEstacion": null
+    "saihEstacion": null,
+    "cuenca": "Palancia"
   },
   {
     "id": "embalse_regajo_libre",
@@ -275,7 +283,8 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE REGAJO",
-    "saihFichaId": 221
+    "saihFichaId": 221,
+    "cuenca": "Palancia"
   },
   {
     "id": "embalse_ulldecona",
@@ -307,6 +316,7 @@
     },
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE ULLDECONA",
-    "saihFichaId": 243
+    "saihFichaId": 243,
+    "cuenca": "Otras"
   }
 ]

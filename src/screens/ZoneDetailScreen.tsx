@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Linking } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import zones from "../data/zones.json";
 import speciesCatalog from "../data/species.json";
-import { estaEnVeda } from "../services/vedaService";
+import { estaEnVeda, notaVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
+import { alternarFavorito, esFavorito } from "../services/storageService";
+import { CHECKLIST_ANTES_DE_PESCAR, FUENTE_NORMATIVA, TALLAS_OFICIALES } from "../data/normativa2026";
 import LicenseBanner from "../components/LicenseBanner";
 import SitiosOrientativos from "../components/SitiosOrientativos";
 import TarjetaEspecie from "../components/TarjetaEspecie";
+import TemporadaBanner from "../components/TemporadaBanner";
 import { sitiosDeFicha } from "../services/sitiosComunidad";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
@@ -26,9 +30,11 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
   const zone: any = (zones as any[]).find((z: any) => z.id === zoneId);
   const [hidro, setHidro] = useState<EstacionHidrologica | null>(null);
   const [cargando, setCargando] = useState(true);
+  const [favorito, setFavorito] = useState(false);
 
   useEffect(() => {
     let activo = true;
+    setCargando(true);
     getEstadoHidrologico(zone?.saihNombre ?? null, zone?.saihFichaId).then((data) => {
       if (activo) {
         setHidro(data);
@@ -38,7 +44,13 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
     return () => {
       activo = false;
     };
-  }, [zoneId]);
+  }, [zoneId, zone?.saihNombre, zone?.saihFichaId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      esFavorito(zoneId).then(setFavorito);
+    }, [zoneId])
+  );
 
   if (!zone) {
     return (
@@ -50,11 +62,26 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 
   const mesActual = MESES[new Date().getMonth()];
 
+  async function toggleFav() {
+    const ahora = await alternarFavorito(zone.id, zone.nombre);
+    setFavorito(ahora);
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
       <LinearGradient colors={GRADIENTS.primary} style={styles.headerCard}>
-        <Text style={styles.title}>{zone.nombre}</Text>
-        <Text style={styles.subtitle}>{zone.rio} · {zone.municipio}</Text>
+        <View style={styles.headerTop}>
+          <View style={{ flex: 1, paddingRight: 10 }}>
+            <Text style={styles.title}>{zone.nombre}</Text>
+            <Text style={styles.subtitle}>
+              {zone.rio} · {zone.municipio}
+              {zone.cuenca ? ` · cuenca ${zone.cuenca}` : ""}
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.favBtn} onPress={toggleFav} accessibilityLabel="Favorito">
+            <Text style={styles.favIcon}>{favorito ? "★" : "☆"}</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.badgeRow}>
           <Text style={styles.badgeVocacion}>{zone.vocacionOficial}</Text>
           <Text style={styles.badgeEstado}>Zona {zone.estadoZona}</Text>
@@ -62,6 +89,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         <Text style={styles.desc}>{zone.descripcion}</Text>
       </LinearGradient>
 
+      <TemporadaBanner compact />
       <LicenseBanner onPress={() => navigation.navigate("License")} />
 
       {sitiosDeFicha(zone.id).map((bloque) => (
@@ -73,19 +101,38 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
       ))}
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>💧 Estado del embalse (SAIH)</Text>
+        <Text style={styles.cardTitle}>Estado del embalse (SAIH Júcar)</Text>
         {cargando ? (
           <ActivityIndicator color={COLORS.water} />
         ) : hidro ? (
           <View>
             {hidro.porcentajeLleno !== null && (
-              <Text style={styles.cardText}>Volumen: {hidro.porcentajeLleno.toFixed(1)}% de su capacidad</Text>
+              <View style={styles.gaugeWrap}>
+                <View style={styles.gaugeTrack}>
+                  <View
+                    style={[
+                      styles.gaugeFill,
+                      {
+                        width: `${Math.max(0, Math.min(100, hidro.porcentajeLleno))}%`,
+                        backgroundColor:
+                          hidro.porcentajeLleno < 25
+                            ? COLORS.danger
+                            : hidro.porcentajeLleno < 50
+                              ? COLORS.warning
+                              : COLORS.water,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.gaugeLabel}>{hidro.porcentajeLleno.toFixed(1)}% de capacidad</Text>
+              </View>
             )}
             {hidro.volumenEmbalsadoHm3 !== null && hidro.volumenMaximoHm3 !== null && (
               <Text style={styles.cardText}>
-                {hidro.volumenEmbalsadoHm3.toFixed(2)} hm³ de {hidro.volumenMaximoHm3.toFixed(2)} hm³
+                {hidro.volumenEmbalsadoHm3.toFixed(2)} hm³ de {hidro.volumenMaximoHm3.toFixed(2)} hm³ (NMN)
               </Text>
             )}
+            {hidro.cotaM !== null && <Text style={styles.cardText}>Cota: {hidro.cotaM.toFixed(2)} m</Text>}
             {hidro.caudalRecibido !== null && (
               <Text style={styles.cardText}>Caudal recibido: {hidro.caudalRecibido} m³/s</Text>
             )}
@@ -95,8 +142,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             {hidro.fechaDato && <Text style={styles.cardNote}>Dato del {hidro.fechaDato}</Text>}
             <Text style={styles.cardNote}>
               {hidro.fuente === "simulado"
-                ? "⚠️ No se pudo consultar el SAIH ahora mismo (puede ser por CORS en la versión web) — dato de ejemplo."
-                : "Fuente: SAIH Confederación Hidrográfica del Júcar"}
+                ? "No se pudo consultar el SAIH ahora mismo — dato de ejemplo. En web puede fallar por CORS; reintenta o abre la ficha oficial."
+                : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
             </Text>
             {hidro.urlFicha && (
               <Text style={styles.linkText} onPress={() => Linking.openURL(hidro.urlFicha!)}>
@@ -105,8 +152,18 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             )}
           </View>
         ) : (
-          <Text style={styles.cardText}>Sin estación hidrológica asociada a esta zona.</Text>
+          <Text style={styles.cardText}>Sin estación hidrológica asociada a esta zona (tramo de río sin embalse SAIH).</Text>
         )}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Antes de pescar aquí</Text>
+        {CHECKLIST_ANTES_DE_PESCAR.map((r, i) => (
+          <Text key={i} style={styles.bullet}>
+            • {r}
+          </Text>
+        ))}
+        <Text style={styles.cardNote}>{FUENTE_NORMATIVA.titulo}</Text>
       </View>
 
       <Text style={styles.sectionTitle}>Especies presentes</Text>
@@ -116,6 +173,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         const enVeda = estaEnVeda(especieId);
         const mejoresMeses: string[] = zone.mejoresEpocas?.[especieId] ?? [];
         const esBuenMes = mejoresMeses.includes(mesActual);
+        const talla = TALLAS_OFICIALES[especieId];
+        const nota = notaVeda(especieId);
 
         return (
           <TarjetaEspecie
@@ -125,6 +184,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             enVeda={enVeda}
             extra={
               <>
+                {talla && <Text style={styles.cardText}>Talla / régimen: {talla}</Text>}
+                {nota && <Text style={styles.cardNote}>{nota}</Text>}
                 {mejoresMeses.length > 0 && (
                   <Text style={styles.cardText}>
                     Mejores meses: {mejoresMeses.join(", ")}{" "}
@@ -161,6 +222,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...SHADOW,
   },
+  headerTop: { flexDirection: "row", alignItems: "flex-start" },
+  favBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  favIcon: { color: "#ffe08a", fontSize: 22, fontWeight: "700" },
   title: { fontSize: 21, fontWeight: "800", color: "#fff" },
   subtitle: { fontSize: 13.5, color: "#dfeee5", marginTop: 2, marginBottom: 10 },
   badgeRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
@@ -195,21 +266,22 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     ...SHADOW,
   },
-  cardInvasora: { borderColor: COLORS.warning, backgroundColor: "#fffaf3" },
-  cardTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary },
+  cardTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary, marginBottom: 6 },
   cardText: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2 },
-  cardNote: { fontSize: 11, color: COLORS.textMuted, marginTop: 2, fontStyle: "italic" },
+  cardNote: { fontSize: 11, color: COLORS.textMuted, marginTop: 4, fontStyle: "italic", lineHeight: 15 },
   linkText: { fontSize: 12.5, color: COLORS.water, fontWeight: "600", marginTop: 8 },
-  avisoLegalBox: {
-    marginTop: 10,
-    backgroundColor: COLORS.dangerLight,
-    borderRadius: RADIUS.sm,
-    padding: 10,
+  bullet: { fontSize: 12.5, color: COLORS.textSecondary, marginBottom: 4, lineHeight: 17 },
+  gaugeWrap: { marginBottom: 8, marginTop: 4 },
+  gaugeTrack: {
+    height: 10,
+    borderRadius: 6,
+    backgroundColor: COLORS.background,
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: COLORS.danger,
+    borderColor: COLORS.border,
   },
-  avisoLegalText: { fontSize: 12, color: "#7a1414", lineHeight: 17, fontWeight: "600" },
-  badgeInvasora: { fontSize: 11, color: COLORS.warning, fontWeight: "bold" },
+  gaugeFill: { height: "100%", borderRadius: 6 },
+  gaugeLabel: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary, marginTop: 6 },
   equipoBox: {
     marginTop: 10,
     backgroundColor: COLORS.waterLight,
