@@ -42,6 +42,35 @@ function etiquetaCorta(iso: string, index: number): { top: string; num: string }
   return { top: DIAS_CORTOS[d.getDay()], num: String(d.getDate()) };
 }
 
+/** Etiqueta corta para que quepa a 16 px bajo el icono del día. */
+function climaCorto(texto: string): string {
+  const mapa: Record<string, string> = {
+    "Cielo despejado": "Despejado",
+    "Mayormente despejado": "Poco nublado",
+    "Parcialmente nublado": "Intervalos",
+    "Nublado": "Nublado",
+    "Niebla": "Niebla",
+    "Niebla helada": "Niebla",
+    "Llovizna ligera": "Llovizna",
+    "Llovizna": "Llovizna",
+    "Llovizna intensa": "Llovizna",
+    "Lluvia ligera": "Lluvia",
+    "Lluvia": "Lluvia",
+    "Lluvia intensa": "Lluvia",
+    "Nieve ligera": "Nieve",
+    "Nieve": "Nieve",
+    "Nieve intensa": "Nieve",
+    "Chubascos ligeros": "Chubascos",
+    "Chubascos": "Chubascos",
+    "Chubascos fuertes": "Chubascos",
+    "Tormenta": "Tormenta",
+    "Tormenta con granizo": "Granizo",
+    "Tormenta fuerte con granizo": "Granizo",
+    "Sin datos": "Sin datos",
+  };
+  return mapa[texto] ?? texto;
+}
+
 export default function PrevisionScreen() {
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
@@ -167,9 +196,15 @@ export default function PrevisionScreen() {
                 >
                   <Text style={[styles.dayChipTop, activo && styles.dayChipTopOn]}>{lab.top}</Text>
                   <Text style={[styles.dayChipNum, activo && styles.dayChipNumOn]}>{lab.num}</Text>
-                  <IconoMeteo codigo={d.codigoTiempo} size={36} etiqueta={t.texto} sobreOscuro={activo} />
+                  <IconoMeteo codigo={d.codigoTiempo} size={40} etiqueta={t.texto} sobreOscuro={activo} />
                   <Text style={[styles.dayChipTemp, activo && styles.dayChipTempOn]}>
                     {Math.round(d.tempMax)}°
+                  </Text>
+                  <Text
+                    style={[styles.dayChipCond, activo && styles.dayChipCondOn]}
+                    numberOfLines={2}
+                  >
+                    {climaCorto(t.texto)}
                   </Text>
                   {iDia ? (
                     <View
@@ -271,10 +306,10 @@ export default function PrevisionScreen() {
                   return (
                     <View key={`${h.fecha}-${h.hora}`} style={styles.hourCard}>
                       <Text style={styles.hourTime}>{h.hora}</Text>
-                      <IconoMeteo codigo={h.codigoTiempo} size={40} etiqueta={th.texto} />
+                      <IconoMeteo codigo={h.codigoTiempo} size={44} etiqueta={th.texto} />
                       <Text style={styles.hourTemp}>{Math.round(h.temperatura)}°</Text>
-                      <Text style={styles.hourRain}>
-                        {h.probabilidadLluvia !== null ? `${h.probabilidadLluvia}% lluvia` : th.texto}
+                      <Text style={styles.hourRain} numberOfLines={2}>
+                        {h.probabilidadLluvia !== null ? `${h.probabilidadLluvia}% lluvia` : climaCorto(th.texto)}
                       </Text>
                     </View>
                   );
@@ -308,7 +343,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: SPACING.lg, paddingBottom: 120 },
   kicker: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "800",
     letterSpacing: 1.2,
     color: COLORS.waterDark,
@@ -339,12 +374,12 @@ const styles = StyleSheet.create({
   retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "800" },
   strip: { gap: 10, paddingBottom: 8 },
   dayChip: {
-    width: 76,
-    minHeight: 132,
+    width: 102,
+    minHeight: 178,
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
-    paddingVertical: 10,
-    paddingHorizontal: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     alignItems: "center",
     borderWidth: 2,
     borderColor: COLORS.border,
@@ -353,12 +388,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryDark,
     borderColor: COLORS.primaryDark,
   },
-  dayChipTop: { fontSize: 13, fontWeight: "800", color: COLORS.textSecondary, letterSpacing: 0.4 },
+  dayChipTop: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary, letterSpacing: 0.3 },
   dayChipTopOn: { color: "#ffffff" },
-  dayChipNum: { fontSize: 20, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 2 },
+  dayChipNum: { fontSize: 22, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 2 },
   dayChipNumOn: { color: "#ffffff" },
-  dayChipTemp: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary, marginTop: 2 },
+  dayChipTemp: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, marginTop: 4 },
   dayChipTempOn: { color: "#ffffff" },
+  dayChipCond: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: COLORS.textPrimary,
+    textAlign: "center",
+    marginTop: 4,
+    lineHeight: 20,
+    minHeight: 40,
+  },
+  dayChipCondOn: { color: "#ffffff" },
   dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6 },
   dotOn: { borderWidth: 2, borderColor: "#ffffff" },
   hero: {
@@ -373,8 +418,8 @@ const styles = StyleSheet.create({
   heroDate: { fontSize: 16, fontWeight: "700", color: COLORS.textSecondary, textTransform: "capitalize" },
   heroRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 8 },
   heroTemp: { fontSize: 52, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 58 },
-  heroRange: { fontSize: 16, color: COLORS.textSecondary, marginTop: 2 },
-  heroCond: { fontSize: 18, fontWeight: "700", color: COLORS.waterDark, marginTop: 6 },
+  heroRange: { fontSize: 18, color: COLORS.textSecondary, marginTop: 4, lineHeight: 26 },
+  heroCond: { fontSize: 20, fontWeight: "700", color: COLORS.waterDark, marginTop: 8, lineHeight: 28 },
   indexCard: {
     marginTop: 14,
     borderRadius: RADIUS.lg,
@@ -383,8 +428,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   indexHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  indexLabel: { fontSize: 14, fontWeight: "800", letterSpacing: 0.4, textTransform: "uppercase" },
-  indexScore: { fontSize: 16, fontWeight: "800" },
+  indexLabel: { fontSize: 16, fontWeight: "800", letterSpacing: 0.3, textTransform: "uppercase" },
+  indexScore: { fontSize: 18, fontWeight: "800" },
   indexCat: { fontSize: 22, fontWeight: "800", marginTop: 4 },
   meterTrack: {
     height: 12,
@@ -394,7 +439,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   meterFill: { height: "100%", borderRadius: 6 },
-  indexHint: { fontSize: 14, color: COLORS.textSecondary, marginTop: 10, lineHeight: 20 },
+  indexHint: { fontSize: 16, color: COLORS.textSecondary, marginTop: 10, lineHeight: 24 },
   metrics: { flexDirection: "row", gap: 10, marginTop: 14 },
   metric: {
     flex: 1,
@@ -406,10 +451,10 @@ const styles = StyleSheet.create({
     minHeight: 108,
     ...SHADOW_SOFT,
   },
-  metricLabel: { fontSize: 14, fontWeight: "800", color: COLORS.textSecondary, textTransform: "uppercase" },
-  metricValue: { fontSize: 22, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8 },
-  metricValueSmall: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8, lineHeight: 20 },
-  metricHelp: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, lineHeight: 18 },
+  metricLabel: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary, textTransform: "uppercase" },
+  metricValue: { fontSize: 24, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8 },
+  metricValueSmall: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8, lineHeight: 22 },
+  metricHelp: { fontSize: 16, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
   alertsBlock: { marginTop: 18 },
   sectionTitle: { fontSize: 20, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 10, marginTop: 8 },
   alert: { borderRadius: RADIUS.md, padding: 14, marginBottom: 8, borderWidth: 2 },
@@ -419,21 +464,21 @@ const styles = StyleSheet.create({
   alertDangerText: { fontSize: 16, fontWeight: "700", color: "#7a1414", lineHeight: 24 },
   hours: { gap: 10, paddingBottom: 4 },
   hourCard: {
-    width: 92,
+    width: 118,
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
-    padding: 10,
+    padding: 12,
     alignItems: "center",
     borderWidth: 1,
     borderColor: COLORS.border,
-    minHeight: 148,
+    minHeight: 176,
   },
-  hourTime: { fontSize: 14, fontWeight: "800", color: COLORS.textSecondary },
-  hourTemp: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, marginTop: 4 },
-  hourRain: { fontSize: 14, color: COLORS.textSecondary, textAlign: "center", marginTop: 4, lineHeight: 18 },
+  hourTime: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary },
+  hourTemp: { fontSize: 22, fontWeight: "800", color: COLORS.textPrimary, marginTop: 6 },
+  hourRain: { fontSize: 16, fontWeight: "600", color: COLORS.textPrimary, textAlign: "center", marginTop: 6, lineHeight: 22 },
   why: { marginTop: 18 },
   whyRow: { flexDirection: "row", gap: 12, marginBottom: 12, alignItems: "flex-start" },
   whyMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: COLORS.waterDark, marginTop: 8 },
-  whyText: { flex: 1, fontSize: 16, color: COLORS.textPrimary, lineHeight: 24 },
-  fuente: { fontSize: 14, color: COLORS.textSecondary, marginTop: 20, lineHeight: 20 },
+  whyText: { flex: 1, fontSize: 18, color: COLORS.textPrimary, lineHeight: 26 },
+  fuente: { fontSize: 16, color: COLORS.textSecondary, marginTop: 20, lineHeight: 24 },
 });
