@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, paddingTop: 64, paddingBottom: 28 },
   brand: {
     textAlign: "center",
-    color: "#cfe8db",
+    color: "#e8f5ee",
     fontWeight: "800",
     letterSpacing: 1,
     textTransform: "uppercase",
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   texto: {
-    color: "#d5ebe0",
+    color: "#eef7f1",
     fontSize: 16,
     lineHeight: 24,
     textAlign: "center",
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(255,255,255,0.35)",
+    backgroundColor: "rgba(255,255,255,0.45)",
   },
   dotOn: { backgroundColor: "#fff", width: 22 },
   cta: {
@@ -151,5 +151,5 @@ const styles = StyleSheet.create({
   },
   ctaTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 16 },
   skip: { alignItems: "center", marginTop: 12, height: 36, justifyContent: "center" },
-  skipTxt: { color: "#cfe8db", fontWeight: "700" },
+  skipTxt: { color: "#e8f5ee", fontWeight: "700" },
 });

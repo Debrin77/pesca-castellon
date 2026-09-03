@@ -150,7 +150,7 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
                 numberOfLines={1}
                 style={[
                   styles.label,
-                  { color: focused ? color : COLORS.textSecondary },
+                  { color: focused ? color : COLORS.textPrimary },
                   focused && styles.labelOn,
                 ]}
               >
@@ -190,13 +190,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     zIndex: 50,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.55)",
+    borderColor: "rgba(255,255,255,0.7)",
     ...(Platform.OS === "web"
       ? ({
-          backgroundColor: "rgba(255,255,255,0.42)",
-          backdropFilter: "blur(22px) saturate(180%)",
-          WebkitBackdropFilter: "blur(22px) saturate(180%)",
-          boxShadow: "0 12px 40px rgba(12,44,32,0.18), inset 0 1px 0 rgba(255,255,255,0.75)",
+          /* Más opaco: el mapa detrás no roba contraste al texto de las pestañas. */
+          backgroundColor: "rgba(247,250,247,0.88)",
+          backdropFilter: "blur(22px) saturate(160%)",
+          WebkitBackdropFilter: "blur(22px) saturate(160%)",
+          boxShadow: "0 12px 40px rgba(12,44,32,0.18), inset 0 1px 0 rgba(255,255,255,0.85)",
         } as any)
       : {
           backgroundColor: "transparent",
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
   },
   glassTint: {
-    backgroundColor: "rgba(255,255,255,0.28)",
+    backgroundColor: "rgba(247,250,247,0.72)",
   },
   topRow: {
     flexDirection: "row",
@@ -225,20 +226,20 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontSize: 11,
-    color: COLORS.textMuted,
+    color: COLORS.textPrimary,
     fontWeight: "700",
   },
   arrow: {
     width: 32,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "rgba(255,255,255,0.55)",
+    backgroundColor: "rgba(255,255,255,0.85)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.8)",
+    borderColor: "rgba(255,255,255,0.95)",
     alignItems: "center",
     justifyContent: "center",
   },
-  arrowOff: { opacity: 0.35 },
+  arrowOff: { opacity: 0.45 },
   arrowSpacer: { width: 32 },
   arrowTxt: { fontSize: 22, fontWeight: "800", color: COLORS.primaryDark, lineHeight: 24 },
   scroll: { maxHeight: 96 },
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   itemOn: {
-    backgroundColor: "rgba(255,255,255,0.38)",
+    backgroundColor: "rgba(255,255,255,0.72)",
   },
   label: {
     marginTop: 5,

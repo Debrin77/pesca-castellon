@@ -7,13 +7,16 @@ export type NombreIcono =
   | "bookmark"
   | "book";
 
-/** Color propio de cada pestaña (se ve a todo color). */
+/**
+ * Color propio de cada pestaña (etiqueta + tint del orbe).
+ * Valores oscurecidos para ≥4.5:1 sobre el vidrio claro de la barra.
+ */
 export const COLOR_TAB: Record<NombreIcono, string> = {
   home: "#164a36",
   water: "#1a6f8a",
-  fish: "#2f7d4a",
-  construct: "#c45c12",
-  book: "#6b4c9a",
-  "partly-sunny": "#d4a017",
+  fish: "#246b3d",
+  construct: "#9a4a0a",
+  book: "#5a3d82",
+  "partly-sunny": "#7a5c0d",
   bookmark: "#b42318",
 };

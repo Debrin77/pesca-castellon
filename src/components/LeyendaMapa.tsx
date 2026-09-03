@@ -34,5 +34,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", flexWrap: "wrap", gap: 14, justifyContent: "center", marginTop: 8 },
   item: { flexDirection: "row", alignItems: "center", gap: 6 },
   dot: { width: 10, height: 10, borderRadius: 5 },
-  txt: { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
+  txt: { fontSize: 12, color: COLORS.textPrimary, fontWeight: "700" },
 });

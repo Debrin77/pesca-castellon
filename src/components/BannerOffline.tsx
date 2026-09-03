@@ -21,5 +21,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 10,
   },
-  txt: { color: COLORS.warning, fontSize: 12, fontWeight: "700", lineHeight: 16 },
+  txt: { color: "#7a3b08", fontSize: 12, fontWeight: "700", lineHeight: 16 },
 });

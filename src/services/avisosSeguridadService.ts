@@ -251,8 +251,9 @@ export async function obtenerAvisosSeguridadPesca(): Promise<AvisoSeguridad[]> {
 
 export function colorSeveridad(s: SeveridadAviso): string {
   if (s === "rojo") return "#b42318";
-  if (s === "naranja") return "#c45c12";
-  return "#c4921a";
+  if (s === "naranja") return "#9a4a0a";
+  /** Ámbar oscuro: blanco legible en badge y texto de enlace ≥4.5:1. */
+  return "#7a5c0d";
 }
 
 export function etiquetaSeveridad(s: SeveridadAviso): string {
