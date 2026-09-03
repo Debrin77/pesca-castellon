@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   cuencaChipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
-  cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textSecondary },
+  cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textPrimary },
   cuencaTxtOn: { color: "#fff" },
   modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
   modoBarMar: { backgroundColor: COLORS.waterLight },
