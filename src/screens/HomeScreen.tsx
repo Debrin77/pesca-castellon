@@ -252,7 +252,7 @@ export default function HomeScreen({ navigation }: Props) {
       : [];
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
@@ -477,35 +477,34 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        {/* Enlaces secundarios */}
-        <ListaAnimada index={4}>
-          <View style={styles.linksRow}>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Capturas")}
-              accessibilityRole="button"
-              accessibilityLabel="Capturas"
-            >
-              <Text style={styles.linkChipTxt}>Capturas</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Consejos")}
-              accessibilityRole="button"
-              accessibilityLabel="Consejos: nudos y montaje"
-            >
-              <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Ajustes")}
-              accessibilityRole="button"
-              accessibilityLabel="Ajustes"
-            >
-              <Text style={styles.linkChipTxt}>Ajustes</Text>
-            </TouchableOpacity>
-          </View>
-        </ListaAnimada>
+        {/* Enlaces secundarios: fuera de ListaAnimada para que en web
+            no queden con opacity 0 / sin clics (p. ej. Cambiar provincia). */}
+        <View style={styles.linksRow}>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+            accessibilityRole="button"
+            accessibilityLabel="Capturas"
+          >
+            <Text style={styles.linkChipTxt}>Capturas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Consejos", { screen: "ConsejosMain" })}
+            accessibilityRole="button"
+            accessibilityLabel="Consejos: nudos y montaje"
+          >
+            <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Ajustes")}
+            accessibilityRole="button"
+            accessibilityLabel="Ajustes"
+          >
+            <Text style={styles.linkChipTxt}>Ajustes</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
