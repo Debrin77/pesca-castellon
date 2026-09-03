@@ -5,6 +5,7 @@ import {
   etiquetaTemporadaTrucha,
   temporadaTruchaAbierta,
 } from "../data/normativa2026";
+import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { distanciaKm } from "./geoService";
 import {
@@ -102,7 +103,8 @@ function tramosActivos(): TramoOficial[] {
 function tramoDesdePoligono(p: PoligonoIcv): TramoOficial {
   const existente = p.tramoId ? tramosActivos().find((t) => t.id === p.tramoId) : undefined;
   if (existente) return existente;
-  const ap: Aprovechamiento = p.capa === "zpc" ? "ZPC" : p.capa === "zrtc" ? "ZRTC" : "VP";
+  const ap: Aprovechamiento =
+    p.capa === "zpc" ? "ZPC" : p.capa === "zpl" ? "ZPL" : p.capa === "zrtc" ? "ZRTC" : "VP";
   return {
     id: `icv-${p.capa}-${p.id}`,
     codigo: p.matricula ?? p.id,
@@ -112,7 +114,7 @@ function tramoDesdePoligono(p: PoligonoIcv): TramoOficial {
     lng: 0,
     radioKm: 0,
     vocacion: p.vocacion ?? "",
-    regimen: ap === "ZPC" ? "Recreo" : "No pescable",
+    regimen: ap === "ZPC" || ap === "ZPL" ? "Recreo" : "No pescable",
     aprovechamiento: ap,
     matriculaCoto: p.matricula ?? undefined,
     fichaId: null,
@@ -165,11 +167,15 @@ function evaluarTramo(
   const restricciones: string[] = [];
   const permisos: string[] = [provincia.etiquetaLicenciaContinental];
   if (fuenteGeometria === "poligono_icv") {
-    permisos.push("Límite según polígono oficial ICV (no un círculo alrededor del centroide).");
+    permisos.push(
+      esAndalucia
+        ? "Límite según polígono oficial DERA / Junta de Andalucía (Orden 13/01/2023), no un círculo alrededor del centroide."
+        : "Límite según polígono oficial ICV (no un círculo alrededor del centroide)."
+    );
   } else {
     restricciones.push(
       esAndalucia
-        ? "Usamos el radio orientativo alrededor del centro del embalse/tramo. En la orilla exacta puede haber error de decenas de metros; mira la señalización."
+        ? "Este tramo no tiene polígono DERA: usamos el radio orientativo alrededor del centro. Mira la señalización."
         : "Este tramo ZPL/VP aún no tiene polígono ICV: usamos el radio del anexo I alrededor del centroide. En la orilla exacta puede haber un error de decenas de metros."
     );
   }
@@ -277,8 +283,17 @@ function evaluarTramo(
     }
   } else if (esAndalucia) {
     permisos.push(
-      "Aguas ciprinícolas / depredadores: sigue la orden de vedas de Andalucía y el cartel del tramo. Autóctonos (barbo gitano, boga…) con talla/cupo o sin muerte según norma."
+      "Art. 5.2: aguas libres si no es coto ni refugio. En Sevilla no hay cotos de ciprínidos (Anexo V.4)."
     );
+    permisos.push(
+      `Barbo: captura y suelta, ${periodoBarboAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 jul–25 feb). Boga: captura y suelta, ${periodoBogaAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 may–31 ene).`
+    );
+    permisos.push("Art. 6: 200 m de presas y escalas. Horario art. 4: 1 h antes del orto – 1 h después del ocaso.");
+    if (t.notaAnexo === "ANEXO_V_3") {
+      permisos.push(
+        "Anexo V.3: en este embalse/tramo las competiciones oficiales FAPD pueden retener barbos en rejones durante su veda."
+      );
+    }
   } else {
     permisos.push(
       "Aguas no trucheras: artículos 2 y 8 de la Orden 30/2016. Lombriz/asticot permitidos. Autóctonos de la tabla 2.2 con talla o sin muerte según especie."

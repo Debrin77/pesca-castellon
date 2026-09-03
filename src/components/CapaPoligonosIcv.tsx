@@ -16,14 +16,20 @@ function anillosDe(geom: { type: string; coordinates: any }): { outer: { latitud
 interface Props {
   zpc?: boolean;
   reservas?: boolean;
+  zpl?: boolean;
 }
 
-/** Polígonos oficiales ICV. QGIS puede regenerarlos con scripts/build_icv_geojson.mjs. */
-export default function CapaPoligonosIcv({ zpc = true, reservas = true }: Props) {
+/** Polígonos oficiales (ICV Castellón o DERA Junta Sevilla). */
+export default function CapaPoligonosIcv({ zpc = true, reservas = true, zpl = true }: Props) {
   return (
     <>
       {poligonosIcv()
-        .filter((f) => (f.properties.capa === "zpc" ? zpc : reservas))
+        .filter((f) => {
+          const capa = f.properties.capa;
+          if (capa === "zpl") return zpl;
+          if (capa === "zpc") return zpc;
+          return reservas;
+        })
         .flatMap((f) =>
           anillosDe(f.geometry).map((ring, i) => {
             const color = colorCapaIcv(f.properties.capa as CapaIcv);

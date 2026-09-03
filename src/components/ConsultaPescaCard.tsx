@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ConsultaPesca } from "../services/consultaPescaService";
 import { FUENTE_MARITIMA } from "../data/normativaMaritima";
-import { FUENTE_ICV } from "../services/geojsonHit";
+import { fuentePoligonosOficiales } from "../services/geojsonHit";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import { avisoSitiosCosta } from "../services/consultaCostaService";
@@ -32,8 +32,12 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
             {mar
               ? "Polígono de consulta (orientativo)"
               : consulta.confianza === "oficial"
-                ? "Polígono ICV oficial"
-                : "Radio del anexo I (aprox.)"}
+                ? provincia.id === "sevilla"
+                  ? "Polígono DERA / Junta oficial"
+                  : "Polígono ICV oficial"
+                : provincia.id === "sevilla"
+                  ? "Fuera de polígono DERA (aprox.)"
+                  : "Radio del anexo I (aprox.)"}
           </Text>
         </View>
         <Text style={styles.title}>{consulta.titulo}</Text>
@@ -75,7 +79,7 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
         ) : (
           <>
             <Text style={styles.fuente}>{provincia.fuenteNormativa.titulo}</Text>
-            {provincia.tieneIcv ? <Text style={styles.fuente}>{FUENTE_ICV}</Text> : null}
+            {provincia.tieneIcv ? <Text style={styles.fuente}>{fuentePoligonosOficiales()}</Text> : null}
           </>
         )}
 

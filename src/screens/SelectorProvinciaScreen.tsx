@@ -23,8 +23,8 @@ const COPY: Record<
   },
   sevilla: {
     kicker: "Andalucía",
-    detalle: "Solo pesca continental: embalses y ríos de la provincia. Sin costa marítima en esta guía.",
-    chips: ["Continental", "Junta Andalucía"],
+    detalle: "Solo continental. Polígonos DERA oficiales (refugios Anexo IV y masas de la Orden 13/01/2023). Sin costa.",
+    chips: ["Continental", "DERA / BOJA", "Junta Andalucía"],
   },
 };
 

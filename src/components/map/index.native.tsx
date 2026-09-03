@@ -18,7 +18,7 @@ type Props = MapViewProps & {
   accent?: "bosque" | "mar";
 };
 
-export default function MapView({ fitCoordinates: _omit, cameraTarget, accent: _accent, ...props }: Props) {
+export default function MapView({ fitCoordinates: _omit, cameraTarget, accent: _accent, pescaWms: _wms, ...props }: Props & { pescaWms?: string }) {
   const ref = useRef<MapViewRN>(null);
 
   useEffect(() => {

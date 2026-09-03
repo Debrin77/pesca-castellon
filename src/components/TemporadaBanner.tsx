@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { resumenTemporadaActual } from "../services/vedaService";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 
 interface Props {
@@ -12,13 +13,19 @@ export default function TemporadaBanner({ compact }: Props) {
   const provincia = getProvinciaActiva();
 
   if (provincia.id === "sevilla") {
+    const barboOk = periodoBarboAbierto();
+    const bogaOk = periodoBogaAbierto();
+    const alerta = !barboOk || !bogaOk;
     return (
-      <View style={[styles.box, styles.boxOk, compact && styles.compact]}>
-        <Text style={styles.kicker}>Normativa · {provincia.nombre}</Text>
-        <Text style={[styles.title, styles.titleOk]}>Pesca continental Andalucía</Text>
+      <View style={[styles.box, alerta ? styles.boxOff : styles.boxOk, compact && styles.compact]}>
+        <Text style={styles.kicker}>Orden 13/01/2023 · {provincia.nombre}</Text>
+        <Text style={[styles.title, alerta ? styles.titleOff : styles.titleOk]}>
+          {alerta ? "Autóctonos en veda parcial" : "Aguas libres · exóticas todo el año"}
+        </Text>
         <Text style={styles.body}>
-          Aguas ciprinícolas: temporada abierta salvo veda puntual del tramo o coto. Confirma la orden
-          de vedas de la Junta.
+          Barbo (captura y suelta): {barboOk ? "hábil (1 jul–25 feb)" : "veda (26 feb–30 jun)"}. Boga
+          (captura y suelta): {bogaOk ? "hábil (1 may–31 ene)" : "veda (1 feb–30 abr)"}. Refugios
+          Anexo IV: pesca prohibida. Tenca y cacho: no se pescan.
         </Text>
         {!compact && (
           <TouchableOpacity
