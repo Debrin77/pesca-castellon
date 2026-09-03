@@ -654,5 +654,287 @@
       "El Ronquillo",
       "Zufre"
     ]
+  },
+  {
+    "id": "sev-penaflor_azud",
+    "codigo": "SE-29",
+    "nombre": "Azud / presa de Peñaflor (Guadalquivir)",
+    "rio": "Guadalquivir",
+    "lat": 37.7082,
+    "lng": -5.3455,
+    "radioKm": 1.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_6_PRESA",
+    "fichaId": "penaflor_azud",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Peñaflor"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_villaverde",
+    "codigo": "SE-30",
+    "nombre": "Guadalquivir en Villaverde del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.5871,
+    "lng": -5.8707,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_villaverde",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin",
+      "black_bass"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Villaverde del Río"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_lora",
+    "codigo": "SE-31",
+    "nombre": "Guadalquivir en Lora del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.6555,
+    "lng": -5.528,
+    "radioKm": 2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_lora",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Lora del Río"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_coria",
+    "codigo": "SE-32",
+    "nombre": "Guadalquivir en Coria del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.287,
+    "lng": -6.046,
+    "radioKm": 2.4,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ESTUARIO",
+    "fichaId": "guadalquivir_coria",
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin",
+      "siluro"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Coria del Río",
+      "La Puebla del Río"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_gelves",
+    "codigo": "SE-33",
+    "nombre": "Guadalquivir en Gelves",
+    "rio": "Guadalquivir",
+    "lat": 37.341,
+    "lng": -6.017,
+    "radioKm": 1.6,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ESTUARIO",
+    "fichaId": "guadalquivir_gelves",
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Gelves",
+      "San Juan de Aznalfarache"
+    ]
+  },
+  {
+    "id": "sev-guadaira_alcala",
+    "codigo": "SE-34",
+    "nombre": "Río Guadaíra en Alcalá de Guadaíra",
+    "rio": "Guadaíra",
+    "lat": 37.3375,
+    "lng": -5.8445,
+    "radioKm": 2.5,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadaira_alcala",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "black_bass"
+    ],
+    "cuenca": "Guadaíra",
+    "municipios": [
+      "Alcalá de Guadaíra"
+    ]
+  },
+  {
+    "id": "sev-guadaira_bajo",
+    "codigo": "SE-35",
+    "nombre": "Río Guadaíra (tramo bajo / Ribera)",
+    "rio": "Guadaíra",
+    "lat": 37.355,
+    "lng": -5.93,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadaira_bajo",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Guadaíra",
+    "municipios": [
+      "Sevilla",
+      "Dos Hermanas"
+    ]
+  },
+  {
+    "id": "sev-viar_melonares_cantillana",
+    "codigo": "SE-36",
+    "nombre": "Río Viar (Melonares → Cantillana)",
+    "rio": "Viar",
+    "lat": 37.64,
+    "lng": -5.84,
+    "radioKm": 4.5,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "viar_melonares_cantillana",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "lucio",
+      "carpin"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Cantillana",
+      "Villaverde del Río",
+      "El Pedroso"
+    ]
+  },
+  {
+    "id": "sev-embalse_huesna",
+    "codigo": "SE-37",
+    "nombre": "Embalse de Huésna",
+    "rio": "Rivera de Huésna",
+    "lat": 37.7717,
+    "lng": -5.6819,
+    "radioKm": 2.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_huesna",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "El Pedroso",
+      "Constantina"
+    ]
+  },
+  {
+    "id": "sev-embalse_agrio",
+    "codigo": "SE-38",
+    "nombre": "Embalse del Agrio (Aznalcóllar)",
+    "rio": "Agrio",
+    "lat": 37.524,
+    "lng": -6.27,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_agrio",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Aznalcóllar"
+    ]
+  },
+  {
+    "id": "sev-embalse_molinos_castilblanco",
+    "codigo": "SE-39",
+    "nombre": "Embalse Los Molinos (Castilblanco de los Arroyos)",
+    "rio": "Rivera del Cala",
+    "lat": 37.705,
+    "lng": -5.99,
+    "radioKm": 1.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_molinos_castilblanco",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Castilblanco de los Arroyos"
+    ]
   }
 ]

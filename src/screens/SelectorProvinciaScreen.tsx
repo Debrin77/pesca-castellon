@@ -25,8 +25,8 @@ const COPY: Record<
   sevilla: {
     kicker: "Andalucía",
     detalle:
-      "Solo continental. Polígonos DERA oficiales. Licencia Junta + NIR + seguro RC obligatorio del pescador.",
-    chips: ["Continental", "Seguro RC", "DERA / BOJA"],
+      "Continental: Guadalquivir, Guadaíra, embalses y azudes (Peñaflor…). Polígonos DERA + aguas libres art. 5.2. Licencia Junta + NIR + seguro RC.",
+    chips: ["Continental", "Seguro RC", "DERA / art. 5.2"],
   },
 };
 

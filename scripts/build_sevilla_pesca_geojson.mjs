@@ -305,6 +305,58 @@ async function main() {
     features,
   };
 
+  // Aguas libres art. 5.2 sin polígono DERA (Guadaíra, azudes, embalses menores…).
+  const extraPath = path.join(DIR, "aguasLibresExtra.json");
+  const extras = JSON.parse(fs.readFileSync(extraPath, "utf8"));
+  let codigo = tramos.length;
+  for (const e of extras) {
+    codigo += 1;
+    const tramoId = `sev-${e.id}`;
+    if (tramos.some((t) => t.id === tramoId || t.fichaId === e.id)) continue;
+    tramos.push({
+      id: tramoId,
+      codigo: `SE-${String(codigo).padStart(2, "0")}`,
+      nombre: e.nombre,
+      rio: e.rio || e.nombre,
+      lat: e.lat,
+      lng: e.lng,
+      radioKm: e.radioKm,
+      vocacion: e.tipo === "embalse" ? "Ciprinícola / embalse" : "Ciprinícola",
+      regimen: "Recreo / aguas libres (art. 5.2)",
+      aprovechamiento: "ZPL",
+      notaAnexo: e.notaAnexo || "ART_52_APROX",
+      fichaId: e.id,
+      especies: e.especies || [],
+      cuenca: e.cuenca,
+      municipios: e.municipios || [e.municipio],
+    });
+    zones.push({
+      id: e.id,
+      nombre: e.nombre,
+      tipo: e.tipo || "rio",
+      estadoZona: "libre",
+      vocacionOficial: e.vocacionOficial || "Aguas libres · art. 5.2",
+      rio: e.rio || e.nombre,
+      municipio: e.municipio,
+      lat: e.lat,
+      lng: e.lng,
+      radioAproxKm: e.radioKm,
+      descripcion: e.descripcion,
+      avisos: e.avisos || [],
+      especies: e.especies || [],
+      mejoresEpocas: {
+        black_bass: ["marzo", "abril", "mayo", "octubre"],
+        carpa: ["mayo", "junio", "septiembre"],
+        barbo_gitano: ["julio", "agosto", "septiembre", "octubre"],
+      },
+      saihEstacion: null,
+      saihNombre: null,
+      saihFichaId: null,
+      cuenca: e.cuenca,
+      fuenteOficial: "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    });
+  }
+
   fs.writeFileSync(path.join(DIR, "pescaOficial.json"), JSON.stringify(geo));
   fs.writeFileSync(path.join(DIR, "tramosOficiales.json"), JSON.stringify(tramos, null, 2) + "\n");
   fs.writeFileSync(path.join(DIR, "zones.json"), JSON.stringify(zones, null, 2) + "\n");
@@ -312,7 +364,9 @@ async function main() {
   const kb = Math.round(fs.statSync(path.join(DIR, "pescaOficial.json")).size / 1024);
   const nRef = features.filter((f) => f.properties.capa === "refugio").length;
   const nZpl = features.filter((f) => f.properties.capa === "zpl").length;
-  console.log(`OK ${features.length} polígonos (${nRef} refugios, ${nZpl} aguas libres) → pescaOficial.json (${kb} KB)`);
+  console.log(
+    `OK ${features.length} polígonos DERA (${nRef} refugios, ${nZpl} ZPL) + ${extras.length} aguas libres art. 5.2 → ${tramos.length} tramos (${kb} KB polígonos)`
+  );
 }
 
 main().catch((e) => {

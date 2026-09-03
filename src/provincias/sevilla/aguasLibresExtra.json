@@ -1,0 +1,221 @@
+[
+  {
+    "id": "penaflor_azud",
+    "nombre": "Azud / presa de Peñaflor (Guadalquivir)",
+    "tipo": "embalse",
+    "lat": 37.7082,
+    "lng": -5.3455,
+    "radioKm": 1.8,
+    "cuenca": "Guadalquivir",
+    "municipio": "Peñaflor",
+    "municipios": ["Peñaflor"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin"],
+    "notaAnexo": "ART_6_PRESA",
+    "vocacionOficial": "Aguas libres · azud / presa menor",
+    "descripcion": "Azud de derivación sobre el Guadalquivir en Peñaflor (capacidad ~3 hm³). Aguas libres por art. 5.2 de la Orden 13/01/2023: no figura como coto ni refugio. Geometría orientativa (sin polígono DERA). Sitio clásico de carpa y barbo en remanso.",
+    "avisos": [
+      "Art. 6: no pescar a menos de 200 m de la presa, escalas y pasos de peces (aguas arriba y abajo).",
+      "Confirma señalización local y accesos; el azud es infraestructura de CHG."
+    ]
+  },
+  {
+    "id": "guadalquivir_villaverde",
+    "nombre": "Guadalquivir en Villaverde del Río",
+    "tipo": "rio",
+    "lat": 37.5871,
+    "lng": -5.8707,
+    "radioKm": 2.2,
+    "cuenca": "Guadalquivir",
+    "municipio": "Villaverde del Río",
+    "municipios": ["Villaverde del Río"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin", "black_bass"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "descripcion": "Tramo del Guadalquivir a su paso por Villaverde del Río. Aguas libres (art. 5.2). Históricamente citado junto a Barqueta/Chapina para retención de barbos en competiciones FAPD (Anexo V.3 de órdenes anteriores). Radio orientativo, sin polígono DERA.",
+    "avisos": [
+      "Radio orientativo art. 5.2: confirma orilla y señalización.",
+      "Art. 6 si pescas cerca de azudes o escalas del tramo."
+    ]
+  },
+  {
+    "id": "guadalquivir_lora",
+    "nombre": "Guadalquivir en Lora del Río",
+    "tipo": "rio",
+    "lat": 37.6555,
+    "lng": -5.528,
+    "radioKm": 2.0,
+    "cuenca": "Guadalquivir",
+    "municipio": "Lora del Río",
+    "municipios": ["Lora del Río"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "descripcion": "Tramo medio del Guadalquivir sevillano en Lora del Río. Aguas libres art. 5.2. Radio orientativo para orillas y remansos; sin geometría DERA.",
+    "avisos": [
+      "Aguas libres art. 5.2. Respeta 200 m de cualquier presa o escala cercana."
+    ]
+  },
+  {
+    "id": "guadalquivir_coria",
+    "nombre": "Guadalquivir en Coria del Río",
+    "tipo": "rio",
+    "lat": 37.287,
+    "lng": -6.046,
+    "radioKm": 2.4,
+    "cuenca": "Guadalquivir",
+    "municipio": "Coria del Río",
+    "municipios": ["Coria del Río", "La Puebla del Río"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "alburno", "barbo_gitano", "carpin", "siluro"],
+    "notaAnexo": "ESTUARIO",
+    "vocacionOficial": "Aguas libres · tramo bajo / estuarino",
+    "descripcion": "Bajo Guadalquivir en Coria del Río: aguas libres art. 5.2, con influencia mareal pero licencia continental de Andalucía (el límite marítimo está en el Caño de la Esparraguera, Sanlúcar). Zona de carpfishing. Radio orientativo.",
+    "avisos": [
+      "Licencia continental Junta (no marítima) en este tramo.",
+      "Cerca de Doñana / marismas: hay refugios (Entremuros, Dehesa de Abajo, Guadiamar) donde la pesca está prohibida. Mira el mapa y la señalización.",
+      "Art. 6 si hay azudes o escalas en la orilla."
+    ]
+  },
+  {
+    "id": "guadalquivir_gelves",
+    "nombre": "Guadalquivir en Gelves",
+    "tipo": "rio",
+    "lat": 37.341,
+    "lng": -6.017,
+    "radioKm": 1.6,
+    "cuenca": "Guadalquivir",
+    "municipio": "Gelves",
+    "municipios": ["Gelves", "San Juan de Aznalfarache"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "alburno", "barbo_gitano", "carpin"],
+    "notaAnexo": "ESTUARIO",
+    "vocacionOficial": "Aguas libres · tramo metropolitano",
+    "descripcion": "Orilla del Guadalquivir en Gelves / área metropolitana. Aguas libres art. 5.2. Radio orientativo; respeta ordenanzas municipales de paseos y muelles.",
+    "avisos": [
+      "Ordenanzas municipales pueden restringir pesca en paseos y muelles.",
+      "Licencia continental Junta. Confirma señalización."
+    ]
+  },
+  {
+    "id": "guadaira_alcala",
+    "nombre": "Río Guadaíra en Alcalá de Guadaíra",
+    "tipo": "rio",
+    "lat": 37.3375,
+    "lng": -5.8445,
+    "radioKm": 2.5,
+    "cuenca": "Guadaíra",
+    "municipio": "Alcalá de Guadaíra",
+    "municipios": ["Alcalá de Guadaíra"],
+    "rio": "Guadaíra",
+    "especies": ["carpa", "barbo_gitano", "alburno", "carpin", "black_bass"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · afluente Guadaíra",
+    "descripcion": "Afluente del Guadalquivir. No figura como coto ni refugio en el Anexo IV → aguas libres art. 5.2. Sin polígono DERA: radio orientativo en torno a Alcalá (molinos / tablas). Carpa, barbo, alburno y bass frecuentes.",
+    "avisos": [
+      "Barbo y boga: solo captura y suelta en periodo hábil (Orden 13/01/2023).",
+      "Geometría orientativa: confirma orilla y señalización."
+    ]
+  },
+  {
+    "id": "guadaira_bajo",
+    "nombre": "Río Guadaíra (tramo bajo / Ribera)",
+    "tipo": "rio",
+    "lat": 37.355,
+    "lng": -5.93,
+    "radioKm": 2.2,
+    "cuenca": "Guadaíra",
+    "municipio": "Sevilla",
+    "municipios": ["Sevilla", "Dos Hermanas"],
+    "rio": "Guadaíra",
+    "especies": ["carpa", "barbo_gitano", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · afluente Guadaíra",
+    "descripcion": "Tramo bajo del Guadaíra hacia su desembocadura en el Guadalquivir. Aguas libres art. 5.2. Radio orientativo.",
+    "avisos": [
+      "Aguas libres art. 5.2. Respeta espacios urbanos y señalización."
+    ]
+  },
+  {
+    "id": "viar_melonares_cantillana",
+    "nombre": "Río Viar (Melonares → Cantillana)",
+    "tipo": "rio",
+    "lat": 37.64,
+    "lng": -5.84,
+    "radioKm": 4.5,
+    "cuenca": "Rivera de Huelva",
+    "municipio": "Cantillana",
+    "municipios": ["Cantillana", "Villaverde del Río", "El Pedroso"],
+    "rio": "Viar",
+    "especies": ["carpa", "black_bass", "barbo_gitano", "alburno", "lucio", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · bajo Melonares",
+    "descripcion": "Tramo del Viar desde aguas abajo de la presa de Melonares hasta Cantillana. El embalse de Melonares es refugio (pesca prohibida); este tramo de río es aguas libres art. 5.2. Radio orientativo.",
+    "avisos": [
+      "No pesques dentro del embalse de Melonares ni en su polígono refugio DERA.",
+      "Art. 6: 200 m de la presa de Melonares y de escalas."
+    ]
+  },
+  {
+    "id": "embalse_huesna",
+    "nombre": "Embalse de Huésna",
+    "tipo": "embalse",
+    "lat": 37.7717,
+    "lng": -5.6819,
+    "radioKm": 2.8,
+    "cuenca": "Rivera de Huelva",
+    "municipio": "El Pedroso",
+    "municipios": ["El Pedroso", "Constantina"],
+    "rio": "Rivera de Huésna",
+    "especies": ["black_bass", "carpa", "barbo_gitano", "lucio", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse",
+    "descripcion": "Embalse CHG en la Rivera de Huésna (El Pedroso / Constantina). Aguas libres art. 5.2: no es refugio ni coto en la Orden 13/01/2023. Sin polígono DERA en el dataset de cotos; radio orientativo. Bass y lucio citados en listados históricos de masas autorizadas.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Invasoras (bass/lucio): RD 630/2013 y Resolución 19/12/2019 — no traslocar."
+    ]
+  },
+  {
+    "id": "embalse_agrio",
+    "nombre": "Embalse del Agrio (Aznalcóllar)",
+    "tipo": "embalse",
+    "lat": 37.524,
+    "lng": -6.27,
+    "radioKm": 2.2,
+    "cuenca": "Rivera de Huelva",
+    "municipio": "Aznalcóllar",
+    "municipios": ["Aznalcóllar"],
+    "rio": "Agrio",
+    "especies": ["carpa", "black_bass", "barbo_gitano", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse",
+    "descripcion": "Embalse del Agrio en Aznalcóllar. Aguas libres art. 5.2 (el embalse no es el refugio del curso Agrio–Guadiamar del Anexo IV). Radio orientativo. Carpa y bass frecuentes.",
+    "avisos": [
+      "No confundir con el refugio «Río Crispinejo o Agrio y río Guadiamar» (Anexo IV / Corredor Verde): allí la pesca está prohibida.",
+      "Art. 6: 200 m de la presa."
+    ]
+  },
+  {
+    "id": "embalse_molinos_castilblanco",
+    "nombre": "Embalse Los Molinos (Castilblanco de los Arroyos)",
+    "tipo": "embalse",
+    "lat": 37.705,
+    "lng": -5.99,
+    "radioKm": 1.8,
+    "cuenca": "Rivera de Huelva",
+    "municipio": "Castilblanco de los Arroyos",
+    "municipios": ["Castilblanco de los Arroyos"],
+    "rio": "Rivera del Cala",
+    "especies": ["black_bass", "carpa", "barbo_gitano", "lucio", "alburno"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse menor",
+    "descripcion": "Embalse Los Molinos en Castilblanco de los Arroyos (Rivera del Cala). Aguas libres art. 5.2. Embalse menor sin polígono DERA de cotos; radio orientativo.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Confirma accesos y señalización local."
+    ]
+  }
+]

@@ -92,6 +92,17 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
       </View>
       <Text style={styles.desc}>{zone.descripcion}</Text>
 
+      {Array.isArray(zone.avisos) && zone.avisos.length > 0 ? (
+        <View style={styles.avisosBox}>
+          <Text style={styles.avisosTitle}>Avisos de este tramo</Text>
+          {zone.avisos.map((a: string, i: number) => (
+            <Text key={i} style={styles.avisoItem}>
+              • {a}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+
       <TemporadaBanner compact />
       <LicenseBanner onPress={() => navigation.navigate("License")} />
 
@@ -266,6 +277,16 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   desc: { fontSize: 13.5, color: COLORS.textSecondary, lineHeight: 19, marginBottom: 12 },
+  avisosBox: {
+    backgroundColor: COLORS.warningLight,
+    borderColor: "#f0d2a8",
+    borderWidth: 1,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    marginBottom: 12,
+  },
+  avisosTitle: { fontSize: 13, fontWeight: "800", color: COLORS.warning, marginBottom: 6 },
+  avisoItem: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
   mapLink: {
     alignSelf: "flex-start",
     marginBottom: 12,
