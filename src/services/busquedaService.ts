@@ -2,7 +2,7 @@
  * Índice de búsqueda unificado: tramos oficiales + fichas de zona + playas,
  * por nombre, río, cuenca, municipio y código de anexo.
  */
-import zones from "../data/zones.json";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { todasLasPlayas } from "./consultaCostaService";
 import { todosLosTramos, TramoOficial } from "./consultaPescaService";
 
@@ -35,11 +35,17 @@ function coincide(haystack: string, q: string): boolean {
   return norm(haystack).includes(q);
 }
 
+/** Cuencas de la provincia activa (para chips del mapa). */
+export function cuencasProvincia(): string[] {
+  return getProvinciaActiva().cuencas;
+}
+
+/** @deprecated Usa cuencasProvincia(); se mantiene por compatibilidad. */
 export const CUENCAS = ["Mijares", "Palancia", "Sénia", "Otras"] as const;
 
 export function municipiosConocidos(): string[] {
   const set = new Set<string>();
-  for (const z of zones as any[]) {
+  for (const z of getProvinciaActiva().zones as any[]) {
     String(z.municipio || "")
       .split("/")
       .map((p: string) => p.trim())
@@ -60,6 +66,8 @@ export function buscarZonas(
   if (!q && !opts.cuenca) return [];
   const limite = opts.limite ?? 10;
   const out: SugerenciaBusqueda[] = [];
+  const provincia = getProvinciaActiva();
+  const zones = provincia.zones as any[];
 
   if (opts.modo !== "costa") {
     for (const t of todosLosTramos() as (TramoOficial & { municipios?: string[]; cuenca?: string })[]) {
@@ -86,7 +94,7 @@ export function buscarZonas(
       });
     }
 
-    for (const z of zones as any[]) {
+    for (const z of zones) {
       if (opts.cuenca && z.cuenca !== opts.cuenca) continue;
       const hit =
         !q ||
@@ -95,13 +103,12 @@ export function buscarZonas(
         coincide(z.municipio || "", q) ||
         coincide(z.cuenca || "", q);
       if (!hit) continue;
-      // Evitar duplicar si ya hay tramo con misma ficha y título similar
       if (out.some((s) => s.fichaId === z.id)) continue;
       out.push({
         id: `ficha:${z.id}`,
         tipo: "ficha",
         titulo: z.nombre,
-        meta: `Ficha · ${z.cuenca ?? z.rio} · ${z.municipio}`,
+        meta: `${z.tipo} · ${z.municipio || z.cuenca || ""}`,
         lat: z.lat,
         lng: z.lng,
         fichaId: z.id,
@@ -110,29 +117,24 @@ export function buscarZonas(
     }
   }
 
-  if (opts.modo !== "continental") {
+  if (opts.modo !== "continental" && !provincia.continentalOnly) {
     for (const p of todasLasPlayas()) {
-      const hit = !q || coincide(p.nombre, q);
+      const hit =
+        !q ||
+        coincide(p.nombre, q) ||
+        coincide((p as any).municipio || "", q) ||
+        coincide((p as any).localidad || "", q);
       if (!hit) continue;
       out.push({
         id: `playa:${p.id}`,
         tipo: "playa",
         titulo: p.nombre,
-        meta: "Costa · playa",
+        meta: (p as any).municipio || "Costa",
         lat: p.lat,
         lng: p.lng,
         playaId: p.id,
       });
     }
-  }
-
-  // Si la query parece un municipio puro, priorizar esos hits
-  if (q) {
-    out.sort((a, b) => {
-      const am = norm(a.meta).includes(q) || norm(a.titulo).includes(q) ? 0 : 1;
-      const bm = norm(b.meta).includes(q) || norm(b.titulo).includes(q) ? 0 : 1;
-      return am - bm;
-    });
   }
 
   return out.slice(0, limite);

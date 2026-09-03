@@ -1,4 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getProvinciaIdActiva } from "../provincias/runtime";
+import type { ProvinciaId } from "../provincias";
 
 export interface PuntoGuardado {
   id: string;
@@ -8,6 +10,7 @@ export interface PuntoGuardado {
   notas?: string;
   creadoEn: string; // ISO
   zonaRelacionadaId?: string | null;
+  provinciaId?: ProvinciaId;
 }
 
 export interface Captura {
@@ -24,80 +27,108 @@ export interface Captura {
   fotoUri?: string | null;
   lat?: number | null;
   lng?: number | null;
+  provinciaId?: ProvinciaId;
 }
 
 export interface FavoritoZona {
   zonaId: string;
   nombre: string;
   creadoEn: string;
+  provinciaId?: ProvinciaId;
 }
 
-const CLAVE_PUNTOS = "@pesca_castellon/puntos_guardados";
-const CLAVE_CAPTURAS = "@pesca_castellon/capturas";
-const CLAVE_FAVORITOS = "@pesca_castellon/favoritos_zonas";
+/** Claves legacy (solo Castellón, migran al namespace nuevo). */
+const LEGACY = {
+  puntos: "@pesca_castellon/puntos_guardados",
+  capturas: "@pesca_castellon/capturas",
+  favoritos: "@pesca_castellon/favoritos_zonas",
+  licencias: "@pesca_castellon/licencias_vigor",
+};
+
+function clave(base: string, provinciaId?: ProvinciaId): string {
+  const id = provinciaId ?? getProvinciaIdActiva();
+  return `@pesca_app/${id}/${base}`;
+}
 
 function generarId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-// --- Puntos guardados ---
-
-export async function obtenerPuntosGuardados(): Promise<PuntoGuardado[]> {
+async function leerLista<T>(base: string, legacyKey?: string): Promise<T[]> {
+  const id = getProvinciaIdActiva();
   try {
-    const raw = await AsyncStorage.getItem(CLAVE_PUNTOS);
-    return raw ? JSON.parse(raw) : [];
+    const raw = await AsyncStorage.getItem(clave(base, id));
+    if (raw) return JSON.parse(raw);
+    // Migración: datos antiguos de Castellón
+    if (id === "castellon" && legacyKey) {
+      const old = await AsyncStorage.getItem(legacyKey);
+      if (old) {
+        await AsyncStorage.setItem(clave(base, id), old);
+        return JSON.parse(old);
+      }
+    }
+    return [];
   } catch (err) {
-    console.warn("Error leyendo puntos guardados:", err);
+    console.warn(`Error leyendo ${base}:`, err);
     return [];
   }
 }
 
+async function escribirLista<T>(base: string, lista: T[]): Promise<void> {
+  await AsyncStorage.setItem(clave(base), JSON.stringify(lista));
+}
+
+// --- Puntos guardados ---
+
+export async function obtenerPuntosGuardados(): Promise<PuntoGuardado[]> {
+  return leerLista<PuntoGuardado>("puntos_guardados", LEGACY.puntos);
+}
+
 export async function guardarPunto(punto: Omit<PuntoGuardado, "id" | "creadoEn">): Promise<PuntoGuardado> {
   const puntos = await obtenerPuntosGuardados();
-  const nuevo: PuntoGuardado = { ...punto, id: generarId(), creadoEn: new Date().toISOString() };
-  await AsyncStorage.setItem(CLAVE_PUNTOS, JSON.stringify([nuevo, ...puntos]));
+  const nuevo: PuntoGuardado = {
+    ...punto,
+    id: generarId(),
+    creadoEn: new Date().toISOString(),
+    provinciaId: getProvinciaIdActiva(),
+  };
+  await escribirLista("puntos_guardados", [nuevo, ...puntos]);
   return nuevo;
 }
 
 export async function eliminarPunto(id: string): Promise<void> {
   const puntos = await obtenerPuntosGuardados();
-  await AsyncStorage.setItem(CLAVE_PUNTOS, JSON.stringify(puntos.filter((p) => p.id !== id)));
+  await escribirLista(
+    "puntos_guardados",
+    puntos.filter((p) => p.id !== id)
+  );
 }
 
 // --- Registro de capturas ---
 
 export async function obtenerCapturas(): Promise<Captura[]> {
-  try {
-    const raw = await AsyncStorage.getItem(CLAVE_CAPTURAS);
-    return raw ? JSON.parse(raw) : [];
-  } catch (err) {
-    console.warn("Error leyendo capturas:", err);
-    return [];
-  }
+  return leerLista<Captura>("capturas", LEGACY.capturas);
 }
 
 export async function guardarCaptura(captura: Omit<Captura, "id">): Promise<Captura> {
   const capturas = await obtenerCapturas();
-  const nueva: Captura = { ...captura, id: generarId() };
-  await AsyncStorage.setItem(CLAVE_CAPTURAS, JSON.stringify([nueva, ...capturas]));
+  const nueva: Captura = { ...captura, id: generarId(), provinciaId: getProvinciaIdActiva() };
+  await escribirLista("capturas", [nueva, ...capturas]);
   return nueva;
 }
 
 export async function eliminarCaptura(id: string): Promise<void> {
   const capturas = await obtenerCapturas();
-  await AsyncStorage.setItem(CLAVE_CAPTURAS, JSON.stringify(capturas.filter((c) => c.id !== id)));
+  await escribirLista(
+    "capturas",
+    capturas.filter((c) => c.id !== id)
+  );
 }
 
 // --- Favoritos de fichas / zonas ---
 
 export async function obtenerFavoritos(): Promise<FavoritoZona[]> {
-  try {
-    const raw = await AsyncStorage.getItem(CLAVE_FAVORITOS);
-    return raw ? JSON.parse(raw) : [];
-  } catch (err) {
-    console.warn("Error leyendo favoritos:", err);
-    return [];
-  }
+  return leerLista<FavoritoZona>("favoritos_zonas", LEGACY.favoritos);
 }
 
 export async function esFavorito(zonaId: string): Promise<boolean> {
@@ -112,15 +143,21 @@ export async function alternarFavorito(zonaId: string, nombre: string): Promise<
   if (existe) {
     siguiente = favs.filter((f) => f.zonaId !== zonaId);
   } else {
-    siguiente = [{ zonaId, nombre, creadoEn: new Date().toISOString() }, ...favs];
+    siguiente = [
+      { zonaId, nombre, creadoEn: new Date().toISOString(), provinciaId: getProvinciaIdActiva() },
+      ...favs,
+    ];
   }
-  await AsyncStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(siguiente));
+  await escribirLista("favoritos_zonas", siguiente);
   return !existe;
 }
 
 export async function eliminarFavorito(zonaId: string): Promise<void> {
   const favs = await obtenerFavoritos();
-  await AsyncStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favs.filter((f) => f.zonaId !== zonaId)));
+  await escribirLista(
+    "favoritos_zonas",
+    favs.filter((f) => f.zonaId !== zonaId)
+  );
 }
 
 // --- Licencias en vigor (solo en este dispositivo) ---
@@ -138,21 +175,13 @@ export interface LicenciaGuardada {
   actualizadoEn: string;
 }
 
-const CLAVE_LICENCIAS = "@pesca_castellon/licencias_vigor";
-
 export const ETIQUETA_LICENCIA: Record<TipoLicencia, string> = {
-  continental: "Pesca continental (GVA)",
-  maritima_tierra: "Marítima recreativa desde tierra (GVA)",
+  continental: "Pesca continental",
+  maritima_tierra: "Marítima recreativa desde tierra",
 };
 
 export async function obtenerLicencias(): Promise<LicenciaGuardada[]> {
-  try {
-    const raw = await AsyncStorage.getItem(CLAVE_LICENCIAS);
-    return raw ? JSON.parse(raw) : [];
-  } catch (err) {
-    console.warn("Error leyendo licencias:", err);
-    return [];
-  }
+  return leerLista<LicenciaGuardada>("licencias_vigor", LEGACY.licencias);
 }
 
 export async function guardarLicencia(
@@ -174,13 +203,16 @@ export async function guardarLicencia(
   };
   const sinDuplicadoTipo = lista.filter((l) => l.tipo !== item.tipo || l.id === item.id);
   const siguiente = [item, ...sinDuplicadoTipo.filter((l) => l.id !== item.id)];
-  await AsyncStorage.setItem(CLAVE_LICENCIAS, JSON.stringify(siguiente));
+  await escribirLista("licencias_vigor", siguiente);
   return item;
 }
 
 export async function eliminarLicencia(id: string): Promise<void> {
   const lista = await obtenerLicencias();
-  await AsyncStorage.setItem(CLAVE_LICENCIAS, JSON.stringify(lista.filter((l) => l.id !== id)));
+  await escribirLista(
+    "licencias_vigor",
+    lista.filter((l) => l.id !== id)
+  );
 }
 
 export function diasHastaCaducidad(caducaEl: string, hoy = new Date()): number {
@@ -194,8 +226,7 @@ export async function resumenLicenciasCortas(): Promise<string> {
   if (lista.length === 0) return "Aún no has guardado tus licencias en el móvil (opcional).";
   const partes = lista.map((l) => {
     const dias = diasHastaCaducidad(l.caducaEl);
-    const nombre =
-      l.tipo === "continental" ? "Continental" : "Marítima desde tierra";
+    const nombre = l.tipo === "continental" ? "Continental" : "Marítima desde tierra";
     if (dias < 0) return `${nombre}: caducada`;
     if (dias <= 30) return `${nombre}: caduca en ${dias} d`;
     return `${nombre}: en vigor`;

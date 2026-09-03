@@ -18,12 +18,13 @@ import {
   descripcionTiempo,
   detectarAlertas,
   obtenerOleaje,
-  GRAO_CASTELLON,
   PrevisionDia,
   PrevisionHora,
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
@@ -78,6 +79,8 @@ function climaCorto(texto: string): string {
 }
 
 export default function PrevisionScreen() {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const insets = useSafeAreaInsets();
@@ -100,11 +103,14 @@ export default function PrevisionScreen() {
     setPermisoDenegado(false);
     const loc = await obtenerUbicacionActual();
     if (loc) {
+      const oleajeCfg = provincia.oleaje;
       const [prevision, horario, ind, mar] = await Promise.all([
         obtenerPrevision(loc.lat, loc.lng, 7),
         obtenerHorario(loc.lat, loc.lng, 7),
         calcularIndicePesca(loc.lat, loc.lng, 7),
-        obtenerOleaje(GRAO_CASTELLON.lat, GRAO_CASTELLON.lng),
+        oleajeCfg
+          ? obtenerOleaje(oleajeCfg.lat, oleajeCfg.lng)
+          : Promise.resolve([] as { hora: string; alturaM: number }[]),
       ]);
       setDias(prevision);
       setHoras(horario);
@@ -117,7 +123,7 @@ export default function PrevisionScreen() {
 
   useEffect(() => {
     cargar();
-  }, []);
+  }, [provincia.id]);
 
   const dia = dias.find((d) => d.fecha === seleccion) ?? dias[0];
   const ind = dia ? indice.find((x) => x.fecha === dia.fecha) : undefined;
@@ -349,9 +355,9 @@ export default function PrevisionScreen() {
             </View>
           ) : null}
 
-          {oleaje.length > 0 ? (
+          {provincia.oleaje && oleaje.length > 0 ? (
             <View style={{ marginTop: 16 }}>
-              <Text style={styles.sectionTitle}>Oleaje en el Grao (costa)</Text>
+              <Text style={styles.sectionTitle}>{provincia.oleaje.etiqueta}</Text>
               <Text style={styles.subtitleSoft}>{NOTA_MAREAS_CASTELLON}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hours}>
                 {oleaje.map((o) => (

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { resumenTemporadaActual } from "../services/vedaService";
-import { FUENTE_NORMATIVA } from "../data/normativa2026";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 
 interface Props {
@@ -9,6 +9,29 @@ interface Props {
 }
 
 export default function TemporadaBanner({ compact }: Props) {
+  const provincia = getProvinciaActiva();
+
+  if (provincia.id === "sevilla") {
+    return (
+      <View style={[styles.box, styles.boxOk, compact && styles.compact]}>
+        <Text style={styles.kicker}>Normativa · {provincia.nombre}</Text>
+        <Text style={[styles.title, styles.titleOk]}>Pesca continental Andalucía</Text>
+        <Text style={styles.body}>
+          Aguas ciprinícolas: temporada abierta salvo veda puntual del tramo o coto. Confirma la orden
+          de vedas de la Junta.
+        </Text>
+        {!compact && (
+          <TouchableOpacity
+            onPress={() => Linking.openURL(provincia.fuenteNormativa.urlOrden)}
+            accessibilityRole="link"
+          >
+            <Text style={styles.link}>Ver fuente normativa →</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
+
   const t = resumenTemporadaActual();
   const abierta = t.truchaAbierta;
 
@@ -20,7 +43,10 @@ export default function TemporadaBanner({ compact }: Props) {
       </Text>
       <Text style={styles.body}>{t.texto}</Text>
       {!compact && (
-        <TouchableOpacity onPress={() => Linking.openURL(FUENTE_NORMATIVA.urlOrden)} accessibilityRole="link">
+        <TouchableOpacity
+          onPress={() => Linking.openURL(provincia.fuenteNormativa.urlOrden)}
+          accessibilityRole="link"
+        >
           <Text style={styles.link}>Ver fuente normativa →</Text>
         </TouchableOpacity>
       )}
@@ -38,18 +64,18 @@ const styles = StyleSheet.create({
   },
   compact: { paddingVertical: 10 },
   boxOk: { backgroundColor: COLORS.primaryLight, borderColor: "#b7d4c4" },
-  boxOff: { backgroundColor: COLORS.warningLight, borderColor: "#f0d2b0" },
+  boxOff: { backgroundColor: COLORS.warningLight, borderColor: "#f0d2a8" },
   kicker: {
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.6,
+    fontSize: 11,
+    fontWeight: "700",
+    color: COLORS.textMuted,
     textTransform: "uppercase",
-    color: COLORS.textSecondary,
+    letterSpacing: 0.5,
     marginBottom: 2,
   },
-  title: { fontSize: 15, fontWeight: "800", marginBottom: 4 },
-  titleOk: { color: COLORS.primaryDark },
+  title: { fontSize: 17, fontWeight: "700", marginBottom: 4 },
+  titleOk: { color: COLORS.success },
   titleOff: { color: COLORS.warning },
-  body: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18 },
-  link: { marginTop: 8, fontSize: 12.5, fontWeight: "700", color: COLORS.waterDark },
+  body: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 20 },
+  link: { marginTop: 8, color: COLORS.primary, fontWeight: "700", fontSize: 14 },
 });

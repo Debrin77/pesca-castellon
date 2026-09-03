@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Linking, TouchableOpacity } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import zones from "../data/zones.json";
-import speciesCatalog from "../data/species.json";
 import { estaEnVeda, notaVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import { alternarFavorito, esFavorito } from "../services/storageService";
-import { CHECKLIST_ANTES_DE_PESCAR, FUENTE_NORMATIVA, TALLAS_OFICIALES } from "../data/normativa2026";
+import { TALLAS_OFICIALES } from "../data/normativa2026";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import LicenseBanner from "../components/LicenseBanner";
 import SitiosOrientativos from "../components/SitiosOrientativos";
 import TarjetaEspecie from "../components/TarjetaEspecie";
@@ -28,7 +28,12 @@ const MESES = [
 
 export default function ZoneDetailScreen({ route, navigation }: Props) {
   const { zoneId } = route.params;
-  const zone: any = (zones as any[]).find((z: any) => z.id === zoneId);
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const speciesCatalog = provincia.species as any[];
+  const checklist = provincia.checklistAntesDePescar;
+  const fuente = provincia.fuenteNormativa;
+  const zone: any = (provincia.zones as any[]).find((z: any) => z.id === zoneId);
   const [hidro, setHidro] = useState<EstacionHidrologica | null>(null);
   const [cargando, setCargando] = useState(true);
   const [favorito, setFavorito] = useState(false);
@@ -105,6 +110,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         />
       ))}
 
+      {provincia.tieneSaih || zone.saihNombre || zone.saihFichaId ? (
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Estado del embalse (SAIH Júcar)</Text>
         {cargando ? (
@@ -160,15 +166,16 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
           <Text style={styles.cardText}>Sin estación hidrológica asociada a esta zona (tramo de río sin embalse SAIH).</Text>
         )}
       </View>
+      ) : null}
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Antes de pescar aquí</Text>
-        {CHECKLIST_ANTES_DE_PESCAR.map((r, i) => (
+        {checklist.map((r, i) => (
           <Text key={i} style={styles.bullet}>
             • {r}
           </Text>
         ))}
-        <Text style={styles.cardNote}>{FUENTE_NORMATIVA.titulo}</Text>
+        <Text style={styles.cardNote}>{fuente.titulo}</Text>
       </View>
 
       <Text style={styles.sectionTitle}>Especies presentes</Text>

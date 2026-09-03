@@ -1,4 +1,4 @@
-import zones from "../data/zones.json";
+import { getProvinciaActiva } from "../provincias/runtime";
 
 /** Distancia en km entre dos coordenadas (fórmula de Haversine). */
 export function distanciaKm(
@@ -17,6 +17,10 @@ export function distanciaKm(
       Math.sin(dLng / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+function zonesActivas(): any[] {
+  return getProvinciaActiva().zones;
 }
 
 /** Distancia en km de un punto al segmento AB (aprox. local). */
@@ -106,7 +110,7 @@ export function evaluarProximidad(lat: number, lng: number): ProximidadResultado
   let libreMasCercana: any = null;
   let distLibre = Infinity;
 
-  for (const zona of zones as any[]) {
+  for (const zona of zonesActivas()) {
     const d = distanciaKm(lat, lng, zona.lat, zona.lng);
     const esLibre = zona.estadoZona === "libre_sin_muerte";
     if (esLibre) {
@@ -179,7 +183,7 @@ export function evaluarProximidad(lat: number, lng: number): ProximidadResultado
 
 /** Devuelve todas las zonas libre_sin_muerte ordenadas por distancia a un punto. */
 export function zonasLibresCercanas(lat: number, lng: number): { zona: any; distanciaKm: number }[] {
-  return (zones as any[])
+  return zonesActivas()
     .filter((z) => z.estadoZona === "libre_sin_muerte")
     .map((z) => ({ zona: z, distanciaKm: distanciaKm(lat, lng, z.lat, z.lng) }))
     .sort((a, b) => a.distanciaKm - b.distanciaKm);
@@ -201,7 +205,7 @@ export function buscarZonaMasCercana(
   let mejor: any = null;
   let mejorDist = Infinity;
 
-  for (const zona of zones as any[]) {
+  for (const zona of zonesActivas()) {
     const d = distanciaKm(lat, lng, zona.lat, zona.lng);
     if (d < mejorDist) {
       mejorDist = d;

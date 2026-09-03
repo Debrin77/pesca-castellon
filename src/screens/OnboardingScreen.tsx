@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,34 +11,44 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { marcarOnboardingVisto } from "../services/offlineService";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SPACING } from "../theme";
 
 const { width } = Dimensions.get("window");
 
-const SLIDES = [
-  {
-    emoji: "🎣",
-    titulo: "Dos aguas, dos licencias",
-    texto:
-      "En ríos y embalses necesitas la licencia continental GVA. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen.",
-  },
-  {
-    emoji: "🚦",
-    titulo: "Lee el semáforo",
-    texto:
-      "Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos ICV y anexos oficiales de Castellón.",
-  },
-  {
-    emoji: "🗺️",
-    titulo: "El mapa es tu herramienta",
-    texto:
-      "Pulsa un tramo o tu posición para el veredicto. En Inicio tienes clima, SAIH y avisos; el mapa completo está en su pestaña.",
-  },
-];
-
 export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const nombreProv = provincia.nombre;
   const [page, setPage] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
+
+  const slides = useMemo(
+    () => [
+      {
+        emoji: "🎣",
+        titulo: provincia.continentalOnly ? "Licencia continental" : "Dos aguas, dos licencias",
+        texto: provincia.continentalOnly
+          ? `En ríos y embalses de ${nombreProv} necesitas la licencia de pesca continental. Comprueba siempre la normativa vigente de tu provincia.`
+          : "En ríos y embalses necesitas la licencia continental. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen.",
+      },
+      {
+        emoji: "🚦",
+        titulo: "Lee el semáforo",
+        texto: provincia.tieneIcv
+          ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
+          : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
+      },
+      {
+        emoji: "🗺️",
+        titulo: "El mapa es tu herramienta",
+        texto:
+          "Pulsa un tramo o tu posición para el veredicto. En Inicio tienes clima y avisos; el mapa completo está en su pestaña.",
+      },
+    ],
+    [provincia.continentalOnly, provincia.tieneIcv, nombreProv]
+  );
 
   async function terminar() {
     await marcarOnboardingVisto();
@@ -52,7 +62,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <LinearGradient colors={[...GRADIENTS.primary]} style={styles.root}>
-      <Text style={styles.brand}>Pesca Castellón</Text>
+      <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -61,7 +71,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         onScroll={onScroll}
         scrollEventThrottle={16}
       >
-        {SLIDES.map((s) => (
+        {slides.map((s) => (
           <View key={s.titulo} style={[styles.slide, { width }]}>
             <Text style={styles.emoji}>{s.emoji}</Text>
             <Text style={styles.titulo}>{s.titulo}</Text>
@@ -71,7 +81,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </ScrollView>
 
       <View style={styles.dots}>
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <View key={i} style={[styles.dot, i === page && styles.dotOn]} />
         ))}
       </View>
@@ -79,7 +89,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       <TouchableOpacity
         style={styles.cta}
         onPress={() => {
-          if (page < SLIDES.length - 1) {
+          if (page < slides.length - 1) {
             scrollRef.current?.scrollTo({ x: (page + 1) * width, animated: true });
             setPage(page + 1);
           } else {
@@ -87,10 +97,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           }
         }}
       >
-        <Text style={styles.ctaTxt}>{page < SLIDES.length - 1 ? "Siguiente" : "Empezar a pescar"}</Text>
+        <Text style={styles.ctaTxt}>{page < slides.length - 1 ? "Siguiente" : "Empezar a pescar"}</Text>
       </TouchableOpacity>
 
-      {page < SLIDES.length - 1 ? (
+      {page < slides.length - 1 ? (
         <TouchableOpacity onPress={terminar} style={styles.skip}>
           <Text style={styles.skipTxt}>Saltar</Text>
         </TouchableOpacity>

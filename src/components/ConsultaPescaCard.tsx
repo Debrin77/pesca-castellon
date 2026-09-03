@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ConsultaPesca } from "../services/consultaPescaService";
-import { FUENTE_NORMATIVA } from "../data/normativa2026";
 import { FUENTE_MARITIMA } from "../data/normativaMaritima";
 import { FUENTE_ICV } from "../services/geojsonHit";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import { avisoSitiosCosta } from "../services/consultaCostaService";
 import SitiosOrientativos from "./SitiosOrientativos";
@@ -18,6 +18,7 @@ interface Props {
 }
 
 export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Props) {
+  const provincia = getProvinciaActiva();
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
   const mar = consulta.ambito === "maritimo";
@@ -73,8 +74,8 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
           <Text style={styles.fuente}>{FUENTE_MARITIMA.titulo}</Text>
         ) : (
           <>
-            <Text style={styles.fuente}>{FUENTE_NORMATIVA.titulo}</Text>
-            <Text style={styles.fuente}>{FUENTE_ICV}</Text>
+            <Text style={styles.fuente}>{provincia.fuenteNormativa.titulo}</Text>
+            {provincia.tieneIcv ? <Text style={styles.fuente}>{FUENTE_ICV}</Text> : null}
           </>
         )}
 

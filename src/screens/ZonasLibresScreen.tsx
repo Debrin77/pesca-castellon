@@ -22,7 +22,9 @@ import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
-import { buscarZonas, CUENCAS, SugerenciaBusqueda } from "../services/busquedaService";
+import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -31,16 +33,13 @@ interface Props {
   navigation: any;
 }
 
-const CASTELLON_REGION = {
-  latitude: 40.05,
-  longitude: -0.02,
-  latitudeDelta: 1.25,
-  longitudeDelta: 1.25,
-};
-
 export default function ZonasLibresScreen({ navigation }: Props) {
+  const { provincia: provinciaCtx, provinciaId } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const soloContinental = provincia.continentalOnly;
+  const cuencas = provincia.cuencas.length ? provincia.cuencas : cuencasProvincia();
   const tramos = todosLosTramos();
-  const playas = todasLasPlayas();
+  const playas = soloContinental ? [] : todasLasPlayas();
   const [busqueda, setBusqueda] = useState("");
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
@@ -52,7 +51,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
-  const mar = modo === "costa";
+  const mar = !soloContinental && modo === "costa";
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -60,6 +59,22 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
     });
   }, [mar, navigation]);
+
+  useEffect(() => {
+    setModo("continental");
+    setCuencaFiltro(null);
+    setBusqueda("");
+    setConsulta(null);
+    setMarcador(null);
+    setFichaAbierta(false);
+    const r = provincia.regionMapa;
+    setCamara({
+      latitude: r.latitude,
+      longitude: r.longitude,
+      zoom: 9,
+      nonce: Date.now(),
+    });
+  }, [provinciaId, provincia.regionMapa]);
 
   useFocusEffect(
     useCallback(() => {
@@ -78,7 +93,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         setYo(pos);
         const c = consultarToqueMapa(loc.lat, loc.lng);
         setConsulta(c);
-        if (c.ambito === "maritimo") setModo("costa");
+        if (!soloContinental && c.ambito === "maritimo") setModo("costa");
         setMarcador(pos);
       }
       cancelar = await suscribirseUbicacion((lat, lng) => {
@@ -86,7 +101,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       });
     })();
     return () => cancelar?.();
-  }, []);
+  }, [soloContinental]);
 
   function toggleCapa(capa: keyof typeof capas) {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
@@ -112,6 +127,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   function aplicarSugerencia(s: SugerenciaBusqueda) {
     setBusqueda(s.titulo);
     if (s.tipo === "playa" && s.playaId) {
+      if (soloContinental) return;
       evaluarPlaya(s.playaId);
       return;
     }
@@ -147,7 +163,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   function evaluarPunto(lat: number, lng: number) {
     const r = consultarToqueMapa(lat, lng);
-    if (r.ambito === "maritimo") {
+    if (!soloContinental && r.ambito === "maritimo") {
       setModo("costa");
       setCamara({ latitude: lat, longitude: lng, zoom: 14, nonce: Date.now() });
     } else {
@@ -158,6 +174,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   function evaluarPlaya(id: string) {
+    if (soloContinental) return;
     const p = playas.find((x) => x.id === id);
     if (!p) return;
     setModo("costa");
@@ -167,9 +184,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   function cambiarModo(siguiente: "continental" | "costa") {
+    if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
     if (siguiente === "costa") {
-      setCamara({ latitude: 40.05, longitude: 0.12, zoom: 10, nonce: Date.now() });
+      const costa = provincia.regionCosta ?? {
+        latitude: provincia.regionMapa.latitude,
+        longitude: provincia.regionMapa.longitude,
+        zoom: 10,
+      };
+      setCamara({ latitude: costa.latitude, longitude: costa.longitude, zoom: costa.zoom, nonce: Date.now() });
       if (marcador) setConsulta(consultarCosta(marcador.latitude, marcador.longitude));
     } else if (marcador) {
       setConsulta(consultarPuntoPesca(marcador.latitude, marcador.longitude));
@@ -194,9 +217,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <TextInput
           style={styles.searchInput}
           placeholder={
-            modo === "costa"
+            mar
               ? "Busca playa o municipio (Benicàssim, Grao, Nules…)"
-              : "Busca tramo, municipio o cuenca (Onda, Palancia, Teresa…)"
+              : provincia.id === "sevilla"
+                ? "Busca embalse o río (Guadalquivir, Minilla, Cala…)"
+                : "Busca tramo, municipio o cuenca (Onda, Palancia, Teresa…)"
           }
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
@@ -210,7 +235,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             >
               <Text style={[styles.cuencaTxt, !cuencaFiltro && styles.cuencaTxtOn]}>Todas</Text>
             </TouchableOpacity>
-            {CUENCAS.filter((c) => c !== "Otras").map((c) => (
+            {cuencas.filter((c) => c !== "Otras").map((c) => (
               <TouchableOpacity
                 key={c}
                 style={[styles.cuencaChip, cuencaFiltro === c && styles.cuencaChipOn]}
@@ -238,24 +263,26 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         )}
       </View>
 
-      <View style={[styles.modoBar, mar && styles.modoBarMar]}>
-        <TouchableOpacity
-          style={[styles.modoBtn, modo === "continental" && styles.modoBtnOnBosque]}
-          onPress={() => cambiarModo("continental")}
-          accessibilityRole="button"
-          accessibilityLabel="Ríos y embalses"
-        >
-          <Text style={[styles.modoTxt, modo === "continental" && styles.modoTxtOn]}>Ríos y embalses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modoBtn, modo === "costa" && styles.modoBtnOnMar]}
-          onPress={() => cambiarModo("costa")}
-          accessibilityRole="button"
-          accessibilityLabel="Costa orilla"
-        >
-          <Text style={[styles.modoTxt, modo === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
-        </TouchableOpacity>
-      </View>
+      {!soloContinental ? (
+        <View style={[styles.modoBar, mar && styles.modoBarMar]}>
+          <TouchableOpacity
+            style={[styles.modoBtn, modo === "continental" && styles.modoBtnOnBosque]}
+            onPress={() => cambiarModo("continental")}
+            accessibilityRole="button"
+            accessibilityLabel="Ríos y embalses"
+          >
+            <Text style={[styles.modoTxt, modo === "continental" && styles.modoTxtOn]}>Ríos y embalses</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modoBtn, modo === "costa" && styles.modoBtnOnMar]}
+            onPress={() => cambiarModo("costa")}
+            accessibilityRole="button"
+            accessibilityLabel="Costa orilla"
+          >
+            <Text style={[styles.modoTxt, modo === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12 }}>
         {mar ? (
@@ -290,14 +317,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       <View style={styles.mapWrap}>
         <MapView
+          key={provincia.id}
           style={styles.map}
-          initialRegion={CASTELLON_REGION}
+          initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
+          {provincia.tieneIcv ? (
+            <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
+          ) : null}
           {mar && capas.zpc ? <CapaPuertos /> : null}
           {mar && capas.vedado ? <CapaVedadosCosta /> : null}
           {mar &&

@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAcceso } from "../context/AccesoContext";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import {
   activarBloqueoConContrasena,
   cambiarContrasena,
@@ -31,6 +33,8 @@ function avisar(titulo: string, mensaje: string) {
 
 export default function AjustesScreen() {
   const { config, biometria, refrescar, marcarDesbloqueado } = useAcceso();
+  const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
   const [cargando, setCargando] = useState(false);
   const [nuevaClave, setNuevaClave] = useState("");
   const [repetirClave, setRepetirClave] = useState("");
@@ -123,6 +127,26 @@ export default function AjustesScreen() {
       <Text style={styles.lead}>
         Protege capturas, favoritos y puntos guardados en este dispositivo.
       </Text>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Provincia de pesca</Text>
+        <View style={styles.row}>
+          <View style={{ flex: 1, paddingRight: 12 }}>
+            <Text style={styles.rowTitle}>{provincia.nombre}</Text>
+            <Text style={styles.rowSub}>
+              El mapa, los sitios y las capturas guardados son por provincia.
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => cambiarProvincia()}
+          accessibilityRole="button"
+          accessibilityLabel="Cambiar provincia"
+        >
+          <Text style={styles.btnTxt}>Cambiar provincia</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Acceso a la app</Text>
