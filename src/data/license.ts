@@ -35,6 +35,7 @@ export const LICENCIA_INFO = {
   notas: [
     "El trámite continental se paga mediante el modelo 046, concepto 9832.",
     "Además de la licencia autonómica, algunos cotos (Zonas de Pesca Controlada) exigen un permiso o tasa adicional propia del coto.",
+    "En la Comunitat Valenciana no se exige seguro de responsabilidad civil del pescador (sí es obligatorio en Andalucía).",
     "Llévala siempre contigo junto al DNI: los agentes medioambientales pueden solicitarla en cualquier momento.",
     "Las tasas e importes pueden actualizarse cada ejercicio — confírmalos en la sede electrónica antes de pagar.",
     "Puedes anotar en la app la caducidad de tus licencias: se guarda solo en este dispositivo.",

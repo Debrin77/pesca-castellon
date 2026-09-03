@@ -28,10 +28,16 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
     () => [
       {
         emoji: "🎣",
-        titulo: provincia.continentalOnly ? "Licencia continental" : "Dos aguas, dos licencias",
+        titulo: provincia.continentalOnly
+          ? provincia.requisitosLicencia.seguroObligatorio
+            ? "Licencia + seguro RC"
+            : "Licencia continental"
+          : "Dos aguas, dos licencias",
         texto: provincia.continentalOnly
-          ? `En ríos y embalses de ${nombreProv} necesitas la licencia de pesca continental. Comprueba siempre la normativa vigente de tu provincia.`
-          : "En ríos y embalses necesitas la licencia continental. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen.",
+          ? provincia.requisitosLicencia.seguroObligatorio
+            ? `En ríos y embalses de ${nombreProv} necesitas licencia continental de la Junta, NIR y el seguro obligatorio de responsabilidad civil del pescador.`
+            : `En ríos y embalses de ${nombreProv} necesitas la licencia de pesca continental. Comprueba siempre la normativa vigente de tu provincia.`
+          : "En ríos y embalses necesitas la licencia continental. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen. En Castellón no se exige seguro de RC de pescador.",
       },
       {
         emoji: "🚦",
@@ -49,7 +55,12 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           "Pulsa un tramo o tu posición para el veredicto. En Inicio tienes clima y avisos; el mapa completo está en su pestaña.",
       },
     ],
-    [provincia.continentalOnly, provincia.tieneIcv, nombreProv]
+    [
+      provincia.continentalOnly,
+      provincia.tieneIcv,
+      provincia.requisitosLicencia.seguroObligatorio,
+      nombreProv,
+    ]
   );
 
   async function terminar() {

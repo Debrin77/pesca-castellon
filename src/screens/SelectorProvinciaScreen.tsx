@@ -18,13 +18,15 @@ const COPY: Record<
 > = {
   castellon: {
     kicker: "Comunitat Valenciana",
-    detalle: "Ríos, embalses y orilla de mar. Polígonos ICV, cotos y previsión con oleaje en el Grao.",
-    chips: ["Continental", "Costa", "ICV / GVA"],
+    detalle:
+      "Ríos, embalses y orilla de mar. Polígonos ICV, cotos y previsión con oleaje. Sin seguro RC obligatorio.",
+    chips: ["Continental", "Costa", "Sin seguro RC"],
   },
   sevilla: {
     kicker: "Andalucía",
-    detalle: "Solo continental. Polígonos DERA oficiales (refugios Anexo IV y masas de la Orden 13/01/2023). Sin costa.",
-    chips: ["Continental", "DERA / BOJA", "Junta Andalucía"],
+    detalle:
+      "Solo continental. Polígonos DERA oficiales. Licencia Junta + NIR + seguro RC obligatorio del pescador.",
+    chips: ["Continental", "Seguro RC", "DERA / BOJA"],
   },
 };
 

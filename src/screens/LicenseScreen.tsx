@@ -129,12 +129,33 @@ export default function LicenseScreen() {
 
       <TemporadaBanner />
 
-      <Text style={styles.resumen}>
-        {esSevilla
-          ? "Para pescar en ríos y embalses de Sevilla necesitas la licencia de pesca continental de Andalucía (Junta). Confirma siempre la orden de vedas vigente."
-          : LICENCIA_INFO.resumen}
-      </Text>
+      <Text style={styles.resumen}>{provincia.requisitosLicencia.resumen}</Text>
       <Text style={styles.vigencia}>{vigencia}</Text>
+
+      <View
+        style={[
+          styles.card,
+          provincia.requisitosLicencia.seguroObligatorio ? styles.cardSeguroOn : styles.cardSeguroOff,
+        ]}
+      >
+        <Text style={styles.cardTitle}>
+          {provincia.requisitosLicencia.seguroObligatorio
+            ? "Seguro obligatorio (Andalucía)"
+            : "Seguro de pescador (Castellón)"}
+        </Text>
+        <Text style={styles.seguroBadge}>
+          {provincia.requisitosLicencia.seguroObligatorio
+            ? "Obligatorio · responsabilidad civil"
+            : "No obligatorio en GVA"}
+        </Text>
+        <Text style={styles.cardText}>{provincia.requisitosLicencia.seguroNota}</Text>
+        <Text style={[styles.cardTitle, { marginTop: 12 }]}>Requisitos en {provincia.nombre}</Text>
+        {provincia.requisitosLicencia.requisitos.map((r, i) => (
+          <Text key={i} style={styles.bullet}>
+            • {r}
+          </Text>
+        ))}
+      </View>
 
       {!soloContinental ? (
         <View style={styles.card}>
@@ -230,7 +251,11 @@ export default function LicenseScreen() {
           style={[styles.input, { minHeight: 44 }]}
           value={notas}
           onChangeText={setNotas}
-          placeholder="p. ej. renovar en sede"
+          placeholder={
+            provincia.requisitosLicencia.seguroObligatorio
+              ? "p. ej. nº póliza seguro RC / aseguradora"
+              : "p. ej. renovar en sede"
+          }
           placeholderTextColor={COLORS.textMuted}
         />
         <TouchableOpacity style={styles.ctaButton} onPress={onGuardar} disabled={guardando}>
@@ -372,7 +397,30 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...SHADOW,
   },
+  cardSeguroOn: {
+    borderWidth: 1.5,
+    borderColor: COLORS.warning,
+    backgroundColor: COLORS.warningLight,
+  },
+  cardSeguroOff: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
   cardTitle: { fontSize: 15, fontWeight: "700", marginBottom: 8, color: COLORS.textPrimary },
+  seguroBadge: {
+    alignSelf: "flex-start",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+    color: COLORS.textPrimary,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginBottom: 8,
+    overflow: "hidden",
+  },
   cardText: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 18 },
   ambitoBlock: {
     marginBottom: 12,

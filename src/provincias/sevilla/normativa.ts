@@ -61,6 +61,8 @@ export const HORARIO_ORIENTATIVO_ANDALUCIA =
 
 export const REGLAS_GENERALES_ANDALUCIA = [
   "Licencia de pesca continental de Andalucía (Junta) obligatoria.",
+  "Seguro obligatorio de responsabilidad civil del pescador: hay que acreditarlo al tramitar la licencia y llevar el justificante al pescar (Junta de Andalucía).",
+  "NIR (Número de Inscripción Registral) del Registro Andaluz de Caza y Pesca Continental.",
   "Aguas libres (art. 5.2): toda masa no delimitada como coto o refugio. En Sevilla no hay cotos de ciprínidos en el Anexo V.4.",
   "Refugios (Anexo IV): pesca prohibida con carácter permanente. Cartografía DERA.",
   "Art. 6: no pescar a menos de 200 m de presas, escalas y pasos de peces.",
@@ -75,10 +77,12 @@ export const REGLAS_GENERALES_ANDALUCIA = [
 
 export const CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA = [
   "Licencia de pesca continental de Andalucía en vigor.",
+  "Seguro obligatorio de RC del pescador vigente (justificante encima).",
+  "NIR del Registro Andaluz (inscripción como pescador).",
   "Comprobar que el punto no cae en un refugio de pesca (Anexo IV / polígono DERA).",
   "200 m de presas, escalas y pasos de peces: no pescar.",
   "Si pescas barbo o boga: periodo hábil y captura y suelta.",
   "Invasoras: no traslocar; sacrificio si la norma lo exige (RD 630/2013 y art. 8).",
   "Horario: 1 h antes del orto – 1 h después del ocaso.",
-  "Llevar DNI/NIE y la licencia (digital o física).",
+  "Llevar DNI/NIE, licencia y justificante del seguro.",
 ];
