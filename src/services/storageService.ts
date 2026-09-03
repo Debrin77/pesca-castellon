@@ -118,3 +118,83 @@ export async function eliminarFavorito(zonaId: string): Promise<void> {
   const favs = await obtenerFavoritos();
   await AsyncStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favs.filter((f) => f.zonaId !== zonaId)));
 }
+
+// --- Licencias en vigor (solo en este dispositivo) ---
+
+export type TipoLicencia = "continental" | "maritima_tierra";
+
+export interface LicenciaGuardada {
+  id: string;
+  tipo: TipoLicencia;
+  /** Número o referencia de la licencia (opcional). */
+  numero?: string;
+  /** Caducidad ISO yyyy-mm-dd */
+  caducaEl: string;
+  notas?: string;
+  actualizadoEn: string;
+}
+
+const CLAVE_LICENCIAS = "@pesca_castellon/licencias_vigor";
+
+export const ETIQUETA_LICENCIA: Record<TipoLicencia, string> = {
+  continental: "Pesca continental (GVA)",
+  maritima_tierra: "Marítima recreativa desde tierra (GVA)",
+};
+
+export async function obtenerLicencias(): Promise<LicenciaGuardada[]> {
+  try {
+    const raw = await AsyncStorage.getItem(CLAVE_LICENCIAS);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.warn("Error leyendo licencias:", err);
+    return [];
+  }
+}
+
+export async function guardarLicencia(
+  datos: Omit<LicenciaGuardada, "id" | "actualizadoEn"> & { id?: string }
+): Promise<LicenciaGuardada> {
+  const lista = await obtenerLicencias();
+  const ahora = new Date().toISOString();
+  const caducaEl = datos.caducaEl.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(caducaEl)) {
+    throw new Error("La fecha de caducidad debe ser AAAA-MM-DD.");
+  }
+  const item: LicenciaGuardada = {
+    id: datos.id ?? generarId(),
+    tipo: datos.tipo,
+    numero: datos.numero?.trim() || undefined,
+    caducaEl,
+    notas: datos.notas?.trim() || undefined,
+    actualizadoEn: ahora,
+  };
+  const sinDuplicadoTipo = lista.filter((l) => l.tipo !== item.tipo || l.id === item.id);
+  const siguiente = [item, ...sinDuplicadoTipo.filter((l) => l.id !== item.id)];
+  await AsyncStorage.setItem(CLAVE_LICENCIAS, JSON.stringify(siguiente));
+  return item;
+}
+
+export async function eliminarLicencia(id: string): Promise<void> {
+  const lista = await obtenerLicencias();
+  await AsyncStorage.setItem(CLAVE_LICENCIAS, JSON.stringify(lista.filter((l) => l.id !== id)));
+}
+
+export function diasHastaCaducidad(caducaEl: string, hoy = new Date()): number {
+  const [y, m, d] = caducaEl.split("-").map(Number);
+  const fin = new Date(y, m - 1, d, 23, 59, 59);
+  return Math.ceil((fin.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+export async function resumenLicenciasCortas(): Promise<string> {
+  const lista = await obtenerLicencias();
+  if (lista.length === 0) return "Aún no has guardado tus licencias en el móvil (opcional).";
+  const partes = lista.map((l) => {
+    const dias = diasHastaCaducidad(l.caducaEl);
+    const nombre =
+      l.tipo === "continental" ? "Continental" : "Marítima desde tierra";
+    if (dias < 0) return `${nombre}: caducada`;
+    if (dias <= 30) return `${nombre}: caduca en ${dias} d`;
+    return `${nombre}: en vigor`;
+  });
+  return partes.join(" · ");
+}
