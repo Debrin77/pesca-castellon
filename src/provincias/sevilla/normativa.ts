@@ -59,6 +59,29 @@ export function textoVigenciaNormativaAndalucia(): string {
 export const HORARIO_ORIENTATIVO_ANDALUCIA =
   "Art. 4: de una hora antes del orto a una hora después del ocaso, salvo competiciones oficiales FAPD que requieran horario nocturno.";
 
+/** Avisos según notaAnexo de tramos art. 5.2 / presa / estuario. */
+export function avisosPorNotaAnexo(nota: string | null | undefined): string[] {
+  switch (nota) {
+    case "ART_6_PRESA":
+      return [
+        "Art. 6 Orden 13/01/2023: no pescar a menos de 200 m de la presa, escalas y pasos de peces.",
+        "Geometría orientativa (art. 5.2): no hay polígono DERA de esta masa.",
+      ];
+    case "ESTUARIO":
+      return [
+        "Tramo bajo / estuarino: licencia continental de Andalucía (el límite marítimo está en el Caño de la Esparraguera).",
+        "Cerca de Doñana y marismas hay refugios donde la pesca está prohibida (Entremuros, Guadiamar, Dehesa de Abajo…). Mira el mapa.",
+        "Ordenanzas municipales pueden restringir pesca en paseos y muelles.",
+      ];
+    case "ART_52_APROX":
+      return [
+        "Aguas libres art. 5.2 (no es coto ni refugio). Radio orientativo: sin polígono DERA en esta ficha.",
+      ];
+    default:
+      return [];
+  }
+}
+
 export const REGLAS_GENERALES_ANDALUCIA = [
   "Licencia de pesca continental de Andalucía (Junta) obligatoria.",
   "Seguro obligatorio de responsabilidad civil del pescador: hay que acreditarlo al tramitar la licencia y llevar el justificante al pescar (Junta de Andalucía).",

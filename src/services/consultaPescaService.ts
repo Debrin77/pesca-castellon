@@ -5,7 +5,7 @@ import {
   etiquetaTemporadaTrucha,
   temporadaTruchaAbierta,
 } from "../data/normativa2026";
-import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
+import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo } from "../provincias/sevilla/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { distanciaKm } from "./geoService";
 import {
@@ -181,6 +181,16 @@ function evaluarTramo(
         ? "Este tramo no tiene polígono DERA: usamos el radio orientativo alrededor del centro. Mira la señalización."
         : "Este tramo ZPL/VP aún no tiene polígono ICV: usamos el radio del anexo I alrededor del centroide. En la orilla exacta puede haber un error de decenas de metros."
     );
+  }
+
+  if (esAndalucia) {
+    const ficha = t.fichaId
+      ? (provincia.zones as { id: string; avisos?: string[] }[]).find((z) => z.id === t.fichaId)
+      : undefined;
+    const avisosFicha = ficha?.avisos?.length ? ficha.avisos : avisosPorNotaAnexo(t.notaAnexo);
+    for (const a of avisosFicha) {
+      if (!restricciones.includes(a)) restricciones.push(a);
+    }
   }
 
   const base = {
