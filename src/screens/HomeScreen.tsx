@@ -616,8 +616,8 @@ const styles = StyleSheet.create({
   },
   ctaSalgoSub: {
     fontSize: 12.5,
-    color: "rgba(255,255,255,0.92)",
-    fontWeight: "600",
+    color: "#ffffff",
+    fontWeight: "700",
     marginTop: 3,
   },
   bloque: {

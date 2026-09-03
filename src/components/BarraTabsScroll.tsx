@@ -150,7 +150,7 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
                 numberOfLines={1}
                 style={[
                   styles.label,
-                  { color: focused ? color : COLORS.textSecondary },
+                  { color: focused ? color : COLORS.textPrimary },
                   focused && styles.labelOn,
                 ]}
               >
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontSize: 11,
-    color: COLORS.textSecondary,
+    color: COLORS.textPrimary,
     fontWeight: "700",
   },
   arrow: {

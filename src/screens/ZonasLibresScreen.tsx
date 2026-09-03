@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   },
   modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
-  modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
+  modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { flex: 1, position: "relative", minHeight: 220 },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   pieMapaMar: { backgroundColor: COLORS.waterLight, borderTopColor: "#b7d4de" },
-  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center" },
+  hint: { fontSize: 13, color: COLORS.textPrimary, lineHeight: 19, textAlign: "center", fontWeight: "600" },
   reabrir: {
     marginTop: 8,
     alignItems: "center",
