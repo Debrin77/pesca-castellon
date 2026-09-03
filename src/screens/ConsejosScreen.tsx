@@ -6,23 +6,28 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScrollToTop } from "@react-navigation/native";
 import { SECCIONES_CONSEJOS, CategoriaConsejo, ConsejoItem } from "../data/consejos";
+import DiagramaConsejo from "../components/DiagramaConsejo";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 
 function coincide(item: ConsejoItem, q: string): boolean {
   if (!q) return true;
-  const blob = `${item.titulo} ${item.resumen} ${item.detalle} ${(item.tags || []).join(" ")}`.toLowerCase();
+  const pasos = (item.pasos || []).join(" ");
+  const blob = `${item.titulo} ${item.resumen} ${item.detalle} ${pasos} ${(item.tags || []).join(" ")}`.toLowerCase();
   return blob.includes(q);
 }
 
 export default function ConsejosScreen() {
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
-  const [categoria, setCategoria] = useState<CategoriaConsejo | "todas">("todas");
+  const { width: winW } = useWindowDimensions();
+  const diagramW = Math.min(340, Math.max(280, winW - 56));
+  const [categoria, setCategoria] = useState<CategoriaConsejo | "todas">("nudos");
   const [busqueda, setBusqueda] = useState("");
   const [abierto, setAbierto] = useState<string | null>(SECCIONES_CONSEJOS[0]?.items[0]?.id ?? null);
 
@@ -40,14 +45,21 @@ export default function ConsejosScreen() {
         <Text style={styles.heroKicker}>Escuela de bolsillo</Text>
         <Text style={styles.heroTitle}>Consejos de pesca</Text>
         <Text style={styles.heroSub}>
-          Nudos, anzuelos, cebos, aparejos y vocabulario para pescar mejor en Castellón — sin sustituir la normativa.
+          Nudos dibujados, plomos, anzuelos por especie y clips para montar en un minuto — pensado para no desanimarte al empezar.
         </Text>
       </LinearGradient>
 
       <View style={styles.body}>
+        <View style={styles.introCard}>
+          <Text style={styles.introTitle}>Empieza aquí si eres nuevo</Text>
+          <Text style={styles.introTxt}>
+            1) Nudo Palomar · 2) Clip snap en la punta · 3) Engancha cucharilla o vinilo. Sin rehacer nudos cada vez que cambias de señuelo.
+          </Text>
+        </View>
+
         <TextInput
           style={styles.search}
-          placeholder="Busca (palomar, bass, ZPL, fluoro…)"
+          placeholder="Busca (palomar, plomo, snap, bass…)"
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}
@@ -96,14 +108,31 @@ export default function ConsejosScreen() {
                       </View>
                       <Text style={styles.chevron}>{isOpen ? "▾" : "▸"}</Text>
                     </View>
-                    {isOpen && <Text style={styles.cardDetalle}>{item.detalle}</Text>}
-                    {isOpen && item.tags && item.tags.length > 0 && (
-                      <View style={styles.tagRow}>
-                        {item.tags.map((t) => (
-                          <Text key={t} style={styles.tag}>
-                            {t}
-                          </Text>
-                        ))}
+                    {isOpen && (
+                      <View style={styles.cardBody}>
+                        {item.diagrama ? <DiagramaConsejo id={item.diagrama} width={diagramW} /> : null}
+                        {item.pasos && item.pasos.length > 0 ? (
+                          <View style={styles.pasosBox}>
+                            {item.pasos.map((p, idx) => (
+                              <View key={idx} style={styles.pasoRow}>
+                                <View style={styles.pasoNum}>
+                                  <Text style={styles.pasoNumTxt}>{idx + 1}</Text>
+                                </View>
+                                <Text style={styles.pasoTxt}>{p}</Text>
+                              </View>
+                            ))}
+                          </View>
+                        ) : null}
+                        <Text style={styles.cardDetalle}>{item.detalle}</Text>
+                        {item.tags && item.tags.length > 0 && (
+                          <View style={styles.tagRow}>
+                            {item.tags.map((t) => (
+                              <Text key={t} style={styles.tag}>
+                                {t}
+                              </Text>
+                            ))}
+                          </View>
+                        )}
                       </View>
                     )}
                   </TouchableOpacity>
@@ -141,6 +170,17 @@ const styles = StyleSheet.create({
   heroTitle: { color: "#fff", fontSize: 26, fontWeight: "800" },
   heroSub: { color: "#eef7f1", fontSize: 13.5, lineHeight: 19, marginTop: 8 },
   body: { paddingHorizontal: SPACING.lg, marginTop: -SPACING.md },
+  introCard: {
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.md,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+    ...SHADOW_SOFT,
+  },
+  introTitle: { fontSize: 14, fontWeight: "800", color: COLORS.waterDark, marginBottom: 4 },
+  introTxt: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19 },
   search: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
@@ -182,15 +222,31 @@ const styles = StyleSheet.create({
   cardHead: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   cardTitle: { fontSize: 14.5, fontWeight: "800", color: COLORS.textPrimary },
   cardResumen: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 3, lineHeight: 17 },
-  cardDetalle: {
-    fontSize: 13,
-    color: COLORS.textPrimary,
-    lineHeight: 19,
+  cardBody: {
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
+  cardDetalle: {
+    fontSize: 13,
+    color: COLORS.textPrimary,
+    lineHeight: 19,
+    marginTop: 10,
+  },
+  pasosBox: { marginTop: 10, gap: 8 },
+  pasoRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+  pasoNum: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: COLORS.primaryDark,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
+  },
+  pasoNumTxt: { color: "#fff", fontSize: 11, fontWeight: "800" },
+  pasoTxt: { flex: 1, fontSize: 13, color: COLORS.textPrimary, lineHeight: 19 },
   chevron: { fontSize: 14, color: COLORS.textMuted, fontWeight: "800", marginTop: 2 },
   tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10 },
   tag: {

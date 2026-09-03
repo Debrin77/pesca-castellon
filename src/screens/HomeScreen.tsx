@@ -482,9 +482,9 @@ export default function HomeScreen({ navigation }: Props) {
               style={styles.linkChip}
               onPress={() => navigation.navigate("Consejos")}
               accessibilityRole="button"
-              accessibilityLabel="Consejos"
+              accessibilityLabel="Consejos: nudos y montaje"
             >
-              <Text style={styles.linkChipTxt}>Consejos</Text>
+              <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.linkChip}
