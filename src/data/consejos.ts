@@ -5,7 +5,7 @@
  * No sustituye la normativa ni un curso presencial de seguridad.
  */
 
-import type { IdDiagrama } from "../components/DiagramaConsejo";
+import type { IdDiagrama } from "./consejosMedia";
 
 export type CategoriaConsejo =
   | "nudos"
@@ -47,38 +47,39 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Nudo Palomar",
         resumen: "El más fiable para anzuelo o mosca. Empieza por este.",
         detalle:
-          "Ideal para trenza y monofilamento. Conserva casi toda la resistencia del hilo. Deja ~2 mm de sobrante y corta en diagonal.",
+          "Ideal para trenza y monofilamento. Conserva casi toda la resistencia del hilo. Deja ~2 mm de sobrante y corta en diagonal. Desliza las fotos: son pasos reales (como en Knots 3D / Animated Knots), guardados en la app para usar sin red.",
         pasos: [
-          "Dobla unos 15 cm de línea (queda doble).",
-          "Pasa el doble por el ojal del anzuelo.",
-          "Haz un lazo simple sobre sí misma (nudo flojo).",
-          "Pasa el anzuelo entero por ese lazo.",
-          "Moja el hilo, aprieta despacio y corta el sobrante.",
+          "Dobla ~15 cm de línea y pasa el doble por el ojal.",
+          "Haz un nudo simple flojo con el doble.",
+          "Abre el lazo para que quepa el anzuelo entero.",
+          "Pasa el anzuelo completo por el lazo.",
+          "Tira para que el lazo baje al ojal.",
+          "Moja el hilo y aprieta sin tirones secos.",
+          "Corta el sobrante a ~2 mm.",
         ],
         diagrama: "nudo-palomar",
-        tags: ["anzuelo", "mosca", "fuerte", "principiante"],
+        tags: ["anzuelo", "mosca", "fuerte", "principiante", "fotos"],
       },
       {
         id: "nudo-clinch",
         titulo: "Clinch mejorado",
         resumen: "Rápido para anzuelos y giratorios en nylon.",
         detalle:
-          "Muy usado en monofilamento. Evítalo en trenza fina (resbala): ahí usa Palomar.",
+          "Muy usado en monofilamento. Evítalo en trenza fina (resbala): ahí usa Palomar. Las fotos muestran el clinch básico, el mejorado y el resultado apretado.",
         pasos: [
-          "Pasa la punta por el ojal.",
-          "Da 5–7 vueltas alrededor de la línea principal.",
-          "Vuelve a pasar la punta por el hueco junto al ojal y luego por el lazo grande.",
-          "Lubrica (agua o saliva) y aprieta tirando del anzuelo y de la línea.",
+          "Pasa la punta por el ojal y da 5–7 vueltas alrededor de la línea.",
+          "Vuelve a pasar por el hueco junto al ojal y luego por el lazo grande (mejorado).",
+          "Lubrica y aprieta tirando del anzuelo y de la línea.",
         ],
         diagrama: "nudo-clinch",
-        tags: ["nylon", "rápido"],
+        tags: ["nylon", "rápido", "fotos"],
       },
       {
         id: "nudo-uni",
         titulo: "Uni knot / Grinner",
         resumen: "Versátil: anzuelo, emerillón o unir líneas similares.",
         detalle:
-          "Si aprendes solo dos nudos, que sean Palomar y Uni. El Uni también une dos monofilamentos del mismo diámetro.",
+          "Si aprendes solo dos nudos, que sean Palomar y Uni. El Uni también une dos monofilamentos del mismo diámetro. El diagrama libre muestra el recorrido completo del hilo.",
         pasos: [
           "Pasa por el ojal y forma un círculo hacia atrás.",
           "Da 5–6 vueltas dentro del círculo con la punta.",
@@ -86,14 +87,14 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
           "Recorta el sobrante corto.",
         ],
         diagrama: "nudo-uni",
-        tags: ["unir", "emerillón"],
+        tags: ["unir", "emerillón", "diagrama"],
       },
       {
         id: "nudo-albright",
         titulo: "Albright (trenza → fluorocarbono)",
         resumen: "Empalme tippet/bajo cuando cambias de material.",
         detalle:
-          "Practica en seco en casa: en el agua, con frío, cuesta más. Alternativa fácil: anilla micro (conector) + dos Uni.",
+          "Practica en seco en casa: en el agua, con frío, cuesta más. Alternativa fácil: anilla micro (conector) + dos Uni. Diagrama de dominio público + foto real del empalme.",
         pasos: [
           "Haz un lazo con el fluorocarbono.",
           "Introduce la trenza por el lazo.",
@@ -101,21 +102,21 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
           "Pasa la punta de la trenza por el lazo y aprieta por etapas.",
         ],
         diagrama: "nudo-albright",
-        tags: ["trenza", "fluoro"],
+        tags: ["trenza", "fluoro", "diagrama"],
       },
       {
         id: "nudo-loop",
         titulo: "Lazo de cirujano (surgeon's loop)",
         resumen: "Crear un ojal al final de la línea o tippet.",
         detalle:
-          "Sirve para montar moscas con lazo o enganchar un snap. Deja el lazo del tamaño justo para no enredar.",
+          "Sirve para montar moscas con lazo o enganchar un snap. Deja el lazo del tamaño justo para no enredar. Diagrama LadyofHats (dominio público).",
         pasos: [
           "Dobla el extremo de la línea.",
           "Haz un nudo simple pasando dos veces por el ojal (nudo doble).",
           "Aprieta mojando y ajusta el tamaño del lazo.",
         ],
         diagrama: "nudo-loop",
-        tags: ["lazo", "mosca"],
+        tags: ["lazo", "mosca", "diagrama"],
       },
     ],
   },
@@ -342,7 +343,14 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         resumen: "Caja plana: 2 snaps, 2 emerillones, 1 mosquetón, plomos y anzuelos.",
         detalle:
           "1) Ata un snap a la línea con Palomar. 2) Engancha la cucharilla o el vinilo al snap. 3) Si usas cucharilla giratoria, pon emerillón + snap. 4) Lleva corta-hilos y 5 anzuelos de repuesto sin arponcillo. Con eso montas en menos de un minuto.",
-        tags: ["kit", "principiante", "rápido"],
+        pasos: [
+          "Snaps y emerillones en la cajita.",
+          "Un solo Palomar al snap.",
+          "Engancha el señuelo al snap (cambio en 1 s).",
+          "Plomos y anzuelos de repuesto sin arponcillo.",
+        ],
+        diagrama: "kit-principiante",
+        tags: ["kit", "principiante", "rápido", "fotos"],
       },
       {
         id: "ap-spinning",
@@ -350,7 +358,13 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         resumen: "Caña 2,10–2,40 m · 5–25 g · trenza 0.08–0.12 + fluoro 0.20–0.28.",
         detalle:
           "El setup más polivalente para embalses de Castellón. Carrete 2500–3000. Bajo de fluorocarbono 1–1,5 m. Sirve para softbait, crank y cucharilla.",
-        tags: ["embalse", "bass"],
+        pasos: [
+          "Línea → bajo de flúoro → emerillón/snap → señuelo.",
+          "Vinilo: texas (bala + offset). Cucharilla: emerillón + snap.",
+          "Caña 2,10–2,40 m y carrete 2500–3000.",
+        ],
+        diagrama: "montaje-spinning",
+        tags: ["embalse", "bass", "fotos"],
       },
       {
         id: "ap-feeder",
@@ -358,7 +372,13 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         resumen: "Caña feeder 3,3–3,6 m · nailon 0.20–0.25 · cage.",
         detalle:
           "Solo donde cebar esté permitido (no trucheros). Montaje anti-enredo con emerillón y anzuelo a la medida del cebo.",
-        tags: ["carpa", "barbo"],
+        pasos: [
+          "Plomo deslizante (oliva o cage) en la línea.",
+          "Emerillón de tope + bajo + anzuelo.",
+          "Solo donde cebar esté permitido.",
+        ],
+        diagrama: "montaje-fondo",
+        tags: ["carpa", "barbo", "fotos"],
       },
       {
         id: "ap-ultralight",
@@ -366,6 +386,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         resumen: "Caña 1,80–2,10 m · 0.5–7 g · nylon 0.14–0.18.",
         detalle:
           "Para trucha y ciprínidos en tramos estrechos. Un anzuelo sin muerte y suela con agarre. Una sola caña en tramos trucheros.",
+        diagrama: "cucharilla-ondulante",
         tags: ["trucha", "río"],
       },
       {
@@ -374,6 +395,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         resumen: "Costa de Castellón sin vedados ni puertos.",
         detalle:
           "Caña 2,7–3,6 m según distancia. Pirámide + running para dorada. Respeta bandas de baño (mapa de la app).",
+        diagrama: "plomo-piramide",
         tags: ["costa"],
       },
     ],

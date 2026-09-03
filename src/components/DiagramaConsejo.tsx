@@ -1,30 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { COLORS, RADIUS } from "../theme";
+import { GUIAS_MEDIA, type IdDiagrama } from "../data/consejosMedia";
+import GuiaFotoConsejo from "./GuiaFotoConsejo";
 
-/** Identificadores de esquemas gráficos para la escuela de bolsillo. */
-export type IdDiagrama =
-  | "nudo-palomar"
-  | "nudo-clinch"
-  | "nudo-uni"
-  | "nudo-albright"
-  | "nudo-loop"
-  | "anzuelo-simple"
-  | "anzuelo-triple"
-  | "anzuelo-offset"
-  | "anzuelo-circle"
-  | "anzuelo-mosca"
-  | "plomo-piramide"
-  | "plomo-bala"
-  | "plomo-oliva"
-  | "plomo-gota"
-  | "cucharilla-giratoria"
-  | "cucharilla-ondulante"
-  | "snap-clip"
-  | "emerillon"
-  | "mosqueton"
-  | "conector-rapido"
-  | "tabla-tallas";
+export type { IdDiagrama };
 
 type Props = {
   id: IdDiagrama;
@@ -801,7 +781,8 @@ function TablaTallas({ width }: { width: number }) {
   );
 }
 
-const MAPA: Record<IdDiagrama, (p: { width: number }) => React.ReactElement> = {
+/** Fallback esquemático (View) solo si no hay guía fotográfica en consejosMedia. */
+const MAPA: Partial<Record<IdDiagrama, (p: { width: number }) => React.ReactElement>> = {
   "nudo-palomar": NudoPalomar,
   "nudo-clinch": NudoClinch,
   "nudo-uni": NudoUni,
@@ -837,6 +818,12 @@ function anchoMinimo(id: IdDiagrama): number {
  * Pensado para que un principiante entienda el montaje de un vistazo.
  */
 export default function DiagramaConsejo({ id, width = 340 }: Props) {
+  /** Preferir fotos/diagramas libres empaquetados (más claros para principiantes). */
+  const guia = GUIAS_MEDIA[id];
+  if (guia) {
+    return <GuiaFotoConsejo guia={guia} width={width} />;
+  }
+
   const Comp = MAPA[id];
   if (!Comp) return null;
   const lienzoW = Math.max(width, anchoMinimo(id));
