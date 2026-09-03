@@ -8,7 +8,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import MejorHoraPesca from "../components/MejorHoraPesca";
-import SiluetaEspecie from "../components/SiluetaEspecie";
+import GraficoEspecie from "../components/GraficoEspecie";
+import { FilaAparejo } from "../components/IconoAparejo";
 import { tallaDestacada } from "../components/TarjetaEspecie";
 
 interface Props {
@@ -96,8 +97,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
             style={[styles.chip, seleccionada === s.id && (mar ? styles.chipActiveMar : styles.chipActiveBosque)]}
             onPress={() => setSeleccionada(s.id)}
           >
-            <Text style={[styles.chipText, seleccionada === s.id && styles.chipTextActive]}>
-              {s.icono ? `${s.icono} ` : ""}
+            <GraficoEspecie id={s.id} nombre={s.nombre} size={28} />
+            <Text style={[styles.chipText, seleccionada === s.id && styles.chipTextActive]} numberOfLines={1}>
               {s.nombre}
             </Text>
           </TouchableOpacity>
@@ -113,7 +114,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             >
               <Text style={styles.headerKicker}>{ambito === "costa" ? "Desde tierra · Mediterráneo" : "Continental · Castellón"}</Text>
               <View style={styles.headerHero}>
-                <SiluetaEspecie id={sp.id} nombre={sp.nombre} color="#fff" size={64} />
+                <GraficoEspecie id={sp.id} nombre={sp.nombre} size={96} />
                 {talla ? (
                   <View>
                     <Text style={styles.headerTallaKicker}>
@@ -148,20 +149,18 @@ export default function AparejosScreen({ route, navigation }: Props) {
             {ambito === "rio" && (sp.habitats || sp.senuelosClave?.length) ? (
               <View style={[styles.gearCard, { marginTop: 12 }]}>
                 {sp.habitats ? (
-                  <>
-                    <Text style={styles.gearRowLabel}>Dónde en Castellón</Text>
+                  <FilaAparejo tipo="habitat" titulo="Dónde en Castellón">
                     <Text style={styles.gearRowValue}>{sp.habitats}</Text>
-                  </>
+                  </FilaAparejo>
                 ) : null}
                 {sp.senuelosClave?.length > 0 && (
-                  <>
-                    <Text style={styles.gearRowLabel}>Señuelos que más funcionan</Text>
+                  <FilaAparejo tipo="senuelo" titulo="Señuelos que más funcionan">
                     {sp.senuelosClave.map((s: string, i: number) => (
                       <Text key={i} style={styles.gearBullet}>
                         • {s}
                       </Text>
                     ))}
-                  </>
+                  </FilaAparejo>
                 )}
               </View>
             ) : null}
@@ -176,24 +175,27 @@ export default function AparejosScreen({ route, navigation }: Props) {
               <View style={styles.gearCard}>
                 <Text style={styles.gearTitle}>Equipo de orilla</Text>
                 {ambito === "costa" ? <Text style={styles.gearAviso}>{aparejosOrilla.aviso}</Text> : null}
-                <Text style={styles.gearRowLabel}>Caña</Text>
-                <Text style={styles.gearRowValue}>{equipo.cana}</Text>
-                <Text style={styles.gearRowLabel}>Carrete</Text>
-                <Text style={styles.gearRowValue}>{equipo.carrete}</Text>
-                <Text style={styles.gearRowLabel}>Línea</Text>
-                <Text style={styles.gearRowValue}>{equipo.linea}</Text>
+                <FilaAparejo tipo="cana" titulo="Caña">
+                  <Text style={styles.gearRowValue}>{equipo.cana}</Text>
+                </FilaAparejo>
+                <FilaAparejo tipo="carrete" titulo="Carrete">
+                  <Text style={styles.gearRowValue}>{equipo.carrete}</Text>
+                </FilaAparejo>
+                <FilaAparejo tipo="linea" titulo="Línea">
+                  <Text style={styles.gearRowValue}>{equipo.linea}</Text>
+                </FilaAparejo>
                 {equipo.senuelosCebos?.length > 0 && (
-                  <>
-                    <Text style={styles.gearRowLabel}>Señuelos / cebos</Text>
+                  <FilaAparejo tipo="senuelo" titulo="Señuelos / cebos">
                     {equipo.senuelosCebos.map((s: string, i: number) => (
                       <Text key={i} style={styles.gearBullet}>
                         • {s}
                       </Text>
                     ))}
-                  </>
+                  </FilaAparejo>
                 )}
-                <Text style={styles.gearRowLabel}>Técnica</Text>
-                <Text style={styles.gearRowValue}>{equipo.tecnica}</Text>
+                <FilaAparejo tipo="tecnica" titulo="Técnica">
+                  <Text style={styles.gearRowValue}>{equipo.tecnica}</Text>
+                </FilaAparejo>
               </View>
             ) : (
               <Text style={styles.emptyText}>No hay recomendaciones de equipo para esta especie.</Text>
@@ -231,10 +233,13 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textSecondary },
   modoTxtOn: { color: "#fff" },
-  chipBar: { maxHeight: 56, backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  chipBar: { maxHeight: 64, backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: RADIUS.pill,
     backgroundColor: COLORS.mist,
     marginRight: 8,
@@ -242,11 +247,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: COLORS.border,
+    maxWidth: 180,
   },
-  chipActiveBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
-  chipActiveMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
-  chipText: { fontSize: 13, color: COLORS.primaryDark, fontWeight: "600" },
-  chipTextActive: { color: "#fff", fontWeight: "700" },
+  chipActiveBosque: { backgroundColor: COLORS.primaryLight, borderColor: COLORS.primary },
+  chipActiveMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
+  chipText: { fontSize: 13, color: COLORS.primaryDark, fontWeight: "700", flexShrink: 1 },
+  chipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
   content: { flex: 1 },
   headerCard: {
     borderRadius: RADIUS.xl,
@@ -262,7 +268,16 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textTransform: "uppercase",
   },
-  headerHero: { flexDirection: "row", alignItems: "center", gap: 14, marginTop: 12 },
+  headerHero: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginTop: 12,
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderRadius: RADIUS.lg,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
   headerTallaKicker: {
     fontSize: 11,
     fontWeight: "800",
@@ -299,7 +314,7 @@ const styles = StyleSheet.create({
   gearTitle: { fontSize: 16, fontWeight: "800", color: COLORS.primaryDark, marginBottom: 6 },
   gearAviso: { fontSize: 12, color: COLORS.textMuted, lineHeight: 18, marginBottom: 8 },
   gearRowLabel: { fontSize: 12, fontWeight: "800", color: COLORS.water, marginTop: 14, letterSpacing: 0.4, textTransform: "uppercase" },
-  gearRowValue: { fontSize: 15, color: COLORS.textPrimary, marginTop: 4, lineHeight: 22 },
+  gearRowValue: { fontSize: 15, color: COLORS.textPrimary, marginTop: 2, lineHeight: 22 },
   gearBullet: { fontSize: 15, color: COLORS.textPrimary, marginTop: 4, marginLeft: 4, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 20, lineHeight: 20 },
 });

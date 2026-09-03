@@ -1,5 +1,7 @@
 /**
- * Cielos tipo app Tiempo (iPhone): degradados según código WMO.
+ * Cielos tipo app Tiempo (iPhone).
+ * Los degradados se mantienen vivos pero lo bastante oscuros
+ * para texto blanco; el cristal oscuro garantiza lectura en cualquier cielo.
  */
 export type TipoMeteo =
   | "sol"
@@ -23,69 +25,83 @@ export function tipoMeteoDeCodigo(codigo: number): TipoMeteo {
 
 export type CieloMeteo = {
   gradient: readonly [string, string, string];
-  chip: string;
-  chipBorder: string;
+  /** Panel translúcido oscuro: texto blanco ≥4.5:1 encima. */
   glass: string;
+  glassBorder: string;
+  chip: string;
+  chipOn: string;
   label: string;
 };
+
+const GLASS = "rgba(10, 24, 42, 0.62)";
+const GLASS_BORDER = "rgba(255,255,255,0.28)";
+const CHIP = "rgba(10, 24, 42, 0.45)";
+const CHIP_ON = "rgba(10, 24, 42, 0.72)";
 
 export function cieloDeCodigo(codigo: number): CieloMeteo {
   const tipo = tipoMeteoDeCodigo(codigo);
   switch (tipo) {
     case "sol":
       return {
-        gradient: ["#1c6fd4", "#4aa3ef", "#9ad0f8"],
-        chip: "rgba(255,255,255,0.22)",
-        chipBorder: "rgba(255,255,255,0.4)",
-        glass: "rgba(255,255,255,0.18)",
+        gradient: ["#0d5bb5", "#2f8de0", "#5eb0f0"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Despejado",
       };
     case "solNubes":
       return {
-        gradient: ["#3a7fc4", "#6aabd8", "#b7d7ef"],
-        chip: "rgba(255,255,255,0.22)",
-        chipBorder: "rgba(255,255,255,0.38)",
-        glass: "rgba(255,255,255,0.18)",
+        gradient: ["#1f6ab0", "#4a96d0", "#7eb8e0"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Intervalos",
       };
     case "nubes":
       return {
-        gradient: ["#4A6F96", "#7A9BB8", "#B7CBDC"],
-        chip: "rgba(255,255,255,0.22)",
-        chipBorder: "rgba(255,255,255,0.38)",
-        glass: "rgba(255,255,255,0.18)",
+        gradient: ["#3a5570", "#5a7594", "#7a96b0"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Nublado",
       };
     case "niebla":
       return {
-        gradient: ["#7a8694", "#a3adb8", "#d2d7dc"],
-        chip: "rgba(255,255,255,0.24)",
-        chipBorder: "rgba(255,255,255,0.4)",
-        glass: "rgba(255,255,255,0.2)",
+        gradient: ["#4a5666", "#657282", "#8490a0"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Niebla",
       };
     case "lluvia":
       return {
-        gradient: ["#2F4F6E", "#4A6F90", "#7A9BB4"],
-        chip: "rgba(255,255,255,0.18)",
-        chipBorder: "rgba(255,255,255,0.34)",
-        glass: "rgba(255,255,255,0.15)",
+        gradient: ["#243d58", "#3a5a78", "#5a7a96"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Lluvia",
       };
     case "tormenta":
       return {
-        gradient: ["#1A2233", "#2C3B55", "#465870"],
-        chip: "rgba(255,255,255,0.14)",
-        chipBorder: "rgba(255,255,255,0.3)",
-        glass: "rgba(255,255,255,0.12)",
+        gradient: ["#141c2c", "#243248", "#3a4a62"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Tormenta",
       };
     case "nieve":
       return {
-        gradient: ["#6a8198", "#95aaba", "#d0dbe4"],
-        chip: "rgba(255,255,255,0.24)",
-        chipBorder: "rgba(255,255,255,0.42)",
-        glass: "rgba(255,255,255,0.2)",
+        gradient: ["#3d5368", "#5a738c", "#7a93aa"],
+        glass: GLASS,
+        glassBorder: GLASS_BORDER,
+        chip: CHIP,
+        chipOn: CHIP_ON,
         label: "Nieve",
       };
   }

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Platform, StyleSheet, View } from "react-native";
-import { tipoMeteoDeCodigo, TipoMeteo } from "./meteoSky";
+import { tipoMeteoDeCodigo } from "./meteoSky";
 
 /** Capas atmosféricas animadas detrás del contenido (estilo Weather.app). */
 export default function AtmosferaMeteo({ codigo }: { codigo: number }) {
