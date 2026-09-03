@@ -151,13 +151,15 @@ export default function PrevisionScreen() {
       contentContainerStyle={[styles.content, { paddingTop: Math.max(insets.top, 12) + 52 }]}
       accessibilityLabel="Previsión meteorológica de 7 días"
     >
-      <Text style={styles.kicker} accessibilityRole="header">
-        Previsión
-      </Text>
-      <Text style={styles.title}>Siete días en tu zona</Text>
-      <Text style={styles.subtitle}>
-        Cielo animado, hora a hora e índice de pesca según el día elegido.
-      </Text>
+      <View style={[styles.introCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
+        <Text style={styles.kicker} accessibilityRole="header">
+          Previsión
+        </Text>
+        <Text style={styles.title}>Siete días en tu zona</Text>
+        <Text style={styles.subtitle}>
+          Cielo animado, hora a hora e índice de pesca según el día elegido.
+        </Text>
+      </View>
 
       {cargando && (
         <View style={styles.loadingBox} accessibilityLiveRegion="polite">
@@ -186,7 +188,7 @@ export default function PrevisionScreen() {
       {!cargando && dias.length > 0 && dia && tiempo && (
         <>
           <ListaAnimada replayKey={dia.fecha} index={0}>
-            <View style={styles.hero}>
+            <View style={[styles.hero, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.heroDate}>{fechaLarga(dia.fecha)}</Text>
               <View style={styles.heroMain}>
                 <IconoMeteo codigo={dia.codigoTiempo} size={112} etiqueta={tiempo.texto} />
@@ -417,37 +419,43 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 220,
   },
+  hero: {
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+  },
+  introCard: {
+    borderRadius: RADIUS.lg,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+  },
   kicker: {
     fontSize: 13,
     fontWeight: "800",
     letterSpacing: 1.4,
     color: "#ffffff",
     textTransform: "uppercase",
-    textShadowColor: "rgba(0,0,0,0.45)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: "800",
     color: glassText,
     marginTop: 4,
-    lineHeight: 36,
+    lineHeight: 34,
     letterSpacing: -0.4,
-    textShadowColor: "rgba(0,0,0,0.4)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14.5,
     color: "#ffffff",
-    marginTop: 8,
-    marginBottom: 18,
-    lineHeight: 22,
-    fontWeight: "700",
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    marginTop: 6,
+    marginBottom: 0,
+    lineHeight: 21,
+    fontWeight: "600",
   },
   subtitleSoft: {
     fontSize: 13,
@@ -475,11 +483,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "800" },
-  hero: {
-    alignItems: "center",
-    paddingVertical: 8,
-    marginBottom: 8,
-  },
   heroDate: {
     fontSize: 15,
     fontWeight: "800",
