@@ -12,7 +12,7 @@ interface Props {
   color?: string;
 }
 
-/** Emojis en orbe liquid-glass (vidrio tintado + brillo). */
+/** Emojis en orbe tintado (menos brillo, más producto). */
 const EMOJI: Record<NombreIcono, string> = {
   home: "🏠",
   water: "🗺️",
@@ -32,11 +32,11 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
   };
 }
 
-export default function TabIcon({ nombre, size = 30, focused }: Props) {
+export default function TabIcon({ nombre, size = 24, focused }: Props) {
   const tint = COLOR_TAB[nombre];
   const { r, g, b } = hexToRgb(tint);
-  const box = size + 22;
-  const fill = focused ? `rgba(${r},${g},${b},0.55)` : `rgba(${r},${g},${b},0.32)`;
+  const box = size + 16;
+  const fill = focused ? `rgba(${r},${g},${b},0.42)` : `rgba(${r},${g},${b},0.16)`;
 
   return (
     <View
@@ -47,28 +47,25 @@ export default function TabIcon({ nombre, size = 30, focused }: Props) {
           height: box,
           borderRadius: box / 2,
           backgroundColor: fill,
-          borderColor: focused ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.55)",
-          transform: [{ scale: focused ? 1.08 : 1 }],
+          borderColor: focused ? `rgba(${r},${g},${b},0.35)` : "rgba(255,255,255,0.65)",
+          transform: [{ scale: focused ? 1.04 : 1 }],
           ...(Platform.OS === "web"
             ? ({
-                backdropFilter: "blur(10px) saturate(160%)",
-                WebkitBackdropFilter: "blur(10px) saturate(160%)",
                 boxShadow: focused
-                  ? `0 8px 18px rgba(${r},${g},${b},0.35), inset 0 1px 0 rgba(255,255,255,0.85), inset 0 -6px 12px rgba(${r},${g},${b},0.25)`
-                  : `0 4px 12px rgba(${r},${g},${b},0.22), inset 0 1px 0 rgba(255,255,255,0.7)`,
+                  ? `0 4px 12px rgba(${r},${g},${b},0.22), inset 0 1px 0 rgba(255,255,255,0.7)`
+                  : `inset 0 1px 0 rgba(255,255,255,0.55)`,
               } as any)
             : {
                 shadowColor: tint,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: focused ? 0.35 : 0.2,
-                shadowRadius: 8,
-                elevation: focused ? 6 : 3,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: focused ? 0.22 : 0.08,
+                shadowRadius: 5,
+                elevation: focused ? 3 : 1,
               }),
         },
       ]}
     >
-      <View style={styles.shine} pointerEvents="none" />
-      <Text style={{ fontSize: size - 4, lineHeight: size }}>{EMOJI[nombre]}</Text>
+      <Text style={{ fontSize: size - 2, lineHeight: size + 2 }}>{EMOJI[nombre]}</Text>
     </View>
   );
 }
@@ -77,16 +74,7 @@ const styles = StyleSheet.create({
   wrap: {
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1.5,
+    borderWidth: 1,
     overflow: "hidden",
-  },
-  shine: {
-    position: "absolute",
-    top: 2,
-    left: "18%",
-    right: "18%",
-    height: "38%",
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.45)",
   },
 });

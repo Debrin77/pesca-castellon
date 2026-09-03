@@ -9,7 +9,7 @@ import { avisoSitiosCosta } from "../services/consultaCostaService";
 import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "./ListaAnimada";
 import SemaforoVeredicto from "./SemaforoVeredicto";
-import { COLORS, RADIUS } from "../theme";
+import { CARD, COLORS, RADIUS, SPACING, TYPE } from "../theme";
 
 interface Props {
   consulta: ConsultaPesca;
@@ -42,16 +42,20 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
           </Text>
         )}
 
-        {consulta.permisos.map((p, i) => (
-          <Text key={`p-${i}`} style={styles.ok}>
-            {p}
-          </Text>
-        ))}
-        {consulta.restriccionesHoy.map((p, i) => (
-          <Text key={`r-${i}`} style={styles.warn}>
-            {p}
-          </Text>
-        ))}
+        {(consulta.permisos.length > 0 || consulta.restriccionesHoy.length > 0) && (
+          <View style={styles.lista}>
+            {consulta.permisos.map((p, i) => (
+              <Text key={`p-${i}`} style={styles.ok}>
+                {p}
+              </Text>
+            ))}
+            {consulta.restriccionesHoy.map((p, i) => (
+              <Text key={`r-${i}`} style={styles.warn}>
+                {p}
+              </Text>
+            ))}
+          </View>
+        )}
 
         {consulta.especiesHabituales ? (
           <Text style={[styles.especies, { color: acento }]}>Especies habituales: {consulta.especiesHabituales}</Text>
@@ -97,23 +101,73 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    ...CARD,
   },
-  pill: { alignSelf: "flex-start", borderRadius: RADIUS.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: 8 },
-  pillText: { color: "#fff", fontSize: 10, fontWeight: "800", letterSpacing: 0.4, textTransform: "uppercase" },
-  title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
-  meta: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 4, marginBottom: 8 },
-  ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
-  warn: { fontSize: 12.5, color: COLORS.danger, lineHeight: 18, marginBottom: 4, fontWeight: "600" },
-  especies: { fontSize: 12, marginTop: 6, fontWeight: "600" },
-  fuente: { fontSize: 10, color: COLORS.textSecondary, marginTop: 8, fontStyle: "italic" },
-  row: { flexDirection: "row", gap: 8, marginTop: 12 },
-  btn: { backgroundColor: COLORS.primary, borderRadius: RADIUS.sm, paddingHorizontal: 12, paddingVertical: 8 },
-  btnText: { color: "#fff", fontWeight: "700", fontSize: 12 },
-  btnGhost: { borderWidth: 1, borderColor: COLORS.border, borderRadius: RADIUS.sm, paddingHorizontal: 12, paddingVertical: 8 },
-  btnGhostText: { color: COLORS.primary, fontWeight: "700", fontSize: 12 },
+  pill: {
+    alignSelf: "flex-start",
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: SPACING.sm,
+  },
+  pillText: {
+    ...TYPE.overline,
+    color: "#fff",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+  },
+  title: {
+    ...TYPE.title,
+    color: COLORS.textPrimary,
+  },
+  meta: {
+    ...TYPE.caption,
+    color: COLORS.textSecondary,
+    marginTop: 4,
+    marginBottom: SPACING.sm,
+  },
+  lista: {
+    marginTop: 2,
+    marginBottom: 4,
+    gap: 4,
+  },
+  ok: {
+    ...TYPE.body,
+    color: COLORS.textSecondary,
+  },
+  warn: {
+    ...TYPE.bodyStrong,
+    color: COLORS.danger,
+  },
+  especies: {
+    ...TYPE.bodyStrong,
+    marginTop: SPACING.sm,
+  },
+  fuente: {
+    ...TYPE.caption,
+    color: COLORS.textMuted,
+    marginTop: SPACING.sm,
+    fontStyle: "italic",
+    fontWeight: "500",
+  },
+  row: { flexDirection: "row", gap: 8, marginTop: SPACING.md },
+  btn: {
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    minHeight: 42,
+    justifyContent: "center",
+  },
+  btnText: { color: "#fff", fontWeight: "700", fontSize: 13.5 },
+  btnGhost: {
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    minHeight: 42,
+    justifyContent: "center",
+    backgroundColor: COLORS.mist,
+  },
+  btnGhostText: { fontWeight: "700", fontSize: 13.5 },
 });

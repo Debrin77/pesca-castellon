@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import TabIcon from "./TabIcon";
 import { COLOR_TAB, NombreIcono } from "./tabTheme";
-import { COLORS } from "../theme";
+import { COLORS, RADIUS } from "../theme";
 
 const ICONO_POR_TAB: Record<string, NombreIcono> = {
   Inicio: "home",
@@ -27,11 +27,11 @@ const ICONO_POR_TAB: Record<string, NombreIcono> = {
   Capturas: "bookmark",
 };
 
-/** Ancho grande a propósito: en móvil solo caben 3–4 → hay que deslizar. */
-const ANCHO_ITEM = 96;
+/** Ancho a propósito: en móvil solo caben 3–4 → hay que deslizar. */
+const ANCHO_ITEM = 88;
 
 /**
- * Barra inferior con scroll + aspecto liquid-glass (vidrio esmerilado).
+ * Barra inferior con scroll + vidrio sobrio (menos “juguete”, más app).
  */
 export default function BarraTabsScroll({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -63,42 +63,25 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
   }
 
   const body = (
-    <>
-      <View style={styles.topRow}>
-        {needsScroll ? (
-          <TouchableOpacity
-            style={[styles.arrow, !canLeft && styles.arrowOff]}
-            onPress={() => scrollBy(-1)}
-            disabled={!canLeft}
-            accessibilityLabel="Ver pestañas anteriores"
-          >
-            <Text style={styles.arrowTxt}>‹</Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.arrowSpacer} />
-        )}
-        <Text style={styles.hint}>{needsScroll ? "Desliza · flechas →" : "Menú"}</Text>
-        {needsScroll ? (
-          <TouchableOpacity
-            style={[styles.arrow, !canRight && styles.arrowOff]}
-            onPress={() => scrollBy(1)}
-            disabled={!canRight}
-            accessibilityLabel="Ver más pestañas"
-          >
-            <Text style={styles.arrowTxt}>›</Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.arrowSpacer} />
-        )}
-      </View>
+    <View style={styles.inner}>
+      {needsScroll && (
+        <TouchableOpacity
+          style={[styles.edgeBtn, styles.edgeLeft, !canLeft && styles.edgeOff]}
+          onPress={() => scrollBy(-1)}
+          disabled={!canLeft}
+          accessibilityLabel="Ver pestañas anteriores"
+        >
+          <Text style={styles.edgeTxt}>‹</Text>
+        </TouchableOpacity>
+      )}
 
       <ScrollView
         ref={scrollRef}
         horizontal
         nestedScrollEnabled
         scrollEnabled
-        showsHorizontalScrollIndicator
-        persistentScrollbar={Platform.OS === "android"}
+        showsHorizontalScrollIndicator={false}
+        persistentScrollbar={false}
         bounces
         decelerationRate="fast"
         snapToInterval={ANCHO_ITEM}
@@ -145,12 +128,12 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
               style={[styles.item, focused && styles.itemOn]}
               activeOpacity={0.8}
             >
-              <TabIcon nombre={iconName} size={30} focused={focused} />
+              <TabIcon nombre={iconName} size={24} focused={focused} />
               <Text
                 numberOfLines={1}
                 style={[
                   styles.label,
-                  { color: focused ? color : COLORS.textPrimary },
+                  { color: focused ? color : COLORS.textSecondary },
                   focused && styles.labelOn,
                 ]}
               >
@@ -160,19 +143,30 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
           );
         })}
       </ScrollView>
-    </>
+
+      {needsScroll && (
+        <TouchableOpacity
+          style={[styles.edgeBtn, styles.edgeRight, !canRight && styles.edgeOff]}
+          onPress={() => scrollBy(1)}
+          disabled={!canRight}
+          accessibilityLabel="Ver más pestañas"
+        >
+          <Text style={styles.edgeTxt}>›</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 
   return (
     <View
       nativeID="barra-tabs-scroll"
-      style={[styles.shell, { paddingBottom: Math.max(insets.bottom, 10) }]}
+      style={[styles.shell, { paddingBottom: Math.max(insets.bottom, 8) }]}
       onLayout={onShellLayout}
     >
       {Platform.OS === "web" ? (
         <View style={styles.glassFill}>{body}</View>
       ) : (
-        <BlurView intensity={55} tint="light" style={styles.glassFill}>
+        <BlurView intensity={48} tint="light" style={styles.glassFill}>
           <View style={styles.glassTint}>{body}</View>
         </BlurView>
       )}
@@ -183,66 +177,53 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
 const styles = StyleSheet.create({
   shell: {
     position: "absolute",
-    left: 6,
-    right: 6,
-    bottom: 6,
-    borderRadius: 28,
+    left: 10,
+    right: 10,
+    bottom: 8,
+    borderRadius: RADIUS.xl,
     overflow: "hidden",
     zIndex: 50,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.7)",
+    borderColor: "rgba(216,226,219,0.95)",
     ...(Platform.OS === "web"
       ? ({
-          /* Más opaco: el mapa detrás no roba contraste al texto de las pestañas. */
-          backgroundColor: "rgba(247,250,247,0.88)",
-          backdropFilter: "blur(22px) saturate(160%)",
-          WebkitBackdropFilter: "blur(22px) saturate(160%)",
-          boxShadow: "0 12px 40px rgba(12,44,32,0.18), inset 0 1px 0 rgba(255,255,255,0.85)",
+          backgroundColor: "rgba(247,250,247,0.94)",
+          backdropFilter: "blur(18px) saturate(140%)",
+          WebkitBackdropFilter: "blur(18px) saturate(140%)",
+          boxShadow: "0 10px 28px rgba(12,44,32,0.14)",
         } as any)
       : {
           backgroundColor: "transparent",
           shadowColor: "#0c2c20",
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.16,
-          shadowRadius: 20,
-          elevation: 12,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.14,
+          shadowRadius: 16,
+          elevation: 10,
         }),
   },
   glassFill: {
     flexGrow: 0,
-    paddingTop: 6,
+    paddingTop: 8,
   },
   glassTint: {
-    backgroundColor: "rgba(247,250,247,0.72)",
+    backgroundColor: "rgba(247,250,247,0.78)",
   },
-  topRow: {
+  inner: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    marginBottom: 2,
   },
-  hint: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 11,
-    color: COLORS.textPrimary,
-    fontWeight: "700",
-  },
-  arrow: {
-    width: 32,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "rgba(255,255,255,0.85)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.95)",
+  edgeBtn: {
+    width: 28,
+    height: 44,
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 2,
   },
-  arrowOff: { opacity: 0.45 },
-  arrowSpacer: { width: 32 },
-  arrowTxt: { fontSize: 22, fontWeight: "800", color: COLORS.primaryDark, lineHeight: 24 },
-  scroll: { maxHeight: 96 },
+  edgeLeft: { marginLeft: 2 },
+  edgeRight: { marginRight: 2 },
+  edgeOff: { opacity: 0.28 },
+  edgeTxt: { fontSize: 22, fontWeight: "700", color: COLORS.primaryDark, lineHeight: 24 },
+  scroll: { flex: 1, maxHeight: 78 },
   row: {
     paddingHorizontal: 4,
     alignItems: "center",
@@ -254,16 +235,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 4,
-    borderRadius: 18,
+    borderRadius: 16,
   },
   itemOn: {
-    backgroundColor: "rgba(255,255,255,0.72)",
+    backgroundColor: "rgba(255,255,255,0.85)",
   },
   label: {
-    marginTop: 5,
-    fontSize: 12,
+    marginTop: 4,
+    fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 0.1,
+    letterSpacing: 0.05,
   },
   labelOn: { fontWeight: "800" },
 });

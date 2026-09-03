@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colorSemaforo, ConsultaPesca } from "../services/consultaPescaService";
-import { RADIUS } from "../theme";
+import { RADIUS, SPACING } from "../theme";
 
 export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
   if (c.veredicto === "coto") return { texto: "COTO", sub: "Hace falta permiso del titular" };
@@ -32,23 +32,24 @@ export default function SemaforoVeredicto({ consulta }: { consulta: ConsultaPesc
 const styles = StyleSheet.create({
   caja: {
     borderRadius: RADIUS.md,
-    paddingVertical: 22,
-    paddingHorizontal: 16,
-    marginBottom: 14,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.md,
     alignItems: "center",
   },
   texto: {
     color: "#fff",
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "800",
-    letterSpacing: 1.2,
-    lineHeight: 36,
+    letterSpacing: 1.1,
+    lineHeight: 32,
   },
   sub: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 13.5,
     fontWeight: "700",
     marginTop: 6,
     textAlign: "center",
+    lineHeight: 18,
   },
 });

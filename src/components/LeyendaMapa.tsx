@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { COLORS, PIN } from "../theme";
+import { COLORS, PIN, SPACING, TYPE } from "../theme";
 
 type Modo = "continental" | "costa";
 
@@ -31,8 +31,14 @@ export default function LeyendaMapa({ modo }: { modo: Modo }) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row", flexWrap: "wrap", gap: 14, justifyContent: "center", marginTop: 8 },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACING.md,
+    justifyContent: "center",
+    marginBottom: 4,
+  },
   item: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dot: { width: 10, height: 10, borderRadius: 5 },
-  txt: { fontSize: 12, color: COLORS.textPrimary, fontWeight: "700" },
+  dot: { width: 9, height: 9, borderRadius: 5 },
+  txt: { ...TYPE.caption, color: COLORS.textPrimary, fontWeight: "700" },
 });

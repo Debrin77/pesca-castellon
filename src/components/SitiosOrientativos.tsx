@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { AVISO_SITIOS_COMUNIDAD, SitioOrientativo } from "../services/sitiosComunidad";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, SPACING, TYPE } from "../theme";
 
 export default function SitiosOrientativos({
   sitios,
@@ -32,17 +32,17 @@ export default function SitiosOrientativos({
 
 const styles = StyleSheet.create({
   box: {
-    marginTop: 12,
+    marginTop: SPACING.md,
     backgroundColor: COLORS.mist,
     borderRadius: RADIUS.md,
-    padding: 12,
+    padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  title: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 8 },
-  item: { marginBottom: 12 },
-  nombre: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, lineHeight: 22 },
-  meta: { fontSize: 14, fontWeight: "600", color: COLORS.textSecondary, marginTop: 4, lineHeight: 20 },
-  detalle: { fontSize: 16, color: COLORS.textPrimary, marginTop: 4, lineHeight: 24 },
-  aviso: { fontSize: 13, color: COLORS.textMuted, lineHeight: 18, marginTop: 4 },
+  title: { ...TYPE.bodyStrong, color: COLORS.textPrimary, marginBottom: SPACING.sm, fontSize: 14 },
+  item: { marginBottom: SPACING.md },
+  nombre: { fontSize: 14.5, fontWeight: "700", color: COLORS.waterDark, lineHeight: 20 },
+  meta: { ...TYPE.caption, color: COLORS.textSecondary, marginTop: 3 },
+  detalle: { ...TYPE.body, color: COLORS.textPrimary, marginTop: 3 },
+  aviso: { ...TYPE.caption, color: COLORS.textMuted, marginTop: 2, fontStyle: "italic", fontWeight: "500" },
 });

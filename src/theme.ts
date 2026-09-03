@@ -87,3 +87,23 @@ export const SHADOW_SOFT = {
 };
 
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
+
+/** Escala tipográfica compartida (Source Sans 3). */
+export const TYPE = {
+  overline: { fontSize: 11, fontWeight: "800" as const, letterSpacing: 0.7, lineHeight: 14 },
+  caption: { fontSize: 12, fontWeight: "600" as const, lineHeight: 16 },
+  body: { fontSize: 14, fontWeight: "500" as const, lineHeight: 20 },
+  bodyStrong: { fontSize: 14, fontWeight: "700" as const, lineHeight: 20 },
+  title: { fontSize: 17, fontWeight: "800" as const, letterSpacing: -0.2, lineHeight: 22 },
+  display: { fontSize: 22, fontWeight: "800" as const, letterSpacing: -0.3, lineHeight: 28 },
+};
+
+/** Superficie de ficha / panel reutilizable. */
+export const CARD = {
+  backgroundColor: COLORS.surface,
+  borderRadius: RADIUS.lg,
+  borderWidth: 1,
+  borderColor: COLORS.border,
+  padding: SPACING.lg,
+  ...SHADOW_SOFT,
+};
