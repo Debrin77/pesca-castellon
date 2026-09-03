@@ -281,17 +281,22 @@ export default function LicenseScreen() {
         ))}
       </View>
 
-      {!esSevilla ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
-          {Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
-            <View key={id} style={styles.tallaRow}>
-              <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
-              <Text style={styles.tallaVal}>{texto}</Text>
-            </View>
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
+        {esSevilla
+          ? (provincia.species as any[]).map((sp) => (
+              <View key={sp.id} style={styles.tallaRow}>
+                <Text style={styles.tallaName}>{sp.nombre}</Text>
+                <Text style={styles.tallaVal}>{sp.tallaOficial ?? "—"}</Text>
+              </View>
+            ))
+          : Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
+              <View key={id} style={styles.tallaRow}>
+                <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
+                <Text style={styles.tallaVal}>{texto}</Text>
+              </View>
+            ))}
+      </View>
 
       {!esSevilla ? (
         <>

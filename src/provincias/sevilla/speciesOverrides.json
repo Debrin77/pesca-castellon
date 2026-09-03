@@ -1,0 +1,202 @@
+[
+  {
+    "id": "siluro",
+    "nombre": "Siluro",
+    "nombreCientifico": "Silurus glanis",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐋",
+    "notas": "Invasora (RD 630/2013). En el Guadalquivir sevillano y embalses conectados hay citas y campañas de control. NO es especie objeto de pesca en Andalucía (Orden 13/01/2023): no se pesca como objetivo. Si entra de forma fortuita, se sacrifica y no se devuelve.",
+    "tallaOficial": "No es objeto de pesca. Captura fortuita: sacrificio inmediato, no devolver.",
+    "cupo": "0 de aprovechamiento. No devolver al agua.",
+    "mejoresMeses": ["mayo", "junio", "julio", "agosto", "septiembre"],
+    "ventanas": "Actividad crepuscular; en Andalucía el horario legal es de día (art. 4).",
+    "mejorHora": {
+      "resumen": "Más activo al atardecer. De día, en verano, suele estar en hoyos profundos.",
+      "verano": "Aprox. 18:00 hasta 1 h después del ocaso (límite legal art. 4). Segunda ventana 6:00–8:00.",
+      "invierno": "Poco activo; si aparece, suele ser 12:00–16:00 en zonas profundas.",
+      "noche": "Cazador nocturno, pero la pesca recreativa fuera del horario art. 4 no está permitida."
+    },
+    "habitats": "Hoyos junto a azudes (Peñaflor, Alcalá del Río), puentes y orillas socavadas del Guadalquivir sevillano; colas profundas de embalses conectados",
+    "senuelosClave": [
+      "Swimbait grande",
+      "Vinilo shad 15-20 cm",
+      "Montaje a fondo con pellet (sin pez vivo)"
+    ],
+    "normativaResumen": "Andalucía: no es especie objeto de pesca. Captura fortuita → sacrificio, no devolver (Orden 13/01/2023 + RD 630/2013). Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA (Sevilla): el siluro NO es especie objeto de pesca. Si lo capturas fortuitamente debes sacrificarlo y no devolverlo al agua (Orden 13/01/2023 y RD 630/2013). Confirma siempre el BOJA vigente.",
+    "equipo": {
+      "cana": "Caña de depredadores pesados 2,10-2,70 m (potencia alta) si aparece en spinning; no se pesca como objetivo",
+      "carrete": "Spinning 5000-8000 con freno potente",
+      "linea": "Trenzado 0,30-0,40 mm + bajo grueso 0,40-0,50 mm",
+      "senuelosCebos": ["Swimbaits y vinilos grandes", "Pellets a fondo"],
+      "tecnica": "No es modalidad objetivo en Sevilla. Si entra al aparejo, no devolver."
+    }
+  },
+  {
+    "id": "black_bass",
+    "nombre": "Black bass (perca americana)",
+    "nombreCientifico": "Micropterus salmoides",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐡",
+    "notas": "Exótica invasora. En Sevilla se pesca sobre todo en embalses (Minilla, Pintado, Cala, Gergal, Torán, Huésna, Torre del Águila, Agrio…). Fuera de las áreas de la Resolución 19/12/2019: sacrificio inmediato (art. 8 Orden 13/01/2023). No traslocar.",
+    "tallaOficial": "Sin talla ni cupo. En áreas autorizadas de la Resolución 19/12/2019 puede pescarse; fuera, sacrificio inmediato.",
+    "cupo": "Sin cupo. No devolver fuera de áreas autorizadas / según art. 8.",
+    "mejoresMeses": ["marzo", "abril", "mayo", "septiembre", "octubre"],
+    "ventanas": "Amanecer y atardecer; mediodía en profundidad o sombra",
+    "mejorHora": {
+      "resumen": "Más probable al amanecer y al atardecer. A mediodía, en profundidad o sombra.",
+      "verano": "Aprox. 6:00–9:30 y 19:00–21:30. De 12:00 a 16:00: drop shot o jig en puntas.",
+      "invierno": "Más de día, cuando el agua se templa: aprox. 10:00–16:00.",
+      "noche": "Puede cazar al anochecer; el horario legal andaluz es art. 4 (1 h antes del orto – 1 h después del ocaso)."
+    },
+    "habitats": "Orillas con cobertura de Minilla, Pintado, Cala, Gergal, José Torán, Huésna, Torre del Águila y Agrio; colas y puntas con caída",
+    "senuelosClave": [
+      "Texas rig creature 4\" green pumpkin",
+      "Drop shot 3-4\" natural",
+      "Football jig 3/8-1/2 oz",
+      "Popper / stickbait al amanecer",
+      "Spinnerbait 3/8 oz con agua turbia"
+    ],
+    "normativaResumen": "Invasora RD 630/2013. Andalucía: pesca de bass solo en masas/áreas de la Resolución 19/12/2019; fuera, sacrificio inmediato (art. 8). Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: black bass — comprueba si la masa está en la Resolución 19/12/2019. Fuera de esas áreas: sacrificio inmediato, no devolver. No traslocar. Licencia Junta + seguro RC.",
+    "equipo": {
+      "cana": "Casting 7' MH para Texas/jig + spinning 6'10\" ML para drop shot",
+      "carrete": "Baitcasting ~7:1 PE 20 lb; spinning 2500 + PE fino + fluoro 8 lb",
+      "linea": "Trenzado fino + líder fluorocarbono 0,20-0,30 mm",
+      "senuelosCebos": ["Creature bait 4\"", "Drop shot", "Football jig", "Topwater", "Spinnerbait"],
+      "tecnica": "Primavera: Texas y spinnerbait en cola. Verano: drop shot y jig en puntas. Otoño: crank y jig a media cota."
+    }
+  },
+  {
+    "id": "lucio",
+    "nombre": "Lucio",
+    "nombreCientifico": "Esox lucius",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🦈",
+    "notas": "Exótica invasora. En Sevilla aparece en algunos embalses de la Sierra Norte / Rivera de Huelva. Misma lógica que el bass: áreas Resolución 19/12/2019 o sacrificio inmediato (art. 8). Bajo anticorte imprescindible.",
+    "tallaOficial": "Sin talla ni cupo. Fuera de áreas autorizadas: sacrificio inmediato.",
+    "cupo": "Sin cupo. No devolver fuera de áreas autorizadas.",
+    "mejoresMeses": ["marzo", "abril", "octubre", "noviembre"],
+    "ventanas": "Primeras y últimas horas; agua fría a media cota",
+    "mejorHora": {
+      "resumen": "Más probable a primera y última hora. Con agua fría también a media mañana.",
+      "verano": "Aprox. 6:00–9:00 y 18:30–21:00 (sombra y profundidad al calor).",
+      "invierno": "Aprox. 10:00–15:00 a media cota.",
+      "noche": "Caza al anochecer; respeta horario art. 4 Orden 13/01/2023."
+    },
+    "habitats": "Orillas con cañas y estructuras en embalses sevillanos donde esté presente (consulta Resolución 19/12/2019 y señalización)",
+    "senuelosClave": [
+      "Jerkbait suspendido",
+      "Swimbait 12-18 cm",
+      "Cuchara ondulante grande",
+      "Bajo de acero o fluoro grueso"
+    ],
+    "normativaResumen": "Invasora. Andalucía art. 8 + Resolución 19/12/2019. No devolver fuera de áreas autorizadas. Licencia Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: lucio — solo retención/pesca regulada en áreas de la Resolución 19/12/2019; fuera, sacrificio inmediato. No traslocar.",
+    "equipo": {
+      "cana": "Spinning heavy 2.10-2.70 m, 20-60 g",
+      "carrete": "Spinning 4000",
+      "linea": "Trenzado 0.18-0.25 mm + bajo anticorte",
+      "senuelosCebos": ["Cucharas grandes", "Swimbaits", "Jerkbaits"],
+      "tecnica": "Lances largos en vegetación y cambios de profundidad; recuperación irregular"
+    }
+  },
+  {
+    "id": "carpa",
+    "nombre": "Carpa común",
+    "nombreCientifico": "Cyprinus carpio",
+    "categoria": "introducida_naturalizada",
+    "invasora": false,
+    "icono": "🐠",
+    "notas": "Exótica naturalizada, muy presente en el Guadalquivir (Barqueta, Coria, Peñaflor, Alcalá del Río), Guadaíra y embalses sevillanos. Sin talla ni cupo general en aguas libres andaluzas. Confirma Resolución 19/12/2019 y cartel del tramo para retención en cada masa.",
+    "tallaOficial": "Sin talla mínima en la Orden 13/01/2023 (exótica).",
+    "cupo": "Sin cupo general en aguas libres. Confirma Resolución 19/12/2019 y cartel del tramo.",
+    "mejoresMeses": ["mayo", "junio", "septiembre"],
+    "ventanas": "Amanecer y atardecer en verano; días suaves de primavera",
+    "mejorHora": {
+      "resumen": "En verano come de madrugada y al anochecer. En primavera, días suaves casi todo el día.",
+      "verano": "Aprox. 5:30–10:00 y 18:30 hasta 1 h después del ocaso (art. 4).",
+      "invierno": "Días suaves, aprox. 10:00–16:00, orillas soleadas.",
+      "noche": "Biológicamente nocturna; el horario legal andaluz limita a art. 4."
+    },
+    "habitats": "Guadalquivir urbano y bajo (Barqueta, Coria, Gelves), azud de Peñaflor, Guadaíra, colas limosas de embalses",
+    "senuelosClave": [
+      "Boilie frutal 15-20 mm",
+      "Maíz dulce en hair",
+      "Pellets con PVA",
+      "Method feeder en orilla"
+    ],
+    "normativaResumen": "Exótica: todo el año sin talla/cupo en aguas libres. Licencia continental Andalucía + seguro RC. Art. 8 / Resolución 19/12/2019 según masa.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: carpa — rige Orden 13/01/2023 y Resolución 19/12/2019. Sin talla mínima general en aguas libres. Licencia Junta + seguro RC.",
+    "equipo": {
+      "cana": "Carpfishing 3.60 m, 2.75-3.5 lb",
+      "carrete": "Big pit 5000-8000 con baitrunner",
+      "linea": "Mono 0.30-0.35 mm o trenzado con líder",
+      "senuelosCebos": ["Boilies", "Maíz dulce", "Pellets", "Masa/pan"],
+      "tecnica": "Fondo con hair rig; cebado previo (PVA/spod)"
+    }
+  },
+  {
+    "id": "carpin",
+    "nombre": "Carpín",
+    "nombreCientifico": "Carassius auratus",
+    "categoria": "introducida_naturalizada",
+    "invasora": false,
+    "icono": "🐠",
+    "notas": "Frecuente en orillas someras del Guadalquivir sevillano, Guadaíra y embalses. Exótica: sin talla mínima específica en la Orden 13/01/2023.",
+    "tallaOficial": "Sin talla mínima específica en la Orden 13/01/2023 (exótica).",
+    "cupo": "Sin cupo general en aguas libres andaluzas.",
+    "mejoresMeses": ["abril", "mayo", "junio"],
+    "ventanas": "Mañanas cálidas en orilla",
+    "mejorHora": {
+      "resumen": "Más probable en mañanas cálidas, pegado a la orilla.",
+      "verano": "Aprox. 7:00–11:00; tarde 17:00–20:00 si no aprieta el sol.",
+      "invierno": "Aprox. 10:00–14:00 en orillas soleadas.",
+      "noche": "Poco activo de noche. Respeta horario art. 4."
+    },
+    "habitats": "Orillas someras del Guadalquivir, Guadaíra y remansos de embalse",
+    "senuelosClave": ["Maíz", "Masa dulce", "Gusano donde el cebo natural esté permitido"],
+    "normativaResumen": "Exótica en Andalucía: sin talla mínima específica. Licencia Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: carpín — sin talla mínima específica en la Orden 13/01/2023. Licencia continental + seguro RC.",
+    "equipo": {
+      "cana": "Coup o feeder ligero 3,6 m",
+      "carrete": "Spinning 2000-3000 o coup",
+      "linea": "Nylon 0,14-0,18 mm",
+      "senuelosCebos": ["Maíz", "Masa", "Asticot si está permitido"],
+      "tecnica": "Pesca fina a fondo o a la inglesa junto a vegetación"
+    }
+  },
+  {
+    "id": "cangrejo_americano",
+    "nombre": "Cangrejo rojo / americano",
+    "nombreCientifico": "Procambarus clarkii",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🦞",
+    "notas": "Invasora. En Sevilla / marismas del Guadalquivir la captura recreativa NO está abierta a cualquiera: solo controladores autorizados (Orden 3/08/2016).",
+    "tallaOficial": "No es pesca recreativa libre en marismas del Guadalquivir.",
+    "cupo": "Solo controladores autorizados (Orden 3/08/2016).",
+    "mejoresMeses": ["abril", "mayo", "junio", "julio", "agosto", "septiembre"],
+    "ventanas": "Atardecer y alba (solo si estás autorizado como controlador)",
+    "mejorHora": {
+      "resumen": "Más activo al atardecer y al alba. La pesca recreativa general no está habilitada en el plan de marismas.",
+      "verano": "19:00–21:30 y 6:00–9:00 si el arte y la autorización lo permiten.",
+      "invierno": "Menos activo.",
+      "noche": "Muy activo de noche; sin autorización de controlador no aplica."
+    },
+    "habitats": "Marismas del Guadalquivir y zonas húmedas asociadas (ámbito Orden 3/08/2016)",
+    "senuelosClave": ["Nasas/reteles solo si estás autorizado"],
+    "normativaResumen": "Andalucía: cangrejo rojo solo por controladores autorizados (Orden 3/08/2016, marismas del Guadalquivir).",
+    "normativaEspecial": "⚠️ ANDALUCÍA: cangrejo rojo — solo controladores autorizados (Orden 3/08/2016). No es pesca recreativa libre en las marismas del Guadalquivir.",
+    "equipo": {
+      "cana": "No aplica a pesca recreativa general",
+      "carrete": "No aplica",
+      "linea": "No aplica",
+      "senuelosCebos": ["Nasa/retel solo con autorización"],
+      "tecnica": "Reservado a controladores del plan de marismas"
+    }
+  }
+]
