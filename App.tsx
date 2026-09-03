@@ -99,8 +99,26 @@ function ConsejosStackScreen() {
 
 function PrevisionStackScreen() {
   return (
-    <PrevisionStack.Navigator screenOptions={stackScreenOptions}>
-      <PrevisionStack.Screen name="PrevisionMain" component={PrevisionScreen} options={{ title: "Previsión" }} />
+    <PrevisionStack.Navigator
+      screenOptions={{
+        ...stackScreenOptions,
+        headerTransparent: true,
+        headerStyle: { backgroundColor: "transparent" },
+        headerBlurEffect: undefined,
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "700" as const,
+          fontSize: 17,
+          fontFamily: "SourceSans3_700Bold",
+          color: "#fff",
+        },
+      }}
+    >
+      <PrevisionStack.Screen
+        name="PrevisionMain"
+        component={PrevisionScreen}
+        options={{ title: "Previsión" }}
+      />
     </PrevisionStack.Navigator>
   );
 }

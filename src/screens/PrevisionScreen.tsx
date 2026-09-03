@@ -7,7 +7,9 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Pressable,
+  Platform,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useScrollToTop } from "@react-navigation/native";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import {
@@ -22,9 +24,10 @@ import {
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
-import { COLORS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
+import { cieloDeCodigo } from "../components/meteoSky";
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const DIAS_CORTOS = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -45,7 +48,6 @@ function etiquetaCorta(iso: string, index: number): { top: string; num: string }
   return { top: DIAS_CORTOS[d.getDay()], num: String(d.getDate()) };
 }
 
-/** Etiqueta corta para que quepa a 16 px bajo el icono del día. */
 function climaCorto(texto: string): string {
   const mapa: Record<string, string> = {
     "Cielo despejado": "Despejado",
@@ -119,6 +121,7 @@ export default function PrevisionScreen() {
   const ind = dia ? indice.find((x) => x.fecha === dia.fecha) : undefined;
   const cat = ind ? CATEGORIA_INFO[ind.categoria] : null;
   const tiempo = dia ? descripcionTiempo(dia.codigoTiempo) : null;
+  const cielo = dia ? cieloDeCodigo(dia.codigoTiempo) : cieloDeCodigo(2);
   const alertas = dia
     ? detectarAlertas({
         codigoTiempo: dia.codigoTiempo,
@@ -139,10 +142,10 @@ export default function PrevisionScreen() {
     return lista.filter((h) => parseInt(h.hora.slice(0, 2), 10) >= hh).slice(0, 10);
   }, [dia, horas]);
 
-  return (
+  const body = (
     <ScrollView
       ref={scrollRef}
-      style={styles.container}
+      style={styles.scroll}
       contentContainerStyle={styles.content}
       accessibilityLabel="Previsión meteorológica de 7 días"
     >
@@ -151,12 +154,12 @@ export default function PrevisionScreen() {
       </Text>
       <Text style={styles.title}>Siete días en tu zona</Text>
       <Text style={styles.subtitle}>
-        Tiempo hora a hora, avisos y el índice de pesca. Texto y colores pensados para leerse con claridad.
+        Cielo animado, hora a hora e índice de pesca según el día elegido.
       </Text>
 
       {cargando && (
         <View style={styles.loadingBox} accessibilityLiveRegion="polite">
-          <ActivityIndicator color={COLORS.waterDark} size="large" />
+          <ActivityIndicator color="#fff" size="large" />
           <Text style={styles.loadingText}>Cargando el tiempo de tu ubicación…</Text>
         </View>
       )}
@@ -180,6 +183,20 @@ export default function PrevisionScreen() {
 
       {!cargando && dias.length > 0 && dia && tiempo && (
         <>
+          <ListaAnimada replayKey={dia.fecha} index={0}>
+            <View style={styles.hero}>
+              <Text style={styles.heroDate}>{fechaLarga(dia.fecha)}</Text>
+              <View style={styles.heroMain}>
+                <IconoMeteo codigo={dia.codigoTiempo} size={112} etiqueta={tiempo.texto} />
+                <Text style={styles.heroTemp}>{Math.round(dia.tempMax)}°</Text>
+              </View>
+              <Text style={styles.heroCond}>{tiempo.texto}</Text>
+              <Text style={styles.heroRange}>
+                Máx. {Math.round(dia.tempMax)}° · Mín. {Math.round(dia.tempMin)}°
+              </Text>
+            </View>
+          </ListaAnimada>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -198,26 +215,25 @@ export default function PrevisionScreen() {
                   accessibilityRole="tab"
                   accessibilityState={{ selected: activo }}
                   accessibilityLabel={`${lab.top} ${lab.num}, ${t.texto}, máxima ${Math.round(d.tempMax)} grados, mínima ${Math.round(d.tempMin)}`}
-                  style={[styles.dayChip, activo && styles.dayChipOn]}
+                  style={[
+                    styles.dayChip,
+                    { backgroundColor: cielo.chip, borderColor: cielo.chipBorder },
+                    activo && styles.dayChipOn,
+                  ]}
                 >
                   <Text style={[styles.dayChipTop, activo && styles.dayChipTopOn]}>{lab.top}</Text>
-                  <Text style={[styles.dayChipNum, activo && styles.dayChipNumOn]}>{lab.num}</Text>
-                  <IconoMeteo codigo={d.codigoTiempo} size={40} etiqueta={t.texto} sobreOscuro={activo} />
-                  <Text style={[styles.dayChipTemp, activo && styles.dayChipTempOn]}>
-                    {Math.round(d.tempMax)}°
-                  </Text>
-                  <Text
-                    style={[styles.dayChipCond, activo && styles.dayChipCondOn]}
-                    numberOfLines={2}
-                  >
+                  <Text style={styles.dayChipNum}>{lab.num}</Text>
+                  <IconoMeteo codigo={d.codigoTiempo} size={42} etiqueta={t.texto} />
+                  <Text style={styles.dayChipTemp}>{Math.round(d.tempMax)}°</Text>
+                  <Text style={styles.dayChipCond} numberOfLines={2}>
                     {climaCorto(t.texto)}
                   </Text>
                   {iDia ? (
                     <View
                       style={[
                         styles.dot,
-                        { backgroundColor: CATEGORIA_INFO[iDia.categoria].color },
-                        activo && styles.dotOn,
+                        { backgroundColor: CATEGORIA_INFO[iDia.categoria].fondo },
+                        { borderColor: CATEGORIA_INFO[iDia.categoria].color },
                       ]}
                       accessibilityLabel={`Índice de pesca ${CATEGORIA_INFO[iDia.categoria].texto}`}
                     />
@@ -227,36 +243,24 @@ export default function PrevisionScreen() {
             })}
           </ScrollView>
 
-          <ListaAnimada replayKey={dia.fecha} index={0}>
-            <View style={styles.hero}>
-              <Text style={styles.heroDate}>{fechaLarga(dia.fecha)}</Text>
-              <View style={styles.heroRow}>
-                <IconoMeteo codigo={dia.codigoTiempo} size={88} etiqueta={tiempo.texto} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.heroTemp}>{Math.round(dia.tempMax)}°</Text>
-                  <Text style={styles.heroRange}>
-                    Máxima {Math.round(dia.tempMax)}° · Mínima {Math.round(dia.tempMin)}°
-                  </Text>
-                  <Text style={styles.heroCond}>{tiempo.texto}</Text>
-                </View>
-              </View>
-            </View>
-          </ListaAnimada>
-
           {cat && ind ? (
             <ListaAnimada replayKey={`idx-${dia.fecha}`} index={1}>
-              <View style={[styles.indexCard, { backgroundColor: cat.fondo }]}>
+              <View style={[styles.glassCard, { backgroundColor: cielo.glass }]}>
                 <View style={styles.indexHead}>
-                  <Text style={[styles.indexLabel, { color: cat.color }]}>Índice de pesca</Text>
-                  <Text style={[styles.indexScore, { color: cat.color }]}>
-                    {ind.puntuacion} de 100
+                  <Text style={styles.glassLabel}>Índice de pesca</Text>
+                  <Text style={styles.glassStrong}>
+                    {ind.puntuacion} · {cat.texto}
                   </Text>
                 </View>
-                <Text style={[styles.indexCat, { color: cat.color }]}>{cat.texto}</Text>
                 <View style={styles.meterTrack} accessibilityLabel={`Puntuación ${ind.puntuacion} de 100`}>
-                  <View style={[styles.meterFill, { width: `${ind.puntuacion}%`, backgroundColor: cat.color }]} />
+                  <View
+                    style={[
+                      styles.meterFill,
+                      { width: `${ind.puntuacion}%`, backgroundColor: cat.fondo },
+                    ]}
+                  />
                 </View>
-                <Text style={styles.indexHint}>
+                <Text style={styles.glassHint}>
                   Orientativo (presión, nubes, viento, lluvia y luna). No es un aviso oficial.
                 </Text>
               </View>
@@ -264,24 +268,24 @@ export default function PrevisionScreen() {
           ) : null}
 
           <View style={styles.metrics}>
-            <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Lluvia</Text>
+            <View style={[styles.metric, { backgroundColor: cielo.glass }]}>
+              <Text style={styles.glassLabel}>Lluvia</Text>
               <Text style={styles.metricValue}>
-                {dia.probabilidadLluvia !== null ? `${dia.probabilidadLluvia} %` : "—"}
+                {dia.probabilidadLluvia !== null ? `${dia.probabilidadLluvia}%` : "—"}
               </Text>
-              <Text style={styles.metricHelp}>Probabilidad máxima</Text>
+              <Text style={styles.glassHint}>Prob. máxima</Text>
             </View>
-            <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Viento</Text>
+            <View style={[styles.metric, { backgroundColor: cielo.glass }]}>
+              <Text style={styles.glassLabel}>Viento</Text>
               <Text style={styles.metricValue}>
                 {dia.vientoMaxKmh !== null ? `${Math.round(dia.vientoMaxKmh)}` : "—"}
               </Text>
-              <Text style={styles.metricHelp}>km/h racha máxima</Text>
+              <Text style={styles.glassHint}>km/h racha</Text>
             </View>
-            <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Luna</Text>
+            <View style={[styles.metric, { backgroundColor: cielo.glass }]}>
+              <Text style={styles.glassLabel}>Luna</Text>
               <Text style={styles.metricValueSmall}>{ind?.faseLunar ?? "—"}</Text>
-              <Text style={styles.metricHelp}>Fase del día</Text>
+              <Text style={styles.glassHint}>Fase del día</Text>
             </View>
           </View>
 
@@ -304,15 +308,18 @@ export default function PrevisionScreen() {
           )}
 
           {horasDia.length > 0 && (
-            <View>
+            <View style={{ marginTop: 8 }}>
               <Text style={styles.sectionTitle}>Por horas</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hours}>
                 {horasDia.map((h) => {
                   const th = descripcionTiempo(h.codigoTiempo);
                   return (
-                    <View key={`${h.fecha}-${h.hora}`} style={styles.hourCard}>
+                    <View
+                      key={`${h.fecha}-${h.hora}`}
+                      style={[styles.hourCard, { backgroundColor: cielo.glass, borderColor: cielo.chipBorder }]}
+                    >
                       <Text style={styles.hourTime}>{h.hora}</Text>
-                      <IconoMeteo codigo={h.codigoTiempo} size={44} etiqueta={th.texto} />
+                      <IconoMeteo codigo={h.codigoTiempo} size={48} etiqueta={th.texto} />
                       <Text style={styles.hourTemp}>{Math.round(h.temperatura)}°</Text>
                       <Text style={styles.hourRain} numberOfLines={2}>
                         {h.probabilidadLluvia !== null ? `${h.probabilidadLluvia}% lluvia` : climaCorto(th.texto)}
@@ -325,7 +332,7 @@ export default function PrevisionScreen() {
           )}
 
           {ind?.desglose?.length ? (
-            <View style={styles.why}>
+            <View style={[styles.why, { backgroundColor: cielo.glass }]}>
               <Text style={styles.sectionTitle}>Por qué este índice</Text>
               {ind.desglose.map((motivo, i) => (
                 <ListaAnimada key={i} index={i} replayKey={dia.fecha}>
@@ -339,12 +346,15 @@ export default function PrevisionScreen() {
           ) : null}
 
           {oleaje.length > 0 ? (
-            <View style={styles.why}>
+            <View style={{ marginTop: 16 }}>
               <Text style={styles.sectionTitle}>Oleaje en el Grao (costa)</Text>
-              <Text style={styles.subtitle}>{NOTA_MAREAS_CASTELLON}</Text>
+              <Text style={styles.subtitleSoft}>{NOTA_MAREAS_CASTELLON}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hours}>
                 {oleaje.map((o) => (
-                  <View key={o.hora} style={styles.hourCard}>
+                  <View
+                    key={o.hora}
+                    style={[styles.hourCard, { backgroundColor: cielo.glass, borderColor: cielo.chipBorder }]}
+                  >
                     <Text style={styles.hourTime}>{o.hora}</Text>
                     <Text style={styles.hourTemp}>{o.alturaM.toFixed(1)} m</Text>
                     <Text style={styles.hourRain}>altura de ola</Text>
@@ -359,28 +369,75 @@ export default function PrevisionScreen() {
       )}
     </ScrollView>
   );
+
+  return (
+    <View style={styles.root}>
+      <LinearGradient
+        colors={[...cielo.gradient]}
+        start={{ x: 0.15, y: 0 }}
+        end={{ x: 0.85, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {/* Veladura inferior para anclar el contenido como en Weather.app */}
+      <LinearGradient
+        colors={["transparent", "rgba(10,20,35,0.28)"]}
+        style={styles.bottomVeil}
+        pointerEvents="none"
+      />
+      {body}
+    </View>
+  );
 }
 
+const glassText = "#ffffff";
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  root: { flex: 1, backgroundColor: "#3a7fc4" },
+  scroll: { flex: 1, backgroundColor: "transparent" },
   content: { padding: SPACING.lg, paddingBottom: 120 },
+  bottomVeil: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 220,
+  },
   kicker: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "800",
-    letterSpacing: 1.2,
-    color: COLORS.waterDark,
+    letterSpacing: 1.4,
+    color: "rgba(255,255,255,0.85)",
     textTransform: "uppercase",
   },
-  title: { fontSize: 28, fontWeight: "800", color: COLORS.textPrimary, marginTop: 4, lineHeight: 34 },
-  subtitle: { fontSize: 16, color: COLORS.textSecondary, marginTop: 8, marginBottom: 20, lineHeight: 24 },
+  title: {
+    fontSize: 30,
+    fontWeight: "800",
+    color: glassText,
+    marginTop: 4,
+    lineHeight: 36,
+    letterSpacing: -0.4,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.88)",
+    marginTop: 8,
+    marginBottom: 18,
+    lineHeight: 22,
+    fontWeight: "600",
+  },
+  subtitleSoft: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.82)",
+    marginBottom: 10,
+    lineHeight: 19,
+    fontWeight: "500",
+  },
   loadingBox: { alignItems: "center", paddingVertical: 40 },
-  loadingText: { marginTop: 12, fontSize: 16, color: COLORS.textSecondary },
+  loadingText: { marginTop: 12, fontSize: 16, color: "rgba(255,255,255,0.92)", fontWeight: "600" },
   emptyCard: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: "rgba(255,255,255,0.92)",
     borderRadius: RADIUS.lg,
     padding: 20,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
   emptyTitle: { fontSize: 20, fontWeight: "800", color: COLORS.textPrimary },
   emptyText: { fontSize: 16, color: COLORS.textSecondary, marginTop: 8, lineHeight: 24 },
@@ -394,113 +451,166 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "800" },
-  strip: { gap: 10, paddingBottom: 8 },
+  hero: {
+    alignItems: "center",
+    paddingVertical: 8,
+    marginBottom: 8,
+  },
+  heroDate: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.9)",
+    textTransform: "capitalize",
+    marginBottom: 4,
+  },
+  heroMain: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  heroTemp: {
+    fontSize: 86,
+    fontWeight: "200",
+    color: glassText,
+    letterSpacing: -3,
+    lineHeight: 92,
+  },
+  heroCond: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: glassText,
+    marginTop: 4,
+  },
+  heroRange: {
+    fontSize: 16,
+    color: "rgba(255,255,255,0.88)",
+    marginTop: 4,
+    fontWeight: "600",
+  },
+  strip: { gap: 10, paddingVertical: 10 },
   dayChip: {
-    width: 102,
-    minHeight: 178,
-    backgroundColor: COLORS.surface,
+    width: 100,
+    minHeight: 168,
     borderRadius: RADIUS.md,
     paddingVertical: 12,
     paddingHorizontal: 8,
     alignItems: "center",
-    borderWidth: 2,
-    borderColor: COLORS.border,
+    borderWidth: 1,
+    ...(Platform.OS === "web"
+      ? ({ backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" } as any)
+      : null),
   },
   dayChipOn: {
-    backgroundColor: COLORS.primaryDark,
-    borderColor: COLORS.primaryDark,
+    backgroundColor: "rgba(255,255,255,0.34)",
+    borderColor: "rgba(255,255,255,0.7)",
+    borderWidth: 2,
   },
-  dayChipTop: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary, letterSpacing: 0.3 },
-  dayChipTopOn: { color: "#ffffff" },
-  dayChipNum: { fontSize: 22, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 2 },
-  dayChipNumOn: { color: "#ffffff" },
-  dayChipTemp: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, marginTop: 4 },
-  dayChipTempOn: { color: "#ffffff" },
+  dayChipTop: { fontSize: 13, fontWeight: "800", color: "rgba(255,255,255,0.82)", letterSpacing: 0.4 },
+  dayChipTopOn: { color: "#fff" },
+  dayChipNum: { fontSize: 20, fontWeight: "800", color: glassText, marginBottom: 2 },
+  dayChipTemp: { fontSize: 17, fontWeight: "800", color: glassText, marginTop: 4 },
   dayChipCond: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "700",
-    color: COLORS.textPrimary,
+    color: "rgba(255,255,255,0.92)",
     textAlign: "center",
     marginTop: 4,
-    lineHeight: 20,
-    minHeight: 40,
+    lineHeight: 15,
+    minHeight: 30,
   },
-  dayChipCondOn: { color: "#ffffff" },
-  dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6 },
-  dotOn: { borderWidth: 2, borderColor: "#ffffff" },
-  hero: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: 20,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    ...SHADOW,
-  },
-  heroDate: { fontSize: 16, fontWeight: "700", color: COLORS.textSecondary, textTransform: "capitalize" },
-  heroRow: { flexDirection: "row", alignItems: "center", gap: 12, marginTop: 8 },
-  heroTemp: { fontSize: 52, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 58 },
-  heroRange: { fontSize: 18, color: COLORS.textSecondary, marginTop: 4, lineHeight: 26 },
-  heroCond: { fontSize: 20, fontWeight: "700", color: COLORS.waterDark, marginTop: 8, lineHeight: 28 },
-  indexCard: {
-    marginTop: 14,
+  dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6, borderWidth: 1.5 },
+  glassCard: {
     borderRadius: RADIUS.lg,
     padding: 16,
+    marginTop: 6,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: "rgba(255,255,255,0.28)",
+    ...(Platform.OS === "web"
+      ? ({ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" } as any)
+      : null),
   },
   indexHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  indexLabel: { fontSize: 16, fontWeight: "800", letterSpacing: 0.3, textTransform: "uppercase" },
-  indexScore: { fontSize: 18, fontWeight: "800" },
-  indexCat: { fontSize: 22, fontWeight: "800", marginTop: 4 },
+  glassLabel: {
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: "rgba(255,255,255,0.85)",
+  },
+  glassStrong: { fontSize: 17, fontWeight: "800", color: glassText },
   meterTrack: {
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "rgba(18,32,24,0.12)",
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "rgba(255,255,255,0.22)",
     marginTop: 12,
     overflow: "hidden",
   },
-  meterFill: { height: "100%", borderRadius: 6 },
-  indexHint: { fontSize: 16, color: COLORS.textSecondary, marginTop: 10, lineHeight: 24 },
-  metrics: { flexDirection: "row", gap: 10, marginTop: 14 },
+  meterFill: { height: "100%", borderRadius: 5 },
+  glassHint: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.82)",
+    marginTop: 10,
+    lineHeight: 18,
+    fontWeight: "500",
+  },
+  metrics: { flexDirection: "row", gap: 10, marginTop: 12 },
   metric: {
     flex: 1,
-    backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
     padding: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    minHeight: 108,
-    ...SHADOW_SOFT,
+    borderColor: "rgba(255,255,255,0.25)",
+    minHeight: 100,
   },
-  metricLabel: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary, textTransform: "uppercase" },
-  metricValue: { fontSize: 24, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8 },
-  metricValueSmall: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary, marginTop: 8, lineHeight: 22 },
-  metricHelp: { fontSize: 16, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
-  alertsBlock: { marginTop: 18 },
-  sectionTitle: { fontSize: 20, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 10, marginTop: 8 },
+  metricValue: { fontSize: 24, fontWeight: "800", color: glassText, marginTop: 8 },
+  metricValueSmall: { fontSize: 14, fontWeight: "800", color: glassText, marginTop: 8, lineHeight: 18 },
+  alertsBlock: { marginTop: 16 },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: glassText,
+    marginBottom: 10,
+    marginTop: 8,
+  },
   alert: { borderRadius: RADIUS.md, padding: 14, marginBottom: 8, borderWidth: 2 },
-  alertWarn: { backgroundColor: COLORS.warningLight, borderColor: COLORS.warning },
-  alertDanger: { backgroundColor: COLORS.dangerLight, borderColor: COLORS.danger },
-  alertWarnText: { fontSize: 16, fontWeight: "700", color: "#7a3b08", lineHeight: 24 },
-  alertDangerText: { fontSize: 16, fontWeight: "700", color: "#7a1414", lineHeight: 24 },
+  alertWarn: { backgroundColor: "rgba(254,243,230,0.95)", borderColor: COLORS.warning },
+  alertDanger: { backgroundColor: "rgba(253,236,234,0.95)", borderColor: COLORS.danger },
+  alertWarnText: { fontSize: 15, fontWeight: "700", color: "#7a3b08", lineHeight: 22 },
+  alertDangerText: { fontSize: 15, fontWeight: "700", color: "#7a1414", lineHeight: 22 },
   hours: { gap: 10, paddingBottom: 4 },
   hourCard: {
-    width: 118,
-    backgroundColor: COLORS.surface,
+    width: 108,
     borderRadius: RADIUS.md,
     padding: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
-    minHeight: 176,
+    minHeight: 158,
   },
-  hourTime: { fontSize: 16, fontWeight: "800", color: COLORS.textSecondary },
-  hourTemp: { fontSize: 22, fontWeight: "800", color: COLORS.textPrimary, marginTop: 6 },
-  hourRain: { fontSize: 16, fontWeight: "600", color: COLORS.textPrimary, textAlign: "center", marginTop: 6, lineHeight: 22 },
-  why: { marginTop: 18 },
-  whyRow: { flexDirection: "row", gap: 12, marginBottom: 12, alignItems: "flex-start" },
-  whyMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: COLORS.waterDark, marginTop: 8 },
-  whyText: { flex: 1, fontSize: 18, color: COLORS.textPrimary, lineHeight: 26 },
-  fuente: { fontSize: 16, color: COLORS.textSecondary, marginTop: 20, lineHeight: 24 },
+  hourTime: { fontSize: 14, fontWeight: "800", color: "rgba(255,255,255,0.88)" },
+  hourTemp: { fontSize: 22, fontWeight: "800", color: glassText, marginTop: 6 },
+  hourRain: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.88)",
+    textAlign: "center",
+    marginTop: 6,
+    lineHeight: 16,
+  },
+  why: {
+    marginTop: 16,
+    borderRadius: RADIUS.lg,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  whyRow: { flexDirection: "row", gap: 12, marginBottom: 10, alignItems: "flex-start" },
+  whyMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#FFD60A", marginTop: 7 },
+  whyText: { flex: 1, fontSize: 15, color: glassText, lineHeight: 22, fontWeight: "600" },
+  fuente: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.78)",
+    marginTop: 20,
+    lineHeight: 19,
+    fontWeight: "500",
+  },
 });
