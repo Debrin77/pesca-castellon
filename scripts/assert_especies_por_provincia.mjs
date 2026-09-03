@@ -11,7 +11,6 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 
-// Cargar JSON vía require (sin TS transpile).
 const speciesBase = JSON.parse(readFileSync(join(root, "src/data/species.json"), "utf8"));
 const overrides = JSON.parse(
   readFileSync(join(root, "src/provincias/sevilla/speciesOverrides.json"), "utf8")
@@ -19,6 +18,7 @@ const overrides = JSON.parse(
 const extras = JSON.parse(
   readFileSync(join(root, "src/provincias/sevilla/speciesExtra.json"), "utf8")
 );
+const configSrc = readFileSync(join(root, "src/provincias/sevilla/config.ts"), "utf8");
 
 const PROHIBIDOS_SEVILLA = [
   /Sitjar/i,
@@ -52,7 +52,12 @@ function ok(msg) {
   console.log("OK:", msg);
 }
 
-// Castellón base sigue teniendo el régimen valenciano del siluro.
+if (/from\s+[\"'].*species\.json[\"']/.test(configSrc)) {
+  fail("sevilla/config.ts no debe importar src/data/species.json");
+} else {
+  ok("Sevilla config no importa species.json de Castellón");
+}
+
 const siluroCs = speciesBase.find((s) => s.id === "siluro");
 if (!siluroCs?.normativaEspecial?.includes("Comunitat Valenciana")) {
   fail("species.json (Castellón) debería conservar normativa CV del siluro");
@@ -87,38 +92,19 @@ for (const e of extras) {
   }
 }
 
-// Simular fusión (misma lógica que config.ts)
-function metadatosTecnicos(base) {
-  return {
-    id: base.id,
-    nombre: base.nombre,
-    nombreCientifico: base.nombreCientifico,
-    categoria: base.categoria,
-    invasora: base.invasora,
-    icono: base.icono,
-    mejoresMeses: base.mejoresMeses,
-    ventanas: base.ventanas,
-    mejorHora: base.mejorHora,
-    equipo: base.equipo,
-    senuelosClave: base.senuelosClave,
-  };
-}
-
+// Catálogo Sevilla = overrides + extras (sin fusionar base CV).
 const catalogoSevilla = [];
-for (const o of overrides) {
-  const base = speciesBase.find((s) => s.id === o.id);
-  catalogoSevilla.push({
-    ...(base ? metadatosTecnicos(base) : {}),
-    ...o,
-    provinciaId: "sevilla",
-  });
+for (const o of overrides) catalogoSevilla.push({ ...o, provinciaId: "sevilla" });
+for (const e of extras) {
+  const i = catalogoSevilla.findIndex((s) => s.id === e.id);
+  if (i >= 0) catalogoSevilla[i] = { ...catalogoSevilla[i], ...e, provinciaId: "sevilla" };
+  else catalogoSevilla.push({ ...e, provinciaId: "sevilla" });
 }
-for (const e of extras) catalogoSevilla.push({ ...e, provinciaId: "sevilla" });
 
 for (const sp of catalogoSevilla) {
   const blob = textoEspecie(sp);
   for (const re of PROHIBIDOS_SEVILLA) {
-    if (re.test(blob)) fail(`Catálogo fusionado ${sp.id}: ${re}`);
+    if (re.test(blob)) fail(`Catálogo Sevilla ${sp.id}: ${re}`);
   }
 }
 
