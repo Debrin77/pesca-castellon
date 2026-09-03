@@ -75,47 +75,103 @@
     "file": "nudos/clinch-resultado.jpg",
     "commons": "File:KlammerknotenLose.JPG",
     "license": "CC BY-SA 2.0 de",
-    "artist": "StromBer 17:02, 6. Apr. 2008 (CEST)",
-    "note": "Clinch apretado",
+    "artist": "StromBer",
+    "note": "Clinch asentado",
     "url": "https://commons.wikimedia.org/wiki/File:KlammerknotenLose.JPG"
   },
   {
-    "file": "nudos/uni-diagrama.jpg",
-    "commons": "File:Uni knot.jpg",
-    "license": "CC BY-SA 3.0",
-    "artist": "Snapper G",
-    "note": "Uni knot",
-    "url": "https://commons.wikimedia.org/wiki/File:Uni_knot.jpg"
+    "file": "nudos/trilene-01.jpg",
+    "commons": "File:Barb01.Trilene-Knoten.jpg",
+    "license": "CC BY 4.0",
+    "artist": "Der Barbar",
+    "note": "Paso 1 Trilene",
+    "url": "https://commons.wikimedia.org/wiki/File:Barb01.Trilene-Knoten.jpg"
   },
   {
-    "file": "nudos/albright-diagrama.png",
-    "commons": "File:Albright knot diagram retouched.png",
-    "license": "Public domain",
-    "artist": "Albright_knot_diagram.png: LadyofHats derivative work: Dfred (talk)",
-    "note": "Albright pasos",
-    "url": "https://commons.wikimedia.org/wiki/File:Albright_knot_diagram_retouched.png"
+    "file": "nudos/trilene-02.jpg",
+    "commons": "File:Barb02.Trilene-Knoten.jpg",
+    "license": "CC BY 4.0",
+    "artist": "Der Barbar",
+    "note": "Paso 2 Trilene",
+    "url": "https://commons.wikimedia.org/wiki/File:Barb02.Trilene-Knoten.jpg"
   },
   {
-    "file": "nudos/albright-foto.jpg",
+    "file": "nudos/trilene-03.jpg",
+    "commons": "File:Barb03.Trilene-Knoten.jpg",
+    "license": "CC BY 4.0",
+    "artist": "Der Barbar",
+    "note": "Paso 3 Trilene",
+    "url": "https://commons.wikimedia.org/wiki/File:Barb03.Trilene-Knoten.jpg"
+  },
+  {
+    "file": "nudos/trilene-04.jpg",
+    "commons": "File:Barb04.Trilene-Knoten.jpg",
+    "license": "CC BY 4.0",
+    "artist": "Der Barbar",
+    "note": "Paso 4 Trilene",
+    "url": "https://commons.wikimedia.org/wiki/File:Barb04.Trilene-Knoten.jpg"
+  },
+  {
+    "file": "nudos/trilene-05.jpg",
+    "commons": "File:Barb05.Trilene-Knoten.jpg",
+    "license": "CC BY 4.0",
+    "artist": "Der Barbar",
+    "note": "Paso 5 Trilene",
+    "url": "https://commons.wikimedia.org/wiki/File:Barb05.Trilene-Knoten.jpg"
+  },
+  {
+    "file": "nudos/albright-01.jpg",
     "commons": "File:AlbrightKnotenLose.JPG",
     "license": "CC BY-SA 2.0 de",
     "artist": "StromBer",
-    "note": "Albright en mano",
+    "note": "Albright paso 1",
     "url": "https://commons.wikimedia.org/wiki/File:AlbrightKnotenLose.JPG"
   },
   {
-    "file": "nudos/cirujano-lazo.png",
-    "commons": "File:Surgeon's Loop knot.svg",
-    "license": "Public domain",
-    "artist": "No machine-readable author provided. LadyofHats assumed (based on copyright claims).",
-    "note": "Lazo de cirujano",
-    "url": "https://commons.wikimedia.org/wiki/File:Surgeon%27s_Loop_knot.svg"
+    "file": "nudos/albright-02.jpg",
+    "commons": "File:AlbrightKnoten2.jpg",
+    "license": "CC BY-SA 2.0 de",
+    "artist": "StromBer",
+    "note": "Albright paso 2",
+    "url": "https://commons.wikimedia.org/wiki/File:AlbrightKnoten2.jpg"
+  },
+  {
+    "file": "nudos/albright-03.jpg",
+    "commons": "File:AlbrightKnotenFertig.jpg",
+    "license": "CC BY-SA 2.0 de",
+    "artist": "StromBer",
+    "note": "Albright asentado",
+    "url": "https://commons.wikimedia.org/wiki/File:AlbrightKnotenFertig.jpg"
+  },
+  {
+    "file": "nudos/albright-04.jpg",
+    "commons": "File:AlbrightKnoten am Angelhaken.JPG",
+    "license": "CC BY-SA 2.0 de",
+    "artist": "StromBer",
+    "note": "Albright en anzuelo",
+    "url": "https://commons.wikimedia.org/wiki/File:AlbrightKnoten_am_Angelhaken.JPG"
+  },
+  {
+    "file": "nudos/lazo-pescador-suelto.jpg",
+    "commons": "File:Anglers-loop-ABOK-1017-loose.jpg",
+    "license": "CC BY-SA 2.5",
+    "artist": "David J. Fred",
+    "note": "Lazo del pescador suelto",
+    "url": "https://commons.wikimedia.org/wiki/File:Anglers-loop-ABOK-1017-loose.jpg"
+  },
+  {
+    "file": "nudos/lazo-pescador-cerrado.jpg",
+    "commons": "File:Anglers-loop-ABOK-1017.jpg",
+    "license": "CC BY-SA 2.5",
+    "artist": "David J. Fred",
+    "note": "Lazo del pescador cerrado",
+    "url": "https://commons.wikimedia.org/wiki/File:Anglers-loop-ABOK-1017.jpg"
   },
   {
     "file": "aparejos/emerillones.jpg",
     "commons": "File:Angeln zubehoer wirbel 01.jpg",
     "license": "CC BY-SA 2.5",
-    "artist": "User:Raboe001",
+    "artist": "Raboe001",
     "note": "Emerillones",
     "url": "https://commons.wikimedia.org/wiki/File:Angeln_zubehoer_wirbel_01.jpg"
   },
@@ -132,7 +188,7 @@
     "commons": "File:Moderne Spinner.jpg",
     "license": "CC0",
     "artist": "Danndorfer1914",
-    "note": "Cucharilla giratoria",
+    "note": "Spinner",
     "url": "https://commons.wikimedia.org/wiki/File:Moderne_Spinner.jpg"
   },
   {
@@ -140,22 +196,38 @@
     "commons": "File:Spinner lure.jpg",
     "license": "CC BY-SA 4.0",
     "artist": "Santeri Viinamäki",
-    "note": "Spinner / cucharilla",
+    "note": "Spinner montado",
     "url": "https://commons.wikimedia.org/wiki/File:Spinner_lure.jpg"
+  },
+  {
+    "file": "aparejos/cucharilla-ondulante.jpg",
+    "commons": "File:Verschiedene Blinker.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Spoons / blinkers",
+    "url": "https://commons.wikimedia.org/wiki/File:Verschiedene_Blinker.jpg"
+  },
+  {
+    "file": "aparejos/cucharilla-ondulante-2.jpg",
+    "commons": "File:Spoon Vorderseite und Rückseite.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Spoon anverso/reverso",
+    "url": "https://commons.wikimedia.org/wiki/File:Spoon_Vorderseite_und_R%C3%BCckseite.jpg"
   },
   {
     "file": "aparejos/anzuelo-offset.jpg",
     "commons": "File:OffsetWormHook.jpg",
     "license": "CC BY-SA 3.0",
     "artist": "Mike Cline",
-    "note": "Offset worm hook",
+    "note": "Offset hook",
     "url": "https://commons.wikimedia.org/wiki/File:OffsetWormHook.jpg"
   },
   {
     "file": "aparejos/anzuelo-circle.jpg",
     "commons": "File:Circle-hook.jpg",
     "license": "Public domain",
-    "artist": "Luenibaer (Jens Kraglund)",
+    "artist": "Luenibaer",
     "note": "Circle hook",
     "url": "https://commons.wikimedia.org/wiki/File:Circle-hook.jpg"
   },
@@ -163,7 +235,7 @@
     "file": "aparejos/j-vs-circle.jpg",
     "commons": "File:Pelagic Longline Hooks - J Hook by a Circle Hook.jpg",
     "license": "CC BY-SA 3.0",
-    "artist": "Western Pacific Regional Fishery Management Council",
+    "artist": "WPRFMC",
     "note": "J vs circle",
     "url": "https://commons.wikimedia.org/wiki/File:Pelagic_Longline_Hooks_-_J_Hook_by_a_Circle_Hook.jpg"
   },
@@ -176,35 +248,75 @@
     "url": "https://commons.wikimedia.org/wiki/File:FishHooks.JPG"
   },
   {
-    "file": "aparejos/anzuelo-partes.png",
-    "commons": "File:Fish hook terminology and measurements.png",
-    "license": "CC BY-SA 4.0",
-    "artist": "Pedergnana A, Cristiani E, Munro N, Valletta F and Sharon G",
-    "note": "Partes del anzuelo",
-    "url": "https://commons.wikimedia.org/wiki/File:Fish_hook_terminology_and_measurements.png"
+    "file": "aparejos/anzuelos-blancos.jpg",
+    "commons": "File:Fishing hooks on white surface.jpg",
+    "license": "CC BY-SA 2.5",
+    "artist": "daniel jaeger",
+    "note": "Anzuelos blancos",
+    "url": "https://commons.wikimedia.org/wiki/File:Fishing_hooks_on_white_surface.jpg"
   },
   {
     "file": "aparejos/plomos.jpg",
     "commons": "File:Lead sinker.JPG",
     "license": "Public domain",
-    "artist": "Chemicalinterest (talk)",
-    "note": "Plomos",
+    "artist": "Chemicalinterest",
+    "note": "Plomo pirámide",
     "url": "https://commons.wikimedia.org/wiki/File:Lead_sinker.JPG"
   },
   {
-    "file": "aparejos/montaje-texas.png",
-    "commons": "File:Texas Rig Diagram.svg",
-    "license": "CC BY 4.0",
-    "artist": "Zachary635",
-    "note": "Montaje Texas",
-    "url": "https://commons.wikimedia.org/wiki/File:Texas_Rig_Diagram.svg"
+    "file": "aparejos/plomos-varios.jpg",
+    "commons": "File:202510 Fishing sinkers (Close-up photography from Taiwan).jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "Junyu-K",
+    "note": "Plomos varios",
+    "url": "https://commons.wikimedia.org/wiki/File:202510_Fishing_sinkers_(Close-up_photography_from_Taiwan).jpg"
   },
   {
-    "file": "aparejos/anzuelos-blancos.jpg",
-    "commons": "File:Fishing hooks on white surface.jpg",
-    "license": "CC BY-SA 2.5",
-    "artist": "daniel jaeger",
-    "note": "Anzuelos",
-    "url": "https://commons.wikimedia.org/wiki/File:Fishing_hooks_on_white_surface.jpg"
+    "file": "aparejos/plomo-cilindro.jpg",
+    "commons": "File:84 gr lead fishing sinker 7 by 2 cm.jpg",
+    "license": "CC BY 4.0",
+    "artist": "R. Henrik Nilsson",
+    "note": "Plomo cilindro",
+    "url": "https://commons.wikimedia.org/wiki/File:84_gr_lead_fishing_sinker_7_by_2_cm.jpg"
+  },
+  {
+    "file": "aparejos/montaje-texas.jpg",
+    "commons": "File:Texas Rig.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "BRDSWRD",
+    "note": "Texas rig foto",
+    "url": "https://commons.wikimedia.org/wiki/File:Texas_Rig.jpg"
+  },
+  {
+    "file": "aparejos/montaje-texas-detalle.jpg",
+    "commons": "File:Das Texas-Rig.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Texas rig detalle",
+    "url": "https://commons.wikimedia.org/wiki/File:Das_Texas-Rig.jpg"
+  },
+  {
+    "file": "aparejos/vinilos-varios.jpg",
+    "commons": "File:Unterschiedliche Gummiköder für das angeln auf Raubfische.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Vinilos varios",
+    "url": "https://commons.wikimedia.org/wiki/File:Unterschiedliche_Gummik%C3%B6der_f%C3%BCr_das_angeln_auf_Raubfische.jpg"
+  },
+  {
+    "file": "aparejos/vinilos-twister.jpg",
+    "commons": "File:Zwei Twister.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Twisters",
+    "url": "https://commons.wikimedia.org/wiki/File:Zwei_Twister.jpg"
+  },
+  {
+    "file": "aparejos/vinilos-peces.jpg",
+    "commons": "File:Mehrere Gummifische in Unterschiedlichen Größen, Farben und Formen.jpg",
+    "license": "CC0",
+    "artist": "Danndorfer1914",
+    "note": "Shads",
+    "url": "https://commons.wikimedia.org/wiki/File:Mehrere_Gummifische_in_Unterschiedlichen_Gr%C3%B6%C3%9Fen,_Farben_und_Formen.jpg"
   }
 ]

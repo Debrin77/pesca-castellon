@@ -1,6 +1,6 @@
 /**
  * Consejos prácticos de pesca: nudos, anzuelos, plomos, conectores, cebos
- * y vocabulario — con esquemas gráficos para no desanimar al principiante.
+ * y vocabulario — con fotografías reales paso a paso (sin croquis).
  * Orientado a pesca continental y de orilla en Castellón.
  * No sustituye la normativa ni un curso presencial de seguridad.
  */
@@ -22,7 +22,7 @@ export interface ConsejoItem {
   titulo: string;
   resumen: string;
   detalle: string;
-  /** Pasos numerados (se muestran bajo el diagrama). */
+  /** Pasos numerados (se muestran bajo la guía fotográfica). */
   pasos?: string[];
   /** Esquema gráfico asociado. */
   diagrama?: IdDiagrama;
@@ -40,14 +40,14 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
   {
     id: "nudos",
     titulo: "Nudos básicos",
-    subtitulo: "Atar el anzuelo al sedal sin perder la mañana",
+    subtitulo: "Atar el anzuelo al sedal: fotos reales, paso a paso",
     items: [
       {
         id: "nudo-palomar",
         titulo: "Nudo Palomar",
         resumen: "El más fiable para anzuelo o mosca. Empieza por este.",
         detalle:
-          "Ideal para trenza y monofilamento. Conserva casi toda la resistencia del hilo. Deja ~2 mm de sobrante y corta en diagonal. Desliza las fotos: son pasos reales (como en Knots 3D / Animated Knots), guardados en la app para usar sin red.",
+          "Ideal en trenza y monofilamento: conserva casi toda la resistencia del hilo. Deja ~2 mm de sobrante y corta en diagonal. Las siete fotos son pasos reales (estilo Knots 3D), empaquetadas para usar sin red.",
         pasos: [
           "Dobla ~15 cm de línea y pasa el doble por el ojal.",
           "Haz un nudo simple flojo con el doble.",
@@ -65,7 +65,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Clinch mejorado",
         resumen: "Rápido para anzuelos y giratorios en nylon.",
         detalle:
-          "Muy usado en monofilamento. Evítalo en trenza fina (resbala): ahí usa Palomar. Las fotos muestran el clinch básico, el mejorado y el resultado apretado.",
+          "Clásico en monofilamento. Evítalo en trenza fina (resbala): ahí Palomar o Trilene. Las fotos muestran el clinch básico, el mejorado y el nudo ya asentado.",
         pasos: [
           "Pasa la punta por el ojal y da 5–7 vueltas alrededor de la línea.",
           "Vuelve a pasar por el hueco junto al ojal y luego por el lazo grande (mejorado).",
@@ -75,48 +75,48 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         tags: ["nylon", "rápido", "fotos"],
       },
       {
-        id: "nudo-uni",
-        titulo: "Uni knot / Grinner",
-        resumen: "Versátil: anzuelo, emerillón o unir líneas similares.",
+        id: "nudo-trilene",
+        titulo: "Trilene (doble pasada por el ojal)",
+        resumen: "Terminal sólido para anzuelo, snap o emerillón en nylon/fluoro.",
         detalle:
-          "Si aprendes solo dos nudos, que sean Palomar y Uni. El Uni también une dos monofilamentos del mismo diámetro. El diagrama libre muestra el recorrido completo del hilo.",
+          "Si aprendes dos nudos de terminal, que sean Palomar y Trilene. La doble pasada por el ojal da un asiento limpio y fiable. No lo uses para unir dos líneas distintas: ahí Albright o anilla micro.",
         pasos: [
-          "Pasa por el ojal y forma un círculo hacia atrás.",
-          "Da 5–6 vueltas dentro del círculo con la punta.",
-          "Tira primero de la punta y luego de la línea principal.",
-          "Recorta el sobrante corto.",
+          "Pasa la punta por el ojal y vuelve a pasarla (doble hilo en el ojal).",
+          "Da 5–6 vueltas alrededor de la línea madre.",
+          "Pasa la punta por la «ventana» del doble lazo junto al ojal.",
+          "Moja, aprieta y recorta el sobrante corto.",
         ],
-        diagrama: "nudo-uni",
-        tags: ["unir", "emerillón", "diagrama"],
+        diagrama: "nudo-trilene",
+        tags: ["anzuelo", "emerillón", "nylon", "fotos"],
       },
       {
         id: "nudo-albright",
         titulo: "Albright (trenza → fluorocarbono)",
-        resumen: "Empalme tippet/bajo cuando cambias de material.",
+        resumen: "Empalme de materiales distintos: tippet o bajo transparente.",
         detalle:
-          "Practica en seco en casa: en el agua, con frío, cuesta más. Alternativa fácil: anilla micro (conector) + dos Uni. Diagrama de dominio público + foto real del empalme.",
+          "Une trenza fina con un bajo de fluorocarbono más grueso. Practica en seco: con frío y manos mojadas cuesta más. Alternativa fácil: anilla micro + Trilene a cada lado.",
         pasos: [
-          "Haz un lazo con el fluorocarbono.",
+          "Haz un lazo con el fluorocarbono (el grueso).",
           "Introduce la trenza por el lazo.",
-          "Da 10–12 vueltas hacia atrás sobre ambas ramas del lazo.",
-          "Pasa la punta de la trenza por el lazo y aprieta por etapas.",
+          "Da 10–12 vueltas apretadas hacia el cierre del lazo.",
+          "Pasa la punta por el lazo (mismo lado por el que entró) y aprieta por etapas.",
         ],
         diagrama: "nudo-albright",
-        tags: ["trenza", "fluoro", "diagrama"],
+        tags: ["trenza", "fluoro", "empalme", "fotos"],
       },
       {
         id: "nudo-loop",
-        titulo: "Lazo de cirujano (surgeon's loop)",
-        resumen: "Crear un ojal al final de la línea o tippet.",
+        titulo: "Lazo del pescador (Angler's loop)",
+        resumen: "Ojal fijo al final de la línea o tippet (ABOK #1017).",
         detalle:
-          "Sirve para montar moscas con lazo o enganchar un snap. Deja el lazo del tamaño justo para no enredar. Diagrama LadyofHats (dominio público).",
+          "Crea un ojal que no se cierra bajo tensión. Sirve para snap, mosca con lazo o unir bajos. Ajusta el tamaño del ojal antes de apretar: demasiado grande enreda en el lance.",
         pasos: [
-          "Dobla el extremo de la línea.",
-          "Haz un nudo simple pasando dos veces por el ojal (nudo doble).",
-          "Aprieta mojando y ajusta el tamaño del lazo.",
+          "Forma el lazo del tamaño deseado al final de la línea.",
+          "Cruza y pasa la punta según la estructura del lazo del pescador (ver fotos).",
+          "Moja, asienta el nudo y deja un sobrante corto.",
         ],
         diagrama: "nudo-loop",
-        tags: ["lazo", "mosca", "diagrama"],
+        tags: ["lazo", "mosca", "snap", "fotos"],
       },
     ],
   },
@@ -189,38 +189,38 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "pl-bala",
         titulo: "Bala (bullet)",
-        resumen: "El de siempre en texas y carolina para bass.",
+        resumen: "Cónico, delante del offset: Texas y Carolina para bass.",
         detalle:
-          "Se ensarta en la línea delante del anzuelo offset. 3–7 g orilla poco profunda; 10–14 g si hay viento o quieres fondo rápido. En Arenós con agua clara, a menudo menos peso y más finesse.",
+          "La foto muestra el plomo bala asentado sobre el softbait. 3–7 g en orilla poco profunda; 10–14 g con viento o fondo rápido. En Arenós con agua clara, a menudo menos peso y más finesse.",
         diagrama: "plomo-bala",
-        tags: ["bass", "texas"],
+        tags: ["bass", "texas", "fotos"],
       },
       {
         id: "pl-piramide",
         titulo: "Pirámide",
         resumen: "Ancla en arena: surfcasting de orilla.",
         detalle:
-          "80–150 g típicos en playas de Castellón (dorada, herrera). La base plana se clava con la corriente. Combina con montaje running (plomo deslizante) para que el pez no note el peso al picar.",
+          "La foto es un plomo pirámide con snap. 80–150 g típicos en playas de Castellón (dorada, herrera). La base plana se clava con la corriente; en running el pez no nota todo el peso al picar.",
         diagrama: "plomo-piramide",
-        tags: ["costa", "surfcasting"],
+        tags: ["costa", "surfcasting", "fotos"],
       },
       {
         id: "pl-oliva",
         titulo: "Oliva / cilindro deslizante",
-        resumen: "Fondo en río o playa con línea libre.",
+        resumen: "Fondo en río o playa con línea libre (running).",
         detalle:
-          "La línea pasa por el plomo; el pez tira y el carrete gira sin arrastrar el peso de inmediato. Muy útil con carpa/barbo donde cebar esté permitido.",
+          "La línea atraviesa el plomo; el pez tira y el carrete gira sin arrastrar el peso de inmediato. Útil con carpa/barbo donde cebar esté permitido.",
         diagrama: "plomo-oliva",
-        tags: ["fondo", "running"],
+        tags: ["fondo", "running", "fotos"],
       },
       {
         id: "pl-gota",
         titulo: "Gota / drop shot",
         resumen: "Peso al final; el anzuelo queda arriba en el bajo.",
         detalle:
-          "Montaje finesse: anzuelo a 30–60 cm del plomo. Ideal en puntas profundas de embalse en verano. Empieza con 5–10 g.",
+          "Montaje finesse: anzuelo a 30–60 cm del plomo terminal. Ideal en puntas profundas de embalse en verano. Empieza con 5–10 g.",
         diagrama: "plomo-gota",
-        tags: ["bass", "finesse"],
+        tags: ["bass", "finesse", "fotos"],
       },
     ],
   },
@@ -234,7 +234,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Clip / snap de acero",
         resumen: "El atajo del principiante: abre, engancha, cierra.",
         detalle:
-          "Ata un solo nudo (Palomar o Uni) al snap y cambia cucharillas, vinilos o crank sin cortar línea. Elige snaps de calidad: los baratos se abren con un bass o una lubina. Talla pequeña para UL; media para spinning 10–30 g.",
+          "Ata un solo nudo (Palomar o Trilene) al snap y cambia cucharillas, vinilos o crank sin cortar línea. Elige snaps de calidad: los baratos se abren con un bass o una lubina. Talla pequeña para UL; media para spinning 10–30 g.",
         diagrama: "snap-clip",
         tags: ["rápido", "principiante", "kit"],
       },
@@ -261,7 +261,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Anilla micro / conector de bajo",
         resumen: "Cambia el fluorocarbono sin deshacer la trenza.",
         detalle:
-          "Anilla diminuta entre trenza y bajo. Atas Uni a cada lado. Ideal si rompes bajos a menudo en roca (sargo, rockfishing). Alternativa al Albright cuando empiezas.",
+          "Anilla diminuta entre trenza y bajo. Atas Trilene (o Uni) a cada lado. Ideal si rompes bajos a menudo en roca (sargo, rockfishing). Alternativa al Albright cuando empiezas.",
         diagrama: "conector-rapido",
         tags: ["fluoro", "fácil"],
       },
@@ -277,18 +277,18 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Cucharilla giratoria",
         resumen: "Pala que da vueltas: busca pez rápido en río y cola.",
         detalle:
-          "N.º 0–1 trucha; n.º 2–4 embalse o jurel desde orilla. Un anzuelo simple sin muerte en zona sensible. Amanecer y agua oxigenada tras lluvia suave.",
+          "La foto muestra un spinner completo (pala + cuerpo + anzuelo). N.º 0–1 trucha; n.º 2–4 embalse. Emerillón delante obligatorio. Anzuelo simple sin muerte en zona sensible.",
         diagrama: "cucharilla-giratoria",
-        tags: ["río", "búsqueda", "trucha"],
+        tags: ["río", "búsqueda", "trucha", "fotos"],
       },
       {
         id: "senuelo-cucharilla-ond",
         titulo: "Cucharilla ondulante",
-        resumen: "Chapa que vaivea: menos giro, más balanceo.",
+        resumen: "Spoon / blinker: chapa que vaivea, sin el giro del spinner.",
         detalle:
-          "Muy clásica a trucha en Castellón. Plateada o cobriza. Recupera a velocidad constante; para un segundo si sientes toque.",
+          "Las fotos son spoons metálicos (ondulantes), no giratorias. Plateada, cobriza o dorada. Recupera constante; para un segundo si sientes toque. Clásica a trucha en Castellón.",
         diagrama: "cucharilla-ondulante",
-        tags: ["trucha", "clásico"],
+        tags: ["trucha", "clásico", "fotos"],
       },
       {
         id: "cebo-lombriz",
@@ -309,10 +309,11 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "senuelo-soft",
         titulo: "Softbaits (vinilos)",
-        resumen: "Black bass y lucio en embalse.",
+        resumen: "Twisters, shads y creaturas para bass y lucio.",
         detalle:
-          "Stickbaits, craws y swimbaits en 7–12 cm. Colores naturales con agua clara; chartreuse/blanco con turbia. Recoge lento junto a riprap, colas y sombra.",
-        tags: ["bass", "lucio"],
+          "Las fotos muestran vinilos reales: twisters de cola rizada y shads. 7–12 cm. Naturales con agua clara; chartreuse/blanco con turbia. Texas o cabeza plomada junto a riprap, colas y sombra.",
+        diagrama: "vinilo-soft",
+        tags: ["bass", "lucio", "fotos"],
       },
       {
         id: "senuelo-mosca",
@@ -335,17 +336,17 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
   {
     id: "aparejos",
     titulo: "Aparejos básicos",
-    subtitulo: "Montajes que cubren el 90 % de salidas",
+    subtitulo: "Montajes reales que cubren el 90 % de salidas",
     items: [
       {
         id: "ap-kit-principiante",
         titulo: "Kit mínimo para no desanimarte",
-        resumen: "Caja plana: 2 snaps, 2 emerillones, 1 mosquetón, plomos y anzuelos.",
+        resumen: "Caja plana: snaps, emerillones, plomos y anzuelos sin arponcillo.",
         detalle:
-          "1) Ata un snap a la línea con Palomar. 2) Engancha la cucharilla o el vinilo al snap. 3) Si usas cucharilla giratoria, pon emerillón + snap. 4) Lleva corta-hilos y 5 anzuelos de repuesto sin arponcillo. Con eso montas en menos de un minuto.",
+          "1) Ata un snap a la línea con Palomar o Trilene. 2) Engancha cucharilla o vinilo al snap. 3) Con giratoria: emerillón + snap. 4) Corta-hilos y 5 anzuelos de repuesto. Montas en menos de un minuto.",
         pasos: [
           "Snaps y emerillones en la cajita.",
-          "Un solo Palomar al snap.",
+          "Un solo nudo (Palomar/Trilene) al snap.",
           "Engancha el señuelo al snap (cambio en 1 s).",
           "Plomos y anzuelos de repuesto sin arponcillo.",
         ],
@@ -357,10 +358,10 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Spinning ligero / medio",
         resumen: "Caña 2,10–2,40 m · 5–25 g · trenza 0.08–0.12 + fluoro 0.20–0.28.",
         detalle:
-          "El setup más polivalente para embalses de Castellón. Carrete 2500–3000. Bajo de fluorocarbono 1–1,5 m. Sirve para softbait, crank y cucharilla.",
+          "Setup polivalente para embalses de Castellón. La foto Texas muestra bala + offset + softbait weedless; con cucharilla usa emerillón + snap. Carrete 2500–3000 y bajo de flúoro 1–1,5 m.",
         pasos: [
           "Línea → bajo de flúoro → emerillón/snap → señuelo.",
-          "Vinilo: texas (bala + offset). Cucharilla: emerillón + snap.",
+          "Vinilo: Texas (bala + offset). Cucharilla: emerillón + snap.",
           "Caña 2,10–2,40 m y carrete 2500–3000.",
         ],
         diagrama: "montaje-spinning",
@@ -369,9 +370,9 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "ap-feeder",
         titulo: "Feeder / fondo para carpa y barbo",
-        resumen: "Caña feeder 3,3–3,6 m · nailon 0.20–0.25 · cage.",
+        resumen: "Caña feeder 3,3–3,6 m · nailon 0.20–0.25 · cage o oliva.",
         detalle:
-          "Solo donde cebar esté permitido (no trucheros). Montaje anti-enredo con emerillón y anzuelo a la medida del cebo.",
+          "Plomo deslizante + emerillón de tope + bajo + anzuelo. Solo donde cebar esté permitido (no trucheros). Anzuelo a la medida del cebo.",
         pasos: [
           "Plomo deslizante (oliva o cage) en la línea.",
           "Emerillón de tope + bajo + anzuelo.",
@@ -385,18 +386,18 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Ultralight de río",
         resumen: "Caña 1,80–2,10 m · 0.5–7 g · nylon 0.14–0.18.",
         detalle:
-          "Para trucha y ciprínidos en tramos estrechos. Un anzuelo sin muerte y suela con agarre. Una sola caña en tramos trucheros.",
+          "Trucha y ciprínidos en tramos estrechos. Cucharilla ondulante pequeña o spinner n.º 0–1. Un anzuelo sin muerte y suela con agarre. Una sola caña en tramos trucheros.",
         diagrama: "cucharilla-ondulante",
-        tags: ["trucha", "río"],
+        tags: ["trucha", "río", "fotos"],
       },
       {
         id: "ap-surf",
         titulo: "Surfcasting / spinning de orilla",
         resumen: "Costa de Castellón sin vedados ni puertos.",
         detalle:
-          "Caña 2,7–3,6 m según distancia. Pirámide + running para dorada. Respeta bandas de baño (mapa de la app).",
+          "Caña 2,7–3,6 m según distancia. Pirámide + running para dorada (ver foto del plomo). Respeta bandas de baño (mapa de la app).",
         diagrama: "plomo-piramide",
-        tags: ["costa"],
+        tags: ["costa", "fotos"],
       },
     ],
   },

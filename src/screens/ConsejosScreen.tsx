@@ -45,7 +45,7 @@ export default function ConsejosScreen() {
         <Text style={styles.heroKicker}>Escuela de bolsillo</Text>
         <Text style={styles.heroTitle}>Consejos de pesca</Text>
         <Text style={styles.heroSub}>
-          Fotos reales paso a paso (nudos) e identificación de aparejos — empaquetadas en la app, sin internet. Como en Knots 3D / Animated Knots, pero en castellano y pensado para Castellón.
+          Solo fotografías reales: nudos paso a paso y aparejos identificados con precisión. Empaquetadas en la app, sin internet. En castellano y pensado para Castellón.
         </Text>
       </LinearGradient>
 
@@ -53,7 +53,7 @@ export default function ConsejosScreen() {
         <View style={styles.introCard}>
           <Text style={styles.introTitle}>Empieza aquí si eres nuevo</Text>
           <Text style={styles.introTxt}>
-            Abre «Nudo Palomar»: desliza las fotos 1→7. Luego «Clip / snap» y «Kit mínimo». Así montas sin rehacer nudos cada vez que cambias de señuelo.
+            Abre «Nudo Palomar»: desliza las fotos 1→7. Luego «Trilene» o «Clip / snap» y «Kit mínimo». Así montas sin rehacer nudos cada vez que cambias de señuelo.
           </Text>
         </View>
 
@@ -143,7 +143,7 @@ export default function ConsejosScreen() {
         ))}
 
         <Text style={styles.footnote}>
-          Contenido orientativo. Carteles del tramo, PTOP del coto y DOGV prevalecen siempre. Fotos/diagramas: Wikimedia Commons (PD/CC), créditos bajo cada guía; copia local para uso offline.
+          Contenido orientativo. Carteles del tramo, PTOP del coto y DOGV prevalecen siempre. Fotografías: Wikimedia Commons (PD/CC), créditos bajo cada guía; copia local para uso offline.
         </Text>
       </View>
     </ScrollView>

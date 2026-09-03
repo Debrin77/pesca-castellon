@@ -45,20 +45,13 @@ export default function GuiaFotoConsejo({ guia, width }: Props) {
     if (i !== paso && i >= 0 && i < total) setPaso(i);
   }
 
-  const imgH =
-    guia.modo === "diagrama"
-      ? Math.min(360, Math.round(width * 1.35))
-      : Math.round(width * 0.72);
+  const imgH = Math.round(width * 0.72);
 
   return (
     <View style={[styles.wrap, { width }]} accessibilityLabel="Guía visual paso a paso">
       <View style={styles.badgeRow}>
         <Text style={styles.badge}>
-          {guia.modo === "secuencia"
-            ? "Fotos paso a paso"
-            : guia.modo === "diagrama"
-              ? "Diagrama instructivo"
-              : "Identificar por foto"}
+          {guia.modo === "secuencia" ? "Fotos paso a paso" : "Identificar por foto"}
         </Text>
         {esSecuencia ? (
           <Text style={styles.contador}>
