@@ -218,7 +218,7 @@ function NudoClinch({ width }: { width: number }) {
 
 function NudoUni({ width }: { width: number }) {
   return (
-    <Lienzo width={width} height={100} label="Diagrama Uni knot">
+    <Lienzo width={width} height={100} label="Diagrama Trilene">
       <Paso n={1} x={12} y={8} />
       <AnzueloDibujo left={40} top={16} size={28} />
       <View style={[styles.lazo, { left: 36, top: 48, width: 44, height: 28 }]} />
@@ -262,7 +262,7 @@ function NudoAlbright({ width }: { width: number }) {
 
 function NudoLoop({ width }: { width: number }) {
   return (
-    <Lienzo width={width} height={90} label="Diagrama lazo de cirujano">
+    <Lienzo width={width} height={90} label="Diagrama lazo del pescador">
       <Paso n={1} x={20} y={12} />
       <Hilo left={48} top={28} w={50} />
       <Hilo left={48} top={36} w={50} color={COLORS.water} />
@@ -785,7 +785,7 @@ function TablaTallas({ width }: { width: number }) {
 const MAPA: Partial<Record<IdDiagrama, (p: { width: number }) => React.ReactElement>> = {
   "nudo-palomar": NudoPalomar,
   "nudo-clinch": NudoClinch,
-  "nudo-uni": NudoUni,
+  "nudo-trilene": NudoUni,
   "nudo-albright": NudoAlbright,
   "nudo-loop": NudoLoop,
   "anzuelo-simple": AnzueloSimple,
@@ -818,7 +818,7 @@ function anchoMinimo(id: IdDiagrama): number {
  * Pensado para que un principiante entienda el montaje de un vistazo.
  */
 export default function DiagramaConsejo({ id, width = 340 }: Props) {
-  /** Preferir fotos/diagramas libres empaquetados (más claros para principiantes). */
+  /** Preferir fotografías empaquetadas (más claras para principiantes). */
   const guia = GUIAS_MEDIA[id];
   if (guia) {
     return <GuiaFotoConsejo guia={guia} width={width} />;
