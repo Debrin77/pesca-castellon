@@ -56,7 +56,14 @@
           "color": "#1b5e3f"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          photosPermission: "Para adjuntar una foto a tus capturas en el diario."
+        }
+      ]
     ]
   }
 }

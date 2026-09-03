@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import ListaAnimada from "./ListaAnimada";
 import MejorHoraPesca from "./MejorHoraPesca";
 import SiluetaEspecie from "./SiluetaEspecie";
+import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: string } {
@@ -43,10 +45,20 @@ export default function TarjetaEspecie({
 }) {
   const talla = tallaDestacada(sp);
   const invasora = sp.invasora || sp.id === "cangrejo_azul";
+  const cara = caraDeEspecie(sp);
 
   return (
     <ListaAnimada key={sp.id} index={index} replayKey={sp.id}>
       <View style={[styles.card, invasora && styles.cardInvasora]}>
+        <LinearGradient colors={[...cara.gradiente]} style={styles.cara}>
+          <Text style={styles.caraEmoji}>{cara.emoji}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.caraKicker}>{cara.etiqueta}</Text>
+            <Text style={styles.caraNombre} numberOfLines={1}>
+              {sp.nombre}
+            </Text>
+          </View>
+        </LinearGradient>
         <View style={styles.hero}>
           <SiluetaEspecie id={sp.id} nombre={sp.nombre} color={invasora ? COLORS.warning : COLORS.waterDark} />
           <View style={styles.tallaCaja}>
@@ -100,14 +112,31 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
-    padding: 16,
+    padding: 0,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
+    overflow: "hidden",
     ...SHADOW,
   },
+  cara: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  caraEmoji: { fontSize: 28 },
+  caraKicker: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+  },
+  caraNombre: { color: "#fff", fontSize: 16, fontWeight: "800", marginTop: 1 },
   cardInvasora: { borderColor: COLORS.warning, backgroundColor: "#fffaf3" },
-  hero: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
+  hero: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8, paddingHorizontal: 16, paddingTop: 12 },
   tallaCaja: { flex: 1 },
   tallaKicker: {
     fontSize: 11,
@@ -120,11 +149,12 @@ const styles = StyleSheet.create({
   tallaNum: { fontSize: 44, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -1.2, lineHeight: 48 },
   tallaUnidad: { fontSize: 22, fontWeight: "700", color: COLORS.water },
   tallaPie: { fontSize: 12, color: COLORS.textMuted, marginTop: 2, lineHeight: 16 },
-  cardTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -0.3 },
-  cardNote: { fontSize: 12, color: COLORS.textMuted, marginTop: 3, fontStyle: "italic" },
-  cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
+  cardTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -0.3, paddingHorizontal: 16 },
+  cardNote: { fontSize: 12, color: COLORS.textMuted, marginTop: 3, fontStyle: "italic", paddingHorizontal: 16 },
+  cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22, paddingHorizontal: 16 },
   avisoLegalBox: {
     marginTop: 12,
+    marginHorizontal: 16,
     backgroundColor: COLORS.mist,
     borderRadius: 10,
     padding: 10,
@@ -139,11 +169,11 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     marginBottom: 4,
   },
-  avisoLegalText: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, fontWeight: "600" },
-  cardStatus: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, lineHeight: 20 },
+  avisoLegalText: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, fontWeight: "600", paddingHorizontal: 16 },
+  cardStatus: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, lineHeight: 20, paddingHorizontal: 16 },
   badgeInvasora: { fontSize: 11, color: COLORS.warning, fontWeight: "800" },
   avisoFuerte: { backgroundColor: COLORS.dangerLight, borderColor: COLORS.danger },
   avisoFuerteTxt: { color: "#7a1414" },
-  gearBtn: { marginTop: 12, alignSelf: "flex-start" },
+  gearBtn: { marginTop: 12, marginBottom: 14, marginLeft: 16, alignSelf: "flex-start" },
   gearLink: { fontSize: 15, color: COLORS.water, fontWeight: "800" },
 });

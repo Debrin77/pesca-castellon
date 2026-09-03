@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Image,
+  Platform,
 } from "react-native";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import speciesCatalog from "../data/species.json";
@@ -24,8 +26,10 @@ import {
   eliminarFavorito,
 } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
+import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
+import { LinearGradient } from "expo-linear-gradient";
 
 type Tab = "favoritos" | "puntos" | "capturas";
 
@@ -47,6 +51,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [tallaCm, setTallaCm] = useState("");
   const [pesoKg, setPesoKg] = useState("");
   const [notas, setNotas] = useState("");
+  const [fotoUri, setFotoUri] = useState<string | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -68,13 +74,54 @@ export default function MyCatchesScreen({ navigation }: Props) {
       tallaCm: tallaCm ? parseFloat(tallaCm) : null,
       pesoKg: pesoKg ? parseFloat(pesoKg) : null,
       notas: notas || undefined,
+      fotoUri: fotoUri || null,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
     });
     setNombreLugar("");
     setTallaCm("");
     setPesoKg("");
     setNotas("");
+    setFotoUri(null);
+    setCoords(null);
     setMostrarFormulario(false);
     cargar();
+  }
+
+  async function elegirFoto() {
+    try {
+      const ImagePicker = await import("expo-image-picker");
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Permiso", "Necesitas permitir acceso a la galería para añadir foto.");
+        return;
+      }
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+      if (!res.canceled && res.assets?.[0]?.uri) {
+        setFotoUri(res.assets[0].uri);
+      }
+    } catch {
+      Alert.alert("Foto", "No se pudo abrir la galería en este entorno.");
+    }
+  }
+
+  async function anadirUbicacionCaptura() {
+    const ok = await solicitarPermisoUbicacion();
+    if (!ok) {
+      Alert.alert("Ubicación", "Activa el permiso para guardar el punto en el mapa.");
+      return;
+    }
+    const loc = await obtenerUbicacionActual();
+    if (!loc) {
+      Alert.alert("Ubicación", "No se pudo obtener tu posición.");
+      return;
+    }
+    setCoords(loc);
   }
 
   async function handleGuardarPuntoActual() {
@@ -185,6 +232,18 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 <Text style={styles.formLabel}>Notas (opcional)</Text>
                 <TextInput style={[styles.input, { height: 60 }]} value={notas} onChangeText={setNotas} multiline placeholder="Señuelo usado, condiciones..." />
 
+                <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
+                  <TouchableOpacity style={styles.photoBtn} onPress={elegirFoto}>
+                    <Text style={styles.photoBtnTxt}>{fotoUri ? "Cambiar foto" : "Añadir foto"}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.photoBtn} onPress={anadirUbicacionCaptura}>
+                    <Text style={styles.photoBtnTxt}>{coords ? "📍 OK" : "Ubicación"}</Text>
+                  </TouchableOpacity>
+                </View>
+                {fotoUri ? (
+                  <Image source={{ uri: fotoUri }} style={styles.fotoPreview} />
+                ) : null}
+
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
                   <TouchableOpacity style={styles.cancelButton} onPress={() => setMostrarFormulario(false)}>
                     <Text style={styles.cancelButtonText}>Cancelar</Text>
@@ -200,30 +259,41 @@ export default function MyCatchesScreen({ navigation }: Props) {
             {capturas.length === 0 && <Text style={styles.emptyText}>Aún no has registrado ninguna captura.</Text>}
             {capturas.map((c, i) => {
               const sp = especieInfo(c.especieId);
+              const cara = caraDeEspecie(sp);
               return (
                 <ListaAnimada key={c.id} index={i}>
                   <View style={styles.card}>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                      <Text style={styles.cardTitle}>
-                        {sp?.icono} {sp?.nombre ?? c.especieId}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          eliminarCaptura(c.id).then(cargar);
-                        }}
-                      >
-                        <Text style={styles.deleteText}>Eliminar</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.cardMeta}>
-                      {c.fecha} {c.nombreLugar ? `· ${c.nombreLugar}` : ""}
-                    </Text>
-                    {(c.tallaCm || c.pesoKg) && (
-                      <Text style={styles.cardMeta}>
-                        {c.tallaCm ? `${c.tallaCm} cm` : ""} {c.pesoKg ? `· ${c.pesoKg} kg` : ""}
-                      </Text>
+                    {c.fotoUri ? (
+                      <Image source={{ uri: c.fotoUri }} style={styles.fotoCard} />
+                    ) : (
+                      <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
+                        <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
+                      </LinearGradient>
                     )}
-                    {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
+                    <View style={{ padding: 12 }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={styles.cardTitle}>
+                          {sp?.icono} {sp?.nombre ?? c.especieId}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            eliminarCaptura(c.id).then(cargar);
+                          }}
+                        >
+                          <Text style={styles.deleteText}>Eliminar</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.cardMeta}>
+                        {c.fecha} {c.nombreLugar ? `· ${c.nombreLugar}` : ""}
+                        {c.lat != null && c.lng != null ? ` · ${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}` : ""}
+                      </Text>
+                      {(c.tallaCm || c.pesoKg) && (
+                        <Text style={styles.cardMeta}>
+                          {c.tallaCm ? `${c.tallaCm} cm` : ""} {c.pesoKg ? `· ${c.pesoKg} kg` : ""}
+                        </Text>
+                      )}
+                      {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
+                    </View>
                   </View>
                 </ListaAnimada>
               );
@@ -341,14 +411,38 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
-    padding: 12,
-    marginBottom: 8,
+    padding: 0,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: COLORS.border,
+    overflow: "hidden",
     ...SHADOW,
   },
   cardTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
   cardMeta: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   cardNotas: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, fontStyle: "italic" },
   deleteText: { fontSize: 12, color: COLORS.danger, fontWeight: "600" },
+  photoBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 10,
+    alignItems: "center",
+    backgroundColor: COLORS.mist,
+  },
+  photoBtnTxt: { fontWeight: "700", color: COLORS.textSecondary, fontSize: 12 },
+  fotoPreview: {
+    width: "100%",
+    height: 160,
+    borderRadius: RADIUS.sm,
+    marginTop: 10,
+  },
+  fotoCard: { width: "100%", height: 160 },
+  fotoCardPlaceholder: {
+    width: "100%",
+    height: 110,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

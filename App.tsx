@@ -1,14 +1,17 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, StyleSheet, Platform } from "react-native";
+import { NavigationContainer, DefaultTheme, NavigationContainerRef } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useFonts, SourceSans3_400Regular, SourceSans3_600SemiBold, SourceSans3_700Bold, SourceSans3_800ExtraBold } from "@expo-google-fonts/source-sans-3";
 import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import { AccesoProvider } from "./src/context/AccesoContext";
+import OnboardingScreen from "./src/screens/OnboardingScreen";
+import { onboardingVisto } from "./src/services/offlineService";
 
 aplicarEstilosWeb();
 
@@ -22,6 +25,7 @@ import LicenseScreen from "./src/screens/LicenseScreen";
 import MyCatchesScreen from "./src/screens/MyCatchesScreen";
 import ConsejosScreen from "./src/screens/ConsejosScreen";
 import AjustesScreen from "./src/screens/AjustesScreen";
+import SalgoAPescarScreen from "./src/screens/SalgoAPescarScreen";
 import { COLORS } from "./src/theme";
 
 const Tab = createBottomTabNavigator();
@@ -42,7 +46,7 @@ const stackScreenOptions = {
   headerStyle: { backgroundColor: COLORS.primaryDark },
   headerTintColor: "#fff",
   headerShadowVisible: false,
-  headerTitleStyle: { fontWeight: "700" as const, fontSize: 17 },
+  headerTitleStyle: { fontWeight: "700" as const, fontSize: 17, fontFamily: "SourceSans3_700Bold" },
 };
 
 function HomeStackScreen() {
@@ -52,6 +56,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
+      <HomeStack.Screen name="SalgoAPescar" component={SalgoAPescarScreen} options={{ title: "Salgo a pescar" }} />
     </HomeStack.Navigator>
   );
 }
@@ -129,30 +134,87 @@ function listenerIrArriba(nombreTab: string) {
   });
 }
 
+function AppNavegacion() {
+  const navRef = useRef<NavigationContainerRef<any>>(null);
+
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    let sub: { remove: () => void } | undefined;
+    (async () => {
+      try {
+        const Notifications = await import("expo-notifications");
+        sub = Notifications.addNotificationResponseReceivedListener((resp) => {
+          const data = resp.notification.request.content.data as any;
+          if (data?.pantalla === "SalgoAPescar") {
+            navRef.current?.navigate("Inicio", { screen: "SalgoAPescar" });
+          } else if (data?.pantalla === "Previsión") {
+            navRef.current?.navigate("Previsión");
+          } else if (data?.pantalla === "Mapa") {
+            navRef.current?.navigate("Mapa");
+          }
+        });
+      } catch {
+        /* web / sin notificaciones */
+      }
+    })();
+    return () => sub?.remove();
+  }, []);
+
+  return (
+    <NavigationContainer theme={navTheme} ref={navRef}>
+      <StatusBar style="light" />
+      <Tab.Navigator
+        tabBar={(props) => <BarraTabsScroll {...props} />}
+        screenOptions={{
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+        }}
+      >
+        <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
+        <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
+        <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
+        <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
+        <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
+        <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
+        <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    SourceSans3_400Regular,
+    SourceSans3_600SemiBold,
+    SourceSans3_700Bold,
+    SourceSans3_800ExtraBold,
+  });
+  const [listoOnboarding, setListoOnboarding] = useState(false);
+  const [mostrarOnboarding, setMostrarOnboarding] = useState(false);
+
+  useEffect(() => {
+    onboardingVisto().then((visto) => {
+      setMostrarOnboarding(!visto);
+      setListoOnboarding(true);
+    });
+  }, []);
+
+  if (!fontsLoaded || !listoOnboarding) {
+    return <View style={[styles.root, { backgroundColor: COLORS.primaryDark }]} />;
+  }
+
   return (
     <SafeAreaProvider>
       <AccesoProvider>
         <View style={styles.root}>
-          <NavigationContainer theme={navTheme}>
-            <StatusBar style="light" />
-            <Tab.Navigator
-              tabBar={(props) => <BarraTabsScroll {...props} />}
-              screenOptions={{
-                headerShown: false,
-                tabBarHideOnKeyboard: true,
-              }}
-            >
-              <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
-              <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
-              <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
-              <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
-              <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
-              <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
-              <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
-            </Tab.Navigator>
-          </NavigationContainer>
-          <PantallaBloqueo />
+          {mostrarOnboarding ? (
+            <OnboardingScreen onDone={() => setMostrarOnboarding(false)} />
+          ) : (
+            <>
+              <AppNavegacion />
+              <PantallaBloqueo />
+            </>
+          )}
         </View>
       </AccesoProvider>
     </SafeAreaProvider>

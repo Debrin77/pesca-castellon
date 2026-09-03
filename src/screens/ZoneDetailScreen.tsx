@@ -11,9 +11,10 @@ import LicenseBanner from "../components/LicenseBanner";
 import SitiosOrientativos from "../components/SitiosOrientativos";
 import TarjetaEspecie from "../components/TarjetaEspecie";
 import TemporadaBanner from "../components/TemporadaBanner";
+import CaraZona from "../components/CaraZona";
+import { caraDeZona } from "../data/carasVisuales";
 import { sitiosDeFicha } from "../services/sitiosComunidad";
-import { LinearGradient } from "expo-linear-gradient";
-import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
+import { COLORS, RADIUS, SHADOW } from "../theme";
 
 interface Props {
   route: { params: { zoneId: string } };
@@ -61,6 +62,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
   }
 
   const mesActual = MESES[new Date().getMonth()];
+  const cara = caraDeZona(zone);
 
   async function toggleFav() {
     const ahora = await alternarFavorito(zone.id, zone.nombre);
@@ -69,28 +71,31 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-      <LinearGradient colors={GRADIENTS.primary} style={styles.headerCard}>
-        <View style={styles.headerTop}>
-          <View style={{ flex: 1, paddingRight: 10 }}>
-            <Text style={styles.title}>{zone.nombre}</Text>
-            <Text style={styles.subtitle}>
-              {zone.rio} · {zone.municipio}
-              {zone.cuenca ? ` · cuenca ${zone.cuenca}` : ""}
-            </Text>
-          </View>
+      <CaraZona
+        cara={cara}
+        titulo={zone.nombre}
+        subtitulo={`${zone.rio} · ${zone.municipio}${zone.cuenca ? ` · cuenca ${zone.cuenca}` : ""}`}
+        right={
           <TouchableOpacity style={styles.favBtn} onPress={toggleFav} accessibilityLabel="Favorito">
             <Text style={styles.favIcon}>{favorito ? "★" : "☆"}</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.badgeRow}>
-          <Text style={styles.badgeVocacion}>{zone.vocacionOficial}</Text>
-          <Text style={styles.badgeEstado}>Zona {zone.estadoZona}</Text>
-        </View>
-        <Text style={styles.desc}>{zone.descripcion}</Text>
-      </LinearGradient>
+        }
+      />
+      <View style={styles.badgeRow}>
+        <Text style={styles.badgeVocacion}>{zone.vocacionOficial}</Text>
+        <Text style={styles.badgeEstado}>Zona {zone.estadoZona}</Text>
+      </View>
+      <Text style={styles.desc}>{zone.descripcion}</Text>
 
       <TemporadaBanner compact />
       <LicenseBanner onPress={() => navigation.navigate("License")} />
+
+      <TouchableOpacity
+        style={styles.mapLink}
+        onPress={() => navigation.navigate("Mapa")}
+      >
+        <Text style={styles.mapLinkTxt}>Ver en el mapa →</Text>
+      </TouchableOpacity>
 
       {sitiosDeFicha(zone.id).map((bloque) => (
         <SitiosOrientativos
@@ -232,30 +237,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   favIcon: { color: "#ffe08a", fontSize: 22, fontWeight: "700" },
-  title: { fontSize: 21, fontWeight: "800", color: "#fff" },
-  subtitle: { fontSize: 13.5, color: "#dfeee5", marginTop: 2, marginBottom: 10 },
-  badgeRow: { flexDirection: "row", gap: 8, marginBottom: 10 },
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 10 },
   badgeVocacion: {
     fontSize: 11,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
+    backgroundColor: COLORS.primaryLight,
+    color: COLORS.primaryDark,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.pill,
     overflow: "hidden",
-    fontWeight: "600",
+    fontWeight: "700",
   },
   badgeEstado: {
     fontSize: 11,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
+    backgroundColor: COLORS.waterLight,
+    color: COLORS.waterDark,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.pill,
     overflow: "hidden",
-    fontWeight: "600",
+    fontWeight: "700",
   },
-  desc: { fontSize: 13.5, color: "#e3f2e9", lineHeight: 19 },
+  desc: { fontSize: 13.5, color: COLORS.textSecondary, lineHeight: 19, marginBottom: 12 },
+  mapLink: {
+    alignSelf: "flex-start",
+    marginBottom: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.waterLight,
+  },
+  mapLinkTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 13 },
   sectionTitle: { fontSize: 16, fontWeight: "700", marginTop: 14, marginBottom: 8, color: COLORS.textPrimary },
   card: {
     backgroundColor: COLORS.surface,

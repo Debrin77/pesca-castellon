@@ -20,6 +20,10 @@ export interface Captura {
   tallaCm?: number | null;
   pesoKg?: number | null;
   notas?: string;
+  /** URI local de foto (opcional). */
+  fotoUri?: string | null;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export interface FavoritoZona {
