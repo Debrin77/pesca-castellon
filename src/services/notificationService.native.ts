@@ -62,7 +62,8 @@ export async function programarAlertasPesca(dias: IndicePescaDia[]): Promise<num
         identifier: `${PREFIJO_ID}vispera-${dia.fecha}`,
         content: {
           title: esExcelente ? "🎣 Mañana pinta excelente para pescar" : "🎣 Mañana es buen día para pescar",
-          body: cuerpoBase,
+          body: `${cuerpoBase}\nToca para abrir el modo salida.`,
+          data: { pantalla: "SalgoAPescar", fecha: dia.fecha },
         },
         trigger: vispera,
       });
@@ -77,7 +78,8 @@ export async function programarAlertasPesca(dias: IndicePescaDia[]): Promise<num
         identifier: `${PREFIJO_ID}manana-${dia.fecha}`,
         content: {
           title: esExcelente ? "🎣 Hoy pinta excelente para pescar" : "🎣 Hoy es buen día para pescar",
-          body: cuerpoBase,
+          body: `${cuerpoBase}\nToca para abrir el modo salida.`,
+          data: { pantalla: "SalgoAPescar", fecha: dia.fecha },
         },
         trigger: manana,
       });
