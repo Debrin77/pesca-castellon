@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
 import { tallaDestacada } from "./TarjetaEspecie";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS } from "../theme";
 
 type Fila = { id: string; nombre: string; sp: any };
@@ -13,7 +13,12 @@ function filasCosta(): Fila[] {
 }
 
 function filasRio(): Fila[] {
-  return (speciesCatalog as any[]).map((sp) => ({ id: sp.id, nombre: sp.nombre, sp }));
+  // Catálogo de la provincia activa: nunca mezclar Castellón bajo Sevilla.
+  return (getProvinciaActiva().species as any[]).map((sp) => ({
+    id: sp.id,
+    nombre: sp.nombre,
+    sp,
+  }));
 }
 
 function ordenar(filas: Fila[]) {
@@ -41,17 +46,27 @@ function FilaTalla({ fila, onPress }: { fila: Fila; onPress?: () => void }) {
 }
 
 export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: string) => void }) {
+  const provincia = getProvinciaActiva();
+  const esSevilla = provincia.id === "sevilla";
+
   return (
     <View>
       <Text style={styles.aviso}>
-        Cifra = talla o peso mínimo para retener. SM = sin muerte. INV = invasora (no devolver). Guión = el anexo no fija
-        número: no te lleves crías. Lisa: 16 cm en mar, 25 cm en río.
+        {esSevilla
+          ? "Cifras según Orden 13/01/2023 (Andalucía) y fichas de Sevilla. INV = invasora / no objeto de pesca. Guión = sin talla de retención."
+          : "Cifra = talla o peso mínimo para retener. SM = sin muerte. INV = invasora (no devolver). Guión = el anexo no fija número. Lisa: 16 cm en mar, 25 cm en río."}
       </Text>
-      <Text style={styles.bloque}>Costa · RD 560/1995 anexo II Mediterráneo</Text>
-      {ordenar(filasCosta()).map((f) => (
-        <FilaTalla key={`m-${f.id}`} fila={f} onPress={onEspecie ? () => onEspecie(f.id) : undefined} />
-      ))}
-      <Text style={styles.bloque}>Ríos y embalses · Orden 30/2016</Text>
+      {!esSevilla ? (
+        <>
+          <Text style={styles.bloque}>Costa · RD 560/1995 anexo II Mediterráneo</Text>
+          {ordenar(filasCosta()).map((f) => (
+            <FilaTalla key={`m-${f.id}`} fila={f} onPress={onEspecie ? () => onEspecie(f.id) : undefined} />
+          ))}
+        </>
+      ) : null}
+      <Text style={styles.bloque}>
+        {esSevilla ? "Ríos y embalses · Orden 13/01/2023 (Junta Andalucía)" : "Ríos y embalses · Orden 30/2016"}
+      </Text>
       {ordenar(filasRio()).map((f) => (
         <FilaTalla key={`r-${f.id}`} fila={f} onPress={onEspecie ? () => onEspecie(f.id) : undefined} />
       ))}

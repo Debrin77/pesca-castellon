@@ -4,7 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { estaEnVeda, notaVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import { alternarFavorito, esFavorito } from "../services/storageService";
-import { TALLAS_OFICIALES } from "../data/normativa2026";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import LicenseBanner from "../components/LicenseBanner";
@@ -196,7 +195,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         const enVeda = estaEnVeda(especieId);
         const mejoresMeses: string[] = zone.mejoresEpocas?.[especieId] ?? [];
         const esBuenMes = mejoresMeses.includes(mesActual);
-        const talla = TALLAS_OFICIALES[especieId];
+        // Talla/régimen y nota salen del catálogo de la provincia activa (nunca de normativa GVA bajo Sevilla).
+        const talla = sp.tallaOficial as string | undefined;
         const nota = notaVeda(especieId);
 
         return (
@@ -207,8 +207,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             enVeda={enVeda}
             extra={
               <>
-                {talla && <Text style={styles.cardText}>Talla / régimen: {talla}</Text>}
-                {nota && <Text style={styles.cardNote}>{nota}</Text>}
+                {talla ? <Text style={styles.cardText}>Talla / régimen: {talla}</Text> : null}
+                {nota ? <Text style={styles.cardNote}>{nota}</Text> : null}
                 {mejoresMeses.length > 0 && (
                   <Text style={styles.cardText}>
                     Mejores meses: {mejoresMeses.join(", ")}{" "}

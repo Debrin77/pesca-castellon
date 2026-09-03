@@ -1,27 +1,30 @@
 import tramos from "./tramosOficiales.json";
 import zones from "./zones.json";
 import speciesExtra from "./speciesExtra.json";
-import speciesBase from "../../data/species.json";
+import speciesOverrides from "./speciesOverrides.json";
 import {
   CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA,
   FUENTE_NORMATIVA_ANDALUCIA,
 } from "./normativa";
 import type { ProvinciaConfig } from "../types";
 
-/** Especies del catálogo base que también viven en Sevilla continental. */
-const IDS_COMPARTIDOS = new Set([
-  "black_bass",
-  "lucio",
-  "carpa",
-  "siluro",
-  "cangrejo_americano",
-  "carpin",
-]);
+/**
+ * Catálogo Sevilla 100 % independiente: NO importamos ni fusionamos
+ * src/data/species.json (textos Castellón/GVA). Solo overrides + extras andaluces.
+ */
+function construirSpeciesSevilla(): any[] {
+  const porId = new Map<string, any>();
 
-const speciesSevilla = [
-  ...(speciesBase as any[]).filter((s) => IDS_COMPARTIDOS.has(s.id)),
-  ...(speciesExtra as any[]),
-];
+  for (const o of speciesOverrides as any[]) {
+    porId.set(o.id, { ...o, provinciaId: "sevilla" as const });
+  }
+
+  for (const s of speciesExtra as any[]) {
+    porId.set(s.id, { ...(porId.get(s.id) ?? {}), ...s, provinciaId: "sevilla" as const });
+  }
+
+  return Array.from(porId.values());
+}
 
 export const sevillaConfig: ProvinciaConfig = {
   id: "sevilla",
@@ -37,7 +40,7 @@ export const sevillaConfig: ProvinciaConfig = {
   cuencas: ["Guadalquivir", "Guadaíra", "Rivera de Huelva", "Corbones", "Otras"],
   tramos: tramos as ProvinciaConfig["tramos"],
   zones: zones as any[],
-  species: speciesSevilla,
+  species: construirSpeciesSevilla(),
   tieneIcv: true,
   tieneSaih: false,
   embalsesPanel: [],
