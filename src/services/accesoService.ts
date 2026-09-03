@@ -163,7 +163,7 @@ export async function autenticarConBiometria(): Promise<boolean> {
     if (!cap.disponible || !cap.enrolada) return false;
 
     const resultado = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Desbloquear Pesca Castellón",
+      promptMessage: "Desbloquear la app de pesca",
       cancelLabel: "Usar contraseña",
       disableDeviceFallback: true,
       fallbackLabel: "Contraseña",

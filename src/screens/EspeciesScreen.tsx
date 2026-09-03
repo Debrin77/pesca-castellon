@@ -1,12 +1,13 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker, Circle } from "../components/map";
-import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
 import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
 import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
@@ -26,16 +27,13 @@ interface Props {
   navigation: any;
 }
 
-const CASTELLON_REGION = {
-  latitude: 40.05,
-  longitude: -0.02,
-  latitudeDelta: 1.25,
-  longitudeDelta: 1.25,
-};
-
 export default function EspeciesScreen({ navigation }: Props) {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const soloContinental = provincia.continentalOnly;
+  const speciesCatalog = provincia.species as any[];
   const tramos = todosLosTramos();
-  const playas = todasLasPlayas();
+  const playas = soloContinental ? [] : todasLasPlayas();
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
@@ -43,13 +41,19 @@ export default function EspeciesScreen({ navigation }: Props) {
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
   const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">("rio");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
-  const mar = consulta?.ambito === "maritimo" || catalogo === "mar";
+  const mar = !soloContinental && (consulta?.ambito === "maritimo" || catalogo === "mar");
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerStyle: { backgroundColor: mar && catalogoAbierto ? COLORS.waterDark : COLORS.primaryDark },
     });
   }, [mar, catalogoAbierto, navigation]);
+
+  useEffect(() => {
+    if (soloContinental && (catalogo === "mar" || catalogo === "no" || catalogo === "tallas")) {
+      setCatalogo("rio");
+    }
+  }, [soloContinental, catalogo]);
 
   async function usarMiUbicacion() {
     setCargandoUbicacion(true);
@@ -59,7 +63,7 @@ export default function EspeciesScreen({ navigation }: Props) {
       if (loc) {
         const r = consultarToqueMapa(loc.lat, loc.lng);
         setConsulta(r);
-        if (r.ambito === "maritimo") setCatalogo("mar");
+        if (!soloContinental && r.ambito === "maritimo") setCatalogo("mar");
         setMarcador({ latitude: loc.lat, longitude: loc.lng });
         setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
       }
@@ -75,7 +79,8 @@ export default function EspeciesScreen({ navigation }: Props) {
     const r = consultarToqueMapa(lat, lng);
     setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
-    if (r.ambito === "maritimo") setCatalogo("mar");
+    if (!soloContinental && r.ambito === "maritimo") setCatalogo("mar");
+    else setCatalogo("rio");
     setFichaAbierta(true);
     setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
   }
@@ -102,20 +107,21 @@ export default function EspeciesScreen({ navigation }: Props) {
           speciesCatalog.find((s: any) => s.id === especieId)
         );
 
-  const costa = consulta?.ambito === "maritimo";
+  const costa = !soloContinental && consulta?.ambito === "maritimo";
 
   return (
     <View style={styles.container}>
       <View style={styles.mapWrap}>
         <MapView
+          key={provincia.id}
           style={styles.map}
-          initialRegion={CASTELLON_REGION}
+          initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={costa ? "mar" : "bosque"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
-          <CapaPoligonosIcv />
+          {provincia.tieneIcv ? <CapaPoligonosIcv /> : null}
           {costa ? <CapaPuertos /> : null}
           {costa ? <CapaVedadosCosta /> : null}
           {costa &&
@@ -187,7 +193,11 @@ export default function EspeciesScreen({ navigation }: Props) {
 
       <View style={styles.pie}>
         <LeyendaMapa modo={costa ? "costa" : "continental"} />
-        <Text style={styles.hint}>Toca río o playa: las especies se abren a pantalla completa.</Text>
+        <Text style={styles.hint}>
+          {soloContinental
+            ? "Toca un tramo o embalse: las especies se abren a pantalla completa."
+            : "Toca río o playa: las especies se abren a pantalla completa."}
+        </Text>
         <View style={styles.pieRow}>
           {consulta && !fichaAbierta ? (
             <TouchableOpacity style={styles.pieBtn} onPress={() => setFichaAbierta(true)}>
@@ -254,30 +264,34 @@ export default function EspeciesScreen({ navigation }: Props) {
           >
             <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOnMar]}
-            onPress={() => setCatalogo("mar")}
-          >
-            <Text style={[styles.modoTxt, catalogo === "mar" && styles.modoTxtOn]}>Orilla mar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modoBtn, catalogo === "tallas" && styles.modoBtnOnMar]}
-            onPress={() => setCatalogo("tallas")}
-          >
-            <Text style={[styles.modoTxt, catalogo === "tallas" && styles.modoTxtOn]}>Tallas</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOnMar]}
-            onPress={() => setCatalogo("no")}
-          >
-            <Text style={[styles.modoTxt, catalogo === "no" && styles.modoTxtOn]}>No tocar</Text>
-          </TouchableOpacity>
+          {!soloContinental ? (
+            <>
+              <TouchableOpacity
+                style={[styles.modoBtn, catalogo === "mar" && styles.modoBtnOnMar]}
+                onPress={() => setCatalogo("mar")}
+              >
+                <Text style={[styles.modoTxt, catalogo === "mar" && styles.modoTxtOn]}>Orilla mar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modoBtn, catalogo === "tallas" && styles.modoBtnOnMar]}
+                onPress={() => setCatalogo("tallas")}
+              >
+                <Text style={[styles.modoTxt, catalogo === "tallas" && styles.modoTxtOn]}>Tallas</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modoBtn, catalogo === "no" && styles.modoBtnOnMar]}
+                onPress={() => setCatalogo("no")}
+              >
+                <Text style={[styles.modoTxt, catalogo === "no" && styles.modoTxtOn]}>No tocar</Text>
+              </TouchableOpacity>
+            </>
+          ) : null}
         </View>
         {catalogo === "rio" &&
           speciesCatalog.map((sp: any, i: number) => (
             <TarjetaEspecie key={sp.id} sp={sp} index={i} enVeda={estaEnVeda(sp.id)} onAparejos={() => irAparejos(sp.id)} />
           ))}
-        {catalogo === "mar" && (
+        {!soloContinental && catalogo === "mar" && (
           <>
             <Text style={styles.cardText}>{orilla.fuenteTallas}</Text>
             {orilla.invasorasOrilla.map((sp: any, i: number) => (
@@ -288,8 +302,8 @@ export default function EspeciesScreen({ navigation }: Props) {
             ))}
           </>
         )}
-        {catalogo === "tallas" && <ListaTallasMinimas onEspecie={irAparejos} />}
-        {catalogo === "no" && orilla.noCapturar.map((sp: any, i: number) => <TarjetaEspecie key={sp.id} sp={sp} index={i} />)}
+        {!soloContinental && catalogo === "tallas" && <ListaTallasMinimas onEspecie={irAparejos} />}
+        {!soloContinental && catalogo === "no" && orilla.noCapturar.map((sp: any, i: number) => <TarjetaEspecie key={sp.id} sp={sp} index={i} />)}
       </VentanaConsulta>
     </View>
   );

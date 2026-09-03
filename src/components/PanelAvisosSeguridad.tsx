@@ -6,6 +6,7 @@ import {
   etiquetaSeveridad,
   formatearCuando,
 } from "../services/avisosSeguridadService";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 
 interface Props {
@@ -41,7 +42,9 @@ export default function PanelAvisosSeguridad({ avisos, cargando, error }: Props)
     return (
       <View style={[styles.box, styles.boxOk]}>
         <Text style={styles.kicker}>Seguridad · avisos oficiales</Text>
-        <Text style={styles.tituloOk}>Sin avisos activos de tormenta ni crecida en Castellón</Text>
+        <Text style={styles.tituloOk}>
+          Sin avisos activos de tormenta ni crecida en {getProvinciaActiva().nombre}
+        </Text>
         <Text style={styles.meta}>
           Fuente: AEMET vía MeteoAlarm + modelo de caudal. Sigue mirando el cielo: una tormenta local puede formarse sin aviso.
         </Text>

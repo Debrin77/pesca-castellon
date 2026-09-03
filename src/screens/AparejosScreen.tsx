@@ -1,10 +1,11 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
-import speciesCatalog from "../data/species.json";
 import orilla from "../data/especiesOrilla.json";
 import aparejosOrilla from "../data/aparejosOrilla.json";
 import { LinearGradient } from "expo-linear-gradient";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import MejorHoraPesca from "../components/MejorHoraPesca";
@@ -26,6 +27,10 @@ type Equipo = {
 };
 
 export default function AparejosScreen({ route, navigation }: Props) {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const soloContinental = provincia.continentalOnly;
+  const speciesCatalog = provincia.species as any[];
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const costaLista = useMemo(
@@ -35,6 +40,18 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const costaIds = useMemo(() => new Set(costaLista.map((s) => s.id)), [costaLista]);
   const [ambito, setAmbito] = useState<"rio" | "costa">("rio");
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
+
+  useEffect(() => {
+    setAmbito("rio");
+    setSeleccionada(speciesCatalog[0]?.id ?? null);
+  }, [provincia.id]);
+
+  useEffect(() => {
+    if (soloContinental && ambito === "costa") {
+      setAmbito("rio");
+      setSeleccionada(speciesCatalog[0]?.id ?? null);
+    }
+  }, [soloContinental, ambito, speciesCatalog]);
 
   useLayoutEffect(() => {
     navigation?.setOptions({
@@ -46,44 +63,46 @@ export default function AparejosScreen({ route, navigation }: Props) {
   useEffect(() => {
     const id = route?.params?.especieId;
     if (!id) return;
-    if (costaIds.has(id)) {
+    if (!soloContinental && costaIds.has(id)) {
       setAmbito("costa");
       setSeleccionada(id);
     } else {
       setAmbito("rio");
       setSeleccionada(id);
     }
-  }, [route?.params?.especieId, costaIds]);
+  }, [route?.params?.especieId, costaIds, soloContinental]);
 
-  const lista = ambito === "costa" ? costaLista : speciesCatalog;
+  const lista = ambito === "costa" && !soloContinental ? costaLista : speciesCatalog;
   const sp: any = lista.find((s: any) => s.id === seleccionada) ?? lista[0];
   const equipo: Equipo | undefined =
     ambito === "costa" ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id] : sp?.equipo;
   const talla = sp ? tallaDestacada(sp) : null;
-  const mar = ambito === "costa";
+  const mar = ambito === "costa" && !soloContinental;
 
   return (
     <View style={styles.container}>
-      <View style={styles.modoBar}>
-        <TouchableOpacity
-          style={[styles.modoBtn, ambito === "rio" && styles.modoBtnOnBosque]}
-          onPress={() => {
-            setAmbito("rio");
-            setSeleccionada(speciesCatalog[0]?.id ?? null);
-          }}
-        >
-          <Text style={[styles.modoTxt, ambito === "rio" && styles.modoTxtOn]}>Ríos y embalses</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOnMar]}
-          onPress={() => {
-            setAmbito("costa");
-            setSeleccionada(costaLista[0]?.id ?? null);
-          }}
-        >
-          <Text style={[styles.modoTxt, ambito === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
-        </TouchableOpacity>
-      </View>
+      {!soloContinental ? (
+        <View style={styles.modoBar}>
+          <TouchableOpacity
+            style={[styles.modoBtn, ambito === "rio" && styles.modoBtnOnBosque]}
+            onPress={() => {
+              setAmbito("rio");
+              setSeleccionada(speciesCatalog[0]?.id ?? null);
+            }}
+          >
+            <Text style={[styles.modoTxt, ambito === "rio" && styles.modoTxtOn]}>Ríos y embalses</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOnMar]}
+            onPress={() => {
+              setAmbito("costa");
+              setSeleccionada(costaLista[0]?.id ?? null);
+            }}
+          >
+            <Text style={[styles.modoTxt, ambito === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <ScrollView
         horizontal
@@ -112,7 +131,9 @@ export default function AparejosScreen({ route, navigation }: Props) {
               colors={sp.invasora || sp.id === "cangrejo_azul" ? GRADIENTS.sunset : ambito === "costa" ? GRADIENTS.water : GRADIENTS.primary}
               style={styles.headerCard}
             >
-              <Text style={styles.headerKicker}>{ambito === "costa" ? "Desde tierra · Mediterráneo" : "Continental · Castellón"}</Text>
+              <Text style={styles.headerKicker}>
+                {ambito === "costa" ? "Desde tierra · Mediterráneo" : `Continental · ${provincia.nombre}`}
+              </Text>
               <View style={styles.headerHero}>
                 <GraficoEspecie id={sp.id} nombre={sp.nombre} size={96} />
                 {talla ? (
@@ -149,7 +170,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             {ambito === "rio" && (sp.habitats || sp.senuelosClave?.length) ? (
               <View style={[styles.gearCard, { marginTop: 12 }]}>
                 {sp.habitats ? (
-                  <FilaAparejo tipo="habitat" titulo="Dónde en Castellón">
+                  <FilaAparejo tipo="habitat" titulo={`Dónde en ${provincia.nombre}`}>
                     <Text style={styles.gearRowValue}>{sp.habitats}</Text>
                   </FilaAparejo>
                 ) : null}

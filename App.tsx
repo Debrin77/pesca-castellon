@@ -10,7 +10,9 @@ import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import { AccesoProvider } from "./src/context/AccesoContext";
+import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
+import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
 import { onboardingVisto } from "./src/services/offlineService";
 
 aplicarEstilosWeb();
@@ -50,9 +52,14 @@ const stackScreenOptions = {
 };
 
 function HomeStackScreen() {
+  const { provincia } = useProvincia();
   return (
     <HomeStack.Navigator screenOptions={stackScreenOptions}>
-      <HomeStack.Screen name="HomeMain" component={HomeScreen} options={{ title: "Pesca Castellón" }} />
+      <HomeStack.Screen
+        name="HomeMain"
+        component={HomeScreen}
+        options={{ title: provincia?.nombreApp ?? "Pesca" }}
+      />
       <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
@@ -151,7 +158,7 @@ function listenerIrArriba(nombreTab: string) {
   });
 }
 
-function AppNavegacion() {
+function AppNavegacion({ provinciaKey }: { provinciaKey: string }) {
   const navRef = useRef<NavigationContainerRef<any>>(null);
 
   useEffect(() => {
@@ -178,7 +185,7 @@ function AppNavegacion() {
   }, []);
 
   return (
-    <NavigationContainer theme={navTheme} ref={navRef}>
+    <NavigationContainer key={provinciaKey} theme={navTheme} ref={navRef}>
       <StatusBar style="light" />
       <Tab.Navigator
         tabBar={(props) => <BarraTabsScroll {...props} />}
@@ -199,13 +206,8 @@ function AppNavegacion() {
   );
 }
 
-export default function App() {
-  const [fontsLoaded] = useFonts({
-    SourceSans3_400Regular,
-    SourceSans3_600SemiBold,
-    SourceSans3_700Bold,
-    SourceSans3_800ExtraBold,
-  });
+function AppRaiz() {
+  const { listo, provinciaId } = useProvincia();
   const [listoOnboarding, setListoOnboarding] = useState(false);
   const [mostrarOnboarding, setMostrarOnboarding] = useState(false);
 
@@ -216,24 +218,47 @@ export default function App() {
     });
   }, []);
 
-  if (!fontsLoaded || !listoOnboarding) {
+  if (!listo || !listoOnboarding) {
+    return <View style={[styles.root, { backgroundColor: COLORS.primaryDark }]} />;
+  }
+
+  if (!provinciaId) {
+    return <SelectorProvinciaScreen />;
+  }
+
+  return (
+    <View style={styles.root}>
+      {mostrarOnboarding ? (
+        <OnboardingScreen onDone={() => setMostrarOnboarding(false)} />
+      ) : (
+        <>
+          <AppNavegacion provinciaKey={provinciaId} />
+          <PantallaBloqueo />
+        </>
+      )}
+    </View>
+  );
+}
+
+export default function App() {
+  const [fontsLoaded] = useFonts({
+    SourceSans3_400Regular,
+    SourceSans3_600SemiBold,
+    SourceSans3_700Bold,
+    SourceSans3_800ExtraBold,
+  });
+
+  if (!fontsLoaded) {
     return <View style={[styles.root, { backgroundColor: COLORS.primaryDark }]} />;
   }
 
   return (
     <SafeAreaProvider>
-      <AccesoProvider>
-        <View style={styles.root}>
-          {mostrarOnboarding ? (
-            <OnboardingScreen onDone={() => setMostrarOnboarding(false)} />
-          ) : (
-            <>
-              <AppNavegacion />
-              <PantallaBloqueo />
-            </>
-          )}
-        </View>
-      </AccesoProvider>
+      <ProvinciaProvider>
+        <AccesoProvider>
+          <AppRaiz />
+        </AccesoProvider>
+      </ProvinciaProvider>
     </SafeAreaProvider>
   );
 }

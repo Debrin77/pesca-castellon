@@ -4,6 +4,7 @@ import playasData from "../data/playasEspigonesCosta.json";
 import { puntoEnPoligono, distanciaAPolylineKm } from "./geoService";
 import { ConsultaPesca, consultarPuntoPesca } from "./consultaPescaService";
 import { FUENTE_MARITIMA, NOTA_CEFALOPODOS_ORILLA, REGLAS_ORILLA_MAR } from "../data/normativaMaritima";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { SEMAFORO } from "../theme";
 
 export type AnilloCosta = { lat: number; lng: number }[];
@@ -183,8 +184,11 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
   };
 }
 
-/** Un toque en el mapa: orilla si estás en la playa; si no, ríos. */
+/** Un toque en el mapa: orilla si estás en la playa (solo Castellón); si no, ríos. */
 export function consultarToqueMapa(lat: number, lng: number): ConsultaPesca {
-  if (esFranjaCosteraCastellon(lat, lng)) return consultarCosta(lat, lng);
+  const provincia = getProvinciaActiva();
+  if (!provincia.continentalOnly && esFranjaCosteraCastellon(lat, lng)) {
+    return consultarCosta(lat, lng);
+  }
   return consultarPuntoPesca(lat, lng);
 }

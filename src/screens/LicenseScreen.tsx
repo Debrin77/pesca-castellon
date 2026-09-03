@@ -20,7 +20,14 @@ import {
   TALLAS_OFICIALES,
   textoVigenciaNormativa,
 } from "../data/normativa2026";
+import {
+  CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA,
+  REGLAS_GENERALES_ANDALUCIA,
+  textoVigenciaNormativaAndalucia,
+} from "../provincias/sevilla/normativa";
 import TemporadaBanner from "../components/TemporadaBanner";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import {
   diasHastaCaducidad,
@@ -55,6 +62,18 @@ function avisar(titulo: string, mensaje: string) {
 }
 
 export default function LicenseScreen() {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const esSevilla = provincia.id === "sevilla";
+  const soloContinental = provincia.continentalOnly;
+  const checklist = provincia.checklistAntesDePescar.length
+    ? provincia.checklistAntesDePescar
+    : esSevilla
+      ? CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA
+      : CHECKLIST_ANTES_DE_PESCAR;
+  const reglas = esSevilla ? REGLAS_GENERALES_ANDALUCIA : REGLAS_GENERALES;
+  const vigencia = esSevilla ? textoVigenciaNormativaAndalucia() : textoVigenciaNormativa();
+  const fuente = provincia.fuenteNormativa;
   const [licencias, setLicencias] = useState<LicenciaGuardada[]>([]);
   const [tipo, setTipo] = useState<TipoLicencia>("continental");
   const [numero, setNumero] = useState("");
@@ -101,24 +120,40 @@ export default function LicenseScreen() {
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.headerCard}>
         <Text style={styles.headerIcon}>🎫</Text>
         <Text style={styles.headerTitle}>Licencias y normativa</Text>
-        <Text style={styles.headerSubtitle}>Continental y marítima recreativa desde tierra</Text>
+        <Text style={styles.headerSubtitle}>
+          {soloContinental
+            ? provincia.etiquetaLicenciaContinental
+            : "Continental y marítima recreativa desde tierra"}
+        </Text>
       </LinearGradient>
 
       <TemporadaBanner />
 
-      <Text style={styles.resumen}>{LICENCIA_INFO.resumen}</Text>
-      <Text style={styles.vigencia}>{textoVigenciaNormativa()}</Text>
+      <Text style={styles.resumen}>
+        {esSevilla
+          ? "Para pescar en ríos y embalses de Sevilla necesitas la licencia de pesca continental de Andalucía (Junta). Confirma siempre la orden de vedas vigente."
+          : LICENCIA_INFO.resumen}
+      </Text>
+      <Text style={styles.vigencia}>{vigencia}</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Ámbitos oficiales (GVA)</Text>
-        {LICENCIA_INFO.ambitos.map((a) => (
-          <View key={a.id} style={styles.ambitoBlock}>
-            <Text style={styles.ambitoTitulo}>{a.titulo}</Text>
-            <Text style={styles.ambitoDonde}>{a.donde}</Text>
-            <Text style={styles.cardText}>{a.detalle}</Text>
-          </View>
-        ))}
-      </View>
+      {!soloContinental ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Ámbitos oficiales (GVA)</Text>
+          {LICENCIA_INFO.ambitos.map((a) => (
+            <View key={a.id} style={styles.ambitoBlock}>
+              <Text style={styles.ambitoTitulo}>{a.titulo}</Text>
+              <Text style={styles.ambitoDonde}>{a.donde}</Text>
+              <Text style={styles.cardText}>{a.detalle}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Ámbito continental</Text>
+          <Text style={styles.cardText}>{provincia.etiquetaLicenciaContinental}</Text>
+          <Text style={[styles.cardText, { marginTop: 6 }]}>{fuente.vigenciaNota}</Text>
+        </View>
+      )}
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Mis licencias en este móvil</Text>
@@ -156,7 +191,10 @@ export default function LicenseScreen() {
 
         <Text style={styles.formLabel}>Tipo</Text>
         <View style={styles.tipoRow}>
-          {(["continental", "maritima_tierra"] as TipoLicencia[]).map((t) => (
+          {(soloContinental
+            ? (["continental"] as TipoLicencia[])
+            : (["continental", "maritima_tierra"] as TipoLicencia[])
+          ).map((t) => (
             <TouchableOpacity
               key={t}
               style={[styles.tipoChip, tipo === t && styles.tipoChipOn]}
@@ -202,7 +240,7 @@ export default function LicenseScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Reglas generales</Text>
-        {REGLAS_GENERALES.map((e, i) => (
+        {reglas.map((e, i) => (
           <Text key={i} style={styles.bullet}>
             • {e}
           </Text>
@@ -211,77 +249,99 @@ export default function LicenseScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Checklist antes de salir</Text>
-        {CHECKLIST_ANTES_DE_PESCAR.map((e, i) => (
+        {checklist.map((e, i) => (
           <Text key={i} style={styles.bullet}>
             • {e}
           </Text>
         ))}
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
-        {Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
-          <View key={id} style={styles.tallaRow}>
-            <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
-            <Text style={styles.tallaVal}>{texto}</Text>
+      {!esSevilla ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
+          {Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
+            <View key={id} style={styles.tallaRow}>
+              <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
+              <Text style={styles.tallaVal}>{texto}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
+      {!esSevilla ? (
+        <>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Tasas 2026 (continental)</Text>
+            {LICENCIA_INFO.tasas2026.map((t, i) => (
+              <View key={i} style={styles.row}>
+                <Text style={styles.rowLabel}>{t.concepto}</Text>
+                <Text style={styles.rowValue}>{t.precio}</Text>
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Tasas 2026 (continental)</Text>
-        {LICENCIA_INFO.tasas2026.map((t, i) => (
-          <View key={i} style={styles.row}>
-            <Text style={styles.rowLabel}>{t.concepto}</Text>
-            <Text style={styles.rowValue}>{t.precio}</Text>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Exenciones de la tasa</Text>
+            {LICENCIA_INFO.exentos.map((e, i) => (
+              <Text key={i} style={styles.bullet}>
+                • {e}
+              </Text>
+            ))}
           </View>
-        ))}
-      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Exenciones de la tasa</Text>
-        {LICENCIA_INFO.exentos.map((e, i) => (
-          <Text key={i} style={styles.bullet}>
-            • {e}
-          </Text>
-        ))}
-      </View>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>A tener en cuenta</Text>
+            {LICENCIA_INFO.notas.map((n, i) => (
+              <Text key={i} style={styles.bullet}>
+                • {n}
+              </Text>
+            ))}
+          </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>A tener en cuenta</Text>
-        {LICENCIA_INFO.notas.map((n, i) => (
-          <Text key={i} style={styles.bullet}>
-            • {n}
-          </Text>
-        ))}
-      </View>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Oficina en Castellón</Text>
+            <Text style={styles.cardText}>{LICENCIA_INFO.oficinaCastellon}</Text>
+          </View>
+        </>
+      ) : null}
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Oficina en Castellón</Text>
-        <Text style={styles.cardText}>{LICENCIA_INFO.oficinaCastellon}</Text>
-      </View>
-
-      <TouchableOpacity style={styles.ctaButton} onPress={() => Linking.openURL(LICENCIA_INFO.tramiteOnline)}>
-        <Text style={styles.ctaText}>Tramitar licencia continental (Sede GVA)</Text>
+      <TouchableOpacity
+        style={styles.ctaButton}
+        onPress={() => Linking.openURL(esSevilla ? fuente.urlLicencia : LICENCIA_INFO.tramiteOnline)}
+      >
+        <Text style={styles.ctaText}>
+          {esSevilla
+            ? "Tramitar licencia continental (Junta de Andalucía)"
+            : "Tramitar licencia continental (Sede GVA)"}
+        </Text>
       </TouchableOpacity>
+
+      {!soloContinental ? (
+        <TouchableOpacity
+          style={styles.ctaButtonSecondary}
+          onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
+        >
+          <Text style={styles.ctaTextSecondary}>Licencia marítima recreativa desde tierra (GVA)</Text>
+        </TouchableOpacity>
+      ) : null}
 
       <TouchableOpacity
         style={styles.ctaButtonSecondary}
-        onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
+        onPress={() => Linking.openURL(fuente.urlOrden || FUENTE_NORMATIVA.urlOrden)}
       >
-        <Text style={styles.ctaTextSecondary}>Licencia marítima recreativa desde tierra (GVA)</Text>
+        <Text style={styles.ctaTextSecondary}>
+          {esSevilla ? "Consultar normativa / orden de vedas" : "Consultar resolución de tramos (DOGV)"}
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.ctaButtonSecondary} onPress={() => Linking.openURL(FUENTE_NORMATIVA.urlOrden)}>
-        <Text style={styles.ctaTextSecondary}>Consultar resolución de tramos (DOGV)</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.ctaButtonSecondary}
-        onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}
-      >
-        <Text style={styles.ctaTextSecondary}>Vía alternativa sin certificado digital</Text>
-      </TouchableOpacity>
+      {!esSevilla ? (
+        <TouchableOpacity
+          style={styles.ctaButtonSecondary}
+          onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}
+        >
+          <Text style={styles.ctaTextSecondary}>Vía alternativa sin certificado digital</Text>
+        </TouchableOpacity>
+      ) : null}
 
       <Text style={styles.footnote}>
         Los importes, vedas y anexos pueden actualizarse cada temporada. Confirma siempre los datos vigentes en la sede

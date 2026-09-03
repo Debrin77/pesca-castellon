@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -34,15 +34,9 @@ import {
   guardarCacheOffline,
   mensajeOfflineCorto,
 } from "../services/offlineService";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
-
-const EMBALSES_PANEL = [
-  { nombre: "EMBALSE DE ARENÓS", fichaId: 266, etiqueta: "Arenós", zoneId: "embalse_arenos" },
-  { nombre: "EMBALSE DE SICHAR", fichaId: 247, etiqueta: "Sichar", zoneId: "embalse_sichar" },
-  { nombre: "EMBALSE DE MARÍA CRISTINA", fichaId: 248, etiqueta: "M. Cristina", zoneId: "embalse_maria_cristina" },
-  { nombre: "EMBALSE DE REGAJO", fichaId: 221, etiqueta: "Regajo", zoneId: "rio_palancia_regajo" },
-  { nombre: "EMBALSE DE ULLDECONA", fichaId: 243, etiqueta: "Ulldecona", zoneId: "embalse_ulldecona" },
-];
 
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
 
@@ -75,6 +69,8 @@ function aplicarCache(cache: CacheOffline, setters: {
 }
 
 export default function HomeScreen({ navigation }: Props) {
+  const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
@@ -91,6 +87,10 @@ export default function HomeScreen({ navigation }: Props) {
   const [online, setOnline] = useState(true);
   const [cache, setCache] = useState<CacheOffline | null>(null);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: provincia.nombreApp });
+  }, [navigation, provincia.nombreApp]);
+
   useFocusEffect(
     useCallback(() => {
       obtenerFavoritos().then(setFavoritos);
@@ -100,6 +100,8 @@ export default function HomeScreen({ navigation }: Props) {
 
   useEffect(() => {
     let vivo = true;
+    const embalsesPanel = provincia.embalsesPanel;
+    const tieneSaih = provincia.tieneSaih;
 
     async function bootstrap() {
       const conectado = await hayConexion();
@@ -146,29 +148,33 @@ export default function HomeScreen({ navigation }: Props) {
         if (vivo) setAvisosCargando(false);
       }
 
-      try {
-        const rows = await getResumenEmbalsesCastellon(EMBALSES_PANEL);
-        if (!vivo) return;
-        const panel: SaihChip[] = rows.map((r) => {
-          const meta =
-            EMBALSES_PANEL.find((e) => e.nombre === r.nombre) ??
-            EMBALSES_PANEL.find((e) => e.etiqueta === r.etiqueta)!;
-          return {
-            etiqueta: r.etiqueta,
-            zoneId: meta.zoneId,
-            pct: r.estacion.porcentajeLleno,
-            fuente: r.estacion.fuente,
-          };
-        });
-        setSaihPanel(panel);
-        if (conectado) {
-          await guardarCacheOffline({ saih: panel });
+      if (tieneSaih && embalsesPanel.length > 0) {
+        try {
+          const rows = await getResumenEmbalsesCastellon(embalsesPanel);
+          if (!vivo) return;
+          const panel: SaihChip[] = rows.map((r) => {
+            const meta =
+              embalsesPanel.find((e) => e.nombre === r.nombre) ??
+              embalsesPanel.find((e) => e.etiqueta === r.etiqueta)!;
+            return {
+              etiqueta: r.etiqueta,
+              zoneId: meta.zoneId,
+              pct: r.estacion.porcentajeLleno,
+              fuente: r.estacion.fuente,
+            };
+          });
+          setSaihPanel(panel);
+          if (conectado) {
+            await guardarCacheOffline({ saih: panel });
+          }
+        } catch {
+          if (!vivo) return;
+          if (cacheLocal && Array.isArray(cacheLocal.saih)) {
+            setSaihPanel(cacheLocal.saih as SaihChip[]);
+          }
         }
-      } catch {
-        if (!vivo) return;
-        if (cacheLocal && Array.isArray(cacheLocal.saih)) {
-          setSaihPanel(cacheLocal.saih as SaihChip[]);
-        }
+      } else {
+        setSaihPanel([]);
       }
 
       await cargar(conectado);
@@ -178,7 +184,7 @@ export default function HomeScreen({ navigation }: Props) {
     return () => {
       vivo = false;
     };
-  }, []);
+  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel]);
 
   async function cargar(conectadoParam?: boolean) {
     setCargando(true);
@@ -246,7 +252,7 @@ export default function HomeScreen({ navigation }: Props) {
       : [];
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
@@ -308,6 +314,20 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
+
+        <View style={styles.provinciaRow}>
+          <Text style={styles.provinciaLbl}>
+            Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
+          </Text>
+          <TouchableOpacity
+            onPress={() => cambiarProvincia()}
+            accessibilityRole="button"
+            accessibilityLabel="Cambiar provincia"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.provinciaCambio}>Cambiar</Text>
+          </TouchableOpacity>
+        </View>
 
         <ListaAnimada index={0}>
           <PulsePress
@@ -459,7 +479,11 @@ export default function HomeScreen({ navigation }: Props) {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
-                  <Text style={styles.mapaCtaSub}>Cotos, vedados, costa y consulta al pulsar</Text>
+                  <Text style={styles.mapaCtaSub}>
+                    {provincia.continentalOnly
+                      ? "Cotos, vedados y consulta al pulsar"
+                      : "Cotos, vedados, costa y consulta al pulsar"}
+                  </Text>
                 </View>
                 <Text style={styles.chevron}>›</Text>
               </View>
@@ -467,35 +491,34 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        {/* Enlaces secundarios */}
-        <ListaAnimada index={4}>
-          <View style={styles.linksRow}>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Capturas")}
-              accessibilityRole="button"
-              accessibilityLabel="Capturas"
-            >
-              <Text style={styles.linkChipTxt}>Capturas</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Consejos")}
-              accessibilityRole="button"
-              accessibilityLabel="Consejos: nudos y montaje"
-            >
-              <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Ajustes")}
-              accessibilityRole="button"
-              accessibilityLabel="Ajustes"
-            >
-              <Text style={styles.linkChipTxt}>Ajustes</Text>
-            </TouchableOpacity>
-          </View>
-        </ListaAnimada>
+        {/* Enlaces secundarios: fuera de ListaAnimada para que en web
+            no queden con opacity 0 / sin clics (p. ej. Cambiar provincia). */}
+        <View style={styles.linksRow}>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+            accessibilityRole="button"
+            accessibilityLabel="Capturas"
+          >
+            <Text style={styles.linkChipTxt}>Capturas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Consejos", { screen: "ConsejosMain" })}
+            accessibilityRole="button"
+            accessibilityLabel="Consejos: nudos y montaje"
+          >
+            <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Ajustes")}
+            accessibilityRole="button"
+            accessibilityLabel="Ajustes"
+          >
+            <Text style={styles.linkChipTxt}>Ajustes</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -595,6 +618,33 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: SPACING.lg,
     marginTop: -SPACING.md,
+  },
+  provinciaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.sm,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  provinciaLbl: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
+  provinciaNombre: {
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+  },
+  provinciaCambio: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.water,
   },
   ctaSalgo: {
     borderRadius: RADIUS.lg,

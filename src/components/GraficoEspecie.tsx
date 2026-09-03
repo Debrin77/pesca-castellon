@@ -47,6 +47,8 @@ const POR_ID: Record<string, Paleta> = {
   pulpo: { cuerpo: "#8A4A8A", vientre: "#D8A8D0", aleta: "#5A2A5A", ojo: "#122018" },
   salmonete: { cuerpo: "#C45A4A", vientre: "#F0C8C0", aleta: "#8A2A28", ojo: "#122018" },
   boga: { cuerpo: "#5A8A9A", vientre: "#D8ECF2", aleta: "#2A5A68", ojo: "#122018" },
+  barbo_gitano: { cuerpo: "#A87840", vientre: "#F2E0C0", aleta: "#6E3E14", ojo: "#122018", detalle: "#C4921A" },
+  alburno: { cuerpo: "#8AB0C0", vientre: "#E8F4F8", aleta: "#4A7080", ojo: "#122018", detalle: "#C8DCE8" },
   corvina: { cuerpo: "#4A5A6A", vientre: "#D8E0E8", aleta: "#2A3440", ojo: "#122018" },
   palometon: { cuerpo: "#3A5A7A", vientre: "#C8DCE8", aleta: "#1A3048", ojo: "#122018" },
   anjova: { cuerpo: "#4A7A9A", vientre: "#D0E6F2", aleta: "#2A4A64", ojo: "#122018" },

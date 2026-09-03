@@ -11,7 +11,8 @@ import {
   Platform,
 } from "react-native";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
-import speciesCatalog from "../data/species.json";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import {
   PuntoGuardado,
   Captura,
@@ -38,6 +39,9 @@ interface Props {
 }
 
 export default function MyCatchesScreen({ navigation }: Props) {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const speciesCatalog = provincia.species as any[];
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const [tab, setTab] = useState<Tab>("favoritos");

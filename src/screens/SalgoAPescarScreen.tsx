@@ -11,7 +11,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { calcularIndicePesca, CATEGORIA_INFO, IndicePescaDia } from "../services/fishingIndexService";
 import { consultarPuntoPesca } from "../services/consultaPescaService";
-import { CHECKLIST_ANTES_DE_PESCAR } from "../data/normativa2026";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import ListaAnimada from "../components/ListaAnimada";
@@ -25,6 +26,9 @@ interface Props {
  * Flujo corto “Salgo a pescar”: ubicación → veredicto → índice → checklist.
  */
 export default function SalgoAPescarScreen({ navigation }: Props) {
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
+  const checklist = provincia.checklistAntesDePescar;
   const [paso, setPaso] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -146,7 +150,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
             <ListaAnimada index={2}>
               <View style={styles.card}>
                 <Text style={styles.cardTitle}>3 · Checklist rápido</Text>
-                {CHECKLIST_ANTES_DE_PESCAR.map((item, i) => (
+                {checklist.map((item, i) => (
                   <Text key={i} style={styles.check}>
                     ☐ {item}
                   </Text>

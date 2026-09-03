@@ -1,0 +1,104 @@
+[
+  {
+    "id": "barbo_gitano",
+    "nombre": "Barbo gitano",
+    "nombreCientifico": "Luciobarbus sclateri",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Ciprínido autóctono de Andalucía (cuencas atlánticas del sur). Muy presente en Guadaíra, Corbones, Rivera de Huelva y colas de embalses sevillanos. Prefiere corriente moderada y fondos de grava.",
+    "tallaOficial": "Consultar orden anual Junta de Andalucía (pesca sin muerte frecuente en tramos protegidos)",
+    "cupo": "Según orden de vedas de Andalucía; en muchos tramos se recomienda o impone devolución",
+    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
+    "mejorHora": {
+      "resumen": "Más probable por la mañana en tablas de corriente. Pico extra si el agua va un poco teñida tras lluvias.",
+      "verano": "Aprox. 7:00–12:00 y segundo pico 17:00–20:00 en orillas sombreadas.",
+      "invierno": "Aprox. 10:00–15:00, en tablas que den el sol.",
+      "noche": "Poco activo de noche. No se pesca de noche salvo autorización expresa."
+    },
+    "habitats": "Tablas del Guadaíra y Corbones, colas de Minilla, Cala y Melonares, azudes del Guadalquivir medio",
+    "senuelosClave": [
+      "Pasta o masa de barbo",
+      "Maíz en corriente",
+      "Ninfa pesada a correlona",
+      "Cucharilla pequeña n.º 1-2 donde el tramo permita spinning"
+    ],
+    "normativaResumen": "Autóctono andaluz: licencia de pesca continental de Andalucía (Junta). Respeta tallas/cupos de la orden de vedas vigente y la señalización del tramo. En cotos (ZPC) manda el permiso del coto.",
+    "equipo": {
+      "cana": "Caña de river/feeder 3.60-3.90 m, acción media, o spinning ligero 2.10-2.40 m",
+      "carrete": "Carrete spinning 3000-4000",
+      "linea": "Nylon 0.18-0.25 mm",
+      "senuelosCebos": ["Lombriz (donde el cebo natural esté permitido)", "Masa/pasta de barbo", "Maíz"],
+      "tecnica": "Pesca a fondo en corriente moderada con feeder o plomada corredera; en embalse, orillas de cola con grava"
+    }
+  },
+  {
+    "id": "boga",
+    "nombre": "Boga del Guadiana",
+    "nombreCientifico": "Pseudochondrostoma willkommii",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Ciprínido autóctono de cuencas del suroeste ibérico. En Sevilla aparece en afluentes (Guadaíra, Corbones, Rivera de Cala/Agrio) y colas de embalse con algo de corriente. Cardúmenes pegados al fondo.",
+    "tallaOficial": "Consultar orden anual Junta de Andalucía",
+    "cupo": "Según orden de vedas de Andalucía",
+    "mejoresMeses": ["abril", "mayo", "junio"],
+    "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
+    "mejorHora": {
+      "resumen": "Más probable a media mañana en tablas con corriente suave y fondo limpio.",
+      "verano": "Aprox. 7:00–11:30; evita el mediodía de calor en orillas sin sombra.",
+      "invierno": "Aprox. 10:00–14:00 en tramos soleados.",
+      "noche": "Poco activa de noche. No se pesca de noche."
+    },
+    "habitats": "Guadaíra medio, Corbones, Rivera del Agrio y colas de Cala y Melonares",
+    "senuelosClave": [
+      "Masa fina o pan",
+      "Maíz pequeño",
+      "Asticot / gusano donde el cebo natural esté permitido",
+      "Ninfa ligera a la deriva"
+    ],
+    "normativaResumen": "Autóctona: licencia continental de Andalucía. Comprueba talla y cupo en la orden de vedas de la Junta. No confundir con especies invasoras de cardumen (alburno).",
+    "equipo": {
+      "cana": "Caña ligera de coup o inglesa 3.6-4.5 m, o feeder fino",
+      "carrete": "Spinning 2000-3000 o pesca al coup",
+      "linea": "Nylon 0.12-0.16 mm",
+      "senuelosCebos": ["Masa", "Pan", "Maíz pequeño", "Asticot si está permitido"],
+      "tecnica": "Pesca fina a fondo o a la deriva en corriente suave; cebado discreto"
+    }
+  },
+  {
+    "id": "alburno",
+    "nombre": "Alburno",
+    "nombreCientifico": "Alburnus alburnus",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐠",
+    "notas": "Ciprínido introducido/invasor, muy abundante en el Guadalquivir sevillano y en embalses (Minilla, Pintado, Zufre, Torre del Águila). Forma cardúmenes en superficie; útil como indicador de actividad pero compite con autóctonos.",
+    "tallaOficial": "Invasora / introducida — no devolver donde la normativa lo prohíba",
+    "cupo": "Captura fomentada; no devolver al agua si figura como invasora en el tramo",
+    "mejoresMeses": ["abril", "mayo", "junio", "julio", "agosto"],
+    "ventanas": "Todo el día en superficie; mejor con sol y agua templada",
+    "mejorHora": {
+      "resumen": "Activo casi todo el día en superficie y media agua. Pico con sol y brisa suave.",
+      "verano": "Aprox. 8:00–13:00 y 17:00–20:00 pegado a orilla y muelles.",
+      "invierno": "Aprox. 11:00–15:00 en zonas soleadas y remansos.",
+      "noche": "Poco visible de noche. No se pesca de noche."
+    },
+    "habitats": "Guadalquivir urbano y bajo, colas y orillas de Minilla, Pintado, Zufre, José Torán y Torre del Águila",
+    "senuelosClave": [
+      "Micro spinning / cucharilla n.º 0",
+      "Mosca seca o streamer pequeño",
+      "Pan o masa en superficie",
+      "Vinilo micro shad"
+    ],
+    "normativaResumen": "Introducida/invasora: licencia de pesca continental de Andalucía. No liberar en otras masas de agua. Sigue RD 630/2013 y la orden de vedas de la Junta si exige sacrificio.",
+    "equipo": {
+      "cana": "Caña ultraligera de spinning 1.80-2.10 m o caña de coup fina",
+      "carrete": "Spinning 1000-2000",
+      "linea": "Nylon 0.10-0.14 mm o trenzado fino",
+      "senuelosCebos": ["Micro cucharilla", "Pan", "Masa", "Mosca pequeña"],
+      "tecnica": "Pesca fina en superficie o media agua sobre cardúmenes visibles; no traslocar ejemplares"
+    }
+  }
+]

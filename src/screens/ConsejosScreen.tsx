@@ -45,7 +45,7 @@ export default function ConsejosScreen() {
         <Text style={styles.heroKicker}>Escuela de bolsillo</Text>
         <Text style={styles.heroTitle}>Consejos de pesca</Text>
         <Text style={styles.heroSub}>
-          Solo fotografías reales: nudos paso a paso y aparejos identificados con precisión. Empaquetadas en la app, sin internet. En castellano y pensado para Castellón.
+          Solo fotografías reales: nudos paso a paso y aparejos identificados con precisión. Empaquetadas en la app, sin internet. Nudos y aparejos para continental y orilla; el mapa es por provincia.
         </Text>
       </LinearGradient>
 
