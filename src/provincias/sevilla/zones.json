@@ -90,7 +90,7 @@
     "lat": 37.37268,
     "lng": -5.99749,
     "radioAproxKm": 6.9,
-    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Guadalquivir urbano: presencia confirmada de siluro (invasora; pesca como objetivo prohibida — captura fortuita: sacrificio, no devolver).",
     "especies": [
       "carpa",
       "siluro",
@@ -115,6 +115,13 @@
         "agosto",
         "septiembre",
         "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
       ]
     },
     "saihEstacion": null,
@@ -669,7 +676,7 @@
     "lat": 37.55349,
     "lng": -5.8967,
     "radioAproxKm": 8,
-    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Presencia de siluro citada en el azud/embalse de Alcalá del Río (invasora; captura fortuita → sacrificio, no devolver).",
     "especies": [
       "carpa",
       "siluro",
@@ -694,6 +701,13 @@
         "agosto",
         "septiembre",
         "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
       ]
     },
     "saihEstacion": null,
@@ -987,7 +1001,7 @@
     "lat": 37.287,
     "lng": -6.046,
     "radioAproxKm": 2.4,
-    "descripcion": "Bajo Guadalquivir en Coria del Río: aguas libres art. 5.2, con influencia mareal pero licencia continental de Andalucía (el límite marítimo está en el Caño de la Esparraguera, Sanlúcar). Zona de carpfishing. Radio orientativo.",
+    "descripcion": "Bajo Guadalquivir en Coria del Río: aguas libres art. 5.2, con influencia mareal pero licencia continental de Andalucía (el límite marítimo está en el Caño de la Esparraguera, Sanlúcar). Siluro citado en el Bajo Guadalquivir hacia Coria (invasora; no devolver). Zona de carpfishing. Radio orientativo.",
     "avisos": [
       "Licencia continental Junta (no marítima) en este tramo.",
       "Cerca de Doñana / marismas: hay refugios (Entremuros, Dehesa de Abajo, Guadiamar) donde la pesca está prohibida. Mira el mapa y la señalización.",
@@ -1017,6 +1031,13 @@
         "agosto",
         "septiembre",
         "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
       ]
     },
     "saihEstacion": null,

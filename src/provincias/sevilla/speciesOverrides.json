@@ -6,9 +6,9 @@
     "categoria": "invasora",
     "invasora": true,
     "icono": "🐋",
-    "notas": "Invasora (RD 630/2013). En el Guadalquivir sevillano y embalses conectados hay citas y campañas de control. NO es especie objeto de pesca en Andalucía (Orden 13/01/2023): no se pesca como objetivo. Si entra de forma fortuita, se sacrifica y no se devuelve.",
-    "tallaOficial": "No es objeto de pesca. Captura fortuita: sacrificio inmediato, no devolver.",
-    "cupo": "0 de aprovechamiento. No devolver al agua.",
+    "notas": "Invasora (RD 630/2013). Presencia confirmada en el Guadalquivir sevillano y afluentes: dársena/puente de las Delicias y tramo urbano, Alcalá del Río, Rivera de Huelva (reproducción documentada por EBD-CSIC, 2025) y Bajo Guadalquivir hacia Coria. NO es especie objeto de pesca en Andalucía: la Junta indica que la pesca del siluro está prohibida; si entra de forma fortuita hay que sacrificarlo y no devolverlo. No basta con avisar a agentes en lugar de sacrificar.",
+    "tallaOficial": "Pesca como objetivo prohibida. Captura fortuita: sacrificio inmediato, no devolver.",
+    "cupo": "0 de aprovechamiento. No devolver al agua. Tras sacrificar, retirar del medio (residuos orgánicos / según BOJA vigente).",
     "mejoresMeses": ["mayo", "junio", "julio", "agosto", "septiembre"],
     "ventanas": "Actividad crepuscular; en Andalucía el horario legal es de día (art. 4).",
     "mejorHora": {
@@ -17,20 +17,20 @@
       "invierno": "Poco activo; si aparece, suele ser 12:00–16:00 en zonas profundas.",
       "noche": "Cazador nocturno, pero la pesca recreativa fuera del horario art. 4 no está permitida."
     },
-    "habitats": "Hoyos junto a azudes (Peñaflor, Alcalá del Río), puentes y orillas socavadas del Guadalquivir sevillano; colas profundas de embalses conectados",
+    "habitats": "Guadalquivir urbano (dársena, Delicias, Chapina/Barqueta), azudes de Alcalá del Río y Peñaflor, Rivera de Huelva / Gergal, Bajo Guadalquivir hacia Coria; hoyos, puentes y orillas socavadas",
     "senuelosClave": [
       "Swimbait grande",
       "Vinilo shad 15-20 cm",
       "Montaje a fondo con pellet (sin pez vivo)"
     ],
-    "normativaResumen": "Andalucía: no es especie objeto de pesca. Captura fortuita → sacrificio, no devolver (Orden 13/01/2023 + RD 630/2013). Licencia continental Junta + seguro RC.",
-    "normativaEspecial": "⚠️ ANDALUCÍA (Sevilla): el siluro NO es especie objeto de pesca. Si lo capturas fortuitamente debes sacrificarlo y no devolverlo al agua (Orden 13/01/2023 y RD 630/2013). Confirma siempre el BOJA vigente.",
+    "normativaResumen": "Andalucía: pesca del siluro prohibida como objetivo. Captura fortuita → sacrificio y no devolver (Orden 13/01/2023 + RD 630/2013). Solo en campañas oficiales de control (si las hay) se autoriza extracción dirigida con licencia.",
+    "normativaEspecial": "⚠️ ANDALUCÍA (Sevilla): la pesca del siluro está prohibida (no es objeto de pesca). Si lo capturas fortuitamente debes sacrificarlo y no devolverlo al agua (portal Junta / Orden 13/01/2023 y RD 630/2013). No basta con «avisar a autoridades» en lugar de sacrificar. Las campañas puntuales de control de la Junta pueden autorizar extracción dirigida (con licencia) y pedir datos de capturas; confirma BOJA y resoluciones vigentes.",
     "equipo": {
-      "cana": "Caña de depredadores pesados 2,10-2,70 m (potencia alta) si aparece en spinning; no se pesca como objetivo",
+      "cana": "Caña de depredadores pesados 2,10-2,70 m (potencia alta) solo si entra de forma fortuita o en campaña oficial de control",
       "carrete": "Spinning 5000-8000 con freno potente",
       "linea": "Trenzado 0,30-0,40 mm + bajo grueso 0,40-0,50 mm",
       "senuelosCebos": ["Swimbaits y vinilos grandes", "Pellets a fondo"],
-      "tecnica": "No es modalidad objetivo en Sevilla. Si entra al aparejo, no devolver."
+      "tecnica": "No es modalidad objetivo en Sevilla salvo campaña oficial. Si entra al aparejo: sacrificar, no devolver."
     }
   },
   {
