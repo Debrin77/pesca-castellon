@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import ListaAnimada from "./ListaAnimada";
 import MejorHoraPesca from "./MejorHoraPesca";
-import SiluetaEspecie from "./SiluetaEspecie";
+import GraficoEspecie from "./GraficoEspecie";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
@@ -60,7 +60,7 @@ export default function TarjetaEspecie({
           </View>
         </LinearGradient>
         <View style={styles.hero}>
-          <SiluetaEspecie id={sp.id} nombre={sp.nombre} color={invasora ? COLORS.warning : COLORS.waterDark} />
+          <GraficoEspecie id={sp.id} nombre={sp.nombre} size={92} />
           <View style={styles.tallaCaja}>
             <Text style={styles.tallaKicker}>{talla.unidad === "kg" ? "Peso mínimo" : talla.unidad ? "Talla mínima" : "Régimen"}</Text>
             <Text style={styles.tallaNum}>
