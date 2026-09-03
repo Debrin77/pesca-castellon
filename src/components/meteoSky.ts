@@ -50,10 +50,10 @@ export function cieloDeCodigo(codigo: number): CieloMeteo {
       };
     case "nubes":
       return {
-        gradient: ["#5f7388", "#8496a8", "#b4c2ce"],
-        chip: "rgba(255,255,255,0.2)",
-        chipBorder: "rgba(255,255,255,0.34)",
-        glass: "rgba(255,255,255,0.16)",
+        gradient: ["#4A6F96", "#7A9BB8", "#B7CBDC"],
+        chip: "rgba(255,255,255,0.22)",
+        chipBorder: "rgba(255,255,255,0.38)",
+        glass: "rgba(255,255,255,0.18)",
         label: "Nublado",
       };
     case "niebla":
@@ -66,17 +66,17 @@ export function cieloDeCodigo(codigo: number): CieloMeteo {
       };
     case "lluvia":
       return {
-        gradient: ["#3d556c", "#5a738a", "#8096a8"],
+        gradient: ["#2F4F6E", "#4A6F90", "#7A9BB4"],
         chip: "rgba(255,255,255,0.18)",
-        chipBorder: "rgba(255,255,255,0.32)",
-        glass: "rgba(255,255,255,0.14)",
+        chipBorder: "rgba(255,255,255,0.34)",
+        glass: "rgba(255,255,255,0.15)",
         label: "Lluvia",
       };
     case "tormenta":
       return {
-        gradient: ["#1b2433", "#2f3d55", "#4a5870"],
+        gradient: ["#1A2233", "#2C3B55", "#465870"],
         chip: "rgba(255,255,255,0.14)",
-        chipBorder: "rgba(255,255,255,0.28)",
+        chipBorder: "rgba(255,255,255,0.3)",
         glass: "rgba(255,255,255,0.12)",
         label: "Tormenta",
       };

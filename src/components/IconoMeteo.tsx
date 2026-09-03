@@ -20,15 +20,16 @@ const PALETTE = {
   solRayo: "#FFCC00",
   solBorde: "#F5A623",
   nube: "#FFFFFF",
-  nubeSombra: "#E8EEF4",
-  nubeGris: "#D5DEE8",
-  nubeOscura: "#9AADC0",
+  nubeSombra: "#DCE9F6",
+  nubeGris: "#C5D5E6",
+  nubeOscura: "#8EABC4",
+  nubeTormenta: "#6B849C",
   lluvia: "#5AC8FA",
   lluviaFuerte: "#0A84FF",
   rayo: "#FFD60A",
   nieve: "#F2F7FC",
   nieveBorde: "#A8C0D8",
-  niebla: "rgba(255,255,255,0.55)",
+  niebla: "rgba(255,255,255,0.7)",
 };
 
 /** Icono meteo a todo color, estilo app Tiempo, con animación continua. */
@@ -207,10 +208,23 @@ export default function IconoMeteo({ codigo, size = 56, etiqueta }: Props) {
           }}
         >
           <Nube
-            width={s * (tipo === "solNubes" ? 0.72 : 0.78)}
-            height={s * 0.42}
-            color={tipo === "tormenta" || tipo === "nubes" ? PALETTE.nubeOscura : PALETTE.nube}
-            shade={tipo === "tormenta" ? "#6B7F94" : PALETTE.nubeSombra}
+            width={s * (tipo === "solNubes" ? 0.72 : 0.82)}
+            height={s * 0.46}
+            color={
+              tipo === "tormenta"
+                ? PALETTE.nubeTormenta
+                : tipo === "nubes"
+                  ? PALETTE.nubeGris
+                  : PALETTE.nube
+            }
+            shade={
+              tipo === "tormenta"
+                ? "#4E657A"
+                : tipo === "nubes"
+                  ? PALETTE.nubeOscura
+                  : PALETTE.nubeSombra
+            }
+            highlight={tipo === "nubes" || tipo === "tormenta" ? PALETTE.nube : undefined}
           />
 
           {(tipo === "lluvia" || tipo === "tormenta") && (
@@ -312,21 +326,23 @@ function Nube({
   height,
   color,
   shade,
+  highlight,
 }: {
   width: number;
   height: number;
   color: string;
   shade: string;
+  highlight?: string;
 }) {
   return (
     <View style={{ width, height, alignItems: "center", justifyContent: "flex-end" }}>
       <View
         style={{
           position: "absolute",
-          left: width * 0.08,
-          bottom: height * 0.08,
-          width: width * 0.42,
-          height: height * 0.72,
+          left: width * 0.06,
+          bottom: height * 0.06,
+          width: width * 0.44,
+          height: height * 0.74,
           borderRadius: width,
           backgroundColor: shade,
         }}
@@ -334,10 +350,10 @@ function Nube({
       <View
         style={{
           position: "absolute",
-          right: width * 0.05,
-          bottom: height * 0.1,
-          width: width * 0.48,
-          height: height * 0.78,
+          right: width * 0.04,
+          bottom: height * 0.08,
+          width: width * 0.5,
+          height: height * 0.8,
           borderRadius: width,
           backgroundColor: color,
         }}
@@ -345,26 +361,26 @@ function Nube({
       <View
         style={{
           position: "absolute",
-          left: width * 0.28,
+          left: width * 0.26,
           top: 0,
-          width: width * 0.46,
-          height: height * 0.85,
+          width: width * 0.48,
+          height: height * 0.88,
           borderRadius: width,
-          backgroundColor: color,
+          backgroundColor: highlight ?? color,
           ...(Platform.OS === "web"
-            ? ({ boxShadow: "0 4px 12px rgba(20,40,60,0.18)" } as any)
+            ? ({ boxShadow: "0 6px 14px rgba(20,40,60,0.22)" } as any)
             : {
                 shadowColor: "#14283c",
-                shadowOpacity: 0.18,
-                shadowRadius: 6,
+                shadowOpacity: 0.22,
+                shadowRadius: 7,
                 shadowOffset: { width: 0, height: 3 },
               }),
         }}
       />
       <View
         style={{
-          width: width * 0.92,
-          height: height * 0.48,
+          width: width * 0.94,
+          height: height * 0.5,
           borderRadius: height,
           backgroundColor: color,
         }}

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScrollToTop } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import {
   obtenerPrevision,
@@ -28,6 +29,7 @@ import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
 import { cieloDeCodigo } from "../components/meteoSky";
+import AtmosferaMeteo from "../components/AtmosferaMeteo";
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const DIAS_CORTOS = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -79,6 +81,7 @@ function climaCorto(texto: string): string {
 export default function PrevisionScreen() {
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
+  const insets = useSafeAreaInsets();
   const [dias, setDias] = useState<PrevisionDia[]>([]);
   const [horas, setHoras] = useState<PrevisionHora[]>([]);
   const [indice, setIndice] = useState<IndicePescaDia[]>([]);
@@ -146,7 +149,7 @@ export default function PrevisionScreen() {
     <ScrollView
       ref={scrollRef}
       style={styles.scroll}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingTop: Math.max(insets.top, 12) + 52 }]}
       accessibilityLabel="Previsión meteorológica de 7 días"
     >
       <Text style={styles.kicker} accessibilityRole="header">
@@ -378,6 +381,7 @@ export default function PrevisionScreen() {
         end={{ x: 0.85, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
+      <AtmosferaMeteo codigo={dia?.codigoTiempo ?? 2} />
       {/* Veladura inferior para anclar el contenido como en Weather.app */}
       <LinearGradient
         colors={["transparent", "rgba(10,20,35,0.28)"]}

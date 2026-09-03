@@ -104,7 +104,6 @@ function PrevisionStackScreen() {
         ...stackScreenOptions,
         headerTransparent: true,
         headerStyle: { backgroundColor: "transparent" },
-        headerBlurEffect: undefined,
         headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "700" as const,
