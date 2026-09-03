@@ -8,17 +8,23 @@
     "splash": {
       "backgroundColor": "#2e7d32"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tuusuario.pescacastellon",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para avisarte si te acercas o estás dentro de un coto o zona vedada, y para mostrarte las zonas libres más cercanas."
+        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para avisarte si te acercas o estás dentro de un coto o zona vedada, y para mostrarte las zonas libres más cercanas.",
+        "NSFaceIDUsageDescription": "Usamos Face ID para desbloquear la app de forma rápida y segura."
       }
     },
     "android": {
       "package": "com.tuusuario.pescacastellon",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": ""
@@ -49,7 +55,8 @@
         {
           "color": "#1b5e3f"
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }

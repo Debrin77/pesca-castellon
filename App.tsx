@@ -1,10 +1,14 @@
 import React from "react";
+import { View, StyleSheet } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
+import PantallaBloqueo from "./src/components/PantallaBloqueo";
+import { AccesoProvider } from "./src/context/AccesoContext";
 
 aplicarEstilosWeb();
 
@@ -17,6 +21,7 @@ import ZoneDetailScreen from "./src/screens/ZoneDetailScreen";
 import LicenseScreen from "./src/screens/LicenseScreen";
 import MyCatchesScreen from "./src/screens/MyCatchesScreen";
 import ConsejosScreen from "./src/screens/ConsejosScreen";
+import AjustesScreen from "./src/screens/AjustesScreen";
 import { COLORS } from "./src/theme";
 
 const Tab = createBottomTabNavigator();
@@ -46,6 +51,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="HomeMain" component={HomeScreen} options={{ title: "Pesca Castellón" }} />
       <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
+      <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
     </HomeStack.Navigator>
   );
 }
@@ -125,23 +131,34 @@ function listenerIrArriba(nombreTab: string) {
 
 export default function App() {
   return (
-    <NavigationContainer theme={navTheme}>
-      <StatusBar style="light" />
-      <Tab.Navigator
-        tabBar={(props) => <BarraTabsScroll {...props} />}
-        screenOptions={{
-          headerShown: false,
-          tabBarHideOnKeyboard: true,
-        }}
-      >
-        <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
-        <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
-        <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
-        <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
-        <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
-        <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
-        <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <AccesoProvider>
+        <View style={styles.root}>
+          <NavigationContainer theme={navTheme}>
+            <StatusBar style="light" />
+            <Tab.Navigator
+              tabBar={(props) => <BarraTabsScroll {...props} />}
+              screenOptions={{
+                headerShown: false,
+                tabBarHideOnKeyboard: true,
+              }}
+            >
+              <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
+              <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
+              <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
+              <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
+              <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
+              <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
+              <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
+            </Tab.Navigator>
+          </NavigationContainer>
+          <PantallaBloqueo />
+        </View>
+      </AccesoProvider>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

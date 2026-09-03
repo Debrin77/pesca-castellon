@@ -318,6 +318,17 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.ajustesButton} onPress={() => navigation.navigate("Ajustes")}>
+          <View style={styles.myCatchesGlyph}>
+            <Text style={styles.ajustesGlyph}>⚙</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.myCatchesTitle}>Ajustes · acceso</Text>
+            <Text style={styles.myCatchesSubtitle}>Contraseña o Face ID / huella para entrar</Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Dónde estás ahora</Text>
           <Text style={styles.sectionMeta}>polígono ICV · pulsa un tramo</Text>
@@ -462,6 +473,19 @@ const styles = StyleSheet.create({
     borderColor: "#b7d4de",
   },
   consejosTitle: { flex: 1, fontSize: 13, fontWeight: "700", color: COLORS.waterDark },
+  ajustesButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 14,
+    marginTop: 8,
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW_SOFT,
+  },
+  ajustesGlyph: { fontSize: 16, color: COLORS.primaryDark, fontWeight: "800" },
   linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
   saihChip: {
     backgroundColor: COLORS.surface,
