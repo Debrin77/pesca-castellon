@@ -93,7 +93,7 @@ export const REGLAS_GENERALES_ANDALUCIA = [
   "Tenca y cacho: pesca prohibida (art. 2.2).",
   "Anguila: no es especie objeto de pesca (Decreto 209/2020).",
   "Exóticas (carpa, bass, lucio, carpín): todo el año, sin talla ni cupo. Bass/lucio/carpa solo en áreas de la Resolución 19/12/2019; fuera de ellas, sacrificio inmediato (art. 8).",
-  "Alburno, siluro y otras invasoras no listadas en art. 2: no son objeto de pesca; si se capturan, no devolver.",
+  "Alburno, siluro y otras invasoras no listadas en art. 2: no son objeto de pesca. Junta: pesca del siluro prohibida; captura fortuita → sacrificio y no devolver (no basta con avisar a agentes).",
   "Cangrejo rojo: solo controladores autorizados (Orden 3/08/2016, marismas del Guadalquivir).",
   "Una caña en aguas trucheras; dos cañas en el resto, máximo 10 m entre ellas (art. 9).",
 ];
