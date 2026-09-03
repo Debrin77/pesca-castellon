@@ -170,7 +170,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             {ambito === "rio" && (sp.habitats || sp.senuelosClave?.length) ? (
               <View style={[styles.gearCard, { marginTop: 12 }]}>
                 {sp.habitats ? (
-                  <FilaAparejo tipo="habitat" titulo="Dónde en Castellón">
+                  <FilaAparejo tipo="habitat" titulo={`Dónde en ${provincia.nombre}`}>
                     <Text style={styles.gearRowValue}>{sp.habitats}</Text>
                   </FilaAparejo>
                 ) : null}

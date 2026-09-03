@@ -110,7 +110,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         />
       ))}
 
-      {provincia.tieneSaih || zone.saihNombre || zone.saihFichaId ? (
+      {provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId) ? (
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Estado del embalse (SAIH Júcar)</Text>
         {cargando ? (

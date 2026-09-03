@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAcceso } from "../context/AccesoContext";
+import { useProvincia } from "../context/ProvinciaContext";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SPACING } from "../theme";
 
 /** Capa a pantalla completa mientras la app está bloqueada. */
@@ -23,6 +25,8 @@ export default function PantallaBloqueo() {
     desbloquearConContrasena,
     desbloquearConBiometria,
   } = useAcceso();
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
   const [clave, setClave] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [probando, setProbando] = useState(false);
@@ -70,7 +74,7 @@ export default function PantallaBloqueo() {
     <View style={styles.overlay} accessibilityViewIsModal>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.card}>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
-          <Text style={styles.brand}>Pesca Castellón</Text>
+          <Text style={styles.brand}>{provincia.nombreApp || "Pesca"}</Text>
           <Text style={styles.title}>App bloqueada</Text>
           <Text style={styles.sub}>Introduce tu contraseña para continuar</Text>
 

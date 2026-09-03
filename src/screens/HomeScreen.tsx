@@ -69,7 +69,7 @@ function aplicarCache(cache: CacheOffline, setters: {
 }
 
 export default function HomeScreen({ navigation }: Props) {
-  const { provincia: provinciaCtx } = useProvincia();
+  const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
@@ -314,6 +314,20 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
+
+        <View style={styles.provinciaRow}>
+          <Text style={styles.provinciaLbl}>
+            Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
+          </Text>
+          <TouchableOpacity
+            onPress={() => cambiarProvincia()}
+            accessibilityRole="button"
+            accessibilityLabel="Cambiar provincia"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.provinciaCambio}>Cambiar</Text>
+          </TouchableOpacity>
+        </View>
 
         <ListaAnimada index={0}>
           <PulsePress
@@ -604,6 +618,33 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: SPACING.lg,
     marginTop: -SPACING.md,
+  },
+  provinciaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.sm,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  provinciaLbl: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
+  provinciaNombre: {
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+  },
+  provinciaCambio: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.water,
   },
   ctaSalgo: {
     borderRadius: RADIUS.lg,
