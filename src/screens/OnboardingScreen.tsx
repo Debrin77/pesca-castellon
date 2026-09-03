@@ -36,9 +36,11 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       {
         emoji: "🚦",
         titulo: "Lee el semáforo",
-        texto: provincia.tieneIcv
-          ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
-          : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
+        texto: provincia.continentalOnly
+          ? `Verde: aguas libres. Rojo: refugio de pesca (Anexo IV, prohibido). En ${nombreProv} usamos polígonos oficiales DERA de la Junta.`
+          : provincia.tieneIcv
+            ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
+            : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
       },
       {
         emoji: "🗺️",

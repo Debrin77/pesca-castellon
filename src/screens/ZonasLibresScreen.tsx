@@ -322,11 +322,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
+          pescaWms={provincia.id === "sevilla" ? "rediam" : "icv"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
           {provincia.tieneIcv ? (
-            <CapaPoligonosIcv zpc={modo === "continental" && capas.zpc} reservas={modo === "continental" && capas.vedado} />
+            <CapaPoligonosIcv
+              zpl={modo === "continental" && capas.zpl}
+              zpc={modo === "continental" && capas.zpc}
+              reservas={modo === "continental" && capas.vedado}
+            />
           ) : null}
           {mar && capas.zpc ? <CapaPuertos /> : null}
           {mar && capas.vedado ? <CapaVedadosCosta /> : null}

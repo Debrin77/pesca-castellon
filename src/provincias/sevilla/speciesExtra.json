@@ -7,8 +7,8 @@
     "invasora": false,
     "icono": "🐟",
     "notas": "Ciprínido autóctono de Andalucía (cuencas atlánticas del sur). Muy presente en Guadaíra, Corbones, Rivera de Huelva y colas de embalses sevillanos. Prefiere corriente moderada y fondos de grava.",
-    "tallaOficial": "Consultar orden anual Junta de Andalucía (pesca sin muerte frecuente en tramos protegidos)",
-    "cupo": "Según orden de vedas de Andalucía; en muchos tramos se recomienda o impone devolución",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de julio a 25 de febrero.",
     "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
     "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
     "mejorHora": {
@@ -41,8 +41,8 @@
     "invasora": false,
     "icono": "🐟",
     "notas": "Ciprínido autóctono de cuencas del suroeste ibérico. En Sevilla aparece en afluentes (Guadaíra, Corbones, Rivera de Cala/Agrio) y colas de embalse con algo de corriente. Cardúmenes pegados al fondo.",
-    "tallaOficial": "Consultar orden anual Junta de Andalucía",
-    "cupo": "Según orden de vedas de Andalucía",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de mayo a 31 de enero.",
     "mejoresMeses": ["abril", "mayo", "junio"],
     "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
     "mejorHora": {

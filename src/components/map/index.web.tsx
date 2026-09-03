@@ -231,6 +231,8 @@ interface MapViewProps {
   fitCoordinates?: { latitude: number; longitude: number }[];
   cameraTarget?: { latitude: number; longitude: number; zoom?: number; nonce: number };
   accent?: "bosque" | "mar";
+  /** Capa WMS oficial de pesca continental. */
+  pescaWms?: "icv" | "rediam" | "none";
 }
 
 export default function MapView({
@@ -243,6 +245,7 @@ export default function MapView({
   fitCoordinates,
   cameraTarget,
   accent = "bosque",
+  pescaWms = "icv",
 }: MapViewProps) {
   inyectarCssMapa();
   const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
@@ -289,16 +292,30 @@ export default function MapView({
               maxZoom={19}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
-            <WMSTileLayer
-              url="https://terramapas.icv.gva.es/0504_CazaPesca"
-              layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
-              format="image/png"
-              transparent={true}
-              opacity={0.45}
-              attribution="ICV / GVA"
-            />
-          </LayersControl.Overlay>
+          {pescaWms === "icv" ? (
+            <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
+              <WMSTileLayer
+                url="https://terramapas.icv.gva.es/0504_CazaPesca"
+                layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
+                format="image/png"
+                transparent={true}
+                opacity={0.45}
+                attribution="ICV / GVA"
+              />
+            </LayersControl.Overlay>
+          ) : null}
+          {pescaWms === "rediam" ? (
+            <LayersControl.Overlay checked name="WMS Junta · cotos y refugios">
+              <WMSTileLayer
+                url="https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_cotos_pesca_continental"
+                layers="cotos_pesca_continental,aguas_libres_trucheras"
+                format="image/png"
+                transparent={true}
+                opacity={0.5}
+                attribution="REDIAM / Junta de Andalucía"
+              />
+            </LayersControl.Overlay>
+          ) : null}
           <LayersControl.Overlay name="Profundidad EMODnet (no navegar)">
             <WMSTileLayer
               url="https://ows.emodnet-bathymetry.eu/wms"

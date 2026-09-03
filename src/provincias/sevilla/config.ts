@@ -16,7 +16,6 @@ const IDS_COMPARTIDOS = new Set([
   "siluro",
   "cangrejo_americano",
   "carpin",
-  "tenca",
 ]);
 
 const speciesSevilla = [
@@ -39,7 +38,7 @@ export const sevillaConfig: ProvinciaConfig = {
   tramos: tramos as ProvinciaConfig["tramos"],
   zones: zones as any[],
   species: speciesSevilla,
-  tieneIcv: false,
+  tieneIcv: true,
   tieneSaih: false,
   embalsesPanel: [],
   fuenteNormativa: {
@@ -51,5 +50,5 @@ export const sevillaConfig: ProvinciaConfig = {
   checklistAntesDePescar: CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA,
   etiquetaLicenciaContinental: "Licencia de pesca continental de Andalucía (Junta).",
   notaConsultaAprox:
-    "Este punto no cae en el radio de un tramo o embalse del catálogo de Sevilla. Puede ser secano, otra provincia o un cauce menor no listado.",
+    "Este punto no cae en un polígono oficial DERA (refugio o masa cartografiada) de Sevilla. Puede ser secano, cauce menor o otra provincia. Las aguas libres no listadas siguen el art. 5.2: confirma señalización y espacios protegidos.",
 };
