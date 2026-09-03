@@ -12,9 +12,10 @@ import {
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
 import TabIcon from "./TabIcon";
 import { COLOR_TAB, NombreIcono } from "./tabTheme";
-import { COLORS, SHADOW } from "../theme";
+import { COLORS } from "../theme";
 
 const ICONO_POR_TAB: Record<string, NombreIcono> = {
   Inicio: "home",
@@ -30,8 +31,7 @@ const ICONO_POR_TAB: Record<string, NombreIcono> = {
 const ANCHO_ITEM = 96;
 
 /**
- * Barra inferior con scroll horizontal e iconos grandes a todo color.
- * En web fuerza overflow-x visible (RN Web a veces lo oculta).
+ * Barra inferior con scroll + aspecto liquid-glass (vidrio esmerilado).
  */
 export default function BarraTabsScroll({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -62,12 +62,8 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
     scrollRef.current?.scrollTo({ x: next, animated: true });
   }
 
-  return (
-    <View
-      nativeID="barra-tabs-scroll"
-      style={[styles.shell, { paddingBottom: Math.max(insets.bottom, 10) }]}
-      onLayout={onShellLayout}
-    >
+  const body = (
+    <>
       <View style={styles.topRow}>
         {needsScroll ? (
           <TouchableOpacity
@@ -81,9 +77,7 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
         ) : (
           <View style={styles.arrowSpacer} />
         )}
-        <Text style={styles.hint}>
-          {needsScroll ? "Desliza · flechas · scrollbar →" : "Menú"}
-        </Text>
+        <Text style={styles.hint}>{needsScroll ? "Desliza · flechas →" : "Menú"}</Text>
         {needsScroll ? (
           <TouchableOpacity
             style={[styles.arrow, !canRight && styles.arrowOff]}
@@ -111,18 +105,11 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
         snapToAlignment="start"
         onScroll={onScroll}
         scrollEventThrottle={16}
-        contentContainerStyle={[
-          styles.row,
-          { width: Math.max(contentW, viewportW || contentW) },
-        ]}
+        contentContainerStyle={[styles.row, { width: Math.max(contentW, viewportW || contentW) }]}
         style={[
           styles.scroll,
           Platform.OS === "web"
-            ? ({
-                overflowX: "scroll",
-                overflowY: "hidden",
-                WebkitOverflowScrolling: "touch",
-              } as any)
+            ? ({ overflowX: "scroll", overflowY: "hidden", WebkitOverflowScrolling: "touch" } as any)
             : null,
         ]}
       >
@@ -156,9 +143,9 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
               onPress={onPress}
               onLongPress={() => navigation.emit({ type: "tabLongPress", target: route.key })}
               style={[styles.item, focused && styles.itemOn]}
-              activeOpacity={0.75}
+              activeOpacity={0.8}
             >
-              <TabIcon nombre={iconName} size={32} focused={focused} />
+              <TabIcon nombre={iconName} size={30} focused={focused} />
               <Text
                 numberOfLines={1}
                 style={[
@@ -173,6 +160,22 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
           );
         })}
       </ScrollView>
+    </>
+  );
+
+  return (
+    <View
+      nativeID="barra-tabs-scroll"
+      style={[styles.shell, { paddingBottom: Math.max(insets.bottom, 10) }]}
+      onLayout={onShellLayout}
+    >
+      {Platform.OS === "web" ? (
+        <View style={styles.glassFill}>{body}</View>
+      ) : (
+        <BlurView intensity={55} tint="light" style={styles.glassFill}>
+          <View style={styles.glassTint}>{body}</View>
+        </BlurView>
+      )}
     </View>
   );
 }
@@ -180,19 +183,36 @@ export default function BarraTabsScroll({ state, descriptors, navigation }: Bott
 const styles = StyleSheet.create({
   shell: {
     position: "absolute",
-    left: 4,
-    right: 4,
-    bottom: 4,
-    backgroundColor: COLORS.surface,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    paddingTop: 6,
+    left: 6,
+    right: 6,
+    bottom: 6,
+    borderRadius: 28,
+    overflow: "hidden",
     zIndex: 50,
-    ...SHADOW,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.55)",
     ...(Platform.OS === "web"
-      ? ({ boxShadow: "0 10px 28px rgba(12,44,32,0.16)" } as any)
-      : null),
+      ? ({
+          backgroundColor: "rgba(255,255,255,0.42)",
+          backdropFilter: "blur(22px) saturate(180%)",
+          WebkitBackdropFilter: "blur(22px) saturate(180%)",
+          boxShadow: "0 12px 40px rgba(12,44,32,0.18), inset 0 1px 0 rgba(255,255,255,0.75)",
+        } as any)
+      : {
+          backgroundColor: "transparent",
+          shadowColor: "#0c2c20",
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.16,
+          shadowRadius: 20,
+          elevation: 12,
+        }),
+  },
+  glassFill: {
+    flexGrow: 0,
+    paddingTop: 6,
+  },
+  glassTint: {
+    backgroundColor: "rgba(255,255,255,0.28)",
   },
   topRow: {
     flexDirection: "row",
@@ -212,7 +232,9 @@ const styles = StyleSheet.create({
     width: 32,
     height: 28,
     borderRadius: 14,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: "rgba(255,255,255,0.55)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.8)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -231,10 +253,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 4,
-    borderRadius: 16,
+    borderRadius: 18,
   },
   itemOn: {
-    backgroundColor: COLORS.mist,
+    backgroundColor: "rgba(255,255,255,0.38)",
   },
   label: {
     marginTop: 5,

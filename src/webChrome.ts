@@ -25,10 +25,10 @@ export function aplicarEstilosWeb() {
     #root input, #root textarea, #root button {
       font-family: inherit;
     }
-    /* Barra de tabs: forzar scroll horizontal visible en web */
+    /* Barra de tabs: scroll + liquid-glass */
     #barra-tabs-scroll, #barra-tabs-scroll * {
       scrollbar-width: thin;
-      scrollbar-color: #164a36 #e4efe8;
+      scrollbar-color: rgba(22,74,54,0.55) rgba(255,255,255,0.25);
     }
     #barra-tabs-scroll div[style*="overflow"],
     #barra-tabs-scroll [style*="overflow"] {
@@ -38,12 +38,16 @@ export function aplicarEstilosWeb() {
     }
     #barra-tabs-scroll::-webkit-scrollbar,
     #barra-tabs-scroll *::-webkit-scrollbar {
-      height: 8px;
+      height: 7px;
     }
     #barra-tabs-scroll::-webkit-scrollbar-thumb,
     #barra-tabs-scroll *::-webkit-scrollbar-thumb {
-      background: #164a36;
+      background: rgba(22,74,54,0.45);
       border-radius: 8px;
+    }
+    #barra-tabs-scroll {
+      -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
+      backdrop-filter: blur(22px) saturate(180%) !important;
     }
   `;
   document.head.appendChild(style);

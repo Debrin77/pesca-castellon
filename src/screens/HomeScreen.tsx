@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
-import MapView, { Marker, Circle } from "../components/map";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
@@ -11,17 +10,14 @@ import { getResumenEmbalsesCastellon } from "../services/saihService";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
-import BotonMiPosicion from "../components/BotonMiPosicion";
-import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import TemporadaBanner from "../components/TemporadaBanner";
 import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
-import { consultarPuntoPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo } from "../services/consultaPescaService";
+import { consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
   obtenerAvisosSeguridadPesca,
 } from "../services/avisosSeguridadService";
-import { COLORS, PIN, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
-import LeyendaMapa from "../components/LeyendaMapa";
+import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 const EMBALSES_PANEL = [
   { nombre: "EMBALSE DE ARENÓS", fichaId: 266, etiqueta: "Arenós", zoneId: "embalse_arenos" },
@@ -34,13 +30,6 @@ const EMBALSES_PANEL = [
 interface Props {
   navigation: any;
 }
-
-const CASTELLON_REGION = {
-  latitude: 40.12,
-  longitude: -0.38,
-  latitudeDelta: 1.15,
-  longitudeDelta: 1.15,
-};
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = [
@@ -60,8 +49,6 @@ export default function HomeScreen({ navigation }: Props) {
   const [indiceHoy, setIndiceHoy] = useState<IndicePescaDia | null>(null);
   const [cargando, setCargando] = useState(true);
   const [permisoDenegado, setPermisoDenegado] = useState(false);
-  const [localizando, setLocalizando] = useState(false);
-  const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [saihPanel, setSaihPanel] = useState<{ etiqueta: string; zoneId: string; pct: number | null; fuente: string }[]>([]);
@@ -139,35 +126,12 @@ export default function HomeScreen({ navigation }: Props) {
     setCargando(false);
   }
 
-  async function irAMiPosicion() {
-    setLocalizando(true);
-    const ok = await solicitarPermisoUbicacion();
-    if (!ok) {
-      setPermisoDenegado(true);
-      setLocalizando(false);
-      return;
-    }
-    const loc = await obtenerUbicacionActual();
-    setLocalizando(false);
-    if (!loc) return;
-    setUbicacion(loc);
-    setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
-    const [c, indice] = await Promise.all([
-      obtenerClimaActual(loc.lat, loc.lng),
-      calcularIndicePesca(loc.lat, loc.lng, 3),
-    ]);
-    setClima(c);
-    if (indice.length > 0) setIndiceHoy(indice[0]);
-  }
-
   useEffect(() => {
     cargar();
   }, []);
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
-  const tramos = todosLosTramos();
-  const fitMapa = tramos.map((z) => ({ latitude: z.lat, longitude: z.lng }));
   const consultaViva = ubicacion ? consultarPuntoPesca(ubicacion.lat, ubicacion.lng) : null;
 
   return (
@@ -331,7 +295,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Dónde estás ahora</Text>
-          <Text style={styles.sectionMeta}>polígono ICV · pulsa un tramo</Text>
+          <Text style={styles.sectionMeta}>según tu ubicación</Text>
         </View>
         {consultaViva ? (
           <View style={{ marginBottom: 12 }}>
@@ -347,52 +311,27 @@ export default function HomeScreen({ navigation }: Props) {
               }
             />
           </View>
-        ) : null}
-        <View style={styles.mapWrap}>
-          <MapView
-            style={styles.map}
-            initialRegion={CASTELLON_REGION}
-            fitCoordinates={fitMapa}
-            cameraTarget={camara}
-          >
-            <CapaPoligonosIcv />
-            {tramos.filter(tramoUsaRadioAnexo).map((z) => {
-              const color = colorAprovechamiento(z.aprovechamiento);
-              return (
-                <Circle
-                  key={`r-${z.id}`}
-                  center={{ latitude: z.lat, longitude: z.lng }}
-                  radius={z.radioKm * 1000}
-                  strokeColor={color}
-                  fillColor={color + "33"}
-                />
-              );
-            })}
-            {tramos.map((z) => (
-              <Marker
-                key={z.id}
-                coordinate={{ latitude: z.lat, longitude: z.lng }}
-                pinColor={colorAprovechamiento(z.aprovechamiento)}
-                identifier={z.aprovechamiento === "ZPL" ? "libre" : z.aprovechamiento === "ZPC" ? "coto" : "vedado"}
-                title={`${z.aprovechamiento} · ${z.nombre}`}
-                onPress={() => {
-                  if (z.fichaId) navigation.navigate("ZoneDetail", { zoneId: z.fichaId });
-                }}
-              />
-            ))}
-            {ubicacion && (
-              <Marker
-                coordinate={{ latitude: ubicacion.lat, longitude: ubicacion.lng }}
-                pinColor={PIN.yo}
-                identifier="user"
-                title="Tú"
-              />
-            )}
-          </MapView>
-          <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
-        </View>
-        <LeyendaMapa modo="continental" />
-        <Text style={styles.mapHint}>Polígono ICV = límite oficial de coto/reserva. Círculo = tramo ZPL/VP del anexo (aprox.). Pulsa «Ir a mí» y consulta el veredicto grande.</Text>
+        ) : (
+          <Text style={styles.sinConsulta}>
+            Activa la ubicación para ver el veredicto del tramo donde estás. El mapa completo está en la pestaña Mapa.
+          </Text>
+        )}
+
+        <TouchableOpacity
+          style={styles.mapaCta}
+          onPress={() => navigation.navigate("Mapa")}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir pestaña Mapa"
+        >
+          <View style={styles.mapaCtaGlyph}>
+            <Text style={styles.mapaCtaIcon}>🗺️</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.myCatchesTitle}>Abrir mapa</Text>
+            <Text style={styles.myCatchesSubtitle}>Cotos, vedados, costa y consulta al pulsar</Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -522,11 +461,32 @@ const styles = StyleSheet.create({
   sectionRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginTop: SPACING.lg, marginBottom: SPACING.sm },
   sectionTitle: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary },
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
-  mapWrap: { height: 420, borderRadius: RADIUS.lg, overflow: "hidden", borderWidth: 1, borderColor: COLORS.border, ...SHADOW, position: "relative" },
-  map: { flex: 1 },
-  legend: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 10, justifyContent: "center" },
-  legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
-  legendDot: { width: 9, height: 9, borderRadius: 5 },
-  legendText: { fontSize: 11, color: COLORS.textSecondary, fontWeight: "600" },
-  mapHint: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 8, textAlign: "center", lineHeight: 16 },
+  sinConsulta: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+    marginBottom: 10,
+  },
+  mapaCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.md,
+    padding: 14,
+    marginTop: 4,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#b7d4de",
+    ...SHADOW_SOFT,
+  },
+  mapaCtaGlyph: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  mapaCtaIcon: { fontSize: 18 },
 });
