@@ -22,6 +22,18 @@ export interface FuenteNormativaProvincia {
   urlLicencia: string;
 }
 
+/** Requisitos de licencia que cambian por comunidad / provincia. */
+export interface RequisitosLicencia {
+  /** Resumen corto para pantalla Licencias y banner. */
+  resumen: string;
+  /** Andalucía exige RC del pescador; GVA/Castellón no. */
+  seguroObligatorio: boolean;
+  /** Texto del requisito de seguro (u orden explícita de que no aplica). */
+  seguroNota: string;
+  /** Lista de requisitos distintivos (NIR, permisos de coto, etc.). */
+  requisitos: string[];
+}
+
 export interface TramoProvincia {
   id: string;
   codigo: string;
@@ -62,6 +74,7 @@ export interface ProvinciaConfig {
   fuenteNormativa: FuenteNormativaProvincia;
   checklistAntesDePescar: string[];
   etiquetaLicenciaContinental: string;
+  requisitosLicencia: RequisitosLicencia;
   /** Texto breve bajo el semáforo / consultas. */
   notaConsultaAprox: string;
   oleaje?: { lat: number; lng: number; etiqueta: string };

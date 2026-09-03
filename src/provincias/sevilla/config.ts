@@ -49,6 +49,19 @@ export const sevillaConfig: ProvinciaConfig = {
   },
   checklistAntesDePescar: CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA,
   etiquetaLicenciaContinental: "Licencia de pesca continental de Andalucía (Junta).",
+  requisitosLicencia: {
+    resumen:
+      "Para pescar en ríos y embalses de Sevilla necesitas la licencia de pesca continental de Andalucía, el NIR del Registro Andaluz y el seguro obligatorio de responsabilidad civil del pescador. Confirma siempre la orden de vedas vigente.",
+    seguroObligatorio: true,
+    seguroNota:
+      "Seguro obligatorio de responsabilidad civil del pescador (Junta de Andalucía). Hay que acreditarlo al tramitar la licencia y llevar el justificante al pescar, junto con la licencia y el DNI/NIE.",
+    requisitos: [
+      "Inscripción en el Registro Andaluz de Caza y Pesca Continental (NIR).",
+      "Licencia de pesca continental de Andalucía en vigor.",
+      "Seguro obligatorio de responsabilidad civil del pescador vigente.",
+      "DNI/NIE; en cotos, permiso del titular además de la licencia.",
+    ],
+  },
   notaConsultaAprox:
     "Este punto no cae en un polígono oficial DERA (refugio o masa cartografiada) de Sevilla. Puede ser secano, cauce menor o otra provincia. Las aguas libres no listadas siguen el art. 5.2: confirma señalización y espacios protegidos.",
 };

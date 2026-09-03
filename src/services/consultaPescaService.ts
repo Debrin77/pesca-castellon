@@ -166,6 +166,9 @@ function evaluarTramo(
 
   const restricciones: string[] = [];
   const permisos: string[] = [provincia.etiquetaLicenciaContinental];
+  if (esAndalucia && provincia.requisitosLicencia.seguroObligatorio) {
+    permisos.push("Seguro obligatorio de responsabilidad civil del pescador (Junta de Andalucía).");
+  }
   if (fuenteGeometria === "poligono_icv") {
     permisos.push(
       esAndalucia
