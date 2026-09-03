@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     lineHeight: 36,
   },
   sub: {
-    color: "rgba(255,255,255,0.92)",
+    color: "#fff",
     fontSize: 14,
     fontWeight: "700",
     marginTop: 6,

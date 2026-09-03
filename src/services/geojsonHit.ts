@@ -112,6 +112,6 @@ export function tramosConPoligono(): Set<string> {
 }
 
 export function colorCapaIcv(capa: CapaIcv): string {
-  if (capa === "zpc") return "#c45c12";
+  if (capa === "zpc") return "#9a4a0a";
   return "#b42318";
 }

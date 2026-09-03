@@ -279,10 +279,12 @@ export default function HomeScreen({ navigation }: Props) {
               <View style={styles.indexBlock}>
                 <Text style={styles.indexLabel}>Índice de pesca</Text>
                 <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
-                <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
-                  {catInfo.icono} {catInfo.texto}
-                  <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
-                </Text>
+                <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
+                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
+                    {catInfo.icono} {catInfo.texto}
+                    <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
+                  </Text>
+                </View>
               </View>
             )}
 
@@ -510,7 +512,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 15,
-    color: "rgba(255,255,255,0.72)",
+    color: "rgba(255,255,255,0.92)",
     textTransform: "capitalize",
     marginBottom: 4,
     fontWeight: "600",
@@ -530,7 +532,7 @@ const styles = StyleSheet.create({
   },
   weatherDesc: {
     fontSize: 17,
-    color: "rgba(255,255,255,0.85)",
+    color: "rgba(255,255,255,0.95)",
     fontWeight: "500",
     marginTop: -2,
   },
@@ -549,8 +551,8 @@ const styles = StyleSheet.create({
   },
   indexLabel: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.65)",
-    fontWeight: "600",
+    color: "rgba(255,255,255,0.9)",
+    fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
   },
@@ -562,28 +564,33 @@ const styles = StyleSheet.create({
     lineHeight: 54,
     marginTop: 2,
   },
+  indexCatPill: {
+    marginTop: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+  },
   indexCategoria: {
     fontSize: 16,
     fontWeight: "700",
-    marginTop: 2,
   },
   indexMoon: {
-    color: "rgba(255,255,255,0.75)",
-    fontWeight: "500",
+    color: COLORS.textSecondary,
+    fontWeight: "600",
   },
   alertRow: {
     marginTop: 14,
     gap: 8,
   },
   weatherAlert: {
-    backgroundColor: "rgba(249,168,37,0.25)",
+    backgroundColor: "rgba(154,74,10,0.92)",
     borderRadius: RADIUS.sm,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: "rgba(255,255,255,0.35)",
   },
-  weatherAlertDanger: { backgroundColor: "rgba(198,40,40,0.35)" },
+  weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
   body: {
     paddingHorizontal: SPACING.lg,
@@ -609,7 +616,7 @@ const styles = StyleSheet.create({
   },
   ctaSalgoSub: {
     fontSize: 12.5,
-    color: "rgba(255,255,255,0.8)",
+    color: "rgba(255,255,255,0.92)",
     fontWeight: "600",
     marginTop: 3,
   },
@@ -619,7 +626,7 @@ const styles = StyleSheet.create({
   bloqueTitulo: {
     fontSize: 13,
     fontWeight: "800",
-    color: COLORS.textMuted,
+    color: COLORS.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.8,
     marginBottom: SPACING.sm,
@@ -664,7 +671,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     ...SHADOW_SOFT,
   },
-  favChipStar: { color: COLORS.gold, fontWeight: "800", marginBottom: 4 },
+  favChipStar: { color: COLORS.goldText, fontWeight: "800", marginBottom: 4 },
   favChipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 16 },
   sinConsulta: {
     fontSize: 13,

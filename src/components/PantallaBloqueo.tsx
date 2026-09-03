@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
   },
   brand: {
-    color: "#cfe8db",
+    color: "#e8f5ee",
     fontWeight: "800",
     fontSize: 13,
     letterSpacing: 0.6,
@@ -137,12 +137,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: { color: "#fff", fontSize: 26, fontWeight: "800" },
-  sub: { color: "#d5ebe0", marginTop: 6, marginBottom: 18, fontSize: 14 },
+  sub: { color: "#eef7f1", marginTop: 6, marginBottom: 18, fontSize: 14 },
   input: {
-    backgroundColor: "rgba(255,255,255,0.14)",
+    backgroundColor: "rgba(255,255,255,0.18)",
     borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: "rgba(255,255,255,0.4)",
     color: "#fff",
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === "web" ? 12 : 14,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   linkBtn: { alignSelf: "flex-end", marginTop: 8, marginBottom: 8 },
-  link: { color: "#cfe8db", fontWeight: "700", fontSize: 12 },
+  link: { color: "#e8f5ee", fontWeight: "700", fontSize: 12 },
   error: { color: "#ffd0c8", fontWeight: "700", marginBottom: 8 },
   btn: {
     backgroundColor: COLORS.success,

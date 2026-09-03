@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: RADIUS.xl,
   },
   heroKicker: {
-    color: "#cfe8db",
+    color: "#e8f5ee",
     fontSize: 11,
     fontWeight: "800",
     letterSpacing: 0.8,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   heroTitle: { color: "#fff", fontSize: 26, fontWeight: "800" },
-  heroSub: { color: "#dfeee5", fontSize: 13.5, lineHeight: 19, marginTop: 8 },
+  heroSub: { color: "#eef7f1", fontSize: 13.5, lineHeight: 19, marginTop: 8 },
   body: { paddingHorizontal: SPACING.lg, marginTop: -SPACING.md },
   search: {
     backgroundColor: COLORS.surface,

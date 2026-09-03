@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   caraEmoji: { fontSize: 28 },
   caraKicker: {
-    color: "rgba(255,255,255,0.75)",
+    color: "rgba(255,255,255,0.92)",
     fontSize: 10,
     fontWeight: "800",
     letterSpacing: 0.6,
@@ -141,16 +141,16 @@ const styles = StyleSheet.create({
   tallaKicker: {
     fontSize: 11,
     fontWeight: "800",
-    color: COLORS.water,
+    color: COLORS.waterDark,
     letterSpacing: 0.6,
     textTransform: "uppercase",
     marginBottom: 2,
   },
   tallaNum: { fontSize: 44, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -1.2, lineHeight: 48 },
-  tallaUnidad: { fontSize: 22, fontWeight: "700", color: COLORS.water },
-  tallaPie: { fontSize: 12, color: COLORS.textMuted, marginTop: 2, lineHeight: 16 },
+  tallaUnidad: { fontSize: 22, fontWeight: "700", color: COLORS.waterDark },
+  tallaPie: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2, lineHeight: 16 },
   cardTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary, letterSpacing: -0.3, paddingHorizontal: 16 },
-  cardNote: { fontSize: 12, color: COLORS.textMuted, marginTop: 3, fontStyle: "italic", paddingHorizontal: 16 },
+  cardNote: { fontSize: 12, color: COLORS.textSecondary, marginTop: 3, fontStyle: "italic", paddingHorizontal: 16 },
   cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22, paddingHorizontal: 16 },
   avisoLegalBox: {
     marginTop: 12,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   normativaKicker: {
     fontSize: 10,
     fontWeight: "800",
-    color: COLORS.textMuted,
+    color: COLORS.textSecondary,
     letterSpacing: 0.8,
     textTransform: "uppercase",
     marginBottom: 4,
@@ -175,5 +175,5 @@ const styles = StyleSheet.create({
   avisoFuerte: { backgroundColor: COLORS.dangerLight, borderColor: COLORS.danger },
   avisoFuerteTxt: { color: "#7a1414" },
   gearBtn: { marginTop: 12, marginBottom: 14, marginLeft: 16, alignSelf: "flex-start" },
-  gearLink: { fontSize: 15, color: COLORS.water, fontWeight: "800" },
+  gearLink: { fontSize: 15, color: COLORS.waterDark, fontWeight: "800" },
 });

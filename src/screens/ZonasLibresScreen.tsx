@@ -524,8 +524,8 @@ const styles = StyleSheet.create({
   },
   layerChipActive: { backgroundColor: COLORS.mist, borderColor: COLORS.primary },
   layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
-  layerChipText: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700" },
-  layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "700" },
+  layerChipText: { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
+  layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
   map: { flex: 1 },
   pieMapa: {
     backgroundColor: COLORS.surface,
