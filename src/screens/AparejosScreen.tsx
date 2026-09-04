@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import orilla from "../data/especiesOrilla.json";
 import aparejosOrilla from "../data/aparejosOrilla.json";
@@ -12,6 +12,7 @@ import MejorHoraPesca from "../components/MejorHoraPesca";
 import GraficoEspecie from "../components/GraficoEspecie";
 import { FilaAparejo } from "../components/IconoAparejo";
 import { tallaDestacada } from "../components/TarjetaEspecie";
+import { fotoEspecie } from "../data/especiesMedia";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -74,6 +75,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
 
   const lista = ambito === "costa" && !soloContinental ? costaLista : speciesCatalog;
   const sp: any = lista.find((s: any) => s.id === seleccionada) ?? lista[0];
+  const foto = fotoEspecie(sp?.id);
   const equipo: Equipo | undefined =
     ambito === "costa" ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id] : sp?.equipo;
   const talla = sp ? tallaDestacada(sp) : null;
@@ -135,9 +137,13 @@ export default function AparejosScreen({ route, navigation }: Props) {
                 {ambito === "costa" ? "Desde tierra · Mediterráneo" : `Continental · ${provincia.nombre}`}
               </Text>
               <View style={styles.headerHero}>
-                <GraficoEspecie id={sp.id} nombre={sp.nombre} size={96} />
+                {foto ? (
+                  <Image source={foto} style={styles.headerFoto} accessibilityLabel={`Foto de ${sp.nombre}`} />
+                ) : (
+                  <GraficoEspecie id={sp.id} nombre={sp.nombre} size={96} />
+                )}
                 {talla ? (
-                  <View>
+                  <View style={{ flex: 1 }}>
                     <Text style={styles.headerTallaKicker}>
                       {talla.unidad === "kg" ? "Peso mínimo" : talla.unidad ? "Talla mínima" : "Régimen"}
                     </Text>
@@ -298,6 +304,12 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     paddingVertical: 12,
     paddingHorizontal: 14,
+  },
+  headerFoto: {
+    width: 96,
+    height: 96,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   headerTallaKicker: {
     fontSize: 11,

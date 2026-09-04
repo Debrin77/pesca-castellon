@@ -24,6 +24,9 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 const CSS_ID = "pesca-leaflet-theme";
+/** Evita que teselas fallidas (radar z>7, etc.) pinten el texto «Zoom Level Not Supported». */
+const PIXEL_TRANSPARENTE =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 function inyectarCssMapa() {
   if (typeof document === "undefined" || document.getElementById(CSS_ID)) return;
@@ -278,6 +281,7 @@ export default function MapView({
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
               maxZoom={18}
               maxNativeZoom={18}
+              errorTileUrl={PIXEL_TRANSPARENTE}
             />
           </LayersControl.BaseLayer>
           <LayersControl.BaseLayer name="Mapa IGN">
@@ -285,6 +289,8 @@ export default function MapView({
               attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
               url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
               maxZoom={19}
+              maxNativeZoom={18}
+              errorTileUrl={PIXEL_TRANSPARENTE}
             />
           </LayersControl.BaseLayer>
           <LayersControl.BaseLayer name="Relieve">
@@ -292,7 +298,8 @@ export default function MapView({
               attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
               url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
               maxZoom={17}
-              maxNativeZoom={17}
+              maxNativeZoom={15}
+              errorTileUrl={PIXEL_TRANSPARENTE}
             />
           </LayersControl.BaseLayer>
           <LayersControl.BaseLayer name="Satélite IGN">
@@ -300,6 +307,8 @@ export default function MapView({
               attribution="PNOA-MA © IGN-CNIG"
               url="https://www.ign.es/wmts/pnoa-ma?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=OI.OrthoimageCoverage&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
               maxZoom={19}
+              maxNativeZoom={18}
+              errorTileUrl={PIXEL_TRANSPARENTE}
             />
           </LayersControl.BaseLayer>
           {pescaWms === "icv" ? (
@@ -326,16 +335,20 @@ export default function MapView({
               />
             </LayersControl.Overlay>
           ) : null}
-          <LayersControl.Overlay checked={showBathymetry} name="Profundidad EMODnet (no navegar)">
-            <WMSTileLayer
-              url="https://ows.emodnet-bathymetry.eu/wms"
-              layers="mean_atlas_land"
-              format="image/png"
-              transparent={true}
-              opacity={0.55}
-              attribution="EMODnet Bathymetry"
-            />
-          </LayersControl.Overlay>
+          {showBathymetry ? (
+            <LayersControl.Overlay checked name="Profundidad EMODnet (no navegar)">
+              <WMSTileLayer
+                url="https://ows.emodnet-bathymetry.eu/wms"
+                layers="mean_atlas_land"
+                format="image/png"
+                transparent={true}
+                opacity={0.55}
+                attribution="EMODnet Bathymetry"
+                maxNativeZoom={12}
+                errorTileUrl={PIXEL_TRANSPARENTE}
+              />
+            </LayersControl.Overlay>
+          ) : null}
           <LayersControl.Overlay name="Carta IHM (no navegar)">
             <WMSTileLayer
               url="https://ideihm.covam.es/wms/enc"
@@ -349,7 +362,15 @@ export default function MapView({
         </LayersControl>
         {/* Radar fuera del LayersControl: al activar desde Campo de hoy se ve al instante. */}
         {showRadar && radarUrl ? (
-          <TileLayer url={radarUrl} opacity={0.65} attribution="RainViewer" zIndex={400} />
+          <TileLayer
+            url={radarUrl}
+            opacity={0.65}
+            attribution="RainViewer"
+            zIndex={400}
+            maxNativeZoom={7}
+            maxZoom={18}
+            errorTileUrl={PIXEL_TRANSPARENTE}
+          />
         ) : null}
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />

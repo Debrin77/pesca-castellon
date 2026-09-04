@@ -68,7 +68,7 @@ export default function MapView({
         />
       ) : null}
       {showRadar && radarUrl ? (
-        <UrlTile urlTemplate={radarUrl} opacity={0.65} zIndex={5} />
+        <UrlTile urlTemplate={radarUrl} opacity={0.65} zIndex={5} maximumZ={7} />
       ) : null}
       {children}
     </MapViewRN>
