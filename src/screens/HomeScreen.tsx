@@ -22,6 +22,7 @@ import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
+import PanelCampoHoy from "../components/PanelCampoHoy";
 import { consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
@@ -286,6 +287,7 @@ export default function HomeScreen({ navigation }: Props) {
       ? detectarAlertas({
           codigoTiempo: clima.codigoTiempo,
           vientoMaxKmh: clima.velocidadVientoKmh,
+          rafagaMaxKmh: clima.rafagaKmh,
         })
       : [];
   const etiquetaClima = (() => {
@@ -350,6 +352,16 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
             )}
 
+            {clima ? (
+              <Text style={styles.climaOrigen} numberOfLines={2}>
+                Viento {Math.round(clima.velocidadVientoKmh)} km/h
+                {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
+                {clima.precipitacionMm != null && clima.precipitacionMm > 0
+                  ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
+                  : ""}
+              </Text>
+            ) : null}
+
             {alertasClima.length > 0 && (
               <View style={styles.alertRow}>
                 {alertasClima.map((alerta, idx) => (
@@ -411,9 +423,13 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
+        <ListaAnimada index={2}>
+          <PanelCampoHoy navigation={navigation} />
+        </ListaAnimada>
+
         {/* Bloque embalses / favoritos */}
         {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
-          <ListaAnimada index={2}>
+          <ListaAnimada index={3}>
             <View style={styles.bloque}>
               <Text style={styles.bloqueTitulo}>Embalses y favoritos</Text>
 

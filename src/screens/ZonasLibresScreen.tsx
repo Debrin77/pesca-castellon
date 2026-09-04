@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
-import MapView, { Marker, Circle } from "../components/map";
+import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
   consultarPuntoPesca,
   consultarPorTramo,
@@ -29,9 +29,20 @@ import CapaPuertos from "../components/CapaPuertos";
 import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
+import SelectorModalidad from "../components/SelectorModalidad";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
+import { obtenerRadar } from "../services/radarService";
+import {
+  anadirPuntoTrack,
+  finalizarTrack,
+  iniciarTrack,
+  obtenerTracks,
+  trackActivo,
+  TrackPesca,
+} from "../services/trackService";
+import type { ModalidadPesca } from "../data/modalidades";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -47,6 +58,7 @@ type ParamsMapa = {
   modoAnadirPunto?: boolean;
   motivoPick?: MotivoUbicacionPendiente;
   centrarEn?: { lat: number; lng: number; nombre?: string };
+  activarRadar?: boolean;
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
@@ -63,12 +75,24 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [yo, setYo] = useState<LatLng | null>(null);
   const [puntosPersonales, setPuntosPersonales] = useState<PuntoGuardado[]>([]);
-  const [capas, setCapas] = useState({ zpl: true, zpc: true, vedado: true, misPuntos: true });
+  const [capas, setCapas] = useState({
+    zpl: true,
+    zpc: true,
+    vedado: true,
+    misPuntos: true,
+    radar: false,
+    batimetria: false,
+    tracks: true,
+  });
   const [localizando, setLocalizando] = useState(false);
   const [modo, setModo] = useState<"continental" | "costa">("continental");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
+  const [radarUrl, setRadarUrl] = useState<string | null>(null);
+  const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
+  const [tracks, setTracks] = useState<TrackPesca[]>([]);
+  const [grabandoId, setGrabandoId] = useState<string | null>(null);
   const [modoAnadir, setModoAnadir] = useState(false);
   const [motivoPick, setMotivoPick] = useState<MotivoUbicacionPendiente | null>(null);
   const mar = !soloContinental && modo === "costa";
@@ -99,6 +123,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   useFocusEffect(
     useCallback(() => {
       obtenerPuntosGuardados().then(setPuntosPersonales);
+      obtenerTracks().then((t) => {
+        setTracks(t);
+        setGrabandoId(trackActivo(t)?.id ?? null);
+      });
 
       const p = (route.params ?? {}) as ParamsMapa;
       const pickActivo = hayPickUbicacion() || !!p.modoAnadirPunto;
@@ -118,11 +146,38 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         navigation.setParams?.({ centrarEn: undefined });
       }
 
+      if (p.activarRadar) {
+        setCapas((prev) => ({ ...prev, radar: true }));
+        navigation.setParams?.({ activarRadar: undefined });
+      }
+
       if (pickActivo) {
         navigation.setParams?.({ modoAnadirPunto: undefined, motivoPick: undefined });
       }
     }, [route.params, navigation, fijarPunto])
   );
+
+  useEffect(() => {
+    if (!capas.radar) return;
+    let cancel = false;
+    void obtenerRadar().then((r) => {
+      if (!cancel) setRadarUrl(r.urlPlantilla);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, [capas.radar]);
+
+  useEffect(() => {
+    setModalidad(mar ? "orilla_mar" : "orilla_continental");
+  }, [mar]);
+
+  useEffect(() => {
+    if (!grabandoId || !yo) return;
+    void anadirPuntoTrack(grabandoId, yo.latitude, yo.longitude).then(() => {
+      void obtenerTracks().then(setTracks);
+    });
+  }, [yo?.latitude, yo?.longitude, grabandoId]);
 
   useEffect(() => {
     let cancelar: (() => void) | undefined;
@@ -447,7 +502,53 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.layerChip, capas.radar && styles.layerChipActive]} onPress={() => toggleCapa("radar")}>
+          <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>
+            {capas.radar ? "Radar ON" : "Radar lluvia"}
+          </Text>
+        </TouchableOpacity>
+        {mar ? (
+          <TouchableOpacity
+            style={[styles.layerChip, capas.batimetria && styles.layerChipMar]}
+            onPress={() => toggleCapa("batimetria")}
+          >
+            <Text style={[styles.layerChipText, capas.batimetria && { color: PIN.playa }]}>Profundidad</Text>
+          </TouchableOpacity>
+        ) : null}
+        <TouchableOpacity style={[styles.layerChip, capas.tracks && styles.layerChipActive]} onPress={() => toggleCapa("tracks")}>
+          <Text style={[styles.layerChipText, capas.tracks && styles.layerChipTextActive]}>Rutas</Text>
+        </TouchableOpacity>
       </ScrollView>
+
+      <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
+        <SelectorModalidad
+          value={modalidad}
+          onChange={setModalidad}
+          filtroAmbito={mar ? "maritimo" : "continental"}
+        />
+        <TouchableOpacity
+          style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start" }]}
+          onPress={async () => {
+            if (grabandoId) {
+              await finalizarTrack(grabandoId);
+              setGrabandoId(null);
+              setTracks(await obtenerTracks());
+              Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
+              return;
+            }
+            const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
+            setGrabandoId(t.id);
+            setTracks(await obtenerTracks());
+            Alert.alert("Grabando ruta", "Se añaden puntos con tu GPS. Pulsa de nuevo para finalizar.");
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={grabandoId ? "Finalizar ruta GPS" : "Grabar ruta GPS"}
+        >
+          <Text style={[styles.layerChipText, grabandoId ? styles.layerChipTextActive : null]}>
+            {grabandoId ? "■ Parar ruta" : "● Grabar ruta"}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.mapWrap}>
         <MapView
@@ -457,6 +558,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
           pescaWms={provincia.id === "sevilla" ? "rediam" : "icv"}
+          showRadar={capas.radar}
+          radarUrl={radarUrl}
+          showBathymetry={mar && capas.batimetria}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
@@ -546,6 +650,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
             ))}
+          {capas.tracks &&
+            tracks.map((t) => (
+              <Polyline
+                key={t.id}
+                coordinates={t.puntos.map((pt) => ({ latitude: pt.lat, longitude: pt.lng }))}
+                strokeColor={t.id === grabandoId ? COLORS.danger : COLORS.water}
+                strokeWidth={t.id === grabandoId ? 5 : 3}
+              />
+            ))}
           {yo && (
             <Marker coordinate={yo} pinColor={PIN.yo} identifier="user" title="Tú" />
           )}
@@ -558,6 +671,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
+        {capas.radar ? (
+          <Text style={styles.hint}>
+            Radar lluvia activo{radarUrl ? "" : " (cargando…)"} · RainViewer · no es aviso AEMET.
+          </Text>
+        ) : null}
         <Text style={styles.hint}>
           {modoAnadir
             ? motivoPick === "captura"

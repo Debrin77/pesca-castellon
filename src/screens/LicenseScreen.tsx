@@ -26,6 +26,8 @@ import {
   textoVigenciaNormativaAndalucia,
 } from "../provincias/sevilla/normativa";
 import TemporadaBanner from "../components/TemporadaBanner";
+import PescaRecBanner from "../components/PescaRecBanner";
+import { infoPermisoCoto } from "../data/permisosCoto";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
@@ -128,6 +130,56 @@ export default function LicenseScreen() {
       </LinearGradient>
 
       <TemporadaBanner />
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Normativa en vigor · {provincia.nombre}</Text>
+        <Text style={styles.cardText}>{fuente.titulo}</Text>
+        <Text style={[styles.cardText, { marginTop: 4 }]}>{fuente.vigenciaNota}</Text>
+        <Text style={styles.privacy}>
+          Consulta en la app: {new Date().toISOString().slice(0, 10)}. El cartel y el boletín oficial mandan.
+        </Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Cupos (catálogo {provincia.nombre})</Text>
+        <Text style={styles.privacy}>
+          Solo especies de esta provincia. El PTOP del coto puede endurecer el cupo.
+        </Text>
+        {(provincia.species as any[]).slice(0, 12).map((sp) => (
+          <View key={sp.id} style={styles.tallaRow}>
+            <Text style={styles.tallaName}>{sp.nombre}</Text>
+            <Text style={styles.tallaVal}>{sp.cupo ?? sp.tallaOficial ?? "—"}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Permisos de coto</Text>
+        <Text style={styles.cardText}>{infoPermisoCoto(provincia.id).comoObtener}</Text>
+        <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPtop}</Text>
+        {esSevilla ? (
+          <Text style={[styles.cardText, { marginTop: 8 }]}>
+            En Sevilla (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
+            refugios (VP) mandan. Si aparece un coto en cartel, pide el permiso al titular.
+          </Text>
+        ) : null}
+      </View>
+
+      {soloContinental ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>PescaREC</Text>
+          <Text style={styles.cardText}>
+            PescaREC es la app estatal para pesca marítima recreativa. En {provincia.nombre} esta guía es
+            continental: no sustituye ni exige PescaREC en ríos/embalses.
+          </Text>
+          <PescaRecBanner compacto />
+        </View>
+      ) : (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>PescaREC (marítima)</Text>
+          <PescaRecBanner />
+        </View>
+      )}
 
       <Text style={styles.resumen}>{provincia.requisitosLicencia.resumen}</Text>
       <Text style={styles.vigencia}>{vigencia}</Text>

@@ -28,6 +28,8 @@ export interface Captura {
   lat?: number | null;
   lng?: number | null;
   provinciaId?: ProvinciaId;
+  /** Modalidad de la jornada (orilla, kayak…). */
+  modalidad?: string;
 }
 
 export interface FavoritoZona {

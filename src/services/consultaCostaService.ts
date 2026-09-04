@@ -2,7 +2,7 @@ import puertos from "../data/puertosCastellon.json";
 import vedados from "../data/vedadosCosta.json";
 import playasData from "../data/playasEspigonesCosta.json";
 import { puntoEnPoligono, distanciaAPolylineKm } from "./geoService";
-import { ConsultaPesca, consultarPuntoPesca } from "./consultaPescaService";
+import { ConsultaPesca, consultarPuntoPesca, fuenteDetalleConsulta } from "./consultaPescaService";
 import { FUENTE_MARITIMA, NOTA_CEFALOPODOS_ORILLA, REGLAS_ORILLA_MAR } from "../data/normativaMaritima";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { SEMAFORO } from "../theme";
@@ -78,8 +78,14 @@ export function esFranjaCosteraCastellon(lat: number, lng: number): boolean {
 
 const COLORES = { libre: SEMAFORO.si, vedado: SEMAFORO.no, fuera: SEMAFORO.neutro };
 
-function baseMar(): Pick<ConsultaPesca, "tramo" | "fuenteGeometria" | "confianza" | "ambito"> {
-  return { tramo: null, fuenteGeometria: "ninguna", confianza: "aproximada", ambito: "maritimo" };
+function baseMar(): Pick<ConsultaPesca, "tramo" | "fuenteGeometria" | "confianza" | "ambito" | "fuenteNormativaDetalle"> {
+  return {
+    tramo: null,
+    fuenteGeometria: "ninguna",
+    confianza: "aproximada",
+    ambito: "maritimo",
+    fuenteNormativaDetalle: fuenteDetalleConsulta("maritimo"),
+  };
 }
 
 export function consultarCosta(lat: number, lng: number): ConsultaPesca {
