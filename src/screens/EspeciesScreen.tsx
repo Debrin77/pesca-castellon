@@ -247,7 +247,18 @@ export default function EspeciesScreen({ navigation }: Props) {
             <Text style={[styles.modoTxt, costa && styles.modoTxtOn]}>Costa (orilla)</Text>
           </TouchableOpacity>
         </View>
-      ) : null}
+      ) : (
+        <View style={styles.modoBar}>
+          <TouchableOpacity
+            style={[styles.modoBtn, styles.modoBtnOnBosque]}
+            onPress={abrirCatalogoContinental}
+            accessibilityRole="button"
+            accessibilityLabel="Ver especies de ríos y embalses de Sevilla"
+          >
+            <Text style={[styles.modoTxt, styles.modoTxtOn]}>Ríos y embalses · ver especies</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View style={styles.mapWrap}>
         <MapView
