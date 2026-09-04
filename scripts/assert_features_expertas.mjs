@@ -27,6 +27,7 @@ const required = [
   "src/components/IdentificarEspecie.tsx",
   "src/components/PanelOfflineMapa.tsx",
   "src/components/SelectorModalidad.tsx",
+  "src/components/PanelCampoHoy.tsx",
 ];
 
 let fallos = 0;
@@ -53,6 +54,52 @@ if (!mapWeb.includes("showRadar") || !mapWeb.includes("Polyline")) {
 const card = fs.readFileSync(path.join(root, "src/components/ConsultaPescaCard.tsx"), "utf8");
 if (!card.includes("PescaRecBanner") || !card.includes("consultadoEn")) {
   console.error("FAIL ConsultaPescaCard sin PescaREC / fecha normativa");
+  fallos++;
+}
+
+const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");
+if (!pkg.includes("assert_features_expertas.mjs")) {
+  console.error("FAIL package.json sin assert_features_expertas");
+  fallos++;
+}
+
+const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
+if (!home.includes("PanelCampoHoy")) {
+  console.error("FAIL HomeScreen sin PanelCampoHoy");
+  fallos++;
+}
+if (!home.includes("rafagaKmh") && !home.includes("rafagaMaxKmh")) {
+  console.error("FAIL HomeScreen sin ráfagas en alertas/clima");
+  fallos++;
+}
+
+const catches = fs.readFileSync(path.join(root, "src/screens/MyCatchesScreen.tsx"), "utf8");
+if (!catches.includes("Exportar GPX") || !catches.includes("filtroAmbito")) {
+  console.error("FAIL MyCatches sin GPX visible o filtro modalidad por provincia");
+  fallos++;
+}
+
+const prev = fs.readFileSync(path.join(root, "src/screens/PrevisionScreen.tsx"), "utf8");
+if (!prev.includes("VentanasSolunarMarea") || !prev.includes('variante="glass"')) {
+  console.error("FAIL Previsión sin solunar glass visible");
+  fallos++;
+}
+
+const license = fs.readFileSync(path.join(root, "src/screens/LicenseScreen.tsx"), "utf8");
+if (!license.includes("PescaRecBanner") || !license.includes("infoPermisoCoto")) {
+  console.error("FAIL LicenseScreen sin PescaREC / permisos coto");
+  fallos++;
+}
+
+const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
+if (!mapa.includes("activarRadar") || !mapa.includes("Radar lluvia")) {
+  console.error("FAIL Mapa sin activarRadar / etiqueta Radar lluvia");
+  fallos++;
+}
+
+const tide = fs.readFileSync(path.join(root, "src/services/tideService.ts"), "utf8");
+if (tide.includes("sevilla_costa_ref")) {
+  console.error("FAIL tideService no debe cruzar referencia atlántica en Sevilla continental");
   fallos++;
 }
 

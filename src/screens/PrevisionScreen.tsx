@@ -393,6 +393,22 @@ export default function PrevisionScreen() {
             </ListaAnimada>
           ) : null}
 
+          <VentanasSolunarMarea
+            solunar={solunar}
+            marea={marea}
+            variante="glass"
+            notaContinental={
+              provincia.continentalOnly
+                ? `${provincia.nombre} es continental en esta app: no hay carta de marea costera. Usa el solunar + índice + SAIH.`
+                : null
+            }
+            oleajeNota={
+              provincia.oleaje
+                ? "En costa, combina solunar con oleaje y viento (radar en el mapa)."
+                : null
+            }
+          />
+
           <View style={styles.metrics}>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Lluvia</Text>
@@ -497,16 +513,6 @@ export default function PrevisionScreen() {
               </ScrollView>
             </View>
           ) : null}
-
-          <VentanasSolunarMarea
-            solunar={solunar}
-            marea={marea}
-            oleajeNota={
-              provincia.oleaje
-                ? "En costa, combina solunar con oleaje y viento (radar en el mapa)."
-                : "En continental, el solunar es orientación; mira también el índice y el SAIH."
-            }
-          />
 
           <Text style={styles.fuente}>Datos de Open-Meteo + solunar/marea locales. Los avisos no sustituyen a AEMET.</Text>
         </>

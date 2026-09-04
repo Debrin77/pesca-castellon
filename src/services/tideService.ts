@@ -1,6 +1,6 @@
 /**
  * Marea astronómica aproximada (armónico simple M2) para orientación.
- * En Castellón es micromareal: priorizar oleaje. Sevilla continental: no aplica costa.
+ * Castellón: micromareal (preferir oleaje). Sevilla continental: sin marea costera.
  */
 export interface MareaHora {
   hora: string;
@@ -24,13 +24,6 @@ const PUERTOS: Record<string, { nombre: string; lat: number; lng: number; rangoM
     lng: 0.03,
     rangoM: 0.2,
     nota: "Micromareal: oscilación de pocos decímetros. El oleaje manda más que la marea.",
-  },
-  sevilla_costa_ref: {
-    nombre: "Referencia Golfo de Cádiz (no es el río)",
-    lat: 36.78,
-    lng: -6.35,
-    rangoM: 2.8,
-    nota: "Sevilla es continental en esta app. Esta curva es solo referencia atlántica cercana, no el cauce del Guadalquivir.",
   },
 };
 
@@ -83,6 +76,7 @@ export function calcularMareaHoy(
   };
 }
 
+/** Solo provincias con costa en la app. Sevilla continental → null (sin cruzar datos atlánticos). */
 export function claveMareaProvincia(provinciaId: string, continentalOnly: boolean): keyof typeof PUERTOS | null {
   if (continentalOnly) return null;
   if (provinciaId === "castellon") return "castellon";

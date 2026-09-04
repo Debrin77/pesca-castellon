@@ -5,16 +5,19 @@ import {
   leerEstadoOfflineMapa,
   prepararMapaOffline,
 } from "../services/offlineMapService";
+import { useProvincia } from "../context/ProvinciaContext";
 import { COLORS, RADIUS } from "../theme";
 
 export default function PanelOfflineMapa() {
+  const { provinciaId, provincia: provinciaCtx } = useProvincia();
+  const nombre = provinciaCtx?.nombre ?? String(provinciaId);
   const [estado, setEstado] = useState<EstadoOfflineMapa | null>(null);
   const [cargando, setCargando] = useState(false);
   const [progreso, setProgreso] = useState("");
 
   useEffect(() => {
     void leerEstadoOfflineMapa().then(setEstado);
-  }, []);
+  }, [provinciaId]);
 
   async function preparar() {
     setCargando(true);
@@ -30,12 +33,12 @@ export default function PanelOfflineMapa() {
   }
 
   return (
-    <View style={styles.box} accessibilityLabel="Mapa offline">
+    <View style={styles.box} accessibilityLabel={`Mapa offline · ${nombre}`}>
       <Text style={styles.title} accessibilityRole="header">
-        Mapa offline
+        Mapa offline · {nombre}
       </Text>
       <Text style={styles.sub}>
-        Calienta teselas de la provincia en caché. Normativa, especies y tramos ya van empaquetados en la app.
+        Calienta teselas de {nombre} en caché. Normativa y especies de esta provincia ya van en la app.
       </Text>
       {estado ? (
         <Text style={styles.meta}>
@@ -50,7 +53,7 @@ export default function PanelOfflineMapa() {
         onPress={() => void preparar()}
         disabled={cargando}
         accessibilityRole="button"
-        accessibilityLabel="Preparar mapa offline"
+        accessibilityLabel={`Preparar mapa offline de ${nombre}`}
       >
         {cargando ? (
           <View style={styles.row}>

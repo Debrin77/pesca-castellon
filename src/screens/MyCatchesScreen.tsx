@@ -288,9 +288,30 @@ export default function MyCatchesScreen({ navigation }: Props) {
       </View>
 
       <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <TouchableOpacity style={styles.gpxBtn} onPress={() => void exportarGpx()} accessibilityRole="button" accessibilityLabel="Exportar GPX">
-          <Text style={styles.gpxBtnText}>Exportar GPX (puntos + capturas + rutas)</Text>
-        </TouchableOpacity>
+        <View style={styles.toolsBox}>
+          <Text style={styles.toolsTitle}>Herramientas · {provincia.nombre}</Text>
+          <TouchableOpacity
+            style={styles.gpxBtn}
+            onPress={() => void exportarGpx()}
+            accessibilityRole="button"
+            accessibilityLabel={`Exportar GPX de ${provincia.nombre}`}
+          >
+            <Text style={styles.gpxBtnText}>Exportar GPX · {provincia.nombre}</Text>
+            <Text style={styles.gpxSub}>Puntos + capturas con GPS + rutas (solo esta provincia)</Text>
+          </TouchableOpacity>
+          {cupoInfo ? (
+            <View style={styles.cupoBox}>
+              <Text style={styles.cupoTitle}>Cupo del día · {speciesCatalog.find((s: any) => s.id === especieId)?.nombre ?? especieId}</Text>
+              <Text style={styles.cupoMeta}>
+                Hoy: {cupoInfo.retenidasHoy}
+                {cupoInfo.maxUnidades != null ? ` / ${cupoInfo.maxUnidades} ud` : " capturas"}
+                {cupoInfo.maxKg != null ? ` · ${cupoInfo.kgHoy.toFixed(1)}/${cupoInfo.maxKg} kg` : ""}
+              </Text>
+              <Text style={styles.cupoMeta}>{cupoInfo.cupoTexto}</Text>
+              {cupoInfo.aviso ? <Text style={styles.cupoWarn}>{cupoInfo.aviso}</Text> : null}
+            </View>
+          ) : null}
+        </View>
 
         {tab === "favoritos" && (
           <>
@@ -334,7 +355,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
               </TouchableOpacity>
             ) : (
               <View style={styles.formCard}>
-                <SelectorModalidad value={modalidad} onChange={setModalidad} />
+                <SelectorModalidad
+                  value={modalidad}
+                  onChange={setModalidad}
+                  filtroAmbito={provincia.continentalOnly ? "continental" : "ambos"}
+                />
                 <Text style={styles.formLabel}>Especie</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
                   {speciesCatalog.map((s: any) => (
@@ -774,12 +799,26 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.water,
     borderRadius: RADIUS.md,
     paddingVertical: 12,
+    paddingHorizontal: 12,
     alignItems: "center",
-    marginBottom: 14,
   },
-  gpxBtnText: { color: "#fff", fontWeight: "800", fontSize: 13 },
-  cupoWarn: { color: COLORS.danger, fontSize: 12, fontWeight: "700", marginBottom: 6 },
-  cupoMeta: { color: COLORS.textSecondary, fontSize: 11.5, marginBottom: 8, lineHeight: 16 },
+  gpxBtnText: { color: "#fff", fontWeight: "800", fontSize: 14 },
+  gpxSub: { color: "rgba(255,255,255,0.9)", fontSize: 11, marginTop: 4, textAlign: "center" },
+  toolsBox: {
+    marginBottom: 14,
+    gap: 8,
+  },
+  toolsTitle: { fontSize: 12, fontWeight: "800", color: COLORS.textMuted, letterSpacing: 0.4, marginBottom: 4 },
+  cupoBox: {
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  cupoTitle: { fontWeight: "800", color: COLORS.textPrimary, fontSize: 13 },
+  cupoWarn: { color: COLORS.danger, fontSize: 12, fontWeight: "700", marginTop: 6 },
+  cupoMeta: { color: COLORS.textSecondary, fontSize: 11.5, marginTop: 4, lineHeight: 16 },
   fotoPreview: {
     width: "100%",
     height: 160,

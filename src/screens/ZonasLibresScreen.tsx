@@ -58,6 +58,7 @@ type ParamsMapa = {
   modoAnadirPunto?: boolean;
   motivoPick?: MotivoUbicacionPendiente;
   centrarEn?: { lat: number; lng: number; nombre?: string };
+  activarRadar?: boolean;
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
@@ -143,6 +144,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         setCapas((prev) => ({ ...prev, misPuntos: true }));
         void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: nombre ?? c.titulo });
         navigation.setParams?.({ centrarEn: undefined });
+      }
+
+      if (p.activarRadar) {
+        setCapas((prev) => ({ ...prev, radar: true }));
+        navigation.setParams?.({ activarRadar: undefined });
       }
 
       if (pickActivo) {
@@ -497,7 +503,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.layerChip, capas.radar && styles.layerChipActive]} onPress={() => toggleCapa("radar")}>
-          <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>Radar</Text>
+          <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>
+            {capas.radar ? "Radar ON" : "Radar lluvia"}
+          </Text>
         </TouchableOpacity>
         {mar ? (
           <TouchableOpacity
@@ -663,6 +671,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
+        {capas.radar ? (
+          <Text style={styles.hint}>
+            Radar lluvia activo{radarUrl ? "" : " (cargando…)"} · RainViewer · no es aviso AEMET.
+          </Text>
+        ) : null}
         <Text style={styles.hint}>
           {modoAnadir
             ? motivoPick === "captura"
