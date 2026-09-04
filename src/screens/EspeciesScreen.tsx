@@ -7,6 +7,7 @@ import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, 
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
+import { especiesOrillaParaSeleccion } from "../services/catalogoEspeciesService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -133,6 +134,7 @@ export default function EspeciesScreen({ navigation }: Props) {
   const especiesConsulta =
     consulta?.ambito === "maritimo"
       ? (consulta.especiesIds ?? []).map((id) =>
+          especiesOrillaParaSeleccion().find((s) => s.id === id) ??
           [...(orilla.pescablesOrilla as any[]), ...(orilla.invasorasOrilla as any[])].find((s) => s.id === id)
         )
       : (consulta?.tramo?.especies ?? []).map((especieId: string) =>
@@ -336,10 +338,10 @@ export default function EspeciesScreen({ navigation }: Props) {
         {!soloContinental && catalogo === "mar" && (
           <>
             <Text style={styles.cardText}>{orilla.fuenteTallas}</Text>
-            {orilla.invasorasOrilla.map((sp: any, i: number) => (
-              <TarjetaEspecie key={sp.id} sp={sp} index={i} onAparejos={() => irAparejos(sp.id)} />
-            ))}
-            {orilla.pescablesOrilla.map((sp: any, i: number) => (
+            <Text style={[styles.cardText, { marginBottom: 8 }]}>
+              Las 15 especies más usuales desde orilla en Castellón (más invasoras). El resto queda en Tallas.
+            </Text>
+            {especiesOrillaParaSeleccion().map((sp: any, i: number) => (
               <TarjetaEspecie key={sp.id} sp={sp} index={i} onAparejos={() => irAparejos(sp.id)} />
             ))}
           </>

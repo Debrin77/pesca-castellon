@@ -1,11 +1,15 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
-import orilla from "../data/especiesOrilla.json";
 import aparejosOrilla from "../data/aparejosOrilla.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import {
+  especiesOrillaParaSeleccion,
+  idsOrillaConocidos,
+  resolverEspecie,
+} from "../services/catalogoEspeciesService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import MejorHoraPesca from "../components/MejorHoraPesca";
@@ -34,11 +38,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const speciesCatalog = provincia.species as any[];
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
-  const costaLista = useMemo(
-    () => [...(orilla.invasorasOrilla as any[]), ...(orilla.pescablesOrilla as any[])],
-    []
-  );
-  const costaIds = useMemo(() => new Set(costaLista.map((s) => s.id)), [costaLista]);
+  const costaLista = useMemo(() => especiesOrillaParaSeleccion(), []);
+  const costaIds = useMemo(() => idsOrillaConocidos(), []);
   const [ambito, setAmbito] = useState<"rio" | "costa">("rio");
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
 
@@ -73,7 +74,13 @@ export default function AparejosScreen({ route, navigation }: Props) {
     }
   }, [route?.params?.especieId, costaIds, soloContinental]);
 
-  const lista = ambito === "costa" && !soloContinental ? costaLista : speciesCatalog;
+  const listaBase = ambito === "costa" && !soloContinental ? costaLista : speciesCatalog;
+  const lista = useMemo(() => {
+    if (ambito !== "costa" || !seleccionada) return listaBase;
+    if (listaBase.some((s: any) => s.id === seleccionada)) return listaBase;
+    const extra = resolverEspecie(seleccionada, []);
+    return extra ? [...listaBase, extra] : listaBase;
+  }, [ambito, listaBase, seleccionada]);
   const sp: any = lista.find((s: any) => s.id === seleccionada) ?? lista[0];
   const foto = fotoEspecie(sp?.id);
   const equipo: Equipo | undefined =
