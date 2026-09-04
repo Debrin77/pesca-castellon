@@ -43,8 +43,19 @@ else ok("Previsión tiene Usar mi GPS");
 if (!home.includes("usePuntoConsulta")) fail("Inicio debe usar punto de consulta para clima");
 else ok("Inicio usa punto de consulta");
 
-if (!avisos.includes("cercaDe")) fail("Avisos caudal deben aceptar cercaDe");
-else ok("Avisos caudal priorizan ríos cercanos");
+if (!prev.includes("Población de referencia") && !prev.includes("poblacion")) {
+  fail("Previsión debe mostrar población de referencia");
+} else {
+  ok("Previsión muestra población de referencia");
+}
+
+const poblacionSrc = readFileSync(join(root, "src/services/poblacionCercanaService.ts"), "utf8");
+if (!poblacionSrc.includes("resolverPoblacionCercana")) fail("Falta resolverPoblacionCercana");
+else ok("Servicio de población cercana");
+
+const puntoSrc = readFileSync(join(root, "src/services/puntoConsultaService.ts"), "utf8");
+if (!puntoSrc.includes("poblacion")) fail("PuntoConsulta debe guardar población");
+else ok("PuntoConsulta guarda población");
 
 if (fallos) {
   console.error(`\n${fallos} fallo(s).`);

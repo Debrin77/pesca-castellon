@@ -26,7 +26,8 @@ import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { etiquetaFuente, type FuentePuntoConsulta } from "../services/puntoConsultaService";
+import { etiquetaFuente, textoOrigenPrevision, type FuentePuntoConsulta } from "../services/puntoConsultaService";
+import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
@@ -99,6 +100,7 @@ export default function PrevisionScreen() {
     lng: number;
     fuente: FuentePuntoConsulta;
     etiqueta?: string;
+    poblacion?: string;
   } | null>(null);
 
   const cargar = useCallback(async () => {
@@ -110,12 +112,14 @@ export default function PrevisionScreen() {
     let lng: number | null = null;
     let fuente: FuentePuntoConsulta = "centro";
     let etiqueta: string | undefined;
+    let poblacion: string | undefined;
 
     if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
       lat = punto.lat;
       lng = punto.lng;
       fuente = punto.fuente;
       etiqueta = punto.etiqueta;
+      poblacion = punto.poblacion;
     } else {
       const ok = await solicitarPermisoUbicacion();
       if (ok) {
@@ -139,6 +143,10 @@ export default function PrevisionScreen() {
       setPermisoDenegado(false);
     }
 
+    if (!poblacion && fuente !== "gps") {
+      poblacion = resolverPoblacionCercana(lat, lng)?.nombre;
+    }
+
     const oleajeCfg = provincia.oleaje;
     // Oleaje: si el punto es costero (Castellón), usa sus coords; si no, Grao por defecto.
     const oleajeLat = oleajeCfg ? (fuente === "mapa" || fuente === "zona" ? lat : oleajeCfg.lat) : null;
@@ -157,7 +165,7 @@ export default function PrevisionScreen() {
     setIndice(ind);
     setOleaje(mar.filter((o) => o.alturaM != null).slice(0, 12));
     setSeleccion(prevision[0]?.fecha ?? null);
-    setOrigen({ lat, lng, fuente, etiqueta });
+    setOrigen({ lat, lng, fuente, etiqueta, poblacion });
     setCargando(false);
   }, [punto, provincia]);
 
@@ -221,9 +229,18 @@ export default function PrevisionScreen() {
             ? `Siete días · ${origen.etiqueta}`
             : "Siete días en tu zona"}
         </Text>
+        {origen?.poblacion && origen.fuente !== "gps" ? (
+          <Text style={styles.poblacionLine} accessibilityRole="text">
+            Población de referencia: {origen.poblacion}
+          </Text>
+        ) : null}
         <Text style={styles.subtitle}>
           {origen
-            ? `${etiquetaFuente(origen.fuente)} · ${origen.lat.toFixed(3)}, ${origen.lng.toFixed(3)}. Toca un tramo en el mapa para cambiar el punto.`
+            ? `${textoOrigenPrevision(origen)}. ${
+                origen.fuente === "gps"
+                  ? "También puedes tocar un tramo en el mapa."
+                  : "Toca otro tramo en el mapa para cambiar el punto."
+              }`
             : "Cielo animado, hora a hora e índice de pesca según el día elegido."}
         </Text>
         {origen && origen.fuente !== "gps" ? (
@@ -242,9 +259,11 @@ export default function PrevisionScreen() {
         <View style={styles.loadingBox} accessibilityLiveRegion="polite">
           <ActivityIndicator color="#fff" size="large" />
           <Text style={styles.loadingText}>
-            {origen?.etiqueta
-              ? `Cargando el tiempo en ${origen.etiqueta}…`
-              : "Cargando el tiempo…"}
+            {origen?.poblacion && origen.fuente !== "gps"
+              ? `Cargando el tiempo en ${origen.poblacion}…`
+              : origen?.etiqueta
+                ? `Cargando el tiempo en ${origen.etiqueta}…`
+                : "Cargando el tiempo…"}
           </Text>
         </View>
       )}
@@ -529,6 +548,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
     lineHeight: 34,
     letterSpacing: -0.4,
+  },
+  poblacionLine: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#fff",
+    marginTop: 8,
+    lineHeight: 22,
   },
   subtitle: {
     fontSize: 14.5,

@@ -24,6 +24,7 @@ interface PuntoConsultaContextValue {
     lng: number;
     fuente?: FuentePuntoConsulta;
     etiqueta?: string;
+    poblacion?: string;
   }) => Promise<void>;
   /** Vuelve a GPS / centro (borra el override del mapa). */
   limpiarPunto: () => Promise<void>;
@@ -59,13 +60,20 @@ export function PuntoConsultaProvider({ children }: { children: React.ReactNode 
   }, [provinciaId]);
 
   const fijarPunto = useCallback(
-    async (args: { lat: number; lng: number; fuente?: FuentePuntoConsulta; etiqueta?: string }) => {
+    async (args: {
+      lat: number;
+      lng: number;
+      fuente?: FuentePuntoConsulta;
+      etiqueta?: string;
+      poblacion?: string;
+    }) => {
       if (!provinciaId) return;
       const full = await guardarPuntoConsulta({
         lat: args.lat,
         lng: args.lng,
         fuente: args.fuente ?? "mapa",
         etiqueta: args.etiqueta,
+        poblacion: args.poblacion,
         provinciaId,
       });
       setPunto(full);

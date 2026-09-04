@@ -38,6 +38,7 @@ import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { etiquetaFuente } from "../services/puntoConsultaService";
+import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
@@ -275,9 +276,21 @@ export default function HomeScreen({ navigation }: Props) {
           vientoMaxKmh: clima.velocidadVientoKmh,
         })
       : [];
-  const etiquetaClima =
-    punto?.etiqueta ??
-    (punto ? etiquetaFuente(punto.fuente) : permisoDenegado ? `Centro de ${provincia.nombre}` : "Tu ubicación");
+  const etiquetaClima = (() => {
+    if (punto?.fuente === "gps") return "Tu ubicación";
+    if (punto?.poblacion) {
+      return punto.etiqueta
+        ? `${punto.etiqueta} · ${punto.poblacion}`
+        : `Predicción · ${punto.poblacion}`;
+    }
+    if (punto?.etiqueta) return punto.etiqueta;
+    if (punto) return etiquetaFuente(punto.fuente);
+    if (ubicacion && permisoDenegado) {
+      const p = resolverPoblacionCercana(ubicacion.lat, ubicacion.lng)?.nombre;
+      return p ? `Centro · ${p}` : `Centro de ${provincia.nombre}`;
+    }
+    return "Tu ubicación";
+  })();
 
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
