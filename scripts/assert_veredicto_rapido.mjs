@@ -45,6 +45,7 @@ for (const needle of [
   "onToggleDetalle",
   "Ver detalle",
   "mostrarTodo",
+  "compactoRow",
 ]) {
   if (!card.includes(needle)) fail(`ConsultaPescaCard sin ${needle}`);
 }

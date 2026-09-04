@@ -114,6 +114,11 @@ export default function HomeScreen({ navigation }: Props) {
     }, [])
   );
 
+  // Al cambiar de punto, el detalle vuelve a plegarse (gesto = expandir)
+  useEffect(() => {
+    setDetalleTramo(false);
+  }, [punto?.lat, punto?.lng, punto?.fuente]);
+
   useEffect(() => {
     if (!puntoListo) return;
     let vivo = true;

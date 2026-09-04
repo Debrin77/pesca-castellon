@@ -10,9 +10,10 @@ import { debeMostrarPescaRec } from "../services/pescaRecService";
 import { guardarPermisoDia, tienePermisoHoy } from "../services/cupoService";
 import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "./ListaAnimada";
-import SemaforoVeredicto from "./SemaforoVeredicto";
+import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
 import { COLORS, RADIUS } from "../theme";
+import { colorSemaforo } from "../services/consultaPescaService";
 
 interface Props {
   consulta: ConsultaPesca;
@@ -64,37 +65,65 @@ export default function ConsultaPescaCard({
   return (
     <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
       <View style={styles.card}>
-        <SemaforoVeredicto consulta={consulta} />
-        <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? COLORS.water : COLORS.textMuted }]}>
-          <Text style={styles.pillText}>
-            {mar
-              ? "Polígono de consulta (orientativo)"
-              : consulta.confianza === "oficial"
-                ? provincia.id === "sevilla"
-                  ? "Polígono DERA / Junta oficial"
-                  : "Polígono ICV oficial"
-                : provincia.id === "sevilla"
-                  ? "Fuera de polígono DERA (aprox.)"
-                  : "Radio del anexo I (aprox.)"}
-          </Text>
-        </View>
-        <Text style={styles.title}>{consulta.titulo}</Text>
-        {consulta.tramo && (
-          <Text style={styles.meta}>
-            Tramo {consulta.tramo.codigo} · {consulta.tramo.rio} · {consulta.tramo.vocacion}
-          </Text>
+        {compacto && !mostrarTodo ? (
+          <>
+            <View style={[styles.compactoRow, { borderLeftColor: colorSemaforo(consulta) }]}>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.compactoHoy, { color: colorSemaforo(consulta) }]}>
+                  {etiquetaHoy(consulta).texto}
+                </Text>
+                <Text style={styles.title} numberOfLines={2}>
+                  {consulta.titulo}
+                </Text>
+                {consulta.tramo ? (
+                  <Text style={styles.meta} numberOfLines={1}>
+                    Tramo {consulta.tramo.codigo} · {consulta.tramo.rio}
+                  </Text>
+                ) : (
+                  <Text style={styles.meta} numberOfLines={1}>
+                    {etiquetaHoy(consulta).sub}
+                  </Text>
+                )}
+              </View>
+            </View>
+            <TouchableOpacity
+              onPress={toggleDetalle}
+              style={styles.btnDetalle}
+              accessibilityRole="button"
+              accessibilityLabel="Ver detalle del tramo"
+            >
+              <Text style={[styles.btnDetalleTxt, { color: acento }]}>Ver detalle ›</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <SemaforoVeredicto consulta={consulta} />
+            <View
+              style={[
+                styles.pill,
+                { backgroundColor: consulta.confianza === "oficial" ? COLORS.water : COLORS.textMuted },
+              ]}
+            >
+              <Text style={styles.pillText}>
+                {mar
+                  ? "Polígono de consulta (orientativo)"
+                  : consulta.confianza === "oficial"
+                    ? provincia.id === "sevilla"
+                      ? "Polígono DERA / Junta oficial"
+                      : "Polígono ICV oficial"
+                    : provincia.id === "sevilla"
+                      ? "Fuera de polígono DERA (aprox.)"
+                      : "Radio del anexo I (aprox.)"}
+              </Text>
+            </View>
+            <Text style={styles.title}>{consulta.titulo}</Text>
+            {consulta.tramo && (
+              <Text style={styles.meta}>
+                Tramo {consulta.tramo.codigo} · {consulta.tramo.rio} · {consulta.tramo.vocacion}
+              </Text>
+            )}
+          </>
         )}
-
-        {!mostrarTodo ? (
-          <TouchableOpacity
-            onPress={toggleDetalle}
-            style={styles.btnDetalle}
-            accessibilityRole="button"
-            accessibilityLabel="Ver detalle del tramo"
-          >
-            <Text style={[styles.btnDetalleTxt, { color: acento }]}>Ver detalle ›</Text>
-          </TouchableOpacity>
-        ) : null}
 
         {mostrarTodo ? (
           <>
@@ -263,4 +292,15 @@ const styles = StyleSheet.create({
   btnGhostText: { color: COLORS.primary, fontWeight: "700", fontSize: 12 },
   btnDetalle: { marginTop: 4, paddingVertical: 6 },
   btnDetalleTxt: { fontSize: 13, fontWeight: "800" },
+  compactoRow: {
+    borderLeftWidth: 4,
+    paddingLeft: 10,
+    paddingVertical: 2,
+  },
+  compactoHoy: {
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    marginBottom: 2,
+  },
 });
