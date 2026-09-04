@@ -11,10 +11,20 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["black_bass", "carpa", "barbo_gitano", "tenca", "carpin", "alburno"],
+    "fichaId": "embalse_minilla",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "tenca",
+      "carpin",
+      "alburno"
+    ],
     "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": ["El Castillo de las Guardas", "El Garrobo"]
+    "municipios": [
+      "El Castillo de las Guardas",
+      "El Garrobo"
+    ]
   },
   {
     "id": "sev-pintado",
@@ -28,10 +38,21 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["black_bass", "lucio", "carpa", "barbo_gitano", "boga", "alburno", "cangrejo_americano"],
+    "fichaId": "embalse_pintado",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "alburno",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir (Viar)",
-    "municipios": ["Cazalla de la Sierra", "El Real de la Jara"]
+    "municipios": [
+      "Cazalla de la Sierra",
+      "El Real de la Jara"
+    ]
   },
   {
     "id": "sev-jose-toran",
@@ -45,10 +66,20 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "carpin", "barbo_gitano", "alburno", "black_bass", "cangrejo_americano"],
+    "fichaId": "embalse_jose_toran",
+    "especies": [
+      "carpa",
+      "carpin",
+      "barbo_gitano",
+      "alburno",
+      "black_bass",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir",
-    "municipios": ["Lora del Río", "Constantina"]
+    "municipios": [
+      "Lora del Río",
+      "Constantina"
+    ]
   },
   {
     "id": "sev-melonares",
@@ -62,10 +93,21 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["black_bass", "carpa", "barbo_gitano", "boga", "lucio", "alburno"],
+    "fichaId": "embalse_melonares",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "lucio",
+      "alburno"
+    ],
     "cuenca": "Guadalquivir (Viar)",
-    "municipios": ["Castilblanco de los Arroyos", "El Pedroso", "Almadén de la Plata"]
+    "municipios": [
+      "Castilblanco de los Arroyos",
+      "El Pedroso",
+      "Almadén de la Plata"
+    ]
   },
   {
     "id": "sev-torre-aguila",
@@ -79,10 +121,21 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "carpin", "tenca", "alburno", "cangrejo_americano", "black_bass"],
+    "fichaId": "embalse_torre_aguila",
+    "especies": [
+      "carpa",
+      "carpin",
+      "tenca",
+      "alburno",
+      "cangrejo_americano",
+      "black_bass"
+    ],
     "cuenca": "Guadalquivir (Salado)",
-    "municipios": ["Utrera", "El Coronil", "Montellano"]
+    "municipios": [
+      "Utrera",
+      "El Coronil",
+      "Montellano"
+    ]
   },
   {
     "id": "sev-agrio",
@@ -96,10 +149,19 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "alburno"],
+    "fichaId": "embalse_agrio",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "carpin",
+      "alburno"
+    ],
     "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": ["Aznalcóllar", "Gerena"]
+    "municipios": [
+      "Aznalcóllar",
+      "Gerena"
+    ]
   },
   {
     "id": "sev-cala",
@@ -113,10 +175,20 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["black_bass", "carpa", "barbo_gitano", "boga", "alburno", "cangrejo_americano"],
+    "fichaId": "embalse_cala",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "alburno",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": ["El Ronquillo", "Castilblanco de los Arroyos"]
+    "municipios": [
+      "El Ronquillo",
+      "Castilblanco de los Arroyos"
+    ]
   },
   {
     "id": "sev-zufre",
@@ -130,10 +202,21 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["black_bass", "lucio", "carpa", "barbo_gitano", "tenca", "alburno", "cangrejo_americano"],
+    "fichaId": "embalse_zufre",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo_gitano",
+      "tenca",
+      "alburno",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": ["Zufre", "El Castillo de las Guardas"]
+    "municipios": [
+      "Zufre",
+      "El Castillo de las Guardas"
+    ]
   },
   {
     "id": "sev-gq-alcala",
@@ -147,10 +230,20 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "barbo_gitano", "boga", "alburno", "siluro", "cangrejo_americano"],
+    "fichaId": "rio_guadalquivir_alcala",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "alburno",
+      "siluro",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir",
-    "municipios": ["Alcalá del Río", "La Algaba"]
+    "municipios": [
+      "Alcalá del Río",
+      "La Algaba"
+    ]
   },
   {
     "id": "sev-gq-sevilla",
@@ -164,10 +257,18 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "alburno", "siluro", "barbo_gitano", "cangrejo_americano"],
+    "fichaId": "rio_guadalquivir_sevilla",
+    "especies": [
+      "carpa",
+      "alburno",
+      "siluro",
+      "barbo_gitano",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir",
-    "municipios": ["Sevilla"]
+    "municipios": [
+      "Sevilla"
+    ]
   },
   {
     "id": "sev-gq-coria",
@@ -181,10 +282,19 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "siluro", "alburno", "barbo_gitano", "cangrejo_americano"],
+    "fichaId": "rio_guadalquivir_coria",
+    "especies": [
+      "carpa",
+      "siluro",
+      "alburno",
+      "barbo_gitano",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir",
-    "municipios": ["Coria del Río", "Puebla del Río"]
+    "municipios": [
+      "Coria del Río",
+      "Puebla del Río"
+    ]
   },
   {
     "id": "sev-guadaira",
@@ -198,10 +308,20 @@
     "regimen": "Recreo",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
-    "fichaId": null,
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "alburno", "cangrejo_americano"],
+    "fichaId": "rio_guadaira",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "carpin",
+      "alburno",
+      "cangrejo_americano"
+    ],
     "cuenca": "Guadalquivir (Guadaíra)",
-    "municipios": ["Alcalá de Guadaíra", "Mairena del Alcor"]
+    "municipios": [
+      "Alcalá de Guadaíra",
+      "Mairena del Alcor"
+    ]
   },
   {
     "id": "sev-corbones-coto",
@@ -216,10 +336,19 @@
     "aprovechamiento": "ZPC",
     "notaAnexo": null,
     "matriculaCoto": "SE-C01",
-    "fichaId": null,
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "tenca"],
+    "fichaId": "rio_corbones_coto",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "boga",
+      "carpin",
+      "tenca"
+    ],
     "cuenca": "Guadalquivir (Corbones)",
-    "municipios": ["Marchena", "La Puebla de Cazalla"]
+    "municipios": [
+      "Marchena",
+      "La Puebla de Cazalla"
+    ]
   },
   {
     "id": "sev-pintado-coto",
@@ -234,10 +363,17 @@
     "aprovechamiento": "ZPC",
     "notaAnexo": null,
     "matriculaCoto": "SE-C02",
-    "fichaId": null,
-    "especies": ["black_bass", "carpa", "lucio", "barbo_gitano"],
+    "fichaId": "embalse_pintado_coto",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "lucio",
+      "barbo_gitano"
+    ],
     "cuenca": "Guadalquivir (Viar)",
-    "municipios": ["Cazalla de la Sierra"]
+    "municipios": [
+      "Cazalla de la Sierra"
+    ]
   },
   {
     "id": "sev-gq-vedado-doaana",
@@ -251,9 +387,12 @@
     "regimen": "No pescable",
     "aprovechamiento": "VP",
     "notaAnexo": null,
-    "fichaId": null,
+    "fichaId": "rio_guadalquivir_vedado_doaana",
     "especies": [],
     "cuenca": "Guadalquivir",
-    "municipios": ["Puebla del Río", "Aznalcázar"]
+    "municipios": [
+      "Puebla del Río",
+      "Aznalcázar"
+    ]
   }
 ]
