@@ -17,6 +17,7 @@ import GraficoEspecie from "../components/GraficoEspecie";
 import { FilaAparejo } from "../components/IconoAparejo";
 import { tallaDestacada } from "../components/TarjetaEspecie";
 import { fotoEspecie } from "../data/especiesMedia";
+import { consejoIdMontajeEspecie, montajesParaEspecie } from "../data/montajesEspecie";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -207,7 +208,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
 
             {equipo ? (
               <View style={styles.gearCard}>
-                <Text style={styles.gearTitle}>Equipo de orilla</Text>
+                <Text style={styles.gearTitle}>{ambito === "costa" ? "Equipo de orilla" : "Equipo recomendado"}</Text>
                 {ambito === "costa" ? <Text style={styles.gearAviso}>{aparejosOrilla.aviso}</Text> : null}
                 <FilaAparejo tipo="cana" titulo="Caña">
                   <Text style={styles.gearRowValue}>{equipo.cana}</Text>
@@ -234,6 +235,25 @@ export default function AparejosScreen({ route, navigation }: Props) {
             ) : (
               <Text style={styles.emptyText}>No hay recomendaciones de equipo para esta especie.</Text>
             )}
+
+            {montajesParaEspecie(sp.id).length > 0 ? (
+              <TouchableOpacity
+                style={styles.montajeCta}
+                onPress={() =>
+                  navigation?.navigate("Consejos", {
+                    consejoId: consejoIdMontajeEspecie(sp.id),
+                    categoria: "montajes",
+                  })
+                }
+                accessibilityRole="button"
+                accessibilityLabel={`Ver montaje de línea para ${sp.nombre}`}
+              >
+                <Text style={styles.montajeCtaTitle}>Cómo montar la línea</Text>
+                <Text style={styles.montajeCtaSub}>
+                  Esquema visual: orden de boya, plomo y anzuelo · {montajesParaEspecie(sp.id)[0].titulo}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </ListaAnimada>
         ) : (
           <Text style={styles.emptyText}>Elige una especie arriba.</Text>
@@ -357,4 +377,14 @@ const styles = StyleSheet.create({
   gearRowValue: { fontSize: 15, color: COLORS.textPrimary, marginTop: 2, lineHeight: 22 },
   gearBullet: { fontSize: 15, color: COLORS.textPrimary, marginTop: 4, marginLeft: 4, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 20, lineHeight: 20 },
+  montajeCta: {
+    marginTop: 14,
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.lg,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+  },
+  montajeCtaTitle: { fontSize: 16, fontWeight: "800", color: COLORS.waterDark },
+  montajeCtaSub: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, lineHeight: 18 },
 });

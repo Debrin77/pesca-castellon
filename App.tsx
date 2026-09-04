@@ -81,6 +81,7 @@ function ZonasLibresStackScreen() {
       <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <ZonasLibresStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <ZonasLibresStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
+      <ZonasLibresStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
     </ZonasLibresStack.Navigator>
   );
 }
@@ -97,6 +98,7 @@ function EspeciesStackScreen() {
       <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <EspeciesStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <EspeciesStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
+      <EspeciesStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
     </EspeciesStack.Navigator>
   );
 }

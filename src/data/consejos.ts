@@ -6,6 +6,7 @@
  */
 
 import type { IdDiagrama } from "./consejosMedia";
+import { MONTAJES_ESPECIE } from "./montajesEspecie";
 
 export type CategoriaConsejo =
   | "nudos"
@@ -14,6 +15,7 @@ export type CategoriaConsejo =
   | "conectores"
   | "cebos"
   | "aparejos"
+  | "montajes"
   | "vocabulario"
   | "seguridad";
 
@@ -400,6 +402,25 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         tags: ["costa", "fotos"],
       },
     ],
+  },
+  {
+    id: "montajes",
+    titulo: "Montajes por especie",
+    subtitulo: "Cómo montar la línea: el de siempre + cómo regular boya/señuelo",
+    items: MONTAJES_ESPECIE.map((m) => ({
+      id: m.consejoId,
+      titulo: m.titulo,
+      resumen: m.resumen,
+      detalle: `${m.regulacion.join(" ")} Alternativa: ${m.alternativa}`,
+      pasos: m.pasos,
+      diagrama: m.diagramaId as IdDiagrama,
+      tags: [
+        "principiante",
+        "montaje",
+        m.ambito,
+        ...m.especieIds.slice(0, 3),
+      ],
+    })),
   },
   {
     id: "vocabulario",

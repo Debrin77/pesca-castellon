@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { COLORS, RADIUS } from "../theme";
 import { GUIAS_MEDIA, type IdDiagrama } from "../data/consejosMedia";
 import GuiaFotoConsejo from "./GuiaFotoConsejo";
+import EsquemaMontajeLinea from "./EsquemaMontajeLinea";
+import { montajePorDiagramaId } from "../data/montajesEspecie";
 
 export type { IdDiagrama };
 
@@ -818,6 +820,12 @@ function anchoMinimo(id: IdDiagrama): number {
  * Pensado para que un principiante entienda el montaje de un vistazo.
  */
 export default function DiagramaConsejo({ id, width = 340 }: Props) {
+  /** Montajes por especie: esquema de línea (orden de piezas + regulación). */
+  const montaje = montajePorDiagramaId(id);
+  if (montaje) {
+    return <EsquemaMontajeLinea montaje={montaje} width={Math.max(width, 280)} />;
+  }
+
   /** Preferir fotografías empaquetadas (más claras para principiantes). */
   const guia = GUIAS_MEDIA[id];
   if (guia) {

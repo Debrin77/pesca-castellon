@@ -23,6 +23,7 @@ import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import LeyendaMapa from "../components/LeyendaMapa";
 import ListaTallasMinimas from "../components/ListaTallasMinimas";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
+import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 
 type LatLng = { latitude: number; longitude: number };
 type ModoEspecies = "continental" | "costa";
@@ -212,6 +213,17 @@ export default function EspeciesScreen({ navigation }: Props) {
     setFichaAbierta(false);
     setCatalogoAbierto(false);
     navigation.navigate("Aparejos", { especieId });
+  }
+
+  function irMontaje(especieId: string) {
+    const consejoId = consejoIdMontajeEspecie(especieId);
+    if (!consejoId) {
+      irAparejos(especieId);
+      return;
+    }
+    setFichaAbierta(false);
+    setCatalogoAbierto(false);
+    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
   }
 
   const especiesConsulta =
@@ -432,6 +444,7 @@ export default function EspeciesScreen({ navigation }: Props) {
                   index={i}
                   enVeda={consulta.ambito === "maritimo" ? undefined : estaEnVeda(sp.id)}
                   onAparejos={() => irAparejos(sp.id)}
+                  onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
                 />
               ))
             )}
@@ -512,7 +525,14 @@ export default function EspeciesScreen({ navigation }: Props) {
         </View>
         {catalogo === "rio" &&
           speciesCatalog.map((sp: any, i: number) => (
-            <TarjetaEspecie key={sp.id} sp={sp} index={i} enVeda={estaEnVeda(sp.id)} onAparejos={() => irAparejos(sp.id)} />
+            <TarjetaEspecie
+              key={sp.id}
+              sp={sp}
+              index={i}
+              enVeda={estaEnVeda(sp.id)}
+              onAparejos={() => irAparejos(sp.id)}
+              onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
+            />
           ))}
         {!soloContinental && catalogo === "mar" && (
           <>
@@ -521,7 +541,13 @@ export default function EspeciesScreen({ navigation }: Props) {
               Las 15 especies más usuales desde orilla en Castellón (más invasoras). El resto queda en Tallas.
             </Text>
             {orillaSeleccion.map((sp: any, i: number) => (
-              <TarjetaEspecie key={sp.id} sp={sp} index={i} onAparejos={() => irAparejos(sp.id)} />
+              <TarjetaEspecie
+                key={sp.id}
+                sp={sp}
+                index={i}
+                onAparejos={() => irAparejos(sp.id)}
+                onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
+              />
             ))}
           </>
         )}
