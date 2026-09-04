@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
   consultarPuntoPesca,
@@ -13,6 +13,14 @@ import {
 } from "../services/consultaPescaService";
 import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
+import { formatearCoords } from "../services/coordsUtils";
+import {
+  cancelarPickUbicacion,
+  hayPickUbicacion,
+  motivoPickActivo,
+  MotivoUbicacionPendiente,
+  resolverPickUbicacion,
+} from "../services/ubicacionPendiente";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import VentanaConsulta from "../components/VentanaConsulta";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -46,7 +54,14 @@ interface Props {
   navigation: any;
 }
 
+type ParamsMapa = {
+  modoAnadirPunto?: boolean;
+  motivoPick?: MotivoUbicacionPendiente;
+  centrarEn?: { lat: number; lng: number; nombre?: string };
+};
+
 export default function ZonasLibresScreen({ navigation }: Props) {
+  const route = useRoute<any>();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -77,6 +92,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [tracks, setTracks] = useState<TrackPesca[]>([]);
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
+  const [modoAnadir, setModoAnadir] = useState(false);
+  const [motivoPick, setMotivoPick] = useState<MotivoUbicacionPendiente | null>(null);
   const mar = !soloContinental && modo === "costa";
 
   useLayoutEffect(() => {
@@ -109,7 +126,29 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         setTracks(t);
         setGrabandoId(trackActivo(t)?.id ?? null);
       });
-    }, [])
+
+      const p = (route.params ?? {}) as ParamsMapa;
+      const pickActivo = hayPickUbicacion() || !!p.modoAnadirPunto;
+      const motivo = p.motivoPick ?? motivoPickActivo();
+      setModoAnadir(pickActivo);
+      setMotivoPick(motivo);
+
+      if (p.centrarEn) {
+        const { lat, lng, nombre } = p.centrarEn;
+        setCamara({ latitude: lat, longitude: lng, zoom: 15, nonce: Date.now() });
+        setMarcador({ latitude: lat, longitude: lng });
+        const c = consultarToqueMapa(lat, lng);
+        setConsulta(c);
+        setFichaAbierta(true);
+        setCapas((prev) => ({ ...prev, misPuntos: true }));
+        void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: nombre ?? c.titulo });
+        navigation.setParams?.({ centrarEn: undefined });
+      }
+
+      if (pickActivo) {
+        navigation.setParams?.({ modoAnadirPunto: undefined, motivoPick: undefined });
+      }
+    }, [route.params, navigation, fijarPunto])
   );
 
   useEffect(() => {
@@ -287,8 +326,76 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
   }
 
+  function salirModoAnadir() {
+    cancelarPickUbicacion();
+    setModoAnadir(false);
+    setMotivoPick(null);
+  }
+
+  async function guardarMarcadorComoPunto() {
+    if (!marcador) {
+      Alert.alert("Mapa", "Pulsa primero un sitio en el mapa.");
+      return;
+    }
+    const lat = marcador.latitude;
+    const lng = marcador.longitude;
+    const nombre = consulta?.titulo?.trim() || `Punto del ${new Date().toLocaleDateString("es-ES")}`;
+    await guardarPunto({
+      nombre,
+      lat,
+      lng,
+      zonaRelacionadaId: consulta?.tramo?.fichaId ?? consulta?.tramo?.id ?? null,
+    });
+    setPuntosPersonales(await obtenerPuntosGuardados());
+    setCapas((prev) => ({ ...prev, misPuntos: true }));
+
+    if (modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
+      resolverPickUbicacion({ lat, lng, etiqueta: nombre });
+      setModoAnadir(false);
+      setMotivoPick(null);
+      setFichaAbierta(false);
+      navigation.navigate("Capturas", { screen: "CapturasMain" });
+      return;
+    }
+
+    Alert.alert("Punto guardado", `${nombre}\n${formatearCoords(lat, lng)}`);
+  }
+
+  function usarUbicacionParaCaptura() {
+    if (!marcador) {
+      Alert.alert("Mapa", "Pulsa primero un sitio en el mapa.");
+      return;
+    }
+    const lat = marcador.latitude;
+    const lng = marcador.longitude;
+    const etiqueta = consulta?.titulo?.trim() || formatearCoords(lat, lng);
+    resolverPickUbicacion({ lat, lng, etiqueta });
+    setModoAnadir(false);
+    setMotivoPick(null);
+    setFichaAbierta(false);
+    navigation.navigate("Capturas", { screen: "CapturasMain" });
+  }
+
   return (
     <View style={[styles.container, mar && styles.containerMar]}>
+      {modoAnadir ? (
+        <View style={styles.bannerAnadir}>
+          <View style={{ flex: 1, paddingRight: 8 }}>
+            <Text style={styles.bannerAnadirTitulo}>
+              {motivoPick === "captura" ? "Ubicación de la captura" : "Añadir punto en el mapa"}
+            </Text>
+            <Text style={styles.bannerAnadirTxt}>
+              {motivoPick === "captura"
+                ? "Pulsa el mapa y confirma la ubicación en la ficha."
+                : `Toca cualquier sitio de ${provincia.nombre} y pulsa «Guardar este punto».`}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={salirModoAnadir} accessibilityRole="button" accessibilityLabel="Cancelar">
+            <Text style={styles.bannerAnadirCancel}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
       <View style={[styles.searchBox, mar && styles.searchBoxMar]}>
         <TextInput
           style={styles.searchInput}
@@ -557,9 +664,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
         <Text style={styles.hint}>
-          {mar
-            ? "Pin de agua = playa. Rojo = vedado. Gris = puerto. La ficha se abre a pantalla completa."
-            : "Verde = libre. Ámbar = coto. Rojo = vedado. La ficha se abre a pantalla completa."}
+          {modoAnadir
+            ? motivoPick === "captura"
+              ? "Pulsa el mapa · en la ficha elige «Usar esta ubicación»."
+              : "Pulsa el mapa · en la ficha elige «Guardar este punto»."
+            : mar
+              ? "Pin de agua = playa. Rojo = vedado. Gris = puerto. La ficha se abre a pantalla completa."
+              : "Verde = libre. Ámbar = coto. Rojo = vedado. Pulsa el mapa para consultar o guardar un punto."}
         </Text>
         {consulta && !fichaAbierta ? (
           <TouchableOpacity style={[styles.reabrir, mar && styles.reabrirMar]} onPress={() => setFichaAbierta(true)}>
@@ -591,21 +702,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } });
               }}
             />
-            {(consulta.tramo || consulta.ambito === "maritimo") && (
-              <TouchableOpacity
-                style={styles.saveSpotButton}
-                onPress={async () => {
-                  await guardarPunto({
-                    nombre: consulta.titulo,
-                    lat: marcador?.latitude ?? 0,
-                    lng: marcador?.longitude ?? 0,
-                    zonaRelacionadaId: consulta.tramo?.fichaId ?? consulta.tramo?.id,
-                  });
-                  setPuntosPersonales(await obtenerPuntosGuardados());
-                }}
-              >
-                <Text style={styles.saveSpotButtonText}>Guardar este punto</Text>
-              </TouchableOpacity>
+            {(consulta.tramo || consulta.ambito === "maritimo" || marcador) && (
+              <>
+                {motivoPick === "captura" ? (
+                  <TouchableOpacity style={styles.saveSpotButton} onPress={usarUbicacionParaCaptura}>
+                    <Text style={styles.saveSpotButtonText}>Usar esta ubicación</Text>
+                  </TouchableOpacity>
+                ) : null}
+                <TouchableOpacity style={styles.saveSpotButton} onPress={guardarMarcadorComoPunto}>
+                  <Text style={styles.saveSpotButtonText}>
+                    {motivoPick === "punto" ? "Guardar este punto y volver" : "Guardar este punto"}
+                  </Text>
+                </TouchableOpacity>
+              </>
             )}
           </>
         ) : null}
@@ -721,4 +830,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   saveSpotButtonText: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 13 },
+  bannerAnadir: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.primaryDark,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  bannerAnadirTitulo: { color: "#fff", fontWeight: "700", fontSize: 13 },
+  bannerAnadirTxt: { color: "#d7e8df", fontSize: 11.5, marginTop: 2, lineHeight: 15 },
+  bannerAnadirCancel: { color: "#fff", fontWeight: "700", fontSize: 12 },
 });

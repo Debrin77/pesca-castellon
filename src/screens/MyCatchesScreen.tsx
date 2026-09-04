@@ -8,7 +8,6 @@ import {
   TextInput,
   Alert,
   Image,
-  Platform,
 } from "react-native";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import { useProvincia } from "../context/ProvinciaContext";
@@ -31,6 +30,12 @@ import { construirGpx, exportarYCompartirGpx } from "../services/gpxService";
 import { obtenerTracks } from "../services/trackService";
 import { resumenCupoHoy, CupoEspecieInfo } from "../services/cupoService";
 import type { ModalidadPesca } from "../data/modalidades";
+import { formatearCoords, parsearLatLng } from "../services/coordsUtils";
+import {
+  cancelarPickUbicacion,
+  consumirPickUbicacion,
+  iniciarPickUbicacion,
+} from "../services/ubicacionPendiente";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
@@ -42,6 +47,10 @@ type Tab = "favoritos" | "puntos" | "capturas";
 
 interface Props {
   navigation: any;
+}
+
+function nombrePuntoPorDefecto(): string {
+  return `Punto del ${new Date().toLocaleDateString("es-ES")}`;
 }
 
 export default function MyCatchesScreen({ navigation }: Props) {
@@ -66,6 +75,15 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [cupoInfo, setCupoInfo] = useState<CupoEspecieInfo | null>(null);
+  const [mostrarCoordsCaptura, setMostrarCoordsCaptura] = useState(false);
+  const [latCaptura, setLatCaptura] = useState("");
+  const [lngCaptura, setLngCaptura] = useState("");
+
+  const [mostrarFormPunto, setMostrarFormPunto] = useState(false);
+  const [nombrePunto, setNombrePunto] = useState("");
+  const [notasPunto, setNotasPunto] = useState("");
+  const [latPunto, setLatPunto] = useState("");
+  const [lngPunto, setLngPunto] = useState("");
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -76,6 +94,19 @@ export default function MyCatchesScreen({ navigation }: Props) {
   useFocusEffect(
     useCallback(() => {
       cargar();
+      const elegidaPunto = consumirPickUbicacion("punto");
+      if (elegidaPunto) {
+        setTab("puntos");
+        // El mapa ya persistió el punto; solo refrescamos la lista.
+        Alert.alert("Punto guardado", elegidaPunto.etiqueta ?? formatearCoords(elegidaPunto.lat, elegidaPunto.lng));
+      }
+      const elegidaCaptura = consumirPickUbicacion("captura");
+      if (elegidaCaptura) {
+        setTab("capturas");
+        setMostrarFormulario(true);
+        setCoords({ lat: elegidaCaptura.lat, lng: elegidaCaptura.lng });
+        setNombreLugar((prev) => prev || elegidaCaptura.etiqueta || "");
+      }
     }, [cargar])
   );
 
@@ -114,6 +145,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setNotas("");
     setFotoUri(null);
     setCoords(null);
+    setLatCaptura("");
+    setLngCaptura("");
+    setMostrarCoordsCaptura(false);
     setMostrarFormulario(false);
     setMostrarId(false);
     cargar();
@@ -141,7 +175,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
     }
   }
 
-  async function anadirUbicacionCaptura() {
+  async function anadirUbicacionCapturaGps() {
     const ok = await solicitarPermisoUbicacion();
     if (!ok) {
       Alert.alert("Ubicación", "Activa el permiso para guardar el punto en el mapa.");
@@ -153,9 +187,28 @@ export default function MyCatchesScreen({ navigation }: Props) {
       return;
     }
     setCoords(loc);
+    setMostrarCoordsCaptura(false);
   }
 
-  async function handleGuardarPuntoActual() {
+  function aplicarCoordsCapturaManual() {
+    const r = parsearLatLng(latCaptura, lngCaptura);
+    if (!r.ok) {
+      Alert.alert("Coordenadas", r.error);
+      return;
+    }
+    setCoords(r.coords);
+    setMostrarCoordsCaptura(false);
+  }
+
+  function irAMapaParaCaptura() {
+    iniciarPickUbicacion("captura");
+    navigation.navigate("Mapa", {
+      screen: "ZonasLibresMain",
+      params: { modoAnadirPunto: true, motivoPick: "captura" },
+    });
+  }
+
+  async function handleGuardarPuntoGps() {
     const ok = await solicitarPermisoUbicacion();
     if (!ok) {
       Alert.alert("Ubicación necesaria", "Activa el permiso de ubicación para guardar tu punto actual.");
@@ -166,8 +219,54 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("No se pudo obtener tu ubicación", "Inténtalo de nuevo en un momento.");
       return;
     }
-    await guardarPunto({ nombre: `Punto del ${new Date().toLocaleDateString("es-ES")}`, lat: loc.lat, lng: loc.lng });
+    await guardarPunto({
+      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      lat: loc.lat,
+      lng: loc.lng,
+      notas: notasPunto.trim() || undefined,
+    });
+    setNombrePunto("");
+    setNotasPunto("");
+    setMostrarFormPunto(false);
     cargar();
+    Alert.alert("Punto guardado", `GPS: ${formatearCoords(loc.lat, loc.lng)}`);
+  }
+
+  async function handleGuardarPuntoCoords() {
+    const r = parsearLatLng(latPunto, lngPunto);
+    if (!r.ok) {
+      Alert.alert("Coordenadas", r.error);
+      return;
+    }
+    await guardarPunto({
+      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      lat: r.coords.lat,
+      lng: r.coords.lng,
+      notas: notasPunto.trim() || undefined,
+    });
+    setNombrePunto("");
+    setNotasPunto("");
+    setLatPunto("");
+    setLngPunto("");
+    setMostrarFormPunto(false);
+    cargar();
+    Alert.alert("Punto guardado", formatearCoords(r.coords.lat, r.coords.lng));
+  }
+
+  function irAMapaParaPunto() {
+    iniciarPickUbicacion("punto");
+    navigation.navigate("Mapa", {
+      screen: "ZonasLibresMain",
+      params: { modoAnadirPunto: true, motivoPick: "punto" },
+    });
+  }
+
+  function verPuntoEnMapa(p: PuntoGuardado) {
+    cancelarPickUbicacion();
+    navigation.navigate("Mapa", {
+      screen: "ZonasLibresMain",
+      params: { centrarEn: { lat: p.lat, lng: p.lng, nombre: p.nombre } },
+    });
   }
 
   function especieInfo(id: string) {
@@ -296,12 +395,61 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 <Text style={styles.formLabel}>Notas (opcional)</Text>
                 <TextInput style={[styles.input, { height: 60 }]} value={notas} onChangeText={setNotas} multiline placeholder="Señuelo usado, condiciones..." />
 
+                <Text style={styles.formLabel}>Ubicación (opcional)</Text>
+                <View style={{ flexDirection: "row", gap: 8, marginTop: 4 }}>
+                  <TouchableOpacity style={styles.methodBtn} onPress={anadirUbicacionCapturaGps}>
+                    <Text style={styles.methodBtnTxt}>GPS</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.methodBtn} onPress={irAMapaParaCaptura}>
+                    <Text style={styles.methodBtnTxt}>Mapa</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.methodBtn}
+                    onPress={() => setMostrarCoordsCaptura((v) => !v)}
+                  >
+                    <Text style={styles.methodBtnTxt}>Coords</Text>
+                  </TouchableOpacity>
+                </View>
+                {coords ? (
+                  <Text style={styles.coordsOk}>📍 {formatearCoords(coords.lat, coords.lng)}</Text>
+                ) : (
+                  <Text style={styles.hintMini}>Sin ubicación · elige GPS, mapa o coordenadas</Text>
+                )}
+                {mostrarCoordsCaptura && (
+                  <View style={styles.coordsBox}>
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.formLabel}>Latitud</Text>
+                        <TextInput
+                          style={styles.input}
+                          value={latCaptura}
+                          onChangeText={setLatCaptura}
+                          keyboardType="numbers-and-punctuation"
+                          placeholder="39.986"
+                          autoCapitalize="none"
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.formLabel}>Longitud</Text>
+                        <TextInput
+                          style={styles.input}
+                          value={lngCaptura}
+                          onChangeText={setLngCaptura}
+                          keyboardType="numbers-and-punctuation"
+                          placeholder="-0.049"
+                          autoCapitalize="none"
+                        />
+                      </View>
+                    </View>
+                    <TouchableOpacity style={styles.secondaryBtn} onPress={aplicarCoordsCapturaManual}>
+                      <Text style={styles.secondaryBtnTxt}>Usar estas coordenadas</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
                   <TouchableOpacity style={styles.photoBtn} onPress={elegirFoto}>
                     <Text style={styles.photoBtnTxt}>{fotoUri ? "Cambiar foto" : "Añadir foto"}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.photoBtn} onPress={anadirUbicacionCaptura}>
-                    <Text style={styles.photoBtnTxt}>{coords ? "📍 OK" : "Ubicación"}</Text>
                   </TouchableOpacity>
                 </View>
                 {fotoUri ? (
@@ -367,15 +515,99 @@ export default function MyCatchesScreen({ navigation }: Props) {
 
         {tab === "puntos" && (
           <>
-            <TouchableOpacity style={styles.addButton} onPress={handleGuardarPuntoActual}>
-              <Text style={styles.addButtonText}>Guardar mi ubicación actual como punto</Text>
-            </TouchableOpacity>
+            <Text style={styles.lead}>
+              Guarda sitios de {provincia.nombre} para volver otro día: por GPS del teléfono, pulsando el mapa o
+              escribiendo latitud y longitud. Cada provincia tiene su propia lista.
+            </Text>
+
+            <View style={styles.methodRow}>
+              <TouchableOpacity style={styles.methodBtnPrimary} onPress={handleGuardarPuntoGps}>
+                <Text style={styles.methodBtnPrimaryTxt}>GPS</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.methodBtnPrimary} onPress={irAMapaParaPunto}>
+                <Text style={styles.methodBtnPrimaryTxt}>Mapa</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.methodBtnPrimary}
+                onPress={() => setMostrarFormPunto((v) => !v)}
+              >
+                <Text style={styles.methodBtnPrimaryTxt}>Coords</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.hintMini}>
+              GPS guarda al instante · Mapa te lleva a tocar el mapa · Coords abre el formulario
+            </Text>
+
+            {mostrarFormPunto && (
+              <View style={styles.formCard}>
+                <Text style={styles.formLabel}>Nombre</Text>
+                <TextInput
+                  style={styles.input}
+                  value={nombrePunto}
+                  onChangeText={setNombrePunto}
+                  placeholder={nombrePuntoPorDefecto()}
+                />
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.formLabel}>Latitud</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={latPunto}
+                      onChangeText={setLatPunto}
+                      keyboardType="numbers-and-punctuation"
+                      placeholder={provincia.id === "sevilla" ? "37.389" : "39.986"}
+                      autoCapitalize="none"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.formLabel}>Longitud</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={lngPunto}
+                      onChangeText={setLngPunto}
+                      keyboardType="numbers-and-punctuation"
+                      placeholder={provincia.id === "sevilla" ? "-5.985" : "-0.049"}
+                      autoCapitalize="none"
+                    />
+                  </View>
+                </View>
+                <Text style={styles.formLabel}>Notas (opcional)</Text>
+                <TextInput
+                  style={[styles.input, { height: 56 }]}
+                  value={notasPunto}
+                  onChangeText={setNotasPunto}
+                  multiline
+                  placeholder="Acceso, aparcamiento, señuelo…"
+                />
+                <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                      setMostrarFormPunto(false);
+                      setLatPunto("");
+                      setLngPunto("");
+                      setNombrePunto("");
+                      setNotasPunto("");
+                    }}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.saveButton} onPress={handleGuardarPuntoCoords}>
+                    <Text style={styles.saveButtonText}>Guardar punto</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
 
             <Text style={styles.sectionTitle}>Puntos guardados ({puntos.length})</Text>
-            {puntos.length === 0 && <Text style={styles.emptyText}>Aún no has guardado ningún punto propio.</Text>}
+            {puntos.length === 0 && (
+              <Text style={styles.emptyText}>
+                Aún no has guardado ningún punto en {provincia.nombre}. Usa GPS, el mapa o las coordenadas.
+              </Text>
+            )}
             {puntos.map((p, i) => (
               <ListaAnimada key={p.id} index={i}>
-                <View style={styles.card}>
+                <TouchableOpacity style={styles.cardPad} onPress={() => verPuntoEnMapa(p)}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <Text style={styles.cardTitle}>{p.nombre}</Text>
                     <TouchableOpacity
@@ -389,7 +621,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   <Text style={styles.cardMeta}>
                     {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
                   </Text>
-                </View>
+                  {p.notas ? <Text style={styles.cardNotas}>{p.notas}</Text> : null}
+                  <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                </TouchableOpacity>
               </ListaAnimada>
             ))}
           </>
@@ -423,6 +657,36 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   addButtonText: { color: "#fff", fontWeight: "700", fontSize: 13.5 },
+  methodRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
+  methodBtnPrimary: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  methodBtnPrimaryTxt: { color: "#fff", fontWeight: "700", fontSize: 13 },
+  methodBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 10,
+    alignItems: "center",
+    backgroundColor: COLORS.mist,
+  },
+  methodBtnTxt: { fontWeight: "700", color: COLORS.textSecondary, fontSize: 12 },
+  hintMini: { fontSize: 11.5, color: COLORS.textMuted, marginBottom: 12, lineHeight: 16 },
+  coordsOk: { fontSize: 12.5, color: COLORS.success, fontWeight: "600", marginTop: 8 },
+  coordsBox: { marginTop: 8 },
+  secondaryBtn: {
+    marginTop: 10,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  secondaryBtnTxt: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 13 },
   formCard: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
@@ -470,7 +734,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.success,
   },
   saveButtonText: { color: "#fff", fontWeight: "700" },
-  sectionTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary, marginBottom: 10 },
+  sectionTitle: { fontSize: 15, fontWeight: "700", color: COLORS.textPrimary, marginBottom: 10, marginTop: 4 },
   emptyText: { fontSize: 13, color: COLORS.textMuted, fontStyle: "italic", lineHeight: 18 },
   card: {
     backgroundColor: COLORS.surface,
@@ -482,9 +746,19 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     ...SHADOW,
   },
+  cardPad: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW,
+  },
   cardTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary, flex: 1, paddingRight: 8 },
   cardMeta: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   cardNotas: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, fontStyle: "italic" },
+  verMapaHint: { fontSize: 11.5, color: COLORS.primary, fontWeight: "600", marginTop: 6 },
   deleteText: { fontSize: 12, color: COLORS.danger, fontWeight: "600" },
   photoBtn: {
     flex: 1,
