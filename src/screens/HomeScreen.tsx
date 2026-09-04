@@ -480,6 +480,7 @@ export default function HomeScreen({ navigation }: Props) {
                         onPress={() =>
                           navigation.navigate("Mapa", {
                             screen: "ZonasLibresMain",
+                            params: { centrarEn: { lat: p.lat, lng: p.lng, nombre: p.nombre } },
                           })
                         }
                       >
