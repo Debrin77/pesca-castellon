@@ -26,7 +26,7 @@ import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { etiquetaFuente, textoOrigenPrevision, type FuentePuntoConsulta } from "../services/puntoConsultaService";
+import { textoOrigenPrevision, type FuentePuntoConsulta } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
