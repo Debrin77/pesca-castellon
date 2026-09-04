@@ -82,7 +82,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     misPuntos: true,
     radar: false,
     batimetria: false,
-    tracks: true,
+    tracks: false,
   });
   const [localizando, setLocalizando] = useState(false);
   const [modo, setModo] = useState<"continental" | "costa">("continental");
@@ -532,7 +532,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Text style={[styles.layerChipText, capas.batimetria && { color: PIN.playa }]}>Profundidad</Text>
           </TouchableOpacity>
         ) : null}
-        {capasExtra || capas.tracks ? (
+        {capasExtra ? (
           <TouchableOpacity style={[styles.layerChip, capas.tracks && styles.layerChipActive]} onPress={() => toggleCapa("tracks")}>
             <Text style={[styles.layerChipText, capas.tracks && styles.layerChipTextActive]}>Rutas</Text>
           </TouchableOpacity>
