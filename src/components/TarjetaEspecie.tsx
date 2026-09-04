@@ -1,10 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import ListaAnimada from "./ListaAnimada";
 import MejorHoraPesca from "./MejorHoraPesca";
 import GraficoEspecie from "./GraficoEspecie";
 import { caraDeEspecie } from "../data/carasVisuales";
+import { fotoEspecie } from "../data/especiesMedia";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: string } {
@@ -46,6 +47,7 @@ export default function TarjetaEspecie({
   const talla = tallaDestacada(sp);
   const invasora = sp.invasora || sp.id === "cangrejo_azul";
   const cara = caraDeEspecie(sp);
+  const foto = fotoEspecie(sp.id);
 
   return (
     <ListaAnimada key={sp.id} index={index} replayKey={sp.id}>
@@ -59,8 +61,11 @@ export default function TarjetaEspecie({
             </Text>
           </View>
         </LinearGradient>
+        {foto ? (
+          <Image source={foto} style={styles.fotoReal} accessibilityLabel={`Foto de ${sp.nombre}`} />
+        ) : null}
         <View style={styles.hero}>
-          <GraficoEspecie id={sp.id} nombre={sp.nombre} size={92} />
+          {foto ? null : <GraficoEspecie id={sp.id} nombre={sp.nombre} size={92} />}
           <View style={styles.tallaCaja}>
             <Text style={styles.tallaKicker}>{talla.unidad === "kg" ? "Peso mínimo" : talla.unidad ? "Talla mínima" : "Régimen"}</Text>
             <Text style={styles.tallaNum}>
@@ -127,6 +132,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   caraEmoji: { fontSize: 28 },
+  fotoReal: {
+    width: "100%",
+    height: 176,
+    backgroundColor: COLORS.mist,
+  },
   caraKicker: {
     color: "rgba(255,255,255,0.92)",
     fontSize: 10,
