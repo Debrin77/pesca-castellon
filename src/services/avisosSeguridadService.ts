@@ -12,6 +12,7 @@
  */
 
 import { Platform } from "react-native";
+import { distanciaKm } from "./geoService";
 import { getProvinciaActiva } from "../provincias/runtime";
 import type { ProvinciaId } from "../provincias/types";
 
@@ -289,18 +290,30 @@ async function caudalPunto(p: PuntoRio): Promise<AvisoSeguridad | null> {
 }
 
 export async function obtenerAvisosCaudal(
-  provinciaId: ProvinciaId = getProvinciaActiva().id
+  provinciaId: ProvinciaId = getProvinciaActiva().id,
+  cercaDe?: { lat: number; lng: number } | null
 ): Promise<AvisoSeguridad[]> {
-  const puntos = RIOS_POR_PROVINCIA[provinciaId] ?? RIOS_POR_PROVINCIA.castellon;
+  const todos = RIOS_POR_PROVINCIA[provinciaId] ?? RIOS_POR_PROVINCIA.castellon;
+  let puntos = todos;
+  if (cercaDe && Number.isFinite(cercaDe.lat) && Number.isFinite(cercaDe.lng)) {
+    // Prioriza los ríos más cercanos al punto del mapa (máx. 2).
+    puntos = [...todos]
+      .map((p) => ({ p, d: distanciaKm(cercaDe.lat, cercaDe.lng, p.lat, p.lng) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2)
+      .map((x) => x.p);
+  }
   const resultados = await Promise.all(puntos.map(caudalPunto));
   return resultados.filter((x): x is AvisoSeguridad => !!x);
 }
 
-export async function obtenerAvisosSeguridadPesca(): Promise<AvisoSeguridad[]> {
+export async function obtenerAvisosSeguridadPesca(
+  cercaDe?: { lat: number; lng: number } | null
+): Promise<AvisoSeguridad[]> {
   const provincia = getProvinciaActiva();
   const [meteo, caudal] = await Promise.all([
     obtenerAvisosMeteoAlarm(provincia.id, provincia.continentalOnly),
-    obtenerAvisosCaudal(provincia.id),
+    obtenerAvisosCaudal(provincia.id, cercaDe),
   ]);
   const all = [...meteo, ...caudal];
   const seen = new Set<string>();

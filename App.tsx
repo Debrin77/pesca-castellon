@@ -11,6 +11,7 @@ import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
+import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
 import { onboardingVisto } from "./src/services/offlineService";
@@ -265,9 +266,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ProvinciaProvider>
-        <AccesoProvider>
-          <AppRaiz />
-        </AccesoProvider>
+        <PuntoConsultaProvider>
+          <AccesoProvider>
+            <AppRaiz />
+          </AccesoProvider>
+        </PuntoConsultaProvider>
       </ProvinciaProvider>
     </SafeAreaProvider>
   );

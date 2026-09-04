@@ -25,6 +25,7 @@ import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosL
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
@@ -36,6 +37,7 @@ interface Props {
 
 export default function ZonasLibresScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
+  const { fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const cuencas = provincia.cuencas.length ? provincia.cuencas : cuencasProvincia();
@@ -159,6 +161,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setModo("continental");
     mostrarFicha(consultarPorTramo(z));
     setMarcador({ latitude: z.lat, longitude: z.lng });
+    void fijarPunto({ lat: z.lat, lng: z.lng, fuente: "zona", etiqueta: z.nombre });
     if (!tramoUsaRadioAnexo(z)) {
       setCamara({ latitude: z.lat, longitude: z.lng, zoom: 15, nonce: Date.now() });
     }
@@ -174,6 +177,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }
     mostrarFicha(r);
     setMarcador({ latitude: lat, longitude: lng });
+    void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
   }
 
   function evaluarPlaya(id: string) {
@@ -181,9 +185,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     const p = playas.find((x) => x.id === id);
     if (!p) return;
     setModo("costa");
-    mostrarFicha(consultarCosta(p.lat, p.lng));
+    const c = consultarCosta(p.lat, p.lng);
+    mostrarFicha(c);
     setMarcador({ latitude: p.lat, longitude: p.lng });
     setCamara({ latitude: p.lat, longitude: p.lng, zoom: 14, nonce: Date.now() });
+    void fijarPunto({ lat: p.lat, lng: p.lng, fuente: "zona", etiqueta: p.nombre });
   }
 
   function cambiarModo(siguiente: "continental" | "costa") {
@@ -221,6 +227,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }
     evaluarPunto(loc.lat, loc.lng);
     setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
+    void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
   }
 
   return (

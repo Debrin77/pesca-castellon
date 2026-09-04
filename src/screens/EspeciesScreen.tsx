@@ -8,6 +8,7 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -34,6 +35,7 @@ function camaraProvincia(region: { latitude: number; longitude: number }) {
 
 export default function EspeciesScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
+  const { fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
@@ -96,6 +98,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           if (!soloContinental && r.ambito === "maritimo") setCatalogo("mar");
           setMarcador({ latitude: loc.lat, longitude: loc.lng });
           setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
+          void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
         }
       }
     }
@@ -110,6 +113,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     else setCatalogo("rio");
     setFichaAbierta(true);
     setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
+    void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
   }
 
   function evaluarTramo(z: TramoOficial) {
@@ -117,6 +121,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     setMarcador({ latitude: z.lat, longitude: z.lng });
     setCatalogo("rio");
     setFichaAbierta(true);
+    void fijarPunto({ lat: z.lat, lng: z.lng, fuente: "zona", etiqueta: z.nombre });
   }
 
   function irAparejos(especieId: string) {
