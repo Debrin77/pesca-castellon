@@ -70,7 +70,12 @@ if (!especiesSrc.includes("camaraProvincia") && !especiesSrc.includes("provincia
   ok("EspeciesScreen ancla cámara a la provincia");
 }
 
-if (!especiesSrc.includes("Catálogo · ${provincia.nombre}") && !especiesSrc.includes("Catálogo · ")) {
+if (
+  !especiesSrc.includes("Catálogo · ${provincia.nombre}") &&
+  !especiesSrc.includes("Catálogo ríos · ${provincia.nombre}") &&
+  !especiesSrc.includes("Catálogo orilla · ${provincia.nombre}") &&
+  !especiesSrc.includes("Catálogo · ")
+) {
   fail("El catálogo debe titularse con el nombre de provincia");
 } else {
   ok("Catálogo titulado por provincia");

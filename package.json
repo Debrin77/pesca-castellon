@@ -6,7 +6,7 @@
   "scripts": {
     "sync:icv": "node scripts/build_icv_geojson.mjs",
     "sync:sevilla": "node scripts/build_sevilla_pesca_geojson.mjs",
-    "assert": "node scripts/assert_especies_por_provincia.mjs && node scripts/assert_camara_por_provincia.mjs && node scripts/assert_prevision_punto_mapa.mjs && node scripts/assert_repaso_errores.mjs && node scripts/assert_sevilla_sitios_saih.mjs && node scripts/assert_features_expertas.mjs && node scripts/assert_guardar_puntos_ubicacion.mjs && node scripts/assert_ritual_ux.mjs && node scripts/assert_fotos_mapa_capturas.mjs && node scripts/assert_especies_costa_castellon.mjs && node scripts/assert_salgo_ubicacion.mjs && node scripts/assert_veredicto_rapido.mjs",
+    "assert": "node scripts/assert_especies_por_provincia.mjs && node scripts/assert_camara_por_provincia.mjs && node scripts/assert_prevision_punto_mapa.mjs && node scripts/assert_repaso_errores.mjs && node scripts/assert_sevilla_sitios_saih.mjs && node scripts/assert_features_expertas.mjs && node scripts/assert_guardar_puntos_ubicacion.mjs && node scripts/assert_ritual_ux.mjs && node scripts/assert_fotos_mapa_capturas.mjs && node scripts/assert_especies_costa_castellon.mjs && node scripts/assert_salgo_ubicacion.mjs && node scripts/assert_veredicto_rapido.mjs && node scripts/assert_especies_continental_equivalente.mjs",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
