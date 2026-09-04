@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 import { resumenLicenciasCortas } from "../services/storageService";
 
@@ -12,11 +13,11 @@ interface Props {
 
 const CLAVE_PLEGADO = "@pesca_castellon/banner_licencia_plegado";
 
-/**
- * Aviso GVA: continental + marítima recreativa desde tierra.
- * Se puede plegar para liberar pantalla en Inicio.
- */
+/** Aviso de licencias según provincia activa. */
 export default function LicenseBanner({ onPress, compact }: Props) {
+  const provincia = getProvinciaActiva();
+  const soloContinental = provincia.continentalOnly;
+  const badge = provincia.id === "sevilla" ? "JA" : "GVA";
   const [plegado, setPlegado] = useState(false);
   const [resumen, setResumen] = useState("Sin licencias guardadas en el móvil");
 
@@ -38,6 +39,24 @@ export default function LicenseBanner({ onPress, compact }: Props) {
     await AsyncStorage.setItem(CLAVE_PLEGADO, siguiente ? "1" : "0");
   }
 
+  const textoCorto = soloContinental
+    ? "Licencias · pesca continental Andalucía"
+    : "Licencias · continental y marítima desde tierra";
+
+  const textoLargo = soloContinental ? (
+    <Text style={styles.text}>
+      En ríos y embalses de Sevilla hace falta la{" "}
+      <Text style={styles.em}>licencia de pesca continental de Andalucía (Junta)</Text>. En cotos, además el
+      permiso del coto.
+    </Text>
+  ) : (
+    <Text style={styles.text}>
+      En ríos y embalses: <Text style={styles.em}>licencia de pesca continental</Text>. En la orilla del mar:{" "}
+      <Text style={styles.em}>licencia de pesca marítima recreativa desde tierra</Text>. No se sustituyen entre
+      sí.
+    </Text>
+  );
+
   if (plegado) {
     return (
       <View style={[styles.wrap, compact && { marginBottom: 8 }]}>
@@ -46,13 +65,13 @@ export default function LicenseBanner({ onPress, compact }: Props) {
             onPress={alternarPlegado}
             style={styles.collapsedMain}
             accessibilityRole="button"
-            accessibilityLabel="Expandir aviso de licencias GVA"
+            accessibilityLabel={`Expandir aviso de licencias ${badge}`}
           >
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>GVA</Text>
+              <Text style={styles.badgeText}>{badge}</Text>
             </View>
             <Text style={styles.collapsedText} numberOfLines={1}>
-              Licencias · continental y marítima desde tierra
+              {textoCorto}
             </Text>
             <Text style={styles.chevronDown}>▾</Text>
           </TouchableOpacity>
@@ -69,7 +88,7 @@ export default function LicenseBanner({ onPress, compact }: Props) {
       <View style={styles.banner}>
         <View style={styles.topRow}>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>GVA</Text>
+            <Text style={styles.badgeText}>{badge}</Text>
           </View>
           <Text style={styles.title}>Licencias de pesca en vigor</Text>
           <TouchableOpacity
@@ -82,10 +101,7 @@ export default function LicenseBanner({ onPress, compact }: Props) {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.text}>
-          En ríos y embalses: <Text style={styles.em}>licencia de pesca continental</Text>. En la orilla del mar:{" "}
-          <Text style={styles.em}>licencia de pesca marítima recreativa desde tierra</Text>. No se sustituyen entre sí.
-        </Text>
+        {textoLargo}
 
         <Text style={styles.resumen}>{resumen}</Text>
 

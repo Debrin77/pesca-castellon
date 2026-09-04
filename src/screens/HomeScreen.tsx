@@ -88,7 +88,19 @@ export default function HomeScreen({ navigation }: Props) {
   const [cache, setCache] = useState<CacheOffline | null>(null);
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: provincia.nombreApp });
+    navigation.setOptions({
+      title: provincia.nombreApp,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Ajustes")}
+          style={{ paddingHorizontal: 12, paddingVertical: 6 }}
+          accessibilityRole="button"
+          accessibilityLabel="Ajustes"
+        >
+          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>Ajustes</Text>
+        </TouchableOpacity>
+      ),
+    });
   }, [navigation, provincia.nombreApp]);
 
   useFocusEffect(
@@ -477,35 +489,33 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        {/* Enlaces secundarios */}
-        <ListaAnimada index={4}>
-          <View style={styles.linksRow}>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Capturas")}
-              accessibilityRole="button"
-              accessibilityLabel="Capturas"
-            >
-              <Text style={styles.linkChipTxt}>Capturas</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Consejos")}
-              accessibilityRole="button"
-              accessibilityLabel="Consejos: nudos y montaje"
-            >
-              <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkChip}
-              onPress={() => navigation.navigate("Ajustes")}
-              accessibilityRole="button"
-              accessibilityLabel="Ajustes"
-            >
-              <Text style={styles.linkChipTxt}>Ajustes</Text>
-            </TouchableOpacity>
-          </View>
-        </ListaAnimada>
+        {/* Enlaces secundarios (sin ListaAnimada: en web a veces quedan opacity 0) */}
+        <View style={styles.linksRow}>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Capturas")}
+            accessibilityRole="button"
+            accessibilityLabel="Capturas"
+          >
+            <Text style={styles.linkChipTxt}>Capturas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Consejos")}
+            accessibilityRole="button"
+            accessibilityLabel="Consejos: nudos y montaje"
+          >
+            <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("Ajustes")}
+            accessibilityRole="button"
+            accessibilityLabel="Ajustes"
+          >
+            <Text style={styles.linkChipTxt}>Ajustes</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

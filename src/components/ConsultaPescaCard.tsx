@@ -23,18 +23,23 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
   const mar = consulta.ambito === "maritimo";
   const acento = mar ? COLORS.water : COLORS.primary;
+  const especiesNombres = (consulta.tramo?.especies ?? [])
+    .map((id) => (provincia.species as { id: string; nombre?: string }[]).find((s) => s.id === id)?.nombre ?? id)
+    .join(" · ");
+  const pillGeometria = mar
+    ? "Polígono de consulta (orientativo)"
+    : consulta.confianza === "oficial"
+      ? "Polígono ICV oficial"
+      : provincia.tieneIcv
+        ? "Radio del anexo I (aprox.)"
+        : "Radio orientativo (aprox.)";
+
   return (
     <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
       <View style={styles.card}>
         <SemaforoVeredicto consulta={consulta} />
         <View style={[styles.pill, { backgroundColor: consulta.confianza === "oficial" ? COLORS.water : COLORS.textMuted }]}>
-          <Text style={styles.pillText}>
-            {mar
-              ? "Polígono de consulta (orientativo)"
-              : consulta.confianza === "oficial"
-                ? "Polígono ICV oficial"
-                : "Radio del anexo I (aprox.)"}
-          </Text>
+          <Text style={styles.pillText}>{pillGeometria}</Text>
         </View>
         <Text style={styles.title}>{consulta.titulo}</Text>
         {consulta.tramo && (
@@ -56,8 +61,8 @@ export default function ConsultaPescaCard({ consulta, onFicha, onAparejos }: Pro
 
         {consulta.especiesHabituales ? (
           <Text style={[styles.especies, { color: acento }]}>Especies habituales: {consulta.especiesHabituales}</Text>
-        ) : consulta.tramo?.especies?.length ? (
-          <Text style={[styles.especies, { color: acento }]}>Especies habituales: {consulta.tramo.especies.join(" · ")}</Text>
+        ) : especiesNombres ? (
+          <Text style={[styles.especies, { color: acento }]}>Especies habituales: {especiesNombres}</Text>
         ) : null}
 
         {mar ? (
