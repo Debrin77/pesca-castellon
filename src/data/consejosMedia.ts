@@ -35,7 +35,15 @@ export type IdDiagrama =
   | "kit-principiante"
   | "montaje-spinning"
   | "montaje-fondo"
-  | "vinilo-soft";
+  | "vinilo-soft"
+  | "montaje-lubina-spinning"
+  | "montaje-dorada-fondo"
+  | "montaje-sargo-roca"
+  | "montaje-carpa-boya"
+  | "montaje-bass-texas"
+  | "montaje-trucha-cucharilla"
+  | "montaje-llisa-boya"
+  | "montaje-sepia-eging";
 
 export type PasoMedia = {
   source: ImageSourcePropType;

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useScrollToTop } from "@react-navigation/native";
+import { useRoute, useScrollToTop } from "@react-navigation/native";
 import { SECCIONES_CONSEJOS, CategoriaConsejo, ConsejoItem } from "../data/consejos";
 import DiagramaConsejo from "../components/DiagramaConsejo";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
@@ -22,14 +22,35 @@ function coincide(item: ConsejoItem, q: string): boolean {
   return blob.includes(q);
 }
 
+type ParamsConsejos = {
+  consejoId?: string;
+  categoria?: CategoriaConsejo | "todas";
+};
+
 export default function ConsejosScreen() {
+  const route = useRoute<any>();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const { width: winW } = useWindowDimensions();
   const diagramW = Math.min(340, Math.max(280, winW - 56));
-  const [categoria, setCategoria] = useState<CategoriaConsejo | "todas">("nudos");
+  const params = (route.params ?? {}) as ParamsConsejos;
+
+  const [categoria, setCategoria] = useState<CategoriaConsejo | "todas">(params.categoria ?? "montajes");
   const [busqueda, setBusqueda] = useState("");
-  const [abierto, setAbierto] = useState<string | null>(SECCIONES_CONSEJOS[0]?.items[0]?.id ?? null);
+  const [abierto, setAbierto] = useState<string | null>(
+    params.consejoId ?? SECCIONES_CONSEJOS.find((s) => s.id === "montajes")?.items[0]?.id ?? SECCIONES_CONSEJOS[0]?.items[0]?.id ?? null
+  );
+
+  useEffect(() => {
+    const p = (route.params ?? {}) as ParamsConsejos;
+    if (p.categoria) setCategoria(p.categoria);
+    if (p.consejoId) {
+      setAbierto(p.consejoId);
+      const sec = SECCIONES_CONSEJOS.find((s) => s.items.some((it) => it.id === p.consejoId));
+      if (sec) setCategoria(sec.id);
+      requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: true }));
+    }
+  }, [route.params]);
 
   const q = busqueda.trim().toLowerCase();
 
@@ -45,21 +66,21 @@ export default function ConsejosScreen() {
         <Text style={styles.heroKicker}>Escuela de bolsillo</Text>
         <Text style={styles.heroTitle}>Consejos de pesca</Text>
         <Text style={styles.heroSub}>
-          Solo fotografías reales: nudos paso a paso y aparejos identificados con precisión. Empaquetadas en la app, sin internet. Nudos y aparejos para continental y orilla; el mapa es por provincia.
+          Montajes por especie, nudos paso a paso y piezas del aparejo. Fotos y esquemas en la app, sin internet.
         </Text>
       </LinearGradient>
 
       <View style={styles.body}>
         <View style={styles.introCard}>
-          <Text style={styles.introTitle}>Empieza aquí si eres nuevo</Text>
+          <Text style={styles.introTitle}>Si empiezas de cero</Text>
           <Text style={styles.introTxt}>
-            Abre «Nudo Palomar»: desliza las fotos 1→7. Luego «Trilene» o «Clip / snap» y «Kit mínimo». Así montas sin rehacer nudos cada vez que cambias de señuelo.
+            Abre «Montajes por especie»: verás el orden de la línea (boya, plomo, anzuelo…) y cómo regularlo. Luego «Nudo Palomar» y «Kit mínimo».
           </Text>
         </View>
 
         <TextInput
           style={styles.search}
-          placeholder="Busca (palomar, plomo, snap, bass…)"
+          placeholder="Busca (lubina, boya, palomar, texas…)"
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}
@@ -143,7 +164,7 @@ export default function ConsejosScreen() {
         ))}
 
         <Text style={styles.footnote}>
-          Contenido orientativo. Carteles del tramo, PTOP del coto y DOGV prevalecen siempre. Fotografías: Wikimedia Commons (PD/CC), créditos bajo cada guía; copia local para uso offline.
+          Orientativo. Carteles del tramo, PTOP del coto y normativa oficial prevalecen. Montajes = esquema de línea para principiantes; nudos con fotos Wikimedia (créditos bajo cada guía).
         </Text>
       </View>
     </ScrollView>
@@ -152,47 +173,40 @@ export default function ConsejosScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
-  hero: {
-    paddingTop: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-    paddingHorizontal: SPACING.lg,
-    borderBottomLeftRadius: RADIUS.xl,
-    borderBottomRightRadius: RADIUS.xl,
-  },
+  hero: { paddingHorizontal: 20, paddingTop: 18, paddingBottom: 22 },
   heroKicker: {
     color: "#e8f5ee",
-    fontSize: 11,
     fontWeight: "800",
+    fontSize: 11,
     letterSpacing: 0.8,
     textTransform: "uppercase",
-    marginBottom: 4,
   },
-  heroTitle: { color: "#fff", fontSize: 26, fontWeight: "800" },
-  heroSub: { color: "#eef7f1", fontSize: 13.5, lineHeight: 19, marginTop: 8 },
-  body: { paddingHorizontal: SPACING.lg, marginTop: -SPACING.md },
+  heroTitle: { color: "#fff", fontSize: 28, fontWeight: "800", marginTop: 4 },
+  heroSub: { color: "#eef7f1", marginTop: 8, fontSize: 14, lineHeight: 20 },
+  body: { padding: SPACING.md },
   introCard: {
-    backgroundColor: COLORS.waterLight,
+    backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.md,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.water,
-    ...SHADOW_SOFT,
+    borderColor: COLORS.border,
   },
-  introTitle: { fontSize: 14, fontWeight: "800", color: COLORS.waterDark, marginBottom: 4 },
-  introTxt: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19 },
+  introTitle: { fontSize: 14, fontWeight: "800", color: COLORS.primaryDark },
+  introTxt: { marginTop: 4, fontSize: 13, lineHeight: 19, color: COLORS.textSecondary },
   search: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
-    color: COLORS.textPrimary,
     borderWidth: 1,
     borderColor: COLORS.border,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: COLORS.textPrimary,
+    marginBottom: 10,
     ...SHADOW_SOFT,
   },
-  chips: { paddingVertical: 12, gap: 8 },
+  chips: { gap: 8, paddingBottom: 8 },
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -200,15 +214,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 1,
     borderColor: COLORS.border,
-    marginRight: 8,
   },
-  chipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
-  chipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textSecondary },
+  chipOn: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  chipTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary },
   chipTxtOn: { color: "#fff" },
-  empty: { color: COLORS.textMuted, fontStyle: "italic", marginTop: 8 },
-  section: { marginBottom: 18 },
-  sectionTitle: { fontSize: 17, fontWeight: "800", color: COLORS.textPrimary },
-  sectionSub: { fontSize: 12.5, color: COLORS.textMuted, marginBottom: 10, marginTop: 2 },
+  empty: { textAlign: "center", color: COLORS.textMuted, marginTop: 24, fontSize: 14 },
+  section: { marginTop: 14 },
+  sectionTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary },
+  sectionSub: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 8, marginTop: 2 },
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
@@ -216,55 +229,37 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...SHADOW_SOFT,
+    ...SHADOW,
   },
-  cardOpen: { borderColor: COLORS.primary, ...SHADOW },
+  cardOpen: { borderColor: COLORS.water },
   cardHead: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
-  cardTitle: { fontSize: 14.5, fontWeight: "800", color: COLORS.textPrimary },
-  cardResumen: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 3, lineHeight: 17 },
-  cardBody: {
-    marginTop: 10,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  cardDetalle: {
-    fontSize: 13,
-    color: COLORS.textPrimary,
-    lineHeight: 19,
-    marginTop: 10,
-  },
-  pasosBox: { marginTop: 10, gap: 8 },
-  pasoRow: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+  cardTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
+  cardResumen: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2, lineHeight: 18 },
+  chevron: { fontSize: 16, color: COLORS.textMuted, fontWeight: "800" },
+  cardBody: { marginTop: 10 },
+  cardDetalle: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, marginTop: 8 },
+  pasosBox: { marginTop: 8, gap: 8 },
+  pasoRow: { flexDirection: "row", gap: 10, alignItems: "flex-start" },
   pasoNum: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: COLORS.primaryDark,
+    backgroundColor: COLORS.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 1,
   },
-  pasoNumTxt: { color: "#fff", fontSize: 11, fontWeight: "800" },
-  pasoTxt: { flex: 1, fontSize: 13, color: COLORS.textPrimary, lineHeight: 19 },
-  chevron: { fontSize: 14, color: COLORS.textMuted, fontWeight: "800", marginTop: 2 },
+  pasoNumTxt: { color: "#fff", fontWeight: "800", fontSize: 12 },
+  pasoTxt: { flex: 1, fontSize: 13, lineHeight: 18, color: COLORS.textPrimary, fontWeight: "600" },
   tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10 },
   tag: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: "700",
-    color: COLORS.primaryDark,
-    backgroundColor: COLORS.primaryLight,
+    color: COLORS.waterDark,
+    backgroundColor: COLORS.waterLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.pill,
     overflow: "hidden",
   },
-  footnote: {
-    fontSize: 11,
-    color: COLORS.textMuted,
-    textAlign: "center",
-    lineHeight: 16,
-    marginTop: 8,
-    marginBottom: 12,
-  },
+  footnote: { fontSize: 11, color: COLORS.textMuted, lineHeight: 16, marginTop: 16, marginBottom: 8 },
 });

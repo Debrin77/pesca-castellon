@@ -36,12 +36,14 @@ export default function TarjetaEspecie({
   index,
   enVeda,
   onAparejos,
+  onMontaje,
   extra,
 }: {
   sp: any;
   index: number;
   enVeda?: boolean;
   onAparejos?: () => void;
+  onMontaje?: () => void;
   extra?: React.ReactNode;
 }) {
   const talla = tallaDestacada(sp);
@@ -103,10 +105,19 @@ export default function TarjetaEspecie({
             </Text>
           </View>
         ) : null}
-        {onAparejos ? (
-          <TouchableOpacity onPress={onAparejos} style={styles.gearBtn}>
-            <Text style={styles.gearLink}>Ver aparejos →</Text>
-          </TouchableOpacity>
+        {onAparejos || onMontaje ? (
+          <View style={styles.actionsRow}>
+            {onMontaje ? (
+              <TouchableOpacity onPress={onMontaje} style={[styles.gearBtn, styles.montajeBtn]}>
+                <Text style={[styles.gearLink, styles.montajeLink]}>Ver montaje →</Text>
+              </TouchableOpacity>
+            ) : null}
+            {onAparejos ? (
+              <TouchableOpacity onPress={onAparejos} style={styles.gearBtn}>
+                <Text style={styles.gearLink}>Ver aparejos →</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         ) : null}
       </View>
     </ListaAnimada>
@@ -186,4 +197,20 @@ const styles = StyleSheet.create({
   avisoFuerteTxt: { color: "#7a1414" },
   gearBtn: { marginTop: 12, marginBottom: 14, marginLeft: 16, alignSelf: "flex-start" },
   gearLink: { fontSize: 15, color: COLORS.waterDark, fontWeight: "800" },
+  actionsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 4,
+    marginBottom: 8,
+    paddingRight: 16,
+  },
+  montajeBtn: {
+    backgroundColor: COLORS.waterLight,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.sm,
+    marginBottom: 8,
+  },
+  montajeLink: { color: COLORS.waterDark },
 });
