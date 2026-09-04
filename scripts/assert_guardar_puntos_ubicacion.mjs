@@ -30,7 +30,7 @@ const pendiente = read("src/services/ubicacionPendiente.ts");
 if (!/iniciarPickUbicacion/.test(pendiente)) fail("falta iniciarPickUbicacion");
 if (!/consumirPickUbicacion/.test(pendiente)) fail("falta consumirPickUbicacion");
 if (!/motivo: MotivoUbicacionPendiente/.test(pendiente) && !/MotivoUbicacionPendiente/.test(pendiente)) {
-  fail("ubicacionPendiente debe tipar motivo punto|captura");
+  fail("ubicacionPendiente debe tipar motivo punto|captura|salgo");
 }
 
 const catches = read("src/screens/MyCatchesScreen.tsx");
