@@ -1,398 +1,940 @@
 [
   {
-    "id": "sev-minilla",
+    "id": "sev-refugio_arroyo_de_santiago_y_vallehondo_con_sus_",
     "codigo": "SE-01",
-    "nombre": "Embalse de la Minilla",
-    "rio": "Rivera de Huelva",
-    "lat": 37.72,
-    "lng": -6.28,
-    "radioKm": 4.5,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_minilla",
-    "especies": [
-      "black_bass",
-      "carpa",
-      "barbo_gitano",
-      "tenca",
-      "carpin",
-      "alburno"
-    ],
-    "cuenca": "Guadalquivir (Rivera de Huelva)",
+    "nombre": "Refugio Arroyo de Santiago y Vallehondo, con sus afluentes",
+    "rio": "Refugio Arroyo de Santiago y Vallehondo, con sus afluentes",
+    "lat": 36.92273,
+    "lng": -5.65605,
+    "radioKm": 8,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_de_santiago_y_vallehondo_con_sus_",
+    "especies": [],
+    "cuenca": "Corbones",
     "municipios": [
-      "El Castillo de las Guardas",
-      "El Garrobo"
-    ]
-  },
-  {
-    "id": "sev-pintado",
-    "codigo": "SE-02",
-    "nombre": "Embalse de El Pintado",
-    "rio": "Rivera de Benalija",
-    "lat": 37.95,
-    "lng": -5.95,
-    "radioKm": 5.5,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_pintado",
-    "especies": [
-      "black_bass",
-      "lucio",
-      "carpa",
-      "barbo_gitano",
-      "boga",
-      "alburno",
-      "cangrejo_americano"
-    ],
-    "cuenca": "Guadalquivir (Viar)",
-    "municipios": [
-      "Cazalla de la Sierra",
-      "El Real de la Jara"
-    ]
-  },
-  {
-    "id": "sev-jose-toran",
-    "codigo": "SE-03",
-    "nombre": "Embalse José Torán",
-    "rio": "Arroyo Retortillo",
-    "lat": 37.68,
-    "lng": -5.48,
-    "radioKm": 3.5,
-    "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_jose_toran",
-    "especies": [
-      "carpa",
-      "carpin",
-      "barbo_gitano",
-      "alburno",
-      "black_bass",
-      "cangrejo_americano"
-    ],
-    "cuenca": "Guadalquivir",
-    "municipios": [
-      "Lora del Río",
-      "Constantina"
-    ]
-  },
-  {
-    "id": "sev-melonares",
-    "codigo": "SE-04",
-    "nombre": "Embalse de Melonares",
-    "rio": "Rivera de Viar",
-    "lat": 37.85,
-    "lng": -5.85,
-    "radioKm": 6,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_melonares",
-    "especies": [
-      "black_bass",
-      "carpa",
-      "barbo_gitano",
-      "boga",
-      "lucio",
-      "alburno"
-    ],
-    "cuenca": "Guadalquivir (Viar)",
-    "municipios": [
-      "Castilblanco de los Arroyos",
-      "El Pedroso",
-      "Almadén de la Plata"
-    ]
-  },
-  {
-    "id": "sev-torre-aguila",
-    "codigo": "SE-05",
-    "nombre": "Embalse Torre del Águila",
-    "rio": "Salado de Morón",
-    "lat": 37.15,
-    "lng": -5.72,
-    "radioKm": 4,
-    "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_torre_aguila",
-    "especies": [
-      "carpa",
-      "carpin",
-      "tenca",
-      "alburno",
-      "cangrejo_americano",
-      "black_bass"
-    ],
-    "cuenca": "Guadalquivir (Salado)",
-    "municipios": [
+      "Espera",
       "Utrera",
-      "El Coronil",
-      "Montellano"
+      "Villamartín"
     ]
   },
   {
-    "id": "sev-agrio",
-    "codigo": "SE-06",
-    "nombre": "Embalse del Agrio",
-    "rio": "Rivera del Agrio",
-    "lat": 37.65,
-    "lng": -6.15,
-    "radioKm": 2.5,
+    "id": "sev-refugio_zona_inundable_entremuros_guadiamar",
+    "codigo": "SE-02",
+    "nombre": "Refugio Zona inundable Entremuros Guadiamar",
+    "rio": "Refugio Zona inundable Entremuros Guadiamar",
+    "lat": 37.19512,
+    "lng": -6.189,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_zona_inundable_entremuros_guadiamar",
+    "especies": [],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Isla Mayor",
+      "La Puebla del Río"
+    ]
+  },
+  {
+    "id": "sev-refugio_arroyo_de_santiago_y_sus_afluentes",
+    "codigo": "SE-03",
+    "nombre": "Refugio Arroyo de Santiago y sus afluentes",
+    "rio": "Refugio Arroyo de Santiago y sus afluentes",
+    "lat": 36.95932,
+    "lng": -5.74758,
+    "radioKm": 5.28,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_de_santiago_y_sus_afluentes",
+    "especies": [],
+    "cuenca": "Corbones",
+    "municipios": [
+      "Utrera"
+    ]
+  },
+  {
+    "id": "sev-refugio_laguna_de_los_tollos_t_m_jerez_de_la_fro",
+    "codigo": "SE-04",
+    "nombre": "Refugio Laguna de los Tollos (T.M. Jerez de la Frontera-El Cuervo)",
+    "rio": "Refugio Laguna de los Tollos (T.M. Jerez de la Frontera-El Cuervo)",
+    "lat": 36.84437,
+    "lng": -6.01966,
+    "radioKm": 0.69,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_los_tollos_t_m_jerez_de_la_fro",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "El Cuervo de Sevilla",
+      "Jerez de la Frontera"
+    ]
+  },
+  {
+    "id": "sev-tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en",
+    "codigo": "SE-05",
+    "nombre": "Tramos de La Barqueta, Paseo de la O y Chapina, en Sevilla",
+    "rio": "Tramos de La Barqueta, Paseo de la O y Chapina, en Sevilla",
+    "lat": 37.37268,
+    "lng": -5.99749,
+    "radioKm": 6.9,
     "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
+    "regimen": "Recreo / aguas libres",
     "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_agrio",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en",
     "especies": [
       "carpa",
-      "barbo_gitano",
-      "boga",
-      "carpin",
-      "alburno"
-    ],
-    "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": [
-      "Aznalcóllar",
-      "Gerena"
-    ]
-  },
-  {
-    "id": "sev-cala",
-    "codigo": "SE-07",
-    "nombre": "Embalse de Cala",
-    "rio": "Rivera de Cala",
-    "lat": 37.78,
-    "lng": -6.05,
-    "radioKm": 4,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_cala",
-    "especies": [
-      "black_bass",
-      "carpa",
-      "barbo_gitano",
-      "boga",
-      "alburno",
-      "cangrejo_americano"
-    ],
-    "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": [
-      "El Ronquillo",
-      "Castilblanco de los Arroyos"
-    ]
-  },
-  {
-    "id": "sev-zufre",
-    "codigo": "SE-08",
-    "nombre": "Embalse de Zufre",
-    "rio": "Rivera de Huelva",
-    "lat": 37.82,
-    "lng": -6.35,
-    "radioKm": 7,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "embalse_zufre",
-    "especies": [
-      "black_bass",
-      "lucio",
-      "carpa",
-      "barbo_gitano",
-      "tenca",
-      "alburno",
-      "cangrejo_americano"
-    ],
-    "cuenca": "Guadalquivir (Rivera de Huelva)",
-    "municipios": [
-      "Zufre",
-      "El Castillo de las Guardas"
-    ]
-  },
-  {
-    "id": "sev-gq-alcala",
-    "codigo": "SE-09",
-    "nombre": "Guadalquivir — Alcalá del Río",
-    "rio": "Río Guadalquivir",
-    "lat": 37.518,
-    "lng": -5.978,
-    "radioKm": 3,
-    "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "rio_guadalquivir_alcala",
-    "especies": [
-      "carpa",
-      "barbo_gitano",
-      "boga",
-      "alburno",
       "siluro",
-      "cangrejo_americano"
+      "alburno",
+      "barbo_gitano",
+      "carpin"
     ],
     "cuenca": "Guadalquivir",
     "municipios": [
-      "Alcalá del Río",
-      "La Algaba"
-    ]
-  },
-  {
-    "id": "sev-gq-sevilla",
-    "codigo": "SE-10",
-    "nombre": "Guadalquivir — tramo urbano Sevilla",
-    "rio": "Río Guadalquivir",
-    "lat": 37.382,
-    "lng": -5.995,
-    "radioKm": 4,
-    "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "rio_guadalquivir_sevilla",
-    "especies": [
-      "carpa",
-      "alburno",
-      "siluro",
-      "barbo_gitano",
-      "cangrejo_americano"
-    ],
-    "cuenca": "Guadalquivir",
-    "municipios": [
+      "Dos Hermanas",
+      "Gelves",
+      "Santiponce",
       "Sevilla"
     ]
   },
   {
-    "id": "sev-gq-coria",
-    "codigo": "SE-11",
-    "nombre": "Guadalquivir — Coria del Río",
-    "rio": "Río Guadalquivir",
-    "lat": 37.285,
-    "lng": -6.052,
-    "radioKm": 3.5,
+    "id": "sev-refugio_rio_crispinejo_o_agrio_y_rio_guadiamar",
+    "codigo": "SE-06",
+    "nombre": "Refugio Rio Crispinejo o Agrio y Rio Guadiamar",
+    "rio": "Refugio Rio Crispinejo o Agrio y Rio Guadiamar",
+    "lat": 37.47921,
+    "lng": -6.21187,
+    "radioKm": 1.65,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_rio_crispinejo_o_agrio_y_rio_guadiamar",
+    "especies": [],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Olivares",
+      "Sanlúcar la Mayor"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_cala",
+    "codigo": "SE-07",
+    "nombre": "Embalse de Cala",
+    "rio": "Embalse de Cala",
+    "lat": 37.72475,
+    "lng": -6.12029,
+    "radioKm": 3.12,
     "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
+    "regimen": "Recreo / aguas libres",
     "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "rio_guadalquivir_coria",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_cala",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Castilblanco de los Arroyos",
+      "El Ronquillo",
+      "Guillena"
+    ]
+  },
+  {
+    "id": "sev-refugio_laguna_de_la_dehesa_de_abajo",
+    "codigo": "SE-08",
+    "nombre": "Refugio Laguna de la Dehesa de Abajo",
+    "rio": "Refugio Laguna de la Dehesa de Abajo",
+    "lat": 37.20644,
+    "lng": -6.18324,
+    "radioKm": 0.92,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_la_dehesa_de_abajo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "La Puebla del Río"
+    ]
+  },
+  {
+    "id": "sev-refugio_arroyo_higueron_mascardo_y_salado_de_leb",
+    "codigo": "SE-09",
+    "nombre": "Refugio Arroyo Higueron, Mascardo y Salado de Lebrija y sus afluentes",
+    "rio": "Refugio Arroyo Higueron, Mascardo y Salado de Lebrija y sus afluentes",
+    "lat": 36.91089,
+    "lng": -5.89924,
+    "radioKm": 8,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_higueron_mascardo_y_salado_de_leb",
+    "especies": [],
+    "cuenca": "Corbones",
+    "municipios": [
+      "El Cuervo de Sevilla",
+      "Espera",
+      "Las Cabezas de San Juan",
+      "Lebrija",
+      "Utrera"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_jose_toran",
+    "codigo": "SE-10",
+    "nombre": "Embalse de José Torán",
+    "rio": "Embalse de José Torán",
+    "lat": 37.76629,
+    "lng": -5.48167,
+    "radioKm": 5.73,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_jose_toran",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Constantina",
+      "La Puebla de los Infantes",
+      "Lora del Río"
+    ]
+  },
+  {
+    "id": "sev-refugio_arroyo_montero_y_salado_de_moron_y_sus_a",
+    "codigo": "SE-11",
+    "nombre": "Refugio Arroyo Montero y Salado de Moron y sus afluentes",
+    "rio": "Refugio Arroyo Montero y Salado de Moron y sus afluentes",
+    "lat": 37.00916,
+    "lng": -5.61233,
+    "radioKm": 8,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_montero_y_salado_de_moron_y_sus_a",
+    "especies": [],
+    "cuenca": "Corbones",
+    "municipios": [
+      "El Coronil",
+      "Montellano",
+      "Morón de la Frontera",
+      "Puerto Serrano",
+      "Utrera",
+      "Villamartín"
+    ]
+  },
+  {
+    "id": "sev-refugio_embalse_de_melonares",
+    "codigo": "SE-12",
+    "nombre": "Refugio Embalse de Melonares",
+    "rio": "Refugio Embalse de Melonares",
+    "lat": 37.77038,
+    "lng": -5.89387,
+    "radioKm": 6.84,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_melonares",
+    "especies": [],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Almadén de la Plata",
+      "Castilblanco de los Arroyos",
+      "Cazalla de la Sierra",
+      "El Pedroso"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_jarrama",
+    "codigo": "SE-13",
+    "nombre": "Embalse de Jarrama",
+    "rio": "Embalse de Jarrama",
+    "lat": 37.67357,
+    "lng": -6.50592,
+    "radioKm": 0.92,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_jarrama",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "El Madroño",
+      "Nerva"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_gergal",
+    "codigo": "SE-14",
+    "nombre": "Embalse de Gergal",
+    "rio": "Embalse de Gergal",
+    "lat": 37.60414,
+    "lng": -6.04904,
+    "radioKm": 6.1,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_gergal",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Castilblanco de los Arroyos",
+      "Guillena"
+    ]
+  },
+  {
+    "id": "sev-refugio_arroyo_del_saladillo_saguzal_de_los_garz",
+    "codigo": "SE-15",
+    "nombre": "Refugio Arroyo del Saladillo, Saguzal, de los Garzos y Mojon Blanco, con sus afluentes",
+    "rio": "Refugio Arroyo del Saladillo, Saguzal, de los Garzos y Mojon Blanco, con sus afluentes",
+    "lat": 36.883,
+    "lng": -5.86342,
+    "radioKm": 7.12,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_del_saladillo_saguzal_de_los_garz",
+    "especies": [],
+    "cuenca": "Corbones",
+    "municipios": [
+      "Espera",
+      "Jerez de la Frontera",
+      "Las Cabezas de San Juan",
+      "Lebrija"
+    ]
+  },
+  {
+    "id": "sev-refugio_embalse_del_retortillo",
+    "codigo": "SE-16",
+    "nombre": "Refugio Embalse del Retortillo",
+    "rio": "Refugio Embalse del Retortillo",
+    "lat": 37.84636,
+    "lng": -5.37375,
+    "radioKm": 0.74,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_del_retortillo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "La Puebla de los Infantes"
+    ]
+  },
+  {
+    "id": "sev-embalse_del_pintado",
+    "codigo": "SE-17",
+    "nombre": "Embalse del Pintado",
+    "rio": "Embalse del Pintado",
+    "lat": 38.00609,
+    "lng": -5.95292,
+    "radioKm": 6.22,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_del_pintado",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Cazalla de la Sierra",
+      "El Real de la Jara",
+      "Guadalcanal"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_torre_del_aguila",
+    "codigo": "SE-18",
+    "nombre": "Embalse de Torre del Aguila",
+    "rio": "Embalse de Torre del Aguila",
+    "lat": 37.03432,
+    "lng": -5.71923,
+    "radioKm": 5.55,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_torre_del_aguila",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Corbones",
+    "municipios": [
+      "El Palmar de Troya",
+      "Utrera"
+    ]
+  },
+  {
+    "id": "sev-refugio_rivera_del_hueznar",
+    "codigo": "SE-19",
+    "nombre": "Refugio Rivera del Hueznar",
+    "rio": "Refugio Rivera del Hueznar",
+    "lat": 37.94748,
+    "lng": -5.68827,
+    "radioKm": 5.71,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_rivera_del_hueznar",
+    "especies": [],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Alanís",
+      "Cazalla de la Sierra",
+      "Constantina",
+      "San Nicolás del Puerto"
+    ]
+  },
+  {
+    "id": "sev-refugio_embalse_de_malpasillo",
+    "codigo": "SE-20",
+    "nombre": "Refugio Embalse de Malpasillo",
+    "rio": "Refugio Embalse de Malpasillo",
+    "lat": 37.28665,
+    "lng": -4.66989,
+    "radioKm": 1.51,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_malpasillo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Badolatosa",
+      "Lucena"
+    ]
+  },
+  {
+    "id": "sev-refugio_arroyo_de_san_pedro",
+    "codigo": "SE-21",
+    "nombre": "Refugio Arroyo de San Pedro",
+    "rio": "Refugio Arroyo de San Pedro",
+    "lat": 37.86016,
+    "lng": -5.74179,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_de_san_pedro",
+    "especies": [],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "El Pedroso"
+    ]
+  },
+  {
+    "id": "sev-embalse_del_retortillo",
+    "codigo": "SE-22",
+    "nombre": "Embalse del Retortillo",
+    "rio": "Embalse del Retortillo",
+    "lat": 37.85679,
+    "lng": -5.39005,
+    "radioKm": 1.44,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_del_retortillo",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Hornachuelos",
+      "La Puebla de los Infantes"
+    ]
+  },
+  {
+    "id": "sev-arroyo_de_la_gargantafria",
+    "codigo": "SE-23",
+    "nombre": "Arroyo de la Gargantafria",
+    "rio": "Arroyo de la Gargantafria",
+    "lat": 37.81121,
+    "lng": -5.96388,
+    "radioKm": 3.64,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_arroyo_de_la_gargantafria",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Almadén de la Plata",
+      "Castilblanco de los Arroyos"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_alcala_del_rio",
+    "codigo": "SE-24",
+    "nombre": "Embalse de Alcalá del Río",
+    "rio": "Embalse de Alcalá del Río",
+    "lat": 37.55349,
+    "lng": -5.8967,
+    "radioKm": 8,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_alcala_del_rio",
     "especies": [
       "carpa",
       "siluro",
       "alburno",
       "barbo_gitano",
-      "cangrejo_americano"
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Alcalá del Río",
+      "Brenes",
+      "Cantillana",
+      "La Rinconada",
+      "Villaverde del Río"
+    ]
+  },
+  {
+    "id": "sev-refugio_embalse_de_altarejos",
+    "codigo": "SE-25",
+    "nombre": "Refugio Embalse de Altarejos",
+    "rio": "Refugio Embalse de Altarejos",
+    "lat": 38.15231,
+    "lng": -5.72742,
+    "radioKm": 0.73,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_altarejos",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Guadalcanal"
+    ]
+  },
+  {
+    "id": "sev-refugio_embalse_de_cordobilla",
+    "codigo": "SE-26",
+    "nombre": "Refugio Embalse de Cordobilla",
+    "rio": "Refugio Embalse de Cordobilla",
+    "lat": 37.34466,
+    "lng": -4.69285,
+    "radioKm": 2.98,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_cordobilla",
+    "especies": [],
+    "cuenca": "Corbones",
+    "municipios": [
+      "Aguilar de la Frontera",
+      "Badolatosa",
+      "Puente Genil"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_la_puebla_de_cazalla",
+    "codigo": "SE-27",
+    "nombre": "Embalse de la Puebla de Cazalla",
+    "rio": "Embalse de la Puebla de Cazalla",
+    "lat": 37.12013,
+    "lng": -5.21777,
+    "radioKm": 2.76,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_la_puebla_de_cazalla",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "La Puebla de Cazalla",
+      "Osuna",
+      "Villanueva de San Juan"
+    ]
+  },
+  {
+    "id": "sev-embalse_de_la_minilla",
+    "codigo": "SE-28",
+    "nombre": "Embalse de la Minilla",
+    "rio": "Embalse de la Minilla",
+    "lat": 37.69753,
+    "lng": -6.20743,
+    "radioKm": 5.1,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_la_minilla",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "El Castillo de las Guardas",
+      "El Garrobo",
+      "El Ronquillo",
+      "Zufre"
+    ]
+  },
+  {
+    "id": "sev-penaflor_azud",
+    "codigo": "SE-29",
+    "nombre": "Azud / presa de Peñaflor (Guadalquivir)",
+    "rio": "Guadalquivir",
+    "lat": 37.7082,
+    "lng": -5.3455,
+    "radioKm": 1.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_6_PRESA",
+    "fichaId": "penaflor_azud",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Peñaflor"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_villaverde",
+    "codigo": "SE-30",
+    "nombre": "Guadalquivir en Villaverde del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.5871,
+    "lng": -5.8707,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_villaverde",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin",
+      "black_bass"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Villaverde del Río"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_lora",
+    "codigo": "SE-31",
+    "nombre": "Guadalquivir en Lora del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.6555,
+    "lng": -5.528,
+    "radioKm": 2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_lora",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Lora del Río"
+    ]
+  },
+  {
+    "id": "sev-guadalquivir_coria",
+    "codigo": "SE-32",
+    "nombre": "Guadalquivir en Coria del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.287,
+    "lng": -6.046,
+    "radioKm": 2.4,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ESTUARIO",
+    "fichaId": "guadalquivir_coria",
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin",
+      "siluro"
     ],
     "cuenca": "Guadalquivir",
     "municipios": [
       "Coria del Río",
-      "Puebla del Río"
+      "La Puebla del Río"
     ]
   },
   {
-    "id": "sev-guadaira",
-    "codigo": "SE-12",
-    "nombre": "Río Guadaíra — tramo medio",
-    "rio": "Río Guadaíra",
-    "lat": 37.35,
-    "lng": -5.78,
+    "id": "sev-guadalquivir_gelves",
+    "codigo": "SE-33",
+    "nombre": "Guadalquivir en Gelves",
+    "rio": "Guadalquivir",
+    "lat": 37.341,
+    "lng": -6.017,
+    "radioKm": 1.6,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ESTUARIO",
+    "fichaId": "guadalquivir_gelves",
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Gelves",
+      "San Juan de Aznalfarache"
+    ]
+  },
+  {
+    "id": "sev-guadaira_alcala",
+    "codigo": "SE-34",
+    "nombre": "Río Guadaíra en Alcalá de Guadaíra",
+    "rio": "Guadaíra",
+    "lat": 37.3375,
+    "lng": -5.8445,
     "radioKm": 2.5,
     "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
     "aprovechamiento": "ZPL",
-    "notaAnexo": null,
-    "fichaId": "rio_guadaira",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadaira_alcala",
     "especies": [
       "carpa",
       "barbo_gitano",
-      "boga",
-      "carpin",
       "alburno",
-      "cangrejo_americano"
+      "carpin",
+      "black_bass"
     ],
-    "cuenca": "Guadalquivir (Guadaíra)",
+    "cuenca": "Guadaíra",
     "municipios": [
-      "Alcalá de Guadaíra",
-      "Mairena del Alcor"
+      "Alcalá de Guadaíra"
     ]
   },
   {
-    "id": "sev-corbones-coto",
-    "codigo": "SE-13",
-    "nombre": "Coto Corbones — tramo medio (Marchena)",
-    "rio": "Río Corbones",
-    "lat": 37.32,
-    "lng": -5.42,
-    "radioKm": 2,
+    "id": "sev-guadaira_bajo",
+    "codigo": "SE-35",
+    "nombre": "Río Guadaíra (tramo bajo / Ribera)",
+    "rio": "Guadaíra",
+    "lat": 37.355,
+    "lng": -5.93,
+    "radioKm": 2.2,
     "vocacion": "Ciprinícola",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPC",
-    "notaAnexo": null,
-    "matriculaCoto": "SE-C01",
-    "fichaId": "rio_corbones_coto",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadaira_bajo",
     "especies": [
       "carpa",
       "barbo_gitano",
-      "boga",
-      "carpin",
-      "tenca"
+      "alburno",
+      "carpin"
     ],
-    "cuenca": "Guadalquivir (Corbones)",
+    "cuenca": "Guadaíra",
     "municipios": [
-      "Marchena",
-      "La Puebla de Cazalla"
+      "Sevilla",
+      "Dos Hermanas"
     ]
   },
   {
-    "id": "sev-pintado-coto",
-    "codigo": "SE-14",
-    "nombre": "Coto El Pintado — orilla oeste",
-    "rio": "Rivera de Benalija",
-    "lat": 37.96,
-    "lng": -5.97,
-    "radioKm": 2,
-    "vocacion": "Ciprinícola / black bass",
-    "regimen": "Recreo",
-    "aprovechamiento": "ZPC",
-    "notaAnexo": null,
-    "matriculaCoto": "SE-C02",
-    "fichaId": "embalse_pintado_coto",
+    "id": "sev-viar_melonares_cantillana",
+    "codigo": "SE-36",
+    "nombre": "Río Viar (Melonares → Cantillana)",
+    "rio": "Viar",
+    "lat": 37.64,
+    "lng": -5.84,
+    "radioKm": 4.5,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "viar_melonares_cantillana",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "lucio",
+      "carpin"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Cantillana",
+      "Villaverde del Río",
+      "El Pedroso"
+    ]
+  },
+  {
+    "id": "sev-embalse_huesna",
+    "codigo": "SE-37",
+    "nombre": "Embalse de Huésna",
+    "rio": "Rivera de Huésna",
+    "lat": 37.7717,
+    "lng": -5.6819,
+    "radioKm": 2.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_huesna",
     "especies": [
       "black_bass",
       "carpa",
+      "barbo_gitano",
       "lucio",
-      "barbo_gitano"
+      "alburno",
+      "carpin"
     ],
-    "cuenca": "Guadalquivir (Viar)",
+    "cuenca": "Rivera de Huelva",
     "municipios": [
-      "Cazalla de la Sierra"
+      "El Pedroso",
+      "Constantina"
     ]
   },
   {
-    "id": "sev-gq-vedado-doaana",
-    "codigo": "SE-15",
-    "nombre": "Guadalquivir — acceso Doñana (vedado)",
-    "rio": "Río Guadalquivir",
-    "lat": 37.12,
-    "lng": -6.18,
-    "radioKm": 3,
-    "vocacion": "Ciprinícola",
-    "regimen": "No pescable",
-    "aprovechamiento": "VP",
-    "notaAnexo": null,
-    "fichaId": "rio_guadalquivir_vedado_doaana",
-    "especies": [],
-    "cuenca": "Guadalquivir",
+    "id": "sev-embalse_agrio",
+    "codigo": "SE-38",
+    "nombre": "Embalse del Agrio (Aznalcóllar)",
+    "rio": "Agrio",
+    "lat": 37.524,
+    "lng": -6.27,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_agrio",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Rivera de Huelva",
     "municipios": [
-      "Puebla del Río",
-      "Aznalcázar"
+      "Aznalcóllar"
+    ]
+  },
+  {
+    "id": "sev-embalse_molinos_castilblanco",
+    "codigo": "SE-39",
+    "nombre": "Embalse Los Molinos (Castilblanco de los Arroyos)",
+    "rio": "Rivera del Cala",
+    "lat": 37.705,
+    "lng": -5.99,
+    "radioKm": 1.8,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_molinos_castilblanco",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno"
+    ],
+    "cuenca": "Rivera de Huelva",
+    "municipios": [
+      "Castilblanco de los Arroyos"
     ]
   }
 ]

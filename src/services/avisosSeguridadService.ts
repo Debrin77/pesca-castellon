@@ -1,17 +1,20 @@
 /**
- * Avisos de seguridad para pescadores en Castellón.
+ * Avisos de seguridad para pescadores según la provincia activa.
  *
  * Fuentes:
  * 1) MeteoAlarm / AEMET — feed Atom CAP oficial europeo alimentado por AEMET
  *    https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain
  *    Sin API key. En web usamos proxy si CORS bloquea.
- * 2) Open-Meteo Flood API — caudal previsto vs media en Mijares y Palancia
- *    (señal de crecida; no sustituye a CHJ / Protección Civil).
+ * 2) Open-Meteo Flood API — caudal previsto vs media en ríos de la provincia
+ *    (señal de crecida; no sustituye a CHJ/CHG / Protección Civil).
  *
  * Prioriza tormentas eléctricas, lluvia intensa y crecidas.
  */
 
 import { Platform } from "react-native";
+import { distanciaKm } from "./geoService";
+import { getProvinciaActiva } from "../provincias/runtime";
+import type { ProvinciaId } from "../provincias/types";
 
 export type SeveridadAviso = "amarillo" | "naranja" | "rojo";
 export type TipoAviso = "tormenta" | "lluvia" | "crecida" | "viento" | "costero" | "otro";
@@ -31,8 +34,12 @@ export interface AvisoSeguridad {
 
 const FEED_METEOALARM = "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-spain";
 
-const ZONAS_CASTELLON =
-  /castell[oó]n|maestrat|penyagolosa|ports|plana|vinar[oò]s|benicarl|oropesa|burriana|moncofa/i;
+const ZONAS_AVISO: Record<ProvinciaId, RegExp> = {
+  castellon:
+    /castell[oó]n|maestrat|penyagolosa|ports|plana|vinar[oò]s|benicarl|oropesa|burriana|moncofa/i,
+  sevilla:
+    /sevilla|andaluc[ií]a|guadalquivir|sierra\s*norte|aljarafe|campi[nñ]a|do[nñ]ana|huelva|c[oó]rdoba/i,
+};
 
 const EVENTOS_INTERES: { re: RegExp; tipo: TipoAviso }[] = [
   { re: /thunder|tormenta|lightning|rayo/i, tipo: "tormenta" },
@@ -115,18 +122,24 @@ async function fetchTexto(url: string): Promise<string> {
   throw ultimo ?? new Error("Sin feed de avisos");
 }
 
-function parsearMeteoAlarm(xml: string): AvisoSeguridad[] {
+function parsearMeteoAlarm(
+  xml: string,
+  provinciaId: ProvinciaId,
+  omitirCosteros: boolean
+): AvisoSeguridad[] {
   const out: AvisoSeguridad[] = [];
   const vistos = new Set<string>();
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/gi) ?? [];
+  const zonaRe = ZONAS_AVISO[provinciaId] ?? ZONAS_AVISO.castellon;
 
   for (const entry of entries) {
     const zona = extraerTag(entry, "areaDesc");
-    if (!ZONAS_CASTELLON.test(zona)) continue;
+    if (!zonaRe.test(zona)) continue;
 
     const event = extraerTag(entry, "event");
     const tipo = clasificarEvento(event);
     if (!tipo) continue;
+    if (omitirCosteros && tipo === "costero") continue;
 
     const sev = parseSeveridad(extraerTag(entry, "severity"));
     if (!sev) continue;
@@ -166,23 +179,74 @@ function parsearMeteoAlarm(xml: string): AvisoSeguridad[] {
   return out;
 }
 
-export async function obtenerAvisosMeteoAlarmCastellon(): Promise<AvisoSeguridad[]> {
+export async function obtenerAvisosMeteoAlarm(
+  provinciaId: ProvinciaId = getProvinciaActiva().id,
+  omitirCosteros = false
+): Promise<AvisoSeguridad[]> {
   try {
     const xml = await fetchTexto(FEED_METEOALARM);
-    return parsearMeteoAlarm(xml);
+    return parsearMeteoAlarm(xml, provinciaId, omitirCosteros);
   } catch (err) {
     console.warn("No se pudieron cargar avisos MeteoAlarm/AEMET:", err);
     return [];
   }
 }
 
-type PuntoRio = { id: string; nombre: string; lat: number; lng: number };
+/** @deprecated Usar obtenerAvisosMeteoAlarm */
+export async function obtenerAvisosMeteoAlarmCastellon(): Promise<AvisoSeguridad[]> {
+  return obtenerAvisosMeteoAlarm("castellon", false);
+}
 
-const RIOS_SEGUIMIENTO: PuntoRio[] = [
-  { id: "mijares_arenos", nombre: "Mijares (cabecera / Arenós)", lat: 40.05, lng: -0.35 },
-  { id: "mijares_sichar", nombre: "Mijares (Sichar / Onda)", lat: 39.98, lng: -0.25 },
-  { id: "palancia_regajo", nombre: "Palancia (Regajo)", lat: 39.9, lng: -0.55 },
-];
+type PuntoRio = { id: string; nombre: string; lat: number; lng: number; urlConfirma: string };
+
+const RIOS_POR_PROVINCIA: Record<ProvinciaId, PuntoRio[]> = {
+  castellon: [
+    {
+      id: "mijares_arenos",
+      nombre: "Mijares (cabecera / Arenós)",
+      lat: 40.05,
+      lng: -0.35,
+      urlConfirma: "https://saih.chj.es",
+    },
+    {
+      id: "mijares_sichar",
+      nombre: "Mijares (Sichar / Onda)",
+      lat: 39.98,
+      lng: -0.25,
+      urlConfirma: "https://saih.chj.es",
+    },
+    {
+      id: "palancia_regajo",
+      nombre: "Palancia (Regajo)",
+      lat: 39.9,
+      lng: -0.55,
+      urlConfirma: "https://saih.chj.es",
+    },
+  ],
+  sevilla: [
+    {
+      id: "gq_alcala",
+      nombre: "Guadalquivir (Alcalá del Río)",
+      lat: 37.52,
+      lng: -5.98,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+    {
+      id: "gq_sevilla",
+      nombre: "Guadalquivir (Sevilla)",
+      lat: 37.38,
+      lng: -6.0,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+    {
+      id: "guadaira",
+      nombre: "Guadaíra (Alcalá de Guadaíra)",
+      lat: 37.35,
+      lng: -5.78,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+  ],
+};
 
 async function caudalPunto(p: PuntoRio): Promise<AvisoSeguridad | null> {
   try {
@@ -212,10 +276,10 @@ async function caudalPunto(p: PuntoRio): Promise<AvisoSeguridad | null> {
       tipo: "crecida",
       severidad,
       titulo: `Caudal elevado · ${p.nombre}`,
-      detalle: `Modelo ~${q.toFixed(2)} m³/s (media ~${mean.toFixed(2)}). Puede indicar crecida. Confirma en SAIH CHJ antes de pescar en el cauce.`,
+      detalle: `Modelo ~${q.toFixed(2)} m³/s (media ~${mean.toFixed(2)}). Puede indicar crecida. Confirma en la confederación antes de pescar en el cauce.`,
       zona: p.nombre,
       fuente: "caudal_modelo",
-      url: "https://saih.chj.es",
+      url: p.urlConfirma,
       desde: d.time[idx],
       hasta: null,
     };
@@ -225,15 +289,31 @@ async function caudalPunto(p: PuntoRio): Promise<AvisoSeguridad | null> {
   }
 }
 
-export async function obtenerAvisosCaudal(): Promise<AvisoSeguridad[]> {
-  const resultados = await Promise.all(RIOS_SEGUIMIENTO.map(caudalPunto));
+export async function obtenerAvisosCaudal(
+  provinciaId: ProvinciaId = getProvinciaActiva().id,
+  cercaDe?: { lat: number; lng: number } | null
+): Promise<AvisoSeguridad[]> {
+  const todos = RIOS_POR_PROVINCIA[provinciaId] ?? RIOS_POR_PROVINCIA.castellon;
+  let puntos = todos;
+  if (cercaDe && Number.isFinite(cercaDe.lat) && Number.isFinite(cercaDe.lng)) {
+    // Prioriza los ríos más cercanos al punto del mapa (máx. 2).
+    puntos = [...todos]
+      .map((p) => ({ p, d: distanciaKm(cercaDe.lat, cercaDe.lng, p.lat, p.lng) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2)
+      .map((x) => x.p);
+  }
+  const resultados = await Promise.all(puntos.map(caudalPunto));
   return resultados.filter((x): x is AvisoSeguridad => !!x);
 }
 
-export async function obtenerAvisosSeguridadPesca(): Promise<AvisoSeguridad[]> {
+export async function obtenerAvisosSeguridadPesca(
+  cercaDe?: { lat: number; lng: number } | null
+): Promise<AvisoSeguridad[]> {
+  const provincia = getProvinciaActiva();
   const [meteo, caudal] = await Promise.all([
-    obtenerAvisosMeteoAlarmCastellon(),
-    obtenerAvisosCaudal(),
+    obtenerAvisosMeteoAlarm(provincia.id, provincia.continentalOnly),
+    obtenerAvisosCaudal(provincia.id, cercaDe),
   ]);
   const all = [...meteo, ...caudal];
   const seen = new Set<string>();

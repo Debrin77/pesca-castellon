@@ -26,6 +26,8 @@ import {
   textoVigenciaNormativaAndalucia,
 } from "../provincias/sevilla/normativa";
 import TemporadaBanner from "../components/TemporadaBanner";
+import PescaRecBanner from "../components/PescaRecBanner";
+import { infoPermisoCoto } from "../data/permisosCoto";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
@@ -129,12 +131,83 @@ export default function LicenseScreen() {
 
       <TemporadaBanner />
 
-      <Text style={styles.resumen}>
-        {esSevilla
-          ? "Para pescar en ríos y embalses de Sevilla necesitas la licencia de pesca continental de Andalucía (Junta). Confirma siempre la orden de vedas vigente."
-          : LICENCIA_INFO.resumen}
-      </Text>
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Normativa en vigor · {provincia.nombre}</Text>
+        <Text style={styles.cardText}>{fuente.titulo}</Text>
+        <Text style={[styles.cardText, { marginTop: 4 }]}>{fuente.vigenciaNota}</Text>
+        <Text style={styles.privacy}>
+          Consulta en la app: {new Date().toISOString().slice(0, 10)}. El cartel y el boletín oficial mandan.
+        </Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Cupos (catálogo {provincia.nombre})</Text>
+        <Text style={styles.privacy}>
+          Solo especies de esta provincia. El PTOP del coto puede endurecer el cupo.
+        </Text>
+        {(provincia.species as any[]).slice(0, 12).map((sp) => (
+          <View key={sp.id} style={styles.tallaRow}>
+            <Text style={styles.tallaName}>{sp.nombre}</Text>
+            <Text style={styles.tallaVal}>{sp.cupo ?? sp.tallaOficial ?? "—"}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Permisos de coto</Text>
+        <Text style={styles.cardText}>{infoPermisoCoto(provincia.id).comoObtener}</Text>
+        <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPtop}</Text>
+        {esSevilla ? (
+          <Text style={[styles.cardText, { marginTop: 8 }]}>
+            En Sevilla (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
+            refugios (VP) mandan. Si aparece un coto en cartel, pide el permiso al titular.
+          </Text>
+        ) : null}
+      </View>
+
+      {soloContinental ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>PescaREC</Text>
+          <Text style={styles.cardText}>
+            PescaREC es la app estatal para pesca marítima recreativa. En {provincia.nombre} esta guía es
+            continental: no sustituye ni exige PescaREC en ríos/embalses.
+          </Text>
+          <PescaRecBanner compacto />
+        </View>
+      ) : (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>PescaREC (marítima)</Text>
+          <PescaRecBanner />
+        </View>
+      )}
+
+      <Text style={styles.resumen}>{provincia.requisitosLicencia.resumen}</Text>
       <Text style={styles.vigencia}>{vigencia}</Text>
+
+      <View
+        style={[
+          styles.card,
+          provincia.requisitosLicencia.seguroObligatorio ? styles.cardSeguroOn : styles.cardSeguroOff,
+        ]}
+      >
+        <Text style={styles.cardTitle}>
+          {provincia.requisitosLicencia.seguroObligatorio
+            ? "Seguro obligatorio (Andalucía)"
+            : "Seguro de pescador (Castellón)"}
+        </Text>
+        <Text style={styles.seguroBadge}>
+          {provincia.requisitosLicencia.seguroObligatorio
+            ? "Obligatorio · responsabilidad civil"
+            : "No obligatorio en GVA"}
+        </Text>
+        <Text style={styles.cardText}>{provincia.requisitosLicencia.seguroNota}</Text>
+        <Text style={[styles.cardTitle, { marginTop: 12 }]}>Requisitos en {provincia.nombre}</Text>
+        {provincia.requisitosLicencia.requisitos.map((r, i) => (
+          <Text key={i} style={styles.bullet}>
+            • {r}
+          </Text>
+        ))}
+      </View>
 
       {!soloContinental ? (
         <View style={styles.card}>
@@ -230,7 +303,11 @@ export default function LicenseScreen() {
           style={[styles.input, { minHeight: 44 }]}
           value={notas}
           onChangeText={setNotas}
-          placeholder="p. ej. renovar en sede"
+          placeholder={
+            provincia.requisitosLicencia.seguroObligatorio
+              ? "p. ej. nº póliza seguro RC / aseguradora"
+              : "p. ej. renovar en sede"
+          }
           placeholderTextColor={COLORS.textMuted}
         />
         <TouchableOpacity style={styles.ctaButton} onPress={onGuardar} disabled={guardando}>
@@ -256,17 +333,22 @@ export default function LicenseScreen() {
         ))}
       </View>
 
-      {!esSevilla ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
-          {Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
-            <View key={id} style={styles.tallaRow}>
-              <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
-              <Text style={styles.tallaVal}>{texto}</Text>
-            </View>
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
+        {esSevilla
+          ? (provincia.species as any[]).map((sp) => (
+              <View key={sp.id} style={styles.tallaRow}>
+                <Text style={styles.tallaName}>{sp.nombre}</Text>
+                <Text style={styles.tallaVal}>{sp.tallaOficial ?? "—"}</Text>
+              </View>
+            ))
+          : Object.entries(TALLAS_OFICIALES).map(([id, texto]) => (
+              <View key={id} style={styles.tallaRow}>
+                <Text style={styles.tallaName}>{TALLA_LABELS[id] ?? id}</Text>
+                <Text style={styles.tallaVal}>{texto}</Text>
+              </View>
+            ))}
+      </View>
 
       {!esSevilla ? (
         <>
@@ -372,7 +454,30 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     ...SHADOW,
   },
+  cardSeguroOn: {
+    borderWidth: 1.5,
+    borderColor: COLORS.warning,
+    backgroundColor: COLORS.warningLight,
+  },
+  cardSeguroOff: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
   cardTitle: { fontSize: 15, fontWeight: "700", marginBottom: 8, color: COLORS.textPrimary },
+  seguroBadge: {
+    alignSelf: "flex-start",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+    color: COLORS.textPrimary,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginBottom: 8,
+    overflow: "hidden",
+  },
   cardText: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 18 },
   ambitoBlock: {
     marginBottom: 12,

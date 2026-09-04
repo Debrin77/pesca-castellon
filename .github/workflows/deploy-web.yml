@@ -29,6 +29,9 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
+      - name: Comprobar invariantes (especies, cámara, previsión)
+        run: npm run assert
+
       - name: Compilar la versión web (Expo)
         run: npx expo export --platform web
 

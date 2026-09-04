@@ -1,12 +1,14 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
-import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, todosLosTramos, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
+import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
 import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
+import { puntoEnRegionMapa } from "../services/geoService";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -27,27 +29,35 @@ interface Props {
   navigation: any;
 }
 
+function camaraProvincia(region: { latitude: number; longitude: number }) {
+  return { latitude: region.latitude, longitude: region.longitude, zoom: 9, nonce: Date.now() };
+}
+
 export default function EspeciesScreen({ navigation }: Props) {
-  const { provincia: provinciaCtx } = useProvincia();
+  const { provincia: provinciaCtx, provinciaId } = useProvincia();
+  const { fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
-  const tramos = todosLosTramos();
+  // Tramos de la provincia del contexto (no del singleton por defecto Castellón).
+  const tramos = provincia.tramos as TramoOficial[];
   const playas = soloContinental ? [] : todasLasPlayas();
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [marcador, setMarcador] = useState<LatLng | null>(null);
-  const [cargandoUbicacion, setCargandoUbicacion] = useState(true);
+  const [cargandoUbicacion, setCargandoUbicacion] = useState(false);
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
   const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">("rio");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
+  const [avisoFuera, setAvisoFuera] = useState<string | null>(null);
   const mar = !soloContinental && (consulta?.ambito === "maritimo" || catalogo === "mar");
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      title: `Especies · ${provincia.nombre}`,
       headerStyle: { backgroundColor: mar && catalogoAbierto ? COLORS.waterDark : COLORS.primaryDark },
     });
-  }, [mar, catalogoAbierto, navigation]);
+  }, [mar, catalogoAbierto, navigation, provincia.nombre]);
 
   useEffect(() => {
     if (soloContinental && (catalogo === "mar" || catalogo === "no" || catalogo === "tallas")) {
@@ -55,25 +65,45 @@ export default function EspeciesScreen({ navigation }: Props) {
     }
   }, [soloContinental, catalogo]);
 
-  async function usarMiUbicacion() {
+  // Al entrar o al cambiar de provincia: mapa y catálogo anclados a ese territorio.
+  useEffect(() => {
+    setConsulta(null);
+    setMarcador(null);
+    setFichaAbierta(false);
+    setCatalogoAbierto(false);
+    setCatalogo("rio");
+    setAvisoFuera(null);
+    setCamara(camaraProvincia(provincia.regionMapa));
+  }, [provinciaId, provincia.regionMapa]);
+
+  async function usarMiUbicacion(opts?: { silencioso?: boolean }) {
     setCargandoUbicacion(true);
+    setAvisoFuera(null);
     const ok = await solicitarPermisoUbicacion();
     if (ok) {
       const loc = await obtenerUbicacionActual();
       if (loc) {
-        const r = consultarToqueMapa(loc.lat, loc.lng);
-        setConsulta(r);
-        if (!soloContinental && r.ambito === "maritimo") setCatalogo("mar");
-        setMarcador({ latitude: loc.lat, longitude: loc.lng });
-        setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
+        const dentro = puntoEnRegionMapa(loc.lat, loc.lng, provincia.regionMapa);
+        if (!dentro) {
+          // No volamos a otra provincia (p. ej. Castellón) ni mezclamos su costa.
+          setCamara(camaraProvincia(provincia.regionMapa));
+          const msg = `Tu GPS está fuera de ${provincia.nombre}. El mapa y las especies siguen siendo solo de esta provincia.`;
+          setAvisoFuera(msg);
+          if (!opts?.silencioso) {
+            Alert.alert(`Fuera de ${provincia.nombre}`, msg);
+          }
+        } else {
+          const r = consultarToqueMapa(loc.lat, loc.lng);
+          setConsulta(r);
+          if (!soloContinental && r.ambito === "maritimo") setCatalogo("mar");
+          setMarcador({ latitude: loc.lat, longitude: loc.lng });
+          setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
+          void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
+        }
       }
     }
     setCargandoUbicacion(false);
   }
-
-  useEffect(() => {
-    usarMiUbicacion();
-  }, []);
 
   function evaluarPunto(lat: number, lng: number) {
     const r = consultarToqueMapa(lat, lng);
@@ -83,6 +113,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     else setCatalogo("rio");
     setFichaAbierta(true);
     setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
+    void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
   }
 
   function evaluarTramo(z: TramoOficial) {
@@ -90,6 +121,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     setMarcador({ latitude: z.lat, longitude: z.lng });
     setCatalogo("rio");
     setFichaAbierta(true);
+    void fijarPunto({ lat: z.lat, lng: z.lng, fuente: "zona", etiqueta: z.nombre });
   }
 
   function irAparejos(especieId: string) {
@@ -118,6 +150,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={costa ? "mar" : "bosque"}
+          pescaWms={provincia.id === "sevilla" ? "rediam" : "icv"}
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >
@@ -188,15 +221,21 @@ export default function EspeciesScreen({ navigation }: Props) {
             <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
           )}
         </MapView>
-        <BotonMiPosicion onPress={usarMiUbicacion} cargando={cargandoUbicacion} />
+        <BotonMiPosicion onPress={() => usarMiUbicacion()} cargando={cargandoUbicacion} />
       </View>
 
       <View style={styles.pie}>
+        <View style={styles.provinciaChip}>
+          <Text style={styles.provinciaChipTxt}>
+            Provincia · {provincia.nombre} · {speciesCatalog.length} especies
+          </Text>
+        </View>
+        {avisoFuera ? <Text style={styles.avisoFuera}>{avisoFuera}</Text> : null}
         <LeyendaMapa modo={costa ? "costa" : "continental"} />
         <Text style={styles.hint}>
           {soloContinental
-            ? "Toca un tramo o embalse: las especies se abren a pantalla completa."
-            : "Toca río o playa: las especies se abren a pantalla completa."}
+            ? `Toca un tramo o embalse de ${provincia.nombre}: las especies se abren a pantalla completa.`
+            : `Toca río o playa de ${provincia.nombre}: las especies se abren a pantalla completa.`}
         </Text>
         <View style={styles.pieRow}>
           {consulta && !fichaAbierta ? (
@@ -204,7 +243,7 @@ export default function EspeciesScreen({ navigation }: Props) {
               <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
             </TouchableOpacity>
           ) : null}
-          <TouchableOpacity style={[styles.pieBtn, styles.pieBtnGhost]} onPress={() => setCatalogoAbierto(true)} accessibilityRole="button" accessibilityLabel="Catálogo">
+          <TouchableOpacity style={[styles.pieBtn, styles.pieBtnGhost]} onPress={() => setCatalogoAbierto(true)} accessibilityRole="button" accessibilityLabel={`Catálogo de ${provincia.nombre}`}>
             <Text style={styles.pieBtnGhostTxt}>Catálogo</Text>
           </TouchableOpacity>
         </View>
@@ -212,7 +251,7 @@ export default function EspeciesScreen({ navigation }: Props) {
 
       <VentanaConsulta
         visible={fichaAbierta && !!consulta}
-        titulo={consulta?.titulo ?? "Especies"}
+        titulo={consulta?.titulo ?? `Especies · ${provincia.nombre}`}
         onCerrar={() => setFichaAbierta(false)}
         acento={costa ? "mar" : "bosque"}
       >
@@ -253,10 +292,13 @@ export default function EspeciesScreen({ navigation }: Props) {
 
       <VentanaConsulta
         visible={catalogoAbierto}
-        titulo="Catálogo de especies"
+        titulo={`Catálogo · ${provincia.nombre}`}
         onCerrar={() => setCatalogoAbierto(false)}
         acento={catalogo === "rio" || catalogo === "tallas" ? "bosque" : "mar"}
       >
+        <Text style={styles.catalogoIntro}>
+          Fichas solo de {provincia.nombre}. Cada provincia tiene su propio listado y normativa.
+        </Text>
         <View style={styles.modoBar}>
           <TouchableOpacity
             style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOnBosque]}
@@ -316,16 +358,37 @@ const styles = StyleSheet.create({
   pie: {
     backgroundColor: COLORS.surface,
     paddingHorizontal: 14,
-    paddingTop: 10,
-    paddingBottom: 88,
+    paddingTop: 8,
+    paddingBottom: 96,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
-  hint: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, textAlign: "center", marginTop: 6 },
-  pieRow: { flexDirection: "row", gap: 8, marginTop: 10 },
+  provinciaChip: {
+    alignSelf: "center",
+    backgroundColor: COLORS.primaryLight,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: RADIUS.md,
+    marginBottom: 4,
+  },
+  provinciaChipTxt: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+    textAlign: "center",
+  },
+  avisoFuera: {
+    fontSize: 12,
+    color: COLORS.warning,
+    lineHeight: 17,
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  hint: { fontSize: 12, color: COLORS.textSecondary, lineHeight: 17, textAlign: "center", marginTop: 4 },
+  pieRow: { flexDirection: "row", gap: 8, marginTop: 8 },
   pieBtn: {
     flex: 1,
-    minHeight: 46,
+    minHeight: 42,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primaryLight,
     alignItems: "center",
@@ -336,6 +399,12 @@ const styles = StyleSheet.create({
   pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },
   lead: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, marginBottom: 12, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 16, lineHeight: 20 },
+  catalogoIntro: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
   cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
   modoBar: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 14 },
   modoBtn: {

@@ -7,8 +7,8 @@
     "invasora": false,
     "icono": "🐟",
     "notas": "Ciprínido autóctono de Andalucía (cuencas atlánticas del sur). Muy presente en Guadaíra, Corbones, Rivera de Huelva y colas de embalses sevillanos. Prefiere corriente moderada y fondos de grava.",
-    "tallaOficial": "Consultar orden anual Junta de Andalucía (pesca sin muerte frecuente en tramos protegidos)",
-    "cupo": "Según orden de vedas de Andalucía; en muchos tramos se recomienda o impone devolución",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de julio a 25 de febrero.",
     "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
     "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
     "mejorHora": {
@@ -24,7 +24,8 @@
       "Ninfa pesada a correlona",
       "Cucharilla pequeña n.º 1-2 donde el tramo permita spinning"
     ],
-    "normativaResumen": "Autóctono andaluz: licencia de pesca continental de Andalucía (Junta). Respeta tallas/cupos de la orden de vedas vigente y la señalización del tramo. En cotos (ZPC) manda el permiso del coto.",
+    "normativaResumen": "Autóctono andaluz: captura y suelta (art. 7.2), periodo 1 jul–25 feb. Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: barbo gitano — solo captura y suelta. Periodo hábil 1 de julio a 25 de febrero (veda 26 feb–30 jun).",
     "equipo": {
       "cana": "Caña de river/feeder 3.60-3.90 m, acción media, o spinning ligero 2.10-2.40 m",
       "carrete": "Carrete spinning 3000-4000",
@@ -41,8 +42,8 @@
     "invasora": false,
     "icono": "🐟",
     "notas": "Ciprínido autóctono de cuencas del suroeste ibérico. En Sevilla aparece en afluentes (Guadaíra, Corbones, Rivera de Cala/Agrio) y colas de embalse con algo de corriente. Cardúmenes pegados al fondo.",
-    "tallaOficial": "Consultar orden anual Junta de Andalucía",
-    "cupo": "Según orden de vedas de Andalucía",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de mayo a 31 de enero.",
     "mejoresMeses": ["abril", "mayo", "junio"],
     "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
     "mejorHora": {
@@ -58,7 +59,8 @@
       "Asticot / gusano donde el cebo natural esté permitido",
       "Ninfa ligera a la deriva"
     ],
-    "normativaResumen": "Autóctona: licencia continental de Andalucía. Comprueba talla y cupo en la orden de vedas de la Junta. No confundir con especies invasoras de cardumen (alburno).",
+    "normativaResumen": "Autóctona: captura y suelta (art. 7.2), periodo 1 may–31 ene. Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: boga — solo captura y suelta. Periodo hábil 1 de mayo a 31 de enero (veda 1 feb–30 abr).",
     "equipo": {
       "cana": "Caña ligera de coup o inglesa 3.6-4.5 m, o feeder fino",
       "carrete": "Spinning 2000-3000 o pesca al coup",
@@ -75,8 +77,8 @@
     "invasora": true,
     "icono": "🐠",
     "notas": "Ciprínido introducido/invasor, muy abundante en el Guadalquivir sevillano y en embalses (Minilla, Pintado, Zufre, Torre del Águila). Forma cardúmenes en superficie; útil como indicador de actividad pero compite con autóctonos.",
-    "tallaOficial": "Invasora / introducida — no devolver donde la normativa lo prohíba",
-    "cupo": "Captura fomentada; no devolver al agua si figura como invasora en el tramo",
+    "tallaOficial": "No es objeto de pesca en Andalucía. Captura fortuita: no devolver.",
+    "cupo": "0 de aprovechamiento. No devolver / no traslocar.",
     "mejoresMeses": ["abril", "mayo", "junio", "julio", "agosto"],
     "ventanas": "Todo el día en superficie; mejor con sol y agua templada",
     "mejorHora": {
@@ -92,7 +94,8 @@
       "Pan o masa en superficie",
       "Vinilo micro shad"
     ],
-    "normativaResumen": "Introducida/invasora: licencia de pesca continental de Andalucía. No liberar en otras masas de agua. Sigue RD 630/2013 y la orden de vedas de la Junta si exige sacrificio.",
+    "normativaResumen": "Andalucía: alburno no es especie objeto de pesca (Orden 13/01/2023). Si entra, no devolver ni traslocar (RD 630/2013). Licencia Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: alburno — no es objeto de pesca. Captura fortuita: no devolver ni traslocar a otras masas.",
     "equipo": {
       "cana": "Caña ultraligera de spinning 1.80-2.10 m o caña de coup fina",
       "carrete": "Spinning 1000-2000",

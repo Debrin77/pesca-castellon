@@ -5,6 +5,7 @@ import {
   etiquetaTemporadaTrucha,
   temporadaTruchaAbierta,
 } from "../data/normativa2026";
+import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo } from "../provincias/sevilla/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { distanciaKm } from "./geoService";
 import {
@@ -59,6 +60,36 @@ export interface ConsultaPesca {
   especiesHabituales?: string;
   especiesIds?: string[];
   sitiosCosta?: { nombre: string; especies: string; cuando: string; detalle: string }[];
+  /** Proveniencia legal visible en el veredicto (fuente + vigencia + fecha de consulta). */
+  fuenteNormativaDetalle?: {
+    titulo: string;
+    vigenciaNota: string;
+    urlOrden?: string;
+    consultadoEn: string;
+  };
+}
+
+function stampFuente(ambito: "continental" | "maritimo" = "continental"): ConsultaPesca["fuenteNormativaDetalle"] {
+  const provincia = getProvinciaActiva();
+  const hoy = new Date().toISOString().slice(0, 10);
+  if (ambito === "maritimo") {
+    return {
+      titulo: "Decreto 41/2013 + RD 347/2011 / RD 560/1995 (marítima)",
+      vigenciaNota: "Pesca desde tierra CV; tallas BOE Mediterráneo. Verifica cartel y PescaREC si aplica.",
+      urlOrden: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
+      consultadoEn: hoy,
+    };
+  }
+  return {
+    titulo: provincia.fuenteNormativa.titulo,
+    vigenciaNota: provincia.fuenteNormativa.vigenciaNota,
+    urlOrden: provincia.fuenteNormativa.urlOrden,
+    consultadoEn: hoy,
+  };
+}
+
+export function fuenteDetalleConsulta(ambito: "continental" | "maritimo" = "continental") {
+  return stampFuente(ambito);
 }
 
 const COLORES: Record<VeredictoPesca, string> = {
@@ -102,7 +133,8 @@ function tramosActivos(): TramoOficial[] {
 function tramoDesdePoligono(p: PoligonoIcv): TramoOficial {
   const existente = p.tramoId ? tramosActivos().find((t) => t.id === p.tramoId) : undefined;
   if (existente) return existente;
-  const ap: Aprovechamiento = p.capa === "zpc" ? "ZPC" : p.capa === "zrtc" ? "ZRTC" : "VP";
+  const ap: Aprovechamiento =
+    p.capa === "zpc" ? "ZPC" : p.capa === "zpl" ? "ZPL" : p.capa === "zrtc" ? "ZRTC" : "VP";
   return {
     id: `icv-${p.capa}-${p.id}`,
     codigo: p.matricula ?? p.id,
@@ -112,7 +144,7 @@ function tramoDesdePoligono(p: PoligonoIcv): TramoOficial {
     lng: 0,
     radioKm: 0,
     vocacion: p.vocacion ?? "",
-    regimen: ap === "ZPC" ? "Recreo" : "No pescable",
+    regimen: ap === "ZPC" || ap === "ZPL" ? "Recreo" : "No pescable",
     aprovechamiento: ap,
     matriculaCoto: p.matricula ?? undefined,
     fichaId: null,
@@ -164,14 +196,31 @@ function evaluarTramo(
 
   const restricciones: string[] = [];
   const permisos: string[] = [provincia.etiquetaLicenciaContinental];
+  if (esAndalucia && provincia.requisitosLicencia.seguroObligatorio) {
+    permisos.push("Seguro obligatorio de responsabilidad civil del pescador (Junta de Andalucía).");
+  }
   if (fuenteGeometria === "poligono_icv") {
-    permisos.push("Límite según polígono oficial ICV (no un círculo alrededor del centroide).");
+    permisos.push(
+      esAndalucia
+        ? "Límite según polígono oficial DERA / Junta de Andalucía (Orden 13/01/2023), no un círculo alrededor del centroide."
+        : "Límite según polígono oficial ICV (no un círculo alrededor del centroide)."
+    );
   } else {
     restricciones.push(
       esAndalucia
-        ? "Usamos el radio orientativo alrededor del centro del embalse/tramo. En la orilla exacta puede haber error de decenas de metros; mira la señalización."
+        ? "Este tramo no tiene polígono DERA: usamos el radio orientativo alrededor del centro. Mira la señalización."
         : "Este tramo ZPL/VP aún no tiene polígono ICV: usamos el radio del anexo I alrededor del centroide. En la orilla exacta puede haber un error de decenas de metros."
     );
+  }
+
+  if (esAndalucia) {
+    const ficha = t.fichaId
+      ? (provincia.zones as { id: string; avisos?: string[] }[]).find((z) => z.id === t.fichaId)
+      : undefined;
+    const avisosFicha = ficha?.avisos?.length ? ficha.avisos : avisosPorNotaAnexo(t.notaAnexo);
+    for (const a of avisosFicha) {
+      if (!restricciones.includes(a)) restricciones.push(a);
+    }
   }
 
   const base = {
@@ -181,6 +230,8 @@ function evaluarTramo(
     fuenteGeometria,
     confianza,
     especiesIds: t.especies,
+    ambito: "continental" as const,
+    fuenteNormativaDetalle: stampFuente("continental"),
   };
 
   if (t.aprovechamiento === "VP") {
@@ -277,8 +328,17 @@ function evaluarTramo(
     }
   } else if (esAndalucia) {
     permisos.push(
-      "Aguas ciprinícolas / depredadores: sigue la orden de vedas de Andalucía y el cartel del tramo. Autóctonos (barbo gitano, boga…) con talla/cupo o sin muerte según norma."
+      "Art. 5.2: aguas libres si no es coto ni refugio. En Sevilla no hay cotos de ciprínidos (Anexo V.4)."
     );
+    permisos.push(
+      `Barbo: captura y suelta, ${periodoBarboAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 jul–25 feb). Boga: captura y suelta, ${periodoBogaAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 may–31 ene).`
+    );
+    permisos.push("Art. 6: 200 m de presas y escalas. Horario art. 4: 1 h antes del orto – 1 h después del ocaso.");
+    if (t.notaAnexo === "ANEXO_V_3") {
+      permisos.push(
+        "Anexo V.3: en este embalse/tramo las competiciones oficiales FAPD pueden retener barbos en rejones durante su veda."
+      );
+    }
   } else {
     permisos.push(
       "Aguas no trucheras: artículos 2 y 8 de la Orden 30/2016. Lombriz/asticot permitidos. Autóctonos de la tabla 2.2 con talla o sin muerte según especie."
@@ -334,6 +394,8 @@ export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new 
       sePuedePescarHoy: false,
       fuenteGeometria: "ninguna",
       confianza: "aproximada",
+      ambito: "continental",
+      fuenteNormativaDetalle: stampFuente("continental"),
       restriccionesHoy: [
         provincia.notaConsultaAprox,
         provincia.continentalOnly

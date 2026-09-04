@@ -28,17 +28,25 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
     () => [
       {
         emoji: "🎣",
-        titulo: provincia.continentalOnly ? "Licencia continental" : "Dos aguas, dos licencias",
+        titulo: provincia.continentalOnly
+          ? provincia.requisitosLicencia.seguroObligatorio
+            ? "Licencia + seguro RC"
+            : "Licencia continental"
+          : "Dos aguas, dos licencias",
         texto: provincia.continentalOnly
-          ? `En ríos y embalses de ${nombreProv} necesitas la licencia de pesca continental. Comprueba siempre la normativa vigente de tu provincia.`
-          : "En ríos y embalses necesitas la licencia continental. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen.",
+          ? provincia.requisitosLicencia.seguroObligatorio
+            ? `En ríos y embalses de ${nombreProv} necesitas licencia continental de la Junta, NIR y el seguro obligatorio de responsabilidad civil del pescador.`
+            : `En ríos y embalses de ${nombreProv} necesitas la licencia de pesca continental. Comprueba siempre la normativa vigente de tu provincia.`
+          : "En ríos y embalses necesitas la licencia continental. En la orilla del mar, la de pesca marítima recreativa desde tierra. No se sustituyen. En Castellón no se exige seguro de RC de pescador.",
       },
       {
         emoji: "🚦",
         titulo: "Lee el semáforo",
-        texto: provincia.tieneIcv
-          ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
-          : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
+        texto: provincia.continentalOnly
+          ? `Verde: aguas libres. Rojo: refugio de pesca (Anexo IV, prohibido). En ${nombreProv} usamos polígonos oficiales DERA de la Junta.`
+          : provincia.tieneIcv
+            ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
+            : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
       },
       {
         emoji: "🗺️",
@@ -47,7 +55,12 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           "Pulsa un tramo o tu posición para el veredicto. En Inicio tienes clima y avisos; el mapa completo está en su pestaña.",
       },
     ],
-    [provincia.continentalOnly, provincia.tieneIcv, nombreProv]
+    [
+      provincia.continentalOnly,
+      provincia.tieneIcv,
+      provincia.requisitosLicencia.seguroObligatorio,
+      nombreProv,
+    ]
   );
 
   async function terminar() {

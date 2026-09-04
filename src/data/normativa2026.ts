@@ -80,6 +80,7 @@ export function textoVigenciaNormativa(): string {
 
 export const CHECKLIST_ANTES_DE_PESCAR = [
   "Licencia GVA en vigor (continental y/o marítima según el agua).",
+  "No hace falta seguro de RC de pescador en Castellón (sí en Andalucía).",
   "Si es ZPC: permiso del coto / PTOP del día.",
   "Comprobar veda de trucha y días hábiles del tramo (anexo Mijares).",
   "Revisar cebos permitidos (nada de pez vivo / huevas / cangrejo).",

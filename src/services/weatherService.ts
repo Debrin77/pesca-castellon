@@ -7,8 +7,10 @@ export interface ClimaActual {
   temperatura: number;
   sensacionTermica: number;
   velocidadVientoKmh: number;
+  rafagaKmh?: number | null;
   codigoTiempo: number;
   esDeDia: boolean;
+  precipitacionMm?: number | null;
 }
 
 export interface PrevisionDia {
@@ -18,6 +20,8 @@ export interface PrevisionDia {
   tempMin: number;
   probabilidadLluvia: number | null;
   vientoMaxKmh: number | null;
+  rafagaMaxKmh?: number | null;
+  precipitacionMm?: number | null;
 }
 
 /** Traduce el código WMO de Open-Meteo a icono + texto en español. */
@@ -50,17 +54,22 @@ export function descripcionTiempo(codigo: number): { icono: string; texto: strin
 
 export async function obtenerClimaActual(lat: number, lng: number): Promise<ClimaActual | null> {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true&timezone=auto`;
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
+      `&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,wind_gusts_10m,precipitation` +
+      `&timezone=auto`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
     const data = await res.json();
-    const cw = data.current_weather;
+    const c = data.current;
     return {
-      temperatura: cw.temperature,
-      sensacionTermica: cw.temperature, // open-meteo current_weather no da sensación térmica aparte
-      velocidadVientoKmh: cw.windspeed,
-      codigoTiempo: cw.weathercode,
-      esDeDia: cw.is_day === 1,
+      temperatura: c.temperature_2m,
+      sensacionTermica: c.apparent_temperature ?? c.temperature_2m,
+      velocidadVientoKmh: c.wind_speed_10m,
+      rafagaKmh: c.wind_gusts_10m ?? null,
+      codigoTiempo: c.weather_code,
+      esDeDia: c.is_day === 1,
+      precipitacionMm: c.precipitation ?? null,
     };
   } catch (err) {
     console.warn("Error obteniendo clima actual:", err);
@@ -82,11 +91,21 @@ export interface AlertaMeteo {
 export function detectarAlertas(datos: {
   codigoTiempo?: number;
   vientoMaxKmh?: number | null;
+  rafagaMaxKmh?: number | null;
   probabilidadLluvia?: number | null;
   tempMax?: number;
   tempMin?: number;
 }): AlertaMeteo[] {
   const alertas: AlertaMeteo[] = [];
+
+  const rafaga = datos.rafagaMaxKmh ?? null;
+  if (rafaga != null) {
+    if (rafaga > 70) {
+      alertas.push({ nivel: "peligro", icono: "💨", texto: `Ráfagas muy fuertes (${Math.round(rafaga)} km/h)` });
+    } else if (rafaga > 50) {
+      alertas.push({ nivel: "aviso", icono: "💨", texto: `Ráfagas fuertes (${Math.round(rafaga)} km/h)` });
+    }
+  }
 
   if (datos.vientoMaxKmh !== undefined && datos.vientoMaxKmh !== null) {
     if (datos.vientoMaxKmh > 50) {
@@ -121,13 +140,16 @@ export interface PrevisionHora {
   codigoTiempo: number;
   temperatura: number;
   probabilidadLluvia: number | null;
+  rafagaKmh?: number | null;
+  precipitacionMm?: number | null;
+  vientoKmh?: number | null;
 }
 
 export async function obtenerHorario(lat: number, lng: number, dias: number = 7): Promise<PrevisionHora[]> {
   try {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
-      `&hourly=temperature_2m,weathercode,precipitation_probability` +
+      `&hourly=temperature_2m,weathercode,precipitation_probability,precipitation,windspeed_10m,windgusts_10m` +
       `&timezone=auto&forecast_days=${dias}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
@@ -139,6 +161,9 @@ export async function obtenerHorario(lat: number, lng: number, dias: number = 7)
       codigoTiempo: h.weathercode[i],
       temperatura: h.temperature_2m[i],
       probabilidadLluvia: h.precipitation_probability?.[i] ?? null,
+      precipitacionMm: h.precipitation?.[i] ?? null,
+      vientoKmh: h.windspeed_10m?.[i] ?? null,
+      rafagaKmh: h.windgusts_10m?.[i] ?? null,
     }));
   } catch (err) {
     console.warn("Error obteniendo horario:", err);
@@ -150,7 +175,7 @@ export async function obtenerPrevision(lat: number, lng: number, dias: number = 
   try {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
-      `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max` +
+      `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max` +
       `&timezone=auto&forecast_days=${dias}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
@@ -162,7 +187,9 @@ export async function obtenerPrevision(lat: number, lng: number, dias: number = 
       tempMax: daily.temperature_2m_max[i],
       tempMin: daily.temperature_2m_min[i],
       probabilidadLluvia: daily.precipitation_probability_max?.[i] ?? null,
+      precipitacionMm: daily.precipitation_sum?.[i] ?? null,
       vientoMaxKmh: daily.windspeed_10m_max?.[i] ?? null,
+      rafagaMaxKmh: daily.windgusts_10m_max?.[i] ?? null,
     }));
     return resultado;
   } catch (err) {

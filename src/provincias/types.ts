@@ -10,9 +10,16 @@ export interface RegionMapa {
 }
 
 export interface EmbalsePanelMeta {
+  /** Nombre tal como aparece en el SAIH (CHJ: "EMBALSE DE ARENÓS"; CHG: "E64 Cala"). */
   nombre: string;
   etiqueta: string;
   zoneId: string;
+  /** Ficha numérica SAIH Júcar (solo CHJ). */
+  fichaId?: number;
+  /** Red hidrológica. Por defecto "chj" (Castellón). Sevilla usa "chg". */
+  red?: "chj" | "chg";
+  /** Página concreta del SAIH CHG (EmbalSE / EmbalCO). */
+  urlPagina?: string;
 }
 
 export interface FuenteNormativaProvincia {
@@ -20,6 +27,18 @@ export interface FuenteNormativaProvincia {
   vigenciaNota: string;
   urlOrden: string;
   urlLicencia: string;
+}
+
+/** Requisitos de licencia que cambian por comunidad / provincia. */
+export interface RequisitosLicencia {
+  /** Resumen corto para pantalla Licencias y banner. */
+  resumen: string;
+  /** Andalucía exige RC del pescador; GVA/Castellón no. */
+  seguroObligatorio: boolean;
+  /** Texto del requisito de seguro (u orden explícita de que no aplica). */
+  seguroNota: string;
+  /** Lista de requisitos distintivos (NIR, permisos de coto, etc.). */
+  requisitos: string[];
 }
 
 export interface TramoProvincia {
@@ -62,6 +81,7 @@ export interface ProvinciaConfig {
   fuenteNormativa: FuenteNormativaProvincia;
   checklistAntesDePescar: string[];
   etiquetaLicenciaContinental: string;
+  requisitosLicencia: RequisitosLicencia;
   /** Texto breve bajo el semáforo / consultas. */
   notaConsultaAprox: string;
   oleaje?: { lat: number; lng: number; etiqueta: string };

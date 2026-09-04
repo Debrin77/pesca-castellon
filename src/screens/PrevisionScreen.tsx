@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -23,8 +23,14 @@ import {
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
+import { calcularSolunarDia, DiaSolunar } from "../services/solunarService";
+import { calcularMareaHoy, claveMareaProvincia, ResumenMarea } from "../services/tideService";
+import VentanasSolunarMarea from "../components/VentanasSolunarMarea";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { textoOrigenPrevision, type FuentePuntoConsulta } from "../services/puntoConsultaService";
+import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, RADIUS, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
@@ -81,6 +87,7 @@ function climaCorto(texto: string): string {
 export default function PrevisionScreen() {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
+  const { punto, fijarPunto, limpiarPunto, listo: puntoListo } = usePuntoConsulta();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const insets = useSafeAreaInsets();
@@ -91,39 +98,105 @@ export default function PrevisionScreen() {
   const [permisoDenegado, setPermisoDenegado] = useState(false);
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [oleaje, setOleaje] = useState<{ hora: string; alturaM: number }[]>([]);
+  const [solunar, setSolunar] = useState<DiaSolunar | null>(null);
+  const [marea, setMarea] = useState<ResumenMarea | null>(null);
+  const [origen, setOrigen] = useState<{
+    lat: number;
+    lng: number;
+    fuente: FuentePuntoConsulta;
+    etiqueta?: string;
+    poblacion?: string;
+  } | null>(null);
+  const cargaIdRef = useRef(0);
 
-  async function cargar() {
+  const cargar = useCallback(async () => {
+    const idCarga = ++cargaIdRef.current;
     setCargando(true);
+    setPermisoDenegado(false);
+
+    // Prioridad: punto del mapa → GPS → centro de provincia.
+    let lat: number | null = null;
+    let lng: number | null = null;
+    let fuente: FuentePuntoConsulta = "centro";
+    let etiqueta: string | undefined;
+    let poblacion: string | undefined;
+
+    if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
+      lat = punto.lat;
+      lng = punto.lng;
+      fuente = punto.fuente;
+      etiqueta = punto.etiqueta;
+      poblacion = punto.poblacion;
+    } else {
+      const ok = await solicitarPermisoUbicacion();
+      if (idCarga !== cargaIdRef.current) return;
+      if (ok) {
+        const loc = await obtenerUbicacionActual();
+        if (idCarga !== cargaIdRef.current) return;
+        if (loc) {
+          lat = loc.lat;
+          lng = loc.lng;
+          fuente = "gps";
+          etiqueta = "Tu ubicación";
+        }
+      } else if (!punto) {
+        setPermisoDenegado(true);
+      }
+    }
+
+    if (lat == null || lng == null) {
+      lat = provincia.regionMapa.latitude;
+      lng = provincia.regionMapa.longitude;
+      fuente = "centro";
+      etiqueta = `Centro de ${provincia.nombre}`;
+      setPermisoDenegado(false);
+    }
+
+    if (!poblacion && fuente !== "gps") {
+      poblacion = resolverPoblacionCercana(lat, lng, 35, provincia.id)?.nombre;
+    }
+
+    const oleajeCfg = provincia.oleaje;
+    // Oleaje: si el punto es costero (Castellón), usa sus coords; si no, Grao por defecto.
+    const oleajeLat = oleajeCfg ? (fuente === "mapa" || fuente === "zona" ? lat : oleajeCfg.lat) : null;
+    const oleajeLng = oleajeCfg ? (fuente === "mapa" || fuente === "zona" ? lng : oleajeCfg.lng) : null;
+
+    const [prevision, horario, ind, mar] = await Promise.all([
+      obtenerPrevision(lat, lng, 7),
+      obtenerHorario(lat, lng, 7),
+      calcularIndicePesca(lat, lng, 7),
+      oleajeLat != null && oleajeLng != null
+        ? obtenerOleaje(oleajeLat, oleajeLng)
+        : Promise.resolve([] as { hora: string; alturaM: number }[]),
+    ]);
+    if (idCarga !== cargaIdRef.current) return;
+    setDias(prevision);
+    setHoras(horario);
+    setIndice(ind);
+    setOleaje(mar.filter((o) => o.alturaM != null).slice(0, 12));
+    setSeleccion(prevision[0]?.fecha ?? null);
+    setOrigen({ lat, lng, fuente, etiqueta, poblacion });
+    setCargando(false);
+  }, [punto, provincia]);
+
+  useEffect(() => {
+    if (!puntoListo) return;
+    cargar();
+  }, [provincia.id, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo, cargar]);
+
+  async function usarMiGps() {
     const ok = await solicitarPermisoUbicacion();
     if (!ok) {
       setPermisoDenegado(true);
-      setCargando(false);
       return;
     }
-    setPermisoDenegado(false);
     const loc = await obtenerUbicacionActual();
     if (loc) {
-      const oleajeCfg = provincia.oleaje;
-      const [prevision, horario, ind, mar] = await Promise.all([
-        obtenerPrevision(loc.lat, loc.lng, 7),
-        obtenerHorario(loc.lat, loc.lng, 7),
-        calcularIndicePesca(loc.lat, loc.lng, 7),
-        oleajeCfg
-          ? obtenerOleaje(oleajeCfg.lat, oleajeCfg.lng)
-          : Promise.resolve([] as { hora: string; alturaM: number }[]),
-      ]);
-      setDias(prevision);
-      setHoras(horario);
-      setIndice(ind);
-      setOleaje(mar.filter((o) => o.alturaM != null).slice(0, 12));
-      setSeleccion(prevision[0]?.fecha ?? null);
+      await fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
+    } else {
+      await limpiarPunto();
     }
-    setCargando(false);
   }
-
-  useEffect(() => {
-    cargar();
-  }, [provincia.id]);
 
   const dia = dias.find((d) => d.fecha === seleccion) ?? dias[0];
   const ind = dia ? indice.find((x) => x.fecha === dia.fecha) : undefined;
@@ -134,11 +207,23 @@ export default function PrevisionScreen() {
     ? detectarAlertas({
         codigoTiempo: dia.codigoTiempo,
         vientoMaxKmh: dia.vientoMaxKmh,
+        rafagaMaxKmh: dia.rafagaMaxKmh,
         probabilidadLluvia: dia.probabilidadLluvia,
         tempMax: dia.tempMax,
         tempMin: dia.tempMin,
       })
     : [];
+
+  useEffect(() => {
+    if (!dia) {
+      setSolunar(null);
+      return;
+    }
+    const lat = origen?.lat ?? provincia.regionMapa.latitude;
+    setSolunar(calcularSolunarDia(dia.fecha, lat));
+    const clave = claveMareaProvincia(provincia.id, provincia.continentalOnly);
+    setMarea(clave ? calcularMareaHoy(clave) : null);
+  }, [dia?.fecha, origen?.lat, provincia.id, provincia.continentalOnly, provincia.regionMapa.latitude]);
 
   const horasDia = useMemo(() => {
     if (!dia) return [];
@@ -161,32 +246,63 @@ export default function PrevisionScreen() {
         <Text style={styles.kicker} accessibilityRole="header">
           Previsión
         </Text>
-        <Text style={styles.title}>Siete días en tu zona</Text>
-        <Text style={styles.subtitle}>
-          Cielo animado, hora a hora e índice de pesca según el día elegido.
+        <Text style={styles.title}>
+          {origen?.etiqueta
+            ? `Siete días · ${origen.etiqueta}`
+            : "Siete días en tu zona"}
         </Text>
+        {origen?.poblacion && origen.fuente !== "gps" ? (
+          <Text style={styles.poblacionLine} accessibilityRole="text">
+            Población de referencia: {origen.poblacion}
+          </Text>
+        ) : null}
+        <Text style={styles.subtitle}>
+          {origen
+            ? `${textoOrigenPrevision(origen)}. ${
+                origen.fuente === "gps"
+                  ? "También puedes tocar un tramo en el mapa."
+                  : "Toca otro tramo en el mapa para cambiar el punto."
+              }`
+            : "Cielo animado, hora a hora e índice de pesca según el día elegido."}
+        </Text>
+        {origen && origen.fuente !== "gps" ? (
+          <TouchableOpacity
+            style={styles.origenBtn}
+            onPress={usarMiGps}
+            accessibilityRole="button"
+            accessibilityLabel="Usar mi ubicación GPS"
+          >
+            <Text style={styles.origenBtnTxt}>Usar mi GPS</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
 
       {cargando && (
         <View style={styles.loadingBox} accessibilityLiveRegion="polite">
           <ActivityIndicator color="#fff" size="large" />
-          <Text style={styles.loadingText}>Cargando el tiempo de tu ubicación…</Text>
+          <Text style={styles.loadingText}>
+            {origen?.poblacion && origen.fuente !== "gps"
+              ? `Cargando el tiempo en ${origen.poblacion}…`
+              : origen?.etiqueta
+                ? `Cargando el tiempo en ${origen.etiqueta}…`
+                : "Cargando el tiempo…"}
+          </Text>
         </View>
       )}
 
-      {permisoDenegado && !cargando && (
+      {permisoDenegado && !cargando && dias.length === 0 && (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Hace falta la ubicación</Text>
+          <Text style={styles.emptyTitle}>Sin punto de consulta</Text>
           <Text style={styles.emptyText}>
-            Con el permiso de ubicación te mostramos la previsión del sitio donde estás.
+            Activa la ubicación o toca un tramo en el Mapa / Especies: la previsión y los avisos locales seguirán esas coordenadas.
           </Text>
           <TouchableOpacity
             style={styles.retryButton}
             onPress={cargar}
             accessibilityRole="button"
-            accessibilityLabel="Reintentar permiso de ubicación"
+            accessibilityLabel="Reintentar"
           >
-            <Text style={styles.retryButtonText}>Permitir y recargar</Text>
+            <Text style={styles.retryButtonText}>Reintentar</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -277,20 +393,40 @@ export default function PrevisionScreen() {
             </ListaAnimada>
           ) : null}
 
+          <VentanasSolunarMarea
+            solunar={solunar}
+            marea={marea}
+            variante="glass"
+            notaContinental={
+              provincia.continentalOnly
+                ? `${provincia.nombre} es continental en esta app: no hay carta de marea costera. Usa el solunar + índice + SAIH.`
+                : null
+            }
+            oleajeNota={
+              provincia.oleaje
+                ? "En costa, combina solunar con oleaje y viento (radar en el mapa)."
+                : null
+            }
+          />
+
           <View style={styles.metrics}>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Lluvia</Text>
               <Text style={styles.metricValue}>
                 {dia.probabilidadLluvia !== null ? `${dia.probabilidadLluvia}%` : "—"}
               </Text>
-              <Text style={styles.glassHint}>Prob. máxima</Text>
+              <Text style={styles.glassHint}>
+                {dia.precipitacionMm != null ? `${dia.precipitacionMm.toFixed(1)} mm` : "Prob. máxima"}
+              </Text>
             </View>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Viento</Text>
               <Text style={styles.metricValue}>
                 {dia.vientoMaxKmh !== null ? `${Math.round(dia.vientoMaxKmh)}` : "—"}
               </Text>
-              <Text style={styles.glassHint}>km/h racha</Text>
+              <Text style={styles.glassHint}>
+                {dia.rafagaMaxKmh != null ? `ráfaga ${Math.round(dia.rafagaMaxKmh)} km/h` : "km/h máx"}
+              </Text>
             </View>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Luna</Text>
@@ -301,7 +437,7 @@ export default function PrevisionScreen() {
 
           {alertas.length > 0 && (
             <View style={styles.alertsBlock}>
-              <Text style={styles.sectionTitle}>Avisos del día</Text>
+              <Text style={styles.sectionTitle}>Avisos del día en este punto</Text>
               {alertas.map((a, i) => (
                 <View
                   key={i}
@@ -332,7 +468,11 @@ export default function PrevisionScreen() {
                       <IconoMeteo codigo={h.codigoTiempo} size={48} etiqueta={th.texto} />
                       <Text style={styles.hourTemp}>{Math.round(h.temperatura)}°</Text>
                       <Text style={styles.hourRain} numberOfLines={2}>
-                        {h.probabilidadLluvia !== null ? `${h.probabilidadLluvia}% lluvia` : climaCorto(th.texto)}
+                        {h.rafagaKmh != null
+                          ? `ráfaga ${Math.round(h.rafagaKmh)}`
+                          : h.probabilidadLluvia !== null
+                            ? `${h.probabilidadLluvia}% lluvia`
+                            : climaCorto(th.texto)}
                       </Text>
                     </View>
                   );
@@ -374,7 +514,7 @@ export default function PrevisionScreen() {
             </View>
           ) : null}
 
-          <Text style={styles.fuente}>Datos de Open-Meteo. Los avisos no sustituyen a AEMET.</Text>
+          <Text style={styles.fuente}>Datos de Open-Meteo + solunar/marea locales. Los avisos no sustituyen a AEMET.</Text>
         </>
       )}
     </ScrollView>
@@ -455,6 +595,13 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     letterSpacing: -0.4,
   },
+  poblacionLine: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#fff",
+    marginTop: 8,
+    lineHeight: 22,
+  },
   subtitle: {
     fontSize: 14.5,
     color: "#ffffff",
@@ -463,6 +610,17 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: "600",
   },
+  origenBtn: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(255,255,255,0.22)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.45)",
+  },
+  origenBtnTxt: { color: "#fff", fontWeight: "800", fontSize: 13 },
   subtitleSoft: {
     fontSize: 13,
     color: "#ffffff",

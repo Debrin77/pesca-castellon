@@ -11,6 +11,7 @@ import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
+import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
 import { onboardingVisto } from "./src/services/offlineService";
@@ -69,9 +70,14 @@ function HomeStackScreen() {
 }
 
 function ZonasLibresStackScreen() {
+  const { provincia } = useProvincia();
   return (
     <ZonasLibresStack.Navigator screenOptions={stackScreenOptions}>
-      <ZonasLibresStack.Screen name="ZonasLibresMain" component={ZonasLibresScreen} options={{ title: "Mapa" }} />
+      <ZonasLibresStack.Screen
+        name="ZonasLibresMain"
+        component={ZonasLibresScreen}
+        options={{ title: provincia ? `Mapa · ${provincia.nombre}` : "Mapa" }}
+      />
       <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <ZonasLibresStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
     </ZonasLibresStack.Navigator>
@@ -79,9 +85,14 @@ function ZonasLibresStackScreen() {
 }
 
 function EspeciesStackScreen() {
+  const { provincia } = useProvincia();
   return (
     <EspeciesStack.Navigator screenOptions={stackScreenOptions}>
-      <EspeciesStack.Screen name="EspeciesMain" component={EspeciesScreen} options={{ title: "Especies" }} />
+      <EspeciesStack.Screen
+        name="EspeciesMain"
+        component={EspeciesScreen}
+        options={{ title: provincia ? `Especies · ${provincia.nombre}` : "Especies" }}
+      />
       <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <EspeciesStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
     </EspeciesStack.Navigator>
@@ -255,9 +266,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ProvinciaProvider>
-        <AccesoProvider>
-          <AppRaiz />
-        </AccesoProvider>
+        <PuntoConsultaProvider>
+          <AccesoProvider>
+            <AppRaiz />
+          </AccesoProvider>
+        </PuntoConsultaProvider>
       </ProvinciaProvider>
     </SafeAreaProvider>
   );

@@ -1,7 +1,9 @@
 import icv from "../data/icvPescaCastellon.json";
+import sevillaOficial from "../provincias/sevilla/pescaOficial.json";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { distanciaKm } from "./geoService";
 
-export type CapaIcv = "zpc" | "zrtc" | "zra";
+export type CapaIcv = "zpc" | "zrtc" | "zra" | "refugio" | "zpl";
 
 export interface PoligonoIcv {
   capa: CapaIcv;
@@ -18,8 +20,17 @@ export interface PoligonoIcv {
 export const FUENTE_ICV =
   "Cartografía ICV (WFS Caza y Pesca) · CC BY 4.0. QGIS puede reexportar el mismo GeoPackage oficial.";
 
-export function poligonosIcv(): typeof icv.features {
-  return icv.features;
+export const FUENTE_DERA_SEVILLA =
+  "IECA / Junta de Andalucía · DERA 08_10_CotosPesca · CC BY 4.0. Orden 13/01/2023 (BOJA nº 15).";
+
+export function fuentePoligonosOficiales(): string {
+  return getProvinciaActiva().id === "sevilla" ? FUENTE_DERA_SEVILLA : FUENTE_ICV;
+}
+
+export function poligonosIcv(): { type: string; properties: PoligonoIcv; geometry: { type: string; coordinates: any } }[] {
+  const p = getProvinciaActiva();
+  if (p.id === "sevilla") return sevillaOficial.features as any;
+  return icv.features as any;
 }
 
 function puntoEnAnillo(lng: number, lat: number, ring: number[][]): boolean {
@@ -83,11 +94,12 @@ function distAGeomM(lat: number, lng: number, geom: { type: string; coordinates:
   return min;
 }
 
-const ORDEN: CapaIcv[] = ["zrtc", "zra", "zpc"];
+/** Refugios / reservas primero; cotos después; aguas libres cartografiadas al final. */
+const ORDEN: CapaIcv[] = ["refugio", "zrtc", "zra", "zpc", "zpl"];
 
 export function buscarPoligonoIcv(lat: number, lng: number): PoligonoIcv | null {
   const candidatos: { props: PoligonoIcv; d: number }[] = [];
-  for (const ft of icv.features) {
+  for (const ft of poligonosIcv()) {
     const d = distAGeomM(lat, lng, ft.geometry);
     const buffer = ft.properties.bufferM ?? (ft.properties.estrecho ? 60 : 22);
     if (d <= buffer) candidatos.push({ props: ft.properties as PoligonoIcv, d });
@@ -103,15 +115,18 @@ export function buscarPoligonoIcv(lat: number, lng: number): PoligonoIcv | null 
 
 export function matriculasConPoligono(): Set<string> {
   return new Set(
-    icv.features.filter((f) => f.properties.capa === "zpc" && f.properties.matricula).map((f) => f.properties.matricula as string)
+    poligonosIcv()
+      .filter((f) => f.properties.capa === "zpc" && f.properties.matricula)
+      .map((f) => f.properties.matricula as string)
   );
 }
 
 export function tramosConPoligono(): Set<string> {
-  return new Set(icv.features.map((f) => f.properties.tramoId).filter(Boolean) as string[]);
+  return new Set(poligonosIcv().map((f) => f.properties.tramoId).filter(Boolean) as string[]);
 }
 
 export function colorCapaIcv(capa: CapaIcv): string {
   if (capa === "zpc") return "#9a4a0a";
+  if (capa === "zpl") return "#1a6b3c";
   return "#b42318";
 }

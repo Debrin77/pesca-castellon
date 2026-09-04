@@ -1,343 +1,1462 @@
 [
   {
-    "id": "embalse_minilla",
-    "nombre": "Embalse de la Minilla",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Huelva",
-    "municipio": "El Castillo de las Guardas",
-    "lat": 37.72,
-    "lng": -6.28,
-    "radioAproxKm": 4.5,
-    "descripcion": "Embalse de aguas claras en la Sierra Norte, con orillas accesibles desde pistas forestales. Muy frecuentado por aficionados al black bass y a la carpa en primavera y otoño.",
-    "especies": ["black_bass", "carpa", "barbo_gitano", "tenca", "carpin", "alburno"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "septiembre", "octubre"],
-      "carpa": ["mayo", "junio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Rivera de Huelva)"
-  },
-  {
-    "id": "embalse_pintado",
-    "nombre": "Embalse de El Pintado",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Benalija",
-    "municipio": "Cazalla de la Sierra",
-    "lat": 37.95,
-    "lng": -5.95,
-    "radioAproxKm": 5.5,
-    "descripcion": "Gran vaso de la Sierra Norte sevillana, con brazos profundos y cola limosa. Ofrece black bass, lucio y ciprínidos en un entorno de dehesa y pinar.",
-    "especies": ["black_bass", "lucio", "carpa", "barbo_gitano", "boga", "alburno", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "octubre"],
-      "lucio": ["marzo", "abril", "octubre", "noviembre"],
-      "carpa": ["mayo", "junio", "septiembre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Viar)"
-  },
-  {
-    "id": "embalse_jose_toran",
-    "nombre": "Embalse José Torán",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Arroyo Retortillo",
-    "municipio": "Lora del Río",
-    "lat": 37.68,
-    "lng": -5.48,
-    "radioAproxKm": 3.5,
-    "descripcion": "Embalse de tamaño medio cerca de Lora del Río, con orillas suaves y buena presencia de carpa y barbos. Ideal para feeder y carpfishing de día completo.",
-    "especies": ["carpa", "carpin", "barbo_gitano", "alburno", "black_bass", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "julio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"],
-      "black_bass": ["abril", "mayo", "octubre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir"
-  },
-  {
-    "id": "embalse_melonares",
-    "nombre": "Embalse de Melonares",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Viar",
-    "municipio": "Castilblanco de los Arroyos",
-    "lat": 37.85,
-    "lng": -5.85,
-    "radioAproxKm": 6,
-    "descripcion": "Embalse amplio en la cuenca del Viar, con costa irregular y zonas de cobertura. Destaca el black bass en primavera y la carpa en colas limosas.",
-    "especies": ["black_bass", "carpa", "barbo_gitano", "boga", "lucio", "alburno"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "septiembre", "octubre"],
-      "carpa": ["mayo", "junio", "septiembre"],
-      "boga": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Viar)"
-  },
-  {
-    "id": "embalse_torre_aguila",
-    "nombre": "Embalse Torre del Águila",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Salado de Morón",
-    "municipio": "Utrera",
-    "lat": 37.15,
-    "lng": -5.72,
-    "radioAproxKm": 4,
-    "descripcion": "Vaso de la campiña sevillana, de aguas más turbias y orillas abiertas. Muy pensado para carpa, carpín y pesca fina de ciprínidos.",
-    "especies": ["carpa", "carpin", "tenca", "alburno", "cangrejo_americano", "black_bass"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "julio", "septiembre"],
-      "tenca": ["mayo", "junio", "julio"],
-      "carpin": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Salado)"
-  },
-  {
-    "id": "embalse_agrio",
-    "nombre": "Embalse del Agrio",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Rivera del Agrio",
-    "municipio": "Aznalcóllar",
-    "lat": 37.65,
-    "lng": -6.15,
-    "radioAproxKm": 2.5,
-    "descripcion": "Embalse pequeño en la Rivera del Agrio, con acceso limitado y ambiente tranquilo. Buena opción para barbos, bogas y carpa en orilla.",
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "alburno"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"],
-      "boga": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Rivera de Huelva)"
-  },
-  {
-    "id": "embalse_cala",
-    "nombre": "Embalse de Cala",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Cala",
-    "municipio": "El Ronquillo",
-    "lat": 37.78,
-    "lng": -6.05,
-    "radioAproxKm": 4,
-    "descripcion": "Embalse encajado entre lomas de la Sierra Norte, con orillas rocosas y buena profundidad junto a presa. Popular entre spinning de black bass y feeder de ciprínidos.",
-    "especies": ["black_bass", "carpa", "barbo_gitano", "boga", "alburno", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "octubre"],
-      "carpa": ["mayo", "junio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Rivera de Huelva)"
-  },
-  {
-    "id": "embalse_zufre",
-    "nombre": "Embalse de Zufre",
-    "tipo": "embalse",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Huelva",
-    "municipio": "Zufre / El Castillo de las Guardas",
-    "lat": 37.82,
-    "lng": -6.35,
-    "radioAproxKm": 7,
-    "descripcion": "Gran embalse fronterizo Huelva–Sevilla, muy popular por el black bass y el lucio. Ofrece kilómetros de orilla y colas productivas en primavera.",
-    "especies": ["black_bass", "lucio", "carpa", "barbo_gitano", "tenca", "alburno", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "septiembre", "octubre"],
-      "lucio": ["marzo", "abril", "octubre", "noviembre"],
-      "carpa": ["mayo", "junio", "septiembre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Rivera de Huelva)"
-  },
-  {
-    "id": "rio_guadalquivir_alcala",
-    "nombre": "Guadalquivir — Alcalá del Río",
-    "tipo": "rio",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Guadalquivir",
-    "municipio": "Alcalá del Río",
-    "lat": 37.518,
-    "lng": -5.978,
-    "radioAproxKm": 3,
-    "descripcion": "Tramo fluvial aguas arriba de Sevilla, con azudes y orillas transitables. Habituales la carpa, el barbo gitano y, en hoyos, el siluro.",
-    "especies": ["carpa", "barbo_gitano", "boga", "alburno", "siluro", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"],
-      "siluro": ["junio", "julio", "agosto", "septiembre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir"
-  },
-  {
-    "id": "rio_guadalquivir_sevilla",
-    "nombre": "Guadalquivir — tramo urbano Sevilla",
-    "tipo": "rio",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Guadalquivir",
-    "municipio": "Sevilla",
-    "lat": 37.382,
-    "lng": -5.995,
-    "radioAproxKm": 4,
-    "descripcion": "Tramo urbano del Guadalquivir con muelles y orillas peatonales. Fácil acceso; carpa y alburno dominan, con siluros en zonas profundas.",
-    "especies": ["carpa", "alburno", "siluro", "barbo_gitano", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "julio", "septiembre"],
-      "siluro": ["junio", "julio", "agosto"],
-      "alburno": ["abril", "mayo", "junio", "julio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir"
-  },
-  {
-    "id": "rio_guadalquivir_coria",
-    "nombre": "Guadalquivir — Coria del Río",
-    "tipo": "rio",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Guadalquivir",
-    "municipio": "Coria del Río",
-    "lat": 37.285,
-    "lng": -6.052,
-    "radioAproxKm": 3.5,
-    "descripcion": "Tramo bajo antes de la influencia mareal fuerte, con orillas de ribera y pesca desde muelle. Carpa y siluro son las piezas más buscadas.",
-    "especies": ["carpa", "siluro", "alburno", "barbo_gitano", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "septiembre"],
-      "siluro": ["junio", "julio", "agosto", "septiembre"],
-      "alburno": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir"
-  },
-  {
-    "id": "rio_guadaira",
-    "nombre": "Río Guadaíra — tramo medio",
-    "tipo": "rio",
-    "estadoZona": "libre",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Guadaíra",
-    "municipio": "Alcalá de Guadaíra",
-    "lat": 37.35,
-    "lng": -5.78,
-    "radioAproxKm": 2.5,
-    "descripcion": "Afluente de la campiña con tablas y remansos accesibles cerca de Alcalá de Guadaíra. Buena pesca de barbos, bogas y carpa en primavera.",
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "alburno", "cangrejo_americano"],
-    "mejoresEpocas": {
-      "barbo_gitano": ["abril", "mayo", "junio"],
-      "boga": ["abril", "mayo", "junio"],
-      "carpa": ["mayo", "junio", "septiembre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Guadaíra)"
-  },
-  {
-    "id": "rio_corbones_coto",
-    "nombre": "Coto Corbones — tramo medio",
-    "tipo": "rio",
-    "estadoZona": "controlada",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Corbones",
-    "municipio": "Marchena",
-    "lat": 37.32,
-    "lng": -5.42,
-    "radioAproxKm": 2,
-    "descripcion": "Tramo acotado del Corbones con permiso de coto obligatorio. Orillas de campiña y pozas donde dominan carpa, barbo gitano y boga.",
-    "especies": ["carpa", "barbo_gitano", "boga", "carpin", "tenca"],
-    "mejoresEpocas": {
-      "carpa": ["mayo", "junio", "septiembre"],
-      "barbo_gitano": ["abril", "mayo", "junio"],
-      "boga": ["abril", "mayo", "junio"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Corbones)"
-  },
-  {
-    "id": "embalse_pintado_coto",
-    "nombre": "Coto El Pintado — orilla oeste",
-    "tipo": "embalse",
-    "estadoZona": "controlada",
-    "vocacionOficial": "Ciprinícola / black bass",
-    "rio": "Rivera de Benalija",
-    "municipio": "Cazalla de la Sierra",
-    "lat": 37.96,
-    "lng": -5.97,
-    "radioAproxKm": 2,
-    "descripcion": "Sector acotado de la orilla oeste de El Pintado. Requiere permiso de coto; pensado para spinning de black bass y lucio con aforo controlado.",
-    "especies": ["black_bass", "carpa", "lucio", "barbo_gitano"],
-    "mejoresEpocas": {
-      "black_bass": ["marzo", "abril", "mayo", "octubre"],
-      "lucio": ["marzo", "abril", "noviembre"],
-      "carpa": ["mayo", "junio", "septiembre"]
-    },
-    "saihEstacion": null,
-    "saihNombre": null,
-    "saihFichaId": null,
-    "cuenca": "Guadalquivir (Viar)"
-  },
-  {
-    "id": "rio_guadalquivir_vedado_doaana",
-    "nombre": "Guadalquivir — acceso Doñana (vedado)",
+    "id": "refugio_arroyo_de_santiago_y_vallehondo_con_sus_",
+    "nombre": "Refugio Arroyo de Santiago y Vallehondo, con sus afluentes",
     "tipo": "rio",
     "estadoZona": "vedada",
-    "vocacionOficial": "Ciprinícola",
-    "rio": "Río Guadalquivir",
-    "municipio": "Puebla del Río",
-    "lat": 37.12,
-    "lng": -6.18,
-    "radioAproxKm": 3,
-    "descripcion": "Tramo vedado en el entorno de acceso al espacio protegido de Doñana. La pesca está prohibida; se incluye solo como referencia cartográfica.",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo de Santiago y Vallehondo, con sus afluentes",
+    "municipio": "Espera",
+    "lat": 36.92273,
+    "lng": -5.65605,
+    "radioAproxKm": 8,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Nacimiento → Limite de la provincia de Sevilla.",
     "especies": [],
     "mejoresEpocas": {},
     "saihEstacion": null,
     "saihNombre": null,
     "saihFichaId": null,
-    "cuenca": "Guadalquivir"
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_zona_inundable_entremuros_guadiamar",
+    "nombre": "Refugio Zona inundable Entremuros Guadiamar",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Zona inundable Entremuros Guadiamar",
+    "municipio": "Isla Mayor",
+    "lat": 37.19512,
+    "lng": -6.189,
+    "radioAproxKm": 0.6,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Zona inundable comprendida entre la compuerta de la laguna de Dehesa de Abajo hasta el muro izquierdo de Entremuros del Guadiamar, situada al norte de la carretera que une la Venta del Cruce con Entremuros → Zona inundable comprendida entre la compuerta de la laguna de Dehesa de Abajo hasta el muro izquierdo de Entremuros del Guadiamar, situada al norte de la carretera que une la Venta del Cruce con Entremuros.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_arroyo_de_santiago_y_sus_afluentes",
+    "nombre": "Refugio Arroyo de Santiago y sus afluentes",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo de Santiago y sus afluentes",
+    "municipio": "Utrera",
+    "lat": 36.95932,
+    "lng": -5.74758,
+    "radioAproxKm": 5.28,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Limite de la provincia de Sevilla → Desembocadura en el Pantano de la Torre del Aguila.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_laguna_de_los_tollos_t_m_jerez_de_la_fro",
+    "nombre": "Refugio Laguna de los Tollos (T.M. Jerez de la Frontera-El Cuervo)",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Laguna de los Tollos (T.M. Jerez de la Frontera-El Cuervo)",
+    "municipio": "El Cuervo de Sevilla",
+    "lat": 36.84437,
+    "lng": -6.01966,
+    "radioAproxKm": 0.69,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Toda la laguna → Toda la laguna.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en",
+    "nombre": "Tramos de La Barqueta, Paseo de la O y Chapina, en Sevilla",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Tramos de La Barqueta, Paseo de la O y Chapina, en Sevilla",
+    "municipio": "Dos Hermanas",
+    "lat": 37.37268,
+    "lng": -5.99749,
+    "radioAproxKm": 6.9,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Guadalquivir urbano: presencia confirmada de siluro (invasora; pesca como objetivo prohibida — captura fortuita: sacrificio, no devolver).",
+    "especies": [
+      "carpa",
+      "siluro",
+      "alburno",
+      "barbo_gitano",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_rio_crispinejo_o_agrio_y_rio_guadiamar",
+    "nombre": "Refugio Rio Crispinejo o Agrio y Rio Guadiamar",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Rio Crispinejo o Agrio y Rio Guadiamar",
+    "municipio": "Olivares",
+    "lat": 37.47921,
+    "lng": -6.21187,
+    "radioAproxKm": 1.65,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Desde sus limites con el Paisaje Protegido Corredor Verde del Guadiamar hasta su confluencia → Desde sus limites con el Paisaje Protegido Corredor Verde del Guadiamar hasta su confluencia.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_de_cala",
+    "nombre": "Embalse de Cala",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de Cala",
+    "municipio": "Castilblanco de los Arroyos",
+    "lat": 37.72475,
+    "lng": -6.12029,
+    "radioAproxKm": 3.12,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E64 Cala",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "refugio_laguna_de_la_dehesa_de_abajo",
+    "nombre": "Refugio Laguna de la Dehesa de Abajo",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Laguna de la Dehesa de Abajo",
+    "municipio": "La Puebla del Río",
+    "lat": 37.20644,
+    "lng": -6.18324,
+    "radioAproxKm": 0.92,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todal la laguna → Toda la laguna.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_arroyo_higueron_mascardo_y_salado_de_leb",
+    "nombre": "Refugio Arroyo Higueron, Mascardo y Salado de Lebrija y sus afluentes",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo Higueron, Mascardo y Salado de Lebrija y sus afluentes",
+    "municipio": "El Cuervo de Sevilla",
+    "lat": 36.91089,
+    "lng": -5.89924,
+    "radioAproxKm": 8,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Limite de la provincia de Sevilla → Autopista AP-4.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_de_jose_toran",
+    "nombre": "Embalse de José Torán",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de José Torán",
+    "municipio": "Constantina",
+    "lat": 37.76629,
+    "lng": -5.48167,
+    "radioAproxKm": 5.73,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E54 José Torán",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalCO.aspx"
+  },
+  {
+    "id": "refugio_arroyo_montero_y_salado_de_moron_y_sus_a",
+    "nombre": "Refugio Arroyo Montero y Salado de Moron y sus afluentes",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo Montero y Salado de Moron y sus afluentes",
+    "municipio": "El Coronil",
+    "lat": 37.00916,
+    "lng": -5.61233,
+    "radioAproxKm": 8,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Limite de la provincia de Sevilla → Desembocadura en el Pantano de la Torre del Aguila.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_embalse_de_melonares",
+    "nombre": "Refugio Embalse de Melonares",
+    "tipo": "embalse",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Embalse de Melonares",
+    "municipio": "Almadén de la Plata",
+    "lat": 37.77038,
+    "lng": -5.89387,
+    "radioAproxKm": 6.84,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todo el embalse → Todo el embalse.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": "E58 Melonares",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "embalse_de_jarrama",
+    "nombre": "Embalse de Jarrama",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de Jarrama",
+    "municipio": "El Madroño",
+    "lat": 37.67357,
+    "lng": -6.50592,
+    "radioAproxKm": 0.92,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_de_gergal",
+    "nombre": "Embalse de Gergal",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de Gergal",
+    "municipio": "Castilblanco de los Arroyos",
+    "lat": 37.60414,
+    "lng": -6.04904,
+    "radioAproxKm": 6.1,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E65 El Gergal",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "refugio_arroyo_del_saladillo_saguzal_de_los_garz",
+    "nombre": "Refugio Arroyo del Saladillo, Saguzal, de los Garzos y Mojon Blanco, con sus afluentes",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo del Saladillo, Saguzal, de los Garzos y Mojon Blanco, con sus afluentes",
+    "municipio": "Espera",
+    "lat": 36.883,
+    "lng": -5.86342,
+    "radioAproxKm": 7.12,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Nacimiento → Limite de la provincia de Sevilla.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_embalse_del_retortillo",
+    "nombre": "Refugio Embalse del Retortillo",
+    "tipo": "embalse",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Embalse del Retortillo",
+    "municipio": "La Puebla de los Infantes",
+    "lat": 37.84636,
+    "lng": -5.37375,
+    "radioAproxKm": 0.74,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Desembocadura del Arroyo de las Animas → Desembocadura del Arroyo de El Higuillo.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_del_pintado",
+    "nombre": "Embalse del Pintado",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse del Pintado",
+    "municipio": "Cazalla de la Sierra",
+    "lat": 38.00609,
+    "lng": -5.95292,
+    "radioAproxKm": 6.22,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E57 El Pintado",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "embalse_de_torre_del_aguila",
+    "nombre": "Embalse de Torre del Aguila",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de Torre del Aguila",
+    "municipio": "El Palmar de Troya",
+    "lat": 37.03432,
+    "lng": -5.71923,
+    "radioAproxKm": 5.55,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E68 Torre del Águila",
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "refugio_rivera_del_hueznar",
+    "nombre": "Refugio Rivera del Hueznar",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Rivera del Hueznar",
+    "municipio": "Alanís",
+    "lat": 37.94748,
+    "lng": -5.68827,
+    "radioAproxKm": 5.71,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Chorrera del Moro → Vado del Cortijo de Jesus.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_embalse_de_malpasillo",
+    "nombre": "Refugio Embalse de Malpasillo",
+    "tipo": "embalse",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Embalse de Malpasillo",
+    "municipio": "Badolatosa",
+    "lat": 37.28665,
+    "lng": -4.66989,
+    "radioAproxKm": 1.51,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todo el embalse → Todo el embalse.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_arroyo_de_san_pedro",
+    "nombre": "Refugio Arroyo de San Pedro",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Arroyo de San Pedro",
+    "municipio": "El Pedroso",
+    "lat": 37.86016,
+    "lng": -5.74179,
+    "radioAproxKm": 0.6,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Azud situado 20 metros aguas arriba de la via del ferrocarril Sevilla-Merida → Confluencia con la Rivera del Hueznar.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_del_retortillo",
+    "nombre": "Embalse del Retortillo",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse del Retortillo",
+    "municipio": "Hornachuelos",
+    "lat": 37.85679,
+    "lng": -5.39005,
+    "radioAproxKm": 1.44,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E39 Retortillo",
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalCO.aspx"
+  },
+  {
+    "id": "refugio_arroyo_de_la_gargantafria",
+    "nombre": "Arroyo de la Gargantafria",
+    "tipo": "rio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Arroyo de la Gargantafria",
+    "municipio": "Almadén de la Plata",
+    "lat": 37.81121,
+    "lng": -5.96388,
+    "radioAproxKm": 3.64,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Confluencia con el Arroyo de la Calzadilla o de la Cedacilla → Azud de Gargantafria.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_de_alcala_del_rio",
+    "nombre": "Embalse de Alcalá del Río",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de Alcalá del Río",
+    "municipio": "Alcalá del Río",
+    "lat": 37.55349,
+    "lng": -5.8967,
+    "radioAproxKm": 8,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Presencia de siluro citada en el azud/embalse de Alcalá del Río (invasora; captura fortuita → sacrificio, no devolver).",
+    "especies": [
+      "carpa",
+      "siluro",
+      "alburno",
+      "barbo_gitano",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_embalse_de_altarejos",
+    "nombre": "Refugio Embalse de Altarejos",
+    "tipo": "embalse",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Embalse de Altarejos",
+    "municipio": "Guadalcanal",
+    "lat": 38.15231,
+    "lng": -5.72742,
+    "radioAproxKm": 0.73,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todo el embalse → Todo el embalse.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "refugio_embalse_de_cordobilla",
+    "nombre": "Refugio Embalse de Cordobilla",
+    "tipo": "embalse",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca (Anexo IV BOJA)",
+    "rio": "Refugio Embalse de Cordobilla",
+    "municipio": "Aguilar de la Frontera",
+    "lat": 37.34466,
+    "lng": -4.69285,
+    "radioAproxKm": 2.98,
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todo el embalse → Todo el embalse.",
+    "especies": [],
+    "mejoresEpocas": {},
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Corbones",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_de_la_puebla_de_cazalla",
+    "nombre": "Embalse de la Puebla de Cazalla",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de la Puebla de Cazalla",
+    "municipio": "La Puebla de Cazalla",
+    "lat": 37.12013,
+    "lng": -5.21777,
+    "radioAproxKm": 2.76,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E55 Puebla de Cazalla",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "embalse_de_la_minilla",
+    "nombre": "Embalse de la Minilla",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · ciprinícola",
+    "rio": "Embalse de la Minilla",
+    "municipio": "El Castillo de las Guardas",
+    "lat": 37.69753,
+    "lng": -6.20743,
+    "radioAproxKm": 5.1,
+    "descripcion": "Aguas libres (art. 5.2 de la Orden 13/01/2023): no es coto ni refugio. Cartografía DERA 08_10_CotosPesca (Retención barbos rejones). Anexo V.3: en competiciones oficiales FAPD se permite retener barbos en rejones durante su veda. Límites: Sin dato → Sin dato.",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E63 La Minilla",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "penaflor_azud",
+    "nombre": "Azud / presa de Peñaflor (Guadalquivir)",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · azud / presa menor",
+    "rio": "Guadalquivir",
+    "municipio": "Peñaflor",
+    "lat": 37.7082,
+    "lng": -5.3455,
+    "radioAproxKm": 1.8,
+    "descripcion": "Azud de derivación sobre el Guadalquivir en Peñaflor (capacidad ~3 hm³). Aguas libres por art. 5.2 de la Orden 13/01/2023: no figura como coto ni refugio. Geometría orientativa (sin polígono DERA). Sitio clásico de carpa y barbo en remanso.",
+    "avisos": [
+      "Art. 6: no pescar a menos de 200 m de la presa, escalas y pasos de peces (aguas arriba y abajo).",
+      "Confirma señalización local y accesos; el azud es infraestructura de CHG."
+    ],
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadalquivir_villaverde",
+    "nombre": "Guadalquivir en Villaverde del Río",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "rio": "Guadalquivir",
+    "municipio": "Villaverde del Río",
+    "lat": 37.5871,
+    "lng": -5.8707,
+    "radioAproxKm": 2.2,
+    "descripcion": "Tramo del Guadalquivir a su paso por Villaverde del Río. Aguas libres (art. 5.2). Históricamente citado junto a Barqueta/Chapina para retención de barbos en competiciones FAPD (Anexo V.3 de órdenes anteriores). Radio orientativo, sin polígono DERA.",
+    "avisos": [
+      "Radio orientativo art. 5.2: confirma orilla y señalización.",
+      "Art. 6 si pescas cerca de azudes o escalas del tramo."
+    ],
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin",
+      "black_bass"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadalquivir_lora",
+    "nombre": "Guadalquivir en Lora del Río",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "rio": "Guadalquivir",
+    "municipio": "Lora del Río",
+    "lat": 37.6555,
+    "lng": -5.528,
+    "radioAproxKm": 2,
+    "descripcion": "Tramo medio del Guadalquivir sevillano en Lora del Río. Aguas libres art. 5.2. Radio orientativo para orillas y remansos; sin geometría DERA.",
+    "avisos": [
+      "Aguas libres art. 5.2. Respeta 200 m de cualquier presa o escala cercana."
+    ],
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadalquivir_coria",
+    "nombre": "Guadalquivir en Coria del Río",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · tramo bajo / estuarino",
+    "rio": "Guadalquivir",
+    "municipio": "Coria del Río",
+    "lat": 37.287,
+    "lng": -6.046,
+    "radioAproxKm": 2.4,
+    "descripcion": "Bajo Guadalquivir en Coria del Río: aguas libres art. 5.2, con influencia mareal pero licencia continental de Andalucía (el límite marítimo está en el Caño de la Esparraguera, Sanlúcar). Siluro citado en el Bajo Guadalquivir hacia Coria (invasora; no devolver). Zona de carpfishing. Radio orientativo.",
+    "avisos": [
+      "Licencia continental Junta (no marítima) en este tramo.",
+      "Cerca de Doñana / marismas: hay refugios (Entremuros, Dehesa de Abajo, Guadiamar) donde la pesca está prohibida. Mira el mapa y la señalización.",
+      "Art. 6 si hay azudes o escalas en la orilla."
+    ],
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin",
+      "siluro"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ],
+      "siluro": [
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadalquivir_gelves",
+    "nombre": "Guadalquivir en Gelves",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · tramo metropolitano",
+    "rio": "Guadalquivir",
+    "municipio": "Gelves",
+    "lat": 37.341,
+    "lng": -6.017,
+    "radioAproxKm": 1.6,
+    "descripcion": "Orilla del Guadalquivir en Gelves / área metropolitana. Aguas libres art. 5.2. Radio orientativo; respeta ordenanzas municipales de paseos y muelles.",
+    "avisos": [
+      "Ordenanzas municipales pueden restringir pesca en paseos y muelles.",
+      "Licencia continental Junta. Confirma señalización."
+    ],
+    "especies": [
+      "carpa",
+      "alburno",
+      "barbo_gitano",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadalquivir",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadaira_alcala",
+    "nombre": "Río Guadaíra en Alcalá de Guadaíra",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · afluente Guadaíra",
+    "rio": "Guadaíra",
+    "municipio": "Alcalá de Guadaíra",
+    "lat": 37.3375,
+    "lng": -5.8445,
+    "radioAproxKm": 2.5,
+    "descripcion": "Afluente del Guadalquivir. No figura como coto ni refugio en el Anexo IV → aguas libres art. 5.2. Sin polígono DERA: radio orientativo en torno a Alcalá (molinos / tablas). Carpa, barbo, alburno y bass frecuentes.",
+    "avisos": [
+      "Barbo y boga: solo captura y suelta en periodo hábil (Orden 13/01/2023).",
+      "Geometría orientativa: confirma orilla y señalización."
+    ],
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "black_bass"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadaíra",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "guadaira_bajo",
+    "nombre": "Río Guadaíra (tramo bajo / Ribera)",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · afluente Guadaíra",
+    "rio": "Guadaíra",
+    "municipio": "Sevilla",
+    "lat": 37.355,
+    "lng": -5.93,
+    "radioAproxKm": 2.2,
+    "descripcion": "Tramo bajo del Guadaíra hacia su desembocadura en el Guadalquivir. Aguas libres art. 5.2. Radio orientativo.",
+    "avisos": [
+      "Aguas libres art. 5.2. Respeta espacios urbanos y señalización."
+    ],
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Guadaíra",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "viar_melonares_cantillana",
+    "nombre": "Río Viar (Melonares → Cantillana)",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · bajo Melonares",
+    "rio": "Viar",
+    "municipio": "Cantillana",
+    "lat": 37.64,
+    "lng": -5.84,
+    "radioAproxKm": 4.5,
+    "descripcion": "Tramo del Viar desde aguas abajo de la presa de Melonares hasta Cantillana. El embalse de Melonares es refugio (pesca prohibida); este tramo de río es aguas libres art. 5.2. Radio orientativo.",
+    "avisos": [
+      "No pesques dentro del embalse de Melonares ni en su polígono refugio DERA.",
+      "Art. 6: 200 m de la presa de Melonares y de escalas."
+    ],
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "lucio",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
+  },
+  {
+    "id": "embalse_huesna",
+    "nombre": "Embalse de Huésna",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · embalse",
+    "rio": "Rivera de Huésna",
+    "municipio": "El Pedroso",
+    "lat": 37.7717,
+    "lng": -5.6819,
+    "radioAproxKm": 2.8,
+    "descripcion": "Embalse CHG en la Rivera de Huésna (El Pedroso / Constantina). Aguas libres art. 5.2: no es refugio ni coto en la Orden 13/01/2023. Sin polígono DERA en el dataset de cotos; radio orientativo. Bass y lucio citados en listados históricos de masas autorizadas.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Invasoras (bass/lucio): RD 630/2013 y Resolución 19/12/2019 — no traslocar."
+    ],
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E56 Huesna",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "embalse_agrio",
+    "nombre": "Embalse del Agrio (Aznalcóllar)",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · embalse",
+    "rio": "Agrio",
+    "municipio": "Aznalcóllar",
+    "lat": 37.524,
+    "lng": -6.27,
+    "radioAproxKm": 2.2,
+    "descripcion": "Embalse del Agrio en Aznalcóllar. Aguas libres art. 5.2 (el embalse no es el refugio del curso Agrio–Guadiamar del Anexo IV). Radio orientativo. Carpa y bass frecuentes.",
+    "avisos": [
+      "No confundir con el refugio «Río Crispinejo o Agrio y río Guadiamar» (Anexo IV / Corredor Verde): allí la pesca está prohibida.",
+      "Art. 6: 200 m de la presa."
+    ],
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "E67 El Agrio",
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
+  },
+  {
+    "id": "embalse_molinos_castilblanco",
+    "nombre": "Embalse Los Molinos (Castilblanco de los Arroyos)",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Aguas libres · embalse menor",
+    "rio": "Rivera del Cala",
+    "municipio": "Castilblanco de los Arroyos",
+    "lat": 37.705,
+    "lng": -5.99,
+    "radioAproxKm": 1.8,
+    "descripcion": "Embalse Los Molinos en Castilblanco de los Arroyos (Rivera del Cala). Aguas libres art. 5.2. Embalse menor sin polígono DERA de cotos; radio orientativo.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Confirma accesos y señalización local."
+    ],
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo_gitano": [
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Rivera de Huelva",
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   }
 ]

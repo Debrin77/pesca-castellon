@@ -13,7 +13,7 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
-import { getResumenEmbalsesCastellon } from "../services/saihService";
+import { getResumenEmbalses } from "../services/saihService";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
@@ -22,6 +22,7 @@ import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
+import PanelCampoHoy from "../components/PanelCampoHoy";
 import { consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
@@ -35,7 +36,10 @@ import {
   mensajeOfflineCorto,
 } from "../services/offlineService";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { etiquetaFuente } from "../services/puntoConsultaService";
+import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
@@ -69,8 +73,9 @@ function aplicarCache(cache: CacheOffline, setters: {
 }
 
 export default function HomeScreen({ navigation }: Props) {
-  const { provincia: provinciaCtx } = useProvincia();
+  const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
+  const { punto, listo: puntoListo } = usePuntoConsulta();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
@@ -111,6 +116,7 @@ export default function HomeScreen({ navigation }: Props) {
   );
 
   useEffect(() => {
+    if (!puntoListo) return;
     let vivo = true;
     const embalsesPanel = provincia.embalsesPanel;
     const tieneSaih = provincia.tieneSaih;
@@ -141,7 +147,11 @@ export default function HomeScreen({ navigation }: Props) {
       // En línea (o sin caché): cargar avisos + SAIH + clima/índice
       setAvisosCargando(true);
       try {
-        const lista = await obtenerAvisosSeguridadPesca();
+        const cerca =
+          punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
+            ? { lat: punto.lat, lng: punto.lng }
+            : null;
+        const lista = await obtenerAvisosSeguridadPesca(cerca);
         if (!vivo) return;
         setAvisosSeguridad(lista);
         setAvisosError(null);
@@ -162,7 +172,7 @@ export default function HomeScreen({ navigation }: Props) {
 
       if (tieneSaih && embalsesPanel.length > 0) {
         try {
-          const rows = await getResumenEmbalsesCastellon(embalsesPanel);
+          const rows = await getResumenEmbalses(embalsesPanel);
           if (!vivo) return;
           const panel: SaihChip[] = rows.map((r) => {
             const meta =
@@ -185,26 +195,30 @@ export default function HomeScreen({ navigation }: Props) {
             setSaihPanel(cacheLocal.saih as SaihChip[]);
           }
         }
-      } else {
+      } else if (vivo) {
         setSaihPanel([]);
       }
 
-      await cargar(conectado);
+      if (!vivo) return;
+      await cargar(conectado, () => vivo);
     }
 
     bootstrap();
     return () => {
       vivo = false;
     };
-  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel]);
+  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo]);
 
-  async function cargar(conectadoParam?: boolean) {
+  async function cargar(conectadoParam?: boolean, sigueVivo?: () => boolean) {
+    const okVivo = () => !sigueVivo || sigueVivo();
     setCargando(true);
     const conectado = conectadoParam ?? (await hayConexion());
+    if (!okVivo()) return;
     setOnline(conectado);
 
     if (!conectado) {
       const cacheLocal = await leerCacheOffline();
+      if (!okVivo()) return;
       setCache(cacheLocal);
       if (cacheLocal) {
         aplicarCache(cacheLocal, {
@@ -219,25 +233,48 @@ export default function HomeScreen({ navigation }: Props) {
       return;
     }
 
-    const ok = await solicitarPermisoUbicacion();
-    if (!ok) {
-      setPermisoDenegado(true);
-      setCargando(false);
-      return;
+    // Prioridad: punto del mapa → GPS → centro provincia.
+    let loc: { lat: number; lng: number } | null = null;
+    if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
+      loc = { lat: punto.lat, lng: punto.lng };
+      setPermisoDenegado(false);
+    } else {
+      const ok = await solicitarPermisoUbicacion();
+      if (!okVivo()) return;
+      if (!ok) {
+        setPermisoDenegado(true);
+        // Sin GPS: al menos centro de provincia para no dejar el inicio vacío.
+        loc = {
+          lat: provincia.regionMapa.latitude,
+          lng: provincia.regionMapa.longitude,
+        };
+      } else {
+        setPermisoDenegado(false);
+        loc = await obtenerUbicacionActual();
+        if (!okVivo()) return;
+        if (!loc) {
+          loc = {
+            lat: provincia.regionMapa.latitude,
+            lng: provincia.regionMapa.longitude,
+          };
+        }
+      }
     }
-    setPermisoDenegado(false);
-    const loc = await obtenerUbicacionActual();
+
     if (loc) {
+      if (!okVivo()) return;
       setUbicacion(loc);
       const [c, indice] = await Promise.all([
         obtenerClimaActual(loc.lat, loc.lng),
         calcularIndicePesca(loc.lat, loc.lng, 3),
       ]);
+      if (!okVivo()) return;
       setClima(c);
       const dia = indice.length > 0 ? indice[0] : null;
       if (dia) {
         setIndiceHoy(dia);
         const permisoNotif = await solicitarPermisoNotificaciones();
+        if (!okVivo()) return;
         if (permisoNotif) await programarAlertasPesca(indice);
       }
       await guardarCacheOffline({
@@ -245,10 +282,12 @@ export default function HomeScreen({ navigation }: Props) {
         indiceHoy: dia,
         ubicacion: loc,
       });
+      if (!okVivo()) return;
       const cacheActualizado = await leerCacheOffline();
+      if (!okVivo()) return;
       setCache(cacheActualizado);
     }
-    setCargando(false);
+    if (okVivo()) setCargando(false);
   }
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
@@ -260,20 +299,36 @@ export default function HomeScreen({ navigation }: Props) {
       ? detectarAlertas({
           codigoTiempo: clima.codigoTiempo,
           vientoMaxKmh: clima.velocidadVientoKmh,
+          rafagaMaxKmh: clima.rafagaKmh,
         })
       : [];
+  const etiquetaClima = (() => {
+    if (punto?.fuente === "gps") return "Tu ubicación";
+    if (punto?.poblacion) {
+      return punto.etiqueta
+        ? `${punto.etiqueta} · ${punto.poblacion}`
+        : `Predicción · ${punto.poblacion}`;
+    }
+    if (punto?.etiqueta) return punto.etiqueta;
+    if (punto) return etiquetaFuente(punto.fuente);
+    if (ubicacion && permisoDenegado) {
+      const p = resolverPoblacionCercana(ubicacion.lat, ubicacion.lng, 35, provincia.id)?.nombre;
+      return p ? `Centro · ${p}` : `Centro de ${provincia.nombre}`;
+    }
+    return "Tu ubicación";
+  })();
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
         {cargando ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 28 }} />
-        ) : permisoDenegado ? (
+        ) : !clima && permisoDenegado && !punto ? (
           <View style={{ alignItems: "center", marginVertical: 16 }}>
             <Text style={styles.weatherFallback}>
-              Activa la ubicación para ver el clima y el índice de pesca
+              Activa la ubicación o toca un tramo en el mapa para ver el clima
             </Text>
             <TouchableOpacity style={styles.retryChip} onPress={() => cargar()}>
               <Text style={styles.retryChipText}>Reintentar</Text>
@@ -281,6 +336,9 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         ) : (
           <>
+            <Text style={styles.climaOrigen} numberOfLines={1}>
+              {etiquetaClima}
+            </Text>
             <View style={styles.heroClima}>
               {tiempo && clima ? (
                 <>
@@ -306,6 +364,16 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
             )}
 
+            {clima ? (
+              <Text style={styles.climaOrigen} numberOfLines={2}>
+                Viento {Math.round(clima.velocidadVientoKmh)} km/h
+                {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
+                {clima.precipitacionMm != null && clima.precipitacionMm > 0
+                  ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
+                  : ""}
+              </Text>
+            ) : null}
+
             {alertasClima.length > 0 && (
               <View style={styles.alertRow}>
                 {alertasClima.map((alerta, idx) => (
@@ -326,6 +394,20 @@ export default function HomeScreen({ navigation }: Props) {
 
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
+
+        <View style={styles.provinciaRow}>
+          <Text style={styles.provinciaLbl}>
+            Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
+          </Text>
+          <TouchableOpacity
+            onPress={() => cambiarProvincia()}
+            accessibilityRole="button"
+            accessibilityLabel="Cambiar provincia"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.provinciaCambio}>Cambiar</Text>
+          </TouchableOpacity>
+        </View>
 
         <ListaAnimada index={0}>
           <PulsePress
@@ -353,9 +435,13 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
+        <ListaAnimada index={2}>
+          <PanelCampoHoy navigation={navigation} />
+        </ListaAnimada>
+
         {/* Bloque embalses / favoritos */}
         {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
-          <ListaAnimada index={2}>
+          <ListaAnimada index={3}>
             <View style={styles.bloque}>
               <Text style={styles.bloqueTitulo}>Embalses y favoritos</Text>
 
@@ -364,7 +450,9 @@ export default function HomeScreen({ navigation }: Props) {
                   <View style={styles.sectionRow}>
                     <Text style={styles.sectionTitle}>Embalses SAIH</Text>
                     <Text style={styles.sectionMeta}>
-                      {saihPanel.some((s) => s.fuente === "saih_chj") ? "en vivo" : "ejemplo / reintentar"}
+                      {saihPanel.some((s) => s.fuente === "saih_chj" || s.fuente === "saih_chg")
+                        ? "en vivo"
+                        : "ejemplo / reintentar"}
                     </Text>
                   </View>
                   <ScrollView
@@ -420,6 +508,7 @@ export default function HomeScreen({ navigation }: Props) {
                         onPress={() =>
                           navigation.navigate("Mapa", {
                             screen: "ZonasLibresMain",
+                            params: { centrarEn: { lat: p.lat, lng: p.lng, nombre: p.nombre } },
                           })
                         }
                       >
@@ -489,11 +578,12 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        {/* Enlaces secundarios (sin ListaAnimada: en web a veces quedan opacity 0) */}
+        {/* Enlaces secundarios: fuera de ListaAnimada para que en web
+            no queden con opacity 0 / sin clics (p. ej. Cambiar provincia). */}
         <View style={styles.linksRow}>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Capturas")}
+            onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
             accessibilityRole="button"
             accessibilityLabel="Capturas"
           >
@@ -501,7 +591,7 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Consejos")}
+            onPress={() => navigation.navigate("Consejos", { screen: "ConsejosMain" })}
             accessibilityRole="button"
             accessibilityLabel="Consejos: nudos y montaje"
           >
@@ -537,6 +627,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontWeight: "600",
     letterSpacing: 0.2,
+  },
+  climaOrigen: {
+    color: "rgba(255,255,255,0.95)",
+    fontSize: 13,
+    fontWeight: "800",
+    textAlign: "center",
+    marginTop: 4,
   },
   heroClima: {
     alignItems: "center",
@@ -615,6 +712,33 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: SPACING.lg,
     marginTop: -SPACING.md,
+  },
+  provinciaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.sm,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  provinciaLbl: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
+  provinciaNombre: {
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+  },
+  provinciaCambio: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.water,
   },
   ctaSalgo: {
     borderRadius: RADIUS.lg,

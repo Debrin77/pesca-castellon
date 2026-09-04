@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { HORARIO_LEGAL_PESCA } from "../data/normativa2026";
+import { HORARIO_ORIENTATIVO_ANDALUCIA } from "../provincias/sevilla/normativa";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS } from "../theme";
 
 export type MejorHora = {
@@ -19,11 +21,14 @@ export default function MejorHoraPesca({ especie }: { especie: EspecieHora }) {
   const h = especie.mejorHora;
   if (!h && !especie.ventanas) return null;
 
+  const horarioLegal =
+    getProvinciaActiva().id === "sevilla" ? HORARIO_ORIENTATIVO_ANDALUCIA : HORARIO_LEGAL_PESCA;
+
   return (
     <View
       style={styles.box}
       accessibilityRole="text"
-      accessibilityLabel={`Mejor hora de pesca. ${h?.resumen ?? especie.ventanas}. ${HORARIO_LEGAL_PESCA}`}
+      accessibilityLabel={`Mejor hora de pesca. ${h?.resumen ?? especie.ventanas}. ${horarioLegal}`}
     >
       <Text style={styles.title}>Mejor hora del día</Text>
       <Text style={styles.body}>{h?.resumen ?? especie.ventanas}</Text>
@@ -45,7 +50,7 @@ export default function MejorHoraPesca({ especie }: { especie: EspecieHora }) {
           <Text style={styles.body}>{h.noche}</Text>
         </>
       ) : null}
-      <Text style={styles.legal}>{HORARIO_LEGAL_PESCA}</Text>
+      <Text style={styles.legal}>{horarioLegal}</Text>
     </View>
   );
 }

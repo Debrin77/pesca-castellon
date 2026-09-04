@@ -4,7 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { estaEnVeda, notaVeda } from "../services/vedaService";
 import { getEstadoHidrologico, EstacionHidrologica } from "../services/saihService";
 import { alternarFavorito, esFavorito } from "../services/storageService";
-import { TALLAS_OFICIALES } from "../data/normativa2026";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import LicenseBanner from "../components/LicenseBanner";
@@ -41,7 +40,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
   useEffect(() => {
     let activo = true;
     setCargando(true);
-    getEstadoHidrologico(zone?.saihNombre ?? null, zone?.saihFichaId).then((data) => {
+    const red = zone?.saihFuente === "chg" ? "chg" : "chj";
+    getEstadoHidrologico(zone?.saihNombre ?? null, zone?.saihFichaId, red, zone?.saihUrl).then((data) => {
       if (activo) {
         setHidro(data);
         setCargando(false);
@@ -50,7 +50,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
     return () => {
       activo = false;
     };
-  }, [zoneId, zone?.saihNombre, zone?.saihFichaId]);
+  }, [zoneId, zone?.saihNombre, zone?.saihFichaId, zone?.saihFuente, zone?.saihUrl]);
 
   useFocusEffect(
     useCallback(() => {
@@ -92,6 +92,17 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
       </View>
       <Text style={styles.desc}>{zone.descripcion}</Text>
 
+      {Array.isArray(zone.avisos) && zone.avisos.length > 0 ? (
+        <View style={styles.avisosBox}>
+          <Text style={styles.avisosTitle}>Avisos de este tramo</Text>
+          {zone.avisos.map((a: string, i: number) => (
+            <Text key={i} style={styles.avisoItem}>
+              • {a}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+
       <TemporadaBanner compact />
       <LicenseBanner onPress={() => navigation.navigate("License")} />
 
@@ -110,9 +121,13 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         />
       ))}
 
-      {provincia.tieneSaih || zone.saihNombre || zone.saihFichaId ? (
+      {provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId) ? (
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Estado del embalse (SAIH Júcar)</Text>
+        <Text style={styles.cardTitle}>
+          {zone.saihFuente === "chg"
+            ? "Estado del embalse (SAIH Guadalquivir)"
+            : "Estado del embalse (SAIH Júcar)"}
+        </Text>
         {cargando ? (
           <ActivityIndicator color={COLORS.water} />
         ) : hidro ? (
@@ -154,7 +169,9 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             <Text style={styles.cardNote}>
               {hidro.fuente === "simulado"
                 ? "No se pudo consultar el SAIH ahora mismo — dato de ejemplo. En web puede fallar por CORS; reintenta o abre la ficha oficial."
-                : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
+                : hidro.fuente === "saih_chg"
+                  ? "Fuente en vivo: SAIH Confederación Hidrográfica del Guadalquivir"
+                  : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
             </Text>
             {hidro.urlFicha && (
               <Text style={styles.linkText} onPress={() => Linking.openURL(hidro.urlFicha!)}>
@@ -185,7 +202,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         const enVeda = estaEnVeda(especieId);
         const mejoresMeses: string[] = zone.mejoresEpocas?.[especieId] ?? [];
         const esBuenMes = mejoresMeses.includes(mesActual);
-        const talla = TALLAS_OFICIALES[especieId];
+        // Talla/régimen y nota salen del catálogo de la provincia activa (nunca de normativa GVA bajo Sevilla).
+        const talla = sp.tallaOficial as string | undefined;
         const nota = notaVeda(especieId);
 
         return (
@@ -196,8 +214,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             enVeda={enVeda}
             extra={
               <>
-                {talla && <Text style={styles.cardText}>Talla / régimen: {talla}</Text>}
-                {nota && <Text style={styles.cardNote}>{nota}</Text>}
+                {talla ? <Text style={styles.cardText}>Talla / régimen: {talla}</Text> : null}
+                {nota ? <Text style={styles.cardNote}>{nota}</Text> : null}
                 {mejoresMeses.length > 0 && (
                   <Text style={styles.cardText}>
                     Mejores meses: {mejoresMeses.join(", ")}{" "}
@@ -266,6 +284,16 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   desc: { fontSize: 13.5, color: COLORS.textSecondary, lineHeight: 19, marginBottom: 12 },
+  avisosBox: {
+    backgroundColor: COLORS.warningLight,
+    borderColor: "#f0d2a8",
+    borderWidth: 1,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    marginBottom: 12,
+  },
+  avisosTitle: { fontSize: 13, fontWeight: "800", color: COLORS.warning, marginBottom: 6 },
+  avisoItem: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
   mapLink: {
     alignSelf: "flex-start",
     marginBottom: 12,

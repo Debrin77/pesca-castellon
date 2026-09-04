@@ -10,7 +10,9 @@ interface Props {
 
 /**
  * Entrada escalonada de filas. En web nativeDriver no pinta bien:
- * usamos JS driver. Failsafe: si la animación no arranca, forzamos opacidad 1.
+ * usamos JS driver para que se vea el fade + el desplazamiento.
+ * Si el efecto se cancela a mitad (re-render / unmount), dejamos opacity=1
+ * para que los botones del final (p. ej. Ajustes en Inicio) sigan clicables.
  */
 export default function ListaAnimada({ index = 0, replayKey, children, style }: Props) {
   const op = useRef(new Animated.Value(0)).current;
@@ -37,19 +39,24 @@ export default function ListaAnimada({ index = 0, replayKey, children, style }: 
         useNativeDriver: nativo,
       }),
     ]);
-    anim.start();
-    const failsafe = setTimeout(() => {
+    anim.start(({ finished }) => {
+      if (!finished) {
+        op.setValue(1);
+        y.setValue(0);
+      }
+    });
+    return () => {
+      anim.stop();
       op.setValue(1);
       y.setValue(0);
-    }, delay + 600);
-    return () => {
-      clearTimeout(failsafe);
-      anim.stop();
     };
   }, [index, nativo, op, replayKey, y]);
 
   return (
-    <Animated.View style={[{ opacity: op, transform: [{ translateY: y }] }, style]}>
+    <Animated.View
+      pointerEvents="box-none"
+      style={[{ opacity: op, transform: [{ translateY: y }] }, style]}
+    >
       {children}
     </Animated.View>
   );

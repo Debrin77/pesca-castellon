@@ -18,13 +18,15 @@ const COPY: Record<
 > = {
   castellon: {
     kicker: "Comunitat Valenciana",
-    detalle: "Ríos, embalses y orilla de mar. Polígonos ICV, cotos y previsión con oleaje en el Grao.",
-    chips: ["Continental", "Costa", "ICV / GVA"],
+    detalle:
+      "Ríos, embalses y orilla de mar. Polígonos ICV, cotos y previsión con oleaje. Sin seguro RC obligatorio.",
+    chips: ["Continental", "Costa", "Sin seguro RC"],
   },
   sevilla: {
     kicker: "Andalucía",
-    detalle: "Solo pesca continental: embalses y ríos de la provincia. Sin costa marítima en esta guía.",
-    chips: ["Continental", "Junta Andalucía"],
+    detalle:
+      "Continental: Guadalquivir, Guadaíra, embalses y azudes (Peñaflor…). Polígonos DERA + aguas libres art. 5.2. Licencia Junta + NIR + seguro RC.",
+    chips: ["Continental", "Seguro RC", "DERA / art. 5.2"],
   },
 };
 

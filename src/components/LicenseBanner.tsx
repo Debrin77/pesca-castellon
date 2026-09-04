@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 import { resumenLicenciasCortas } from "../services/storageService";
@@ -13,10 +14,16 @@ interface Props {
 
 const CLAVE_PLEGADO = "@pesca_castellon/banner_licencia_plegado";
 
-/** Aviso de licencias según provincia activa. */
+/**
+ * Aviso de licencias según provincia:
+ * Castellón → continental + marítima recreativa desde tierra (GVA); sin seguro RC.
+ * Sevilla → solo continental Andalucía (Junta) + seguro RC obligatorio.
+ */
 export default function LicenseBanner({ onPress, compact }: Props) {
-  const provincia = getProvinciaActiva();
+  const { provincia: provinciaCtx } = useProvincia();
+  const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
+  const req = provincia.requisitosLicencia;
   const badge = provincia.id === "sevilla" ? "JA" : "GVA";
   const [plegado, setPlegado] = useState(false);
   const [resumen, setResumen] = useState("Sin licencias guardadas en el móvil");
@@ -39,22 +46,33 @@ export default function LicenseBanner({ onPress, compact }: Props) {
     await AsyncStorage.setItem(CLAVE_PLEGADO, siguiente ? "1" : "0");
   }
 
-  const textoCorto = soloContinental
-    ? "Licencias · pesca continental Andalucía"
+  const tituloCorto = soloContinental
+    ? req.seguroObligatorio
+      ? `Licencias · ${provincia.nombre} · seguro RC`
+      : `Licencias · ${provincia.nombre} continental`
     : "Licencias · continental y marítima desde tierra";
 
-  const textoLargo = soloContinental ? (
-    <Text style={styles.text}>
-      En ríos y embalses de Sevilla hace falta la{" "}
-      <Text style={styles.em}>licencia de pesca continental de Andalucía (Junta)</Text>. En cotos, además el
-      permiso del coto.
-    </Text>
+  const textoExpandido = soloContinental ? (
+    <>
+      En ríos y embalses de {provincia.nombre}:{" "}
+      <Text style={styles.em}>{provincia.etiquetaLicenciaContinental}</Text>
+      {req.seguroObligatorio ? (
+        <>
+          {" "}
+          Además: <Text style={styles.em}>seguro obligatorio de RC del pescador</Text> y NIR.
+        </>
+      ) : (
+        <> Sin seguro de RC obligatorio.</>
+      )}{" "}
+      Confirma siempre la normativa vigente.
+    </>
   ) : (
-    <Text style={styles.text}>
-      En ríos y embalses: <Text style={styles.em}>licencia de pesca continental</Text>. En la orilla del mar:{" "}
-      <Text style={styles.em}>licencia de pesca marítima recreativa desde tierra</Text>. No se sustituyen entre
-      sí.
-    </Text>
+    <>
+      En ríos y embalses: <Text style={styles.em}>licencia de pesca continental</Text>. En la orilla
+      del mar: <Text style={styles.em}>licencia de pesca marítima recreativa desde tierra</Text>. No
+      se sustituyen entre sí. En Castellón <Text style={styles.em}>no</Text> hace falta seguro de RC
+      de pescador.
+    </>
   );
 
   if (plegado) {
@@ -71,7 +89,7 @@ export default function LicenseBanner({ onPress, compact }: Props) {
               <Text style={styles.badgeText}>{badge}</Text>
             </View>
             <Text style={styles.collapsedText} numberOfLines={1}>
-              {textoCorto}
+              {tituloCorto}
             </Text>
             <Text style={styles.chevronDown}>▾</Text>
           </TouchableOpacity>
@@ -101,7 +119,7 @@ export default function LicenseBanner({ onPress, compact }: Props) {
           </TouchableOpacity>
         </View>
 
-        {textoLargo}
+        <Text style={styles.text}>{textoExpandido}</Text>
 
         <Text style={styles.resumen}>{resumen}</Text>
 

@@ -11,6 +11,7 @@ import {
   Marker as LeafletMarker,
   Circle as LeafletCircle,
   Polygon as LeafletPolygon,
+  Polyline as LeafletPolyline,
   Popup,
   useMap,
   useMapEvents,
@@ -231,6 +232,13 @@ interface MapViewProps {
   fitCoordinates?: { latitude: number; longitude: number }[];
   cameraTarget?: { latitude: number; longitude: number; zoom?: number; nonce: number };
   accent?: "bosque" | "mar";
+  /** Capa WMS oficial de pesca continental. */
+  pescaWms?: "icv" | "rediam" | "none";
+  /** Radar RainViewer (plantilla {z}/{x}/{y}). */
+  radarUrl?: string | null;
+  showRadar?: boolean;
+  /** Forzar capa batimetría EMODnet visible. */
+  showBathymetry?: boolean;
 }
 
 export default function MapView({
@@ -243,9 +251,14 @@ export default function MapView({
   fitCoordinates,
   cameraTarget,
   accent = "bosque",
+  pescaWms = "icv",
+  radarUrl = null,
+  showRadar = false,
+  showBathymetry = false,
 }: MapViewProps) {
   inyectarCssMapa();
-  const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
+  // Sin fallback a Castellón: la pantalla debe pasar regionMapa de la provincia activa.
+  const inicio = initialRegion || region || { latitude: 40, longitude: -3.5, latitudeDelta: 8, longitudeDelta: 8 };
 
   return (
     <View style={[{ flex: 1 }, style]}>
@@ -289,17 +302,31 @@ export default function MapView({
               maxZoom={19}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
-            <WMSTileLayer
-              url="https://terramapas.icv.gva.es/0504_CazaPesca"
-              layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
-              format="image/png"
-              transparent={true}
-              opacity={0.45}
-              attribution="ICV / GVA"
-            />
-          </LayersControl.Overlay>
-          <LayersControl.Overlay name="Profundidad EMODnet (no navegar)">
+          {pescaWms === "icv" ? (
+            <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
+              <WMSTileLayer
+                url="https://terramapas.icv.gva.es/0504_CazaPesca"
+                layers="Pesca.ZonasControladas,Pesca.ZonasReserva.TruchaComun,Pesca.ZonasReserva.Anguila"
+                format="image/png"
+                transparent={true}
+                opacity={0.45}
+                attribution="ICV / GVA"
+              />
+            </LayersControl.Overlay>
+          ) : null}
+          {pescaWms === "rediam" ? (
+            <LayersControl.Overlay checked name="WMS Junta · cotos y refugios">
+              <WMSTileLayer
+                url="https://www.juntadeandalucia.es/medioambiente/mapwms/REDIAM_cotos_pesca_continental"
+                layers="cotos_pesca_continental,aguas_libres_trucheras"
+                format="image/png"
+                transparent={true}
+                opacity={0.5}
+                attribution="REDIAM / Junta de Andalucía"
+              />
+            </LayersControl.Overlay>
+          ) : null}
+          <LayersControl.Overlay checked={showBathymetry} name="Profundidad EMODnet (no navegar)">
             <WMSTileLayer
               url="https://ows.emodnet-bathymetry.eu/wms"
               layers="mean_atlas_land"
@@ -319,6 +346,11 @@ export default function MapView({
               attribution="© Instituto Hidrográfico de la Marina — no válido para navegación"
             />
           </LayersControl.Overlay>
+          {showRadar && radarUrl ? (
+            <LayersControl.Overlay checked name="Radar lluvia">
+              <TileLayer url={radarUrl} opacity={0.65} attribution="RainViewer" zIndex={400} />
+            </LayersControl.Overlay>
+          ) : null}
         </LayersControl>
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
@@ -418,6 +450,26 @@ export function Polygon({
         fillOpacity: strokeWidth >= 4 ? 0.4 : 0.28,
         interactive: false,
       }}
+    />
+  );
+}
+
+interface PolylineProps {
+  coordinates: { latitude: number; longitude: number }[];
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
+export function Polyline({
+  coordinates,
+  strokeColor = "#1a6f8a",
+  strokeWidth = 4,
+}: PolylineProps) {
+  if (coordinates.length < 2) return null;
+  return (
+    <LeafletPolyline
+      positions={coordinates.map((c) => [c.latitude, c.longitude] as [number, number])}
+      pathOptions={{ color: strokeColor, weight: strokeWidth, opacity: 0.9 }}
     />
   );
 }

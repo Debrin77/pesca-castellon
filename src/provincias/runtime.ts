@@ -15,3 +15,8 @@ export function setProvinciaActiva(id: ProvinciaId): ProvinciaConfig {
   activa = provinciaPorId(id);
   return activa;
 }
+
+/** Invalida la provincia activa (selector). Evita dejar Castellón “fantasma”. */
+export function clearProvinciaActiva(): void {
+  activa = PROVINCIAS.castellon;
+}
