@@ -17,7 +17,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_zona_inundable_entremuros_guadiamar",
@@ -37,7 +39,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_arroyo_de_santiago_y_sus_afluentes",
@@ -57,7 +61,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_laguna_de_los_tollos_t_m_jerez_de_la_fro",
@@ -77,7 +83,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en",
@@ -128,7 +136,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_rio_crispinejo_o_agrio_y_rio_guadiamar",
@@ -148,7 +158,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_de_cala",
@@ -190,10 +202,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E64 Cala",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "refugio_laguna_de_la_dehesa_de_abajo",
@@ -213,7 +227,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_arroyo_higueron_mascardo_y_salado_de_leb",
@@ -233,7 +249,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_de_jose_toran",
@@ -275,10 +293,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E54 José Torán",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalCO.aspx"
   },
   {
     "id": "refugio_arroyo_montero_y_salado_de_moron_y_sus_a",
@@ -298,7 +318,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_embalse_de_melonares",
@@ -315,10 +337,12 @@
     "especies": [],
     "mejoresEpocas": {},
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E58 Melonares",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "embalse_de_jarrama",
@@ -363,7 +387,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_de_gergal",
@@ -405,10 +431,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E65 El Gergal",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "refugio_arroyo_del_saladillo_saguzal_de_los_garz",
@@ -428,7 +456,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_embalse_del_retortillo",
@@ -448,7 +478,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_del_pintado",
@@ -490,10 +522,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E57 El Pintado",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "embalse_de_torre_del_aguila",
@@ -535,10 +569,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E68 Torre del Águila",
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "refugio_rivera_del_hueznar",
@@ -558,7 +594,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_embalse_de_malpasillo",
@@ -578,7 +616,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_arroyo_de_san_pedro",
@@ -598,7 +638,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_del_retortillo",
@@ -640,10 +682,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E39 Retortillo",
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalCO.aspx"
   },
   {
     "id": "refugio_arroyo_de_la_gargantafria",
@@ -663,7 +707,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_de_alcala_del_rio",
@@ -714,7 +760,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_embalse_de_altarejos",
@@ -734,7 +782,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "refugio_embalse_de_cordobilla",
@@ -754,7 +804,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Corbones",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_de_la_puebla_de_cazalla",
@@ -796,10 +848,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E55 Puebla de Cazalla",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "embalse_de_la_minilla",
@@ -841,10 +895,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E63 La Minilla",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15"
+    "fuenteOficial": "DERA 08_10_CotosPesca · Orden 13/01/2023 BOJA 15",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "penaflor_azud",
@@ -892,7 +948,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadalquivir_villaverde",
@@ -941,7 +999,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadalquivir_lora",
@@ -988,7 +1048,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadalquivir_coria",
@@ -1044,7 +1106,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadalquivir_gelves",
@@ -1091,7 +1155,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadalquivir",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadaira_alcala",
@@ -1139,7 +1205,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadaíra",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "guadaira_bajo",
@@ -1185,7 +1253,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Guadaíra",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "viar_melonares_cantillana",
@@ -1234,7 +1304,9 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   },
   {
     "id": "embalse_huesna",
@@ -1280,10 +1352,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E56 Huesna",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "embalse_agrio",
@@ -1328,10 +1402,12 @@
       ]
     },
     "saihEstacion": null,
-    "saihNombre": null,
+    "saihNombre": "E67 El Agrio",
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": "chg",
+    "saihUrl": "https://www.chguadalquivir.es/saih/EmbalSE.aspx"
   },
   {
     "id": "embalse_molinos_castilblanco",
@@ -1379,6 +1455,8 @@
     "saihNombre": null,
     "saihFichaId": null,
     "cuenca": "Rivera de Huelva",
-    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)"
+    "fuenteOficial": "Art. 5.2 Orden 13/01/2023 · radio orientativo (sin polígono DERA)",
+    "saihFuente": null,
+    "saihUrl": null
   }
 ]

@@ -10,9 +10,16 @@ export interface RegionMapa {
 }
 
 export interface EmbalsePanelMeta {
+  /** Nombre tal como aparece en el SAIH (CHJ: "EMBALSE DE ARENÓS"; CHG: "E64 Cala"). */
   nombre: string;
   etiqueta: string;
   zoneId: string;
+  /** Ficha numérica SAIH Júcar (solo CHJ). */
+  fichaId?: number;
+  /** Red hidrológica. Por defecto "chj" (Castellón). Sevilla usa "chg". */
+  red?: "chj" | "chg";
+  /** Página concreta del SAIH CHG (EmbalSE / EmbalCO). */
+  urlPagina?: string;
 }
 
 export interface FuenteNormativaProvincia {

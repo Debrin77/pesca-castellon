@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { AVISO_SITIOS_COMUNIDAD, SitioOrientativo } from "../services/sitiosComunidad";
+import { avisoSitiosComunidad, SitioOrientativo } from "../services/sitiosComunidad";
 import { COLORS, RADIUS } from "../theme";
 
 export default function SitiosOrientativos({
@@ -25,7 +25,7 @@ export default function SitiosOrientativos({
           <Text style={styles.detalle}>{s.detalle}</Text>
         </View>
       ))}
-      <Text style={styles.aviso}>{aviso ?? AVISO_SITIOS_COMUNIDAD}</Text>
+      <Text style={styles.aviso}>{aviso ?? avisoSitiosComunidad()}</Text>
     </View>
   );
 }

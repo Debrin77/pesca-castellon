@@ -88,7 +88,7 @@ export default function PanelAvisosSeguridad({ avisos, cargando, error }: Props)
               {a.fuente === "aemet_meteoalarm"
                 ? "Oficial: AEMET (MeteoAlarm)"
                 : a.fuente === "caudal_modelo"
-                  ? "Modelo de caudal (Open-Meteo / GloFAS) · confirma en SAIH CHJ"
+                  ? "Modelo de caudal (Open-Meteo / GloFAS) · confirma en SAIH CHJ / CHG"
                   : "Meteo local"}
             </Text>
             {a.url ? (
