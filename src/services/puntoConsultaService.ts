@@ -32,7 +32,7 @@ export async function leerPuntoConsulta(provinciaId?: ProvinciaId): Promise<Punt
     if (p.provinciaId && p.provinciaId !== id) return null;
     // Migración: puntos guardados antes de tener población.
     if (!p.poblacion && (p.fuente === "mapa" || p.fuente === "zona" || p.fuente === "centro")) {
-      const r = resolverPoblacionCercana(p.lat, p.lng);
+      const r = resolverPoblacionCercana(p.lat, p.lng, 35, id);
       if (r) p.poblacion = r.nombre;
     }
     return p;
@@ -47,7 +47,7 @@ export async function guardarPuntoConsulta(
   const provinciaId = punto.provinciaId ?? getProvinciaIdActiva();
   let poblacion = punto.poblacion;
   if (!poblacion && punto.fuente !== "gps") {
-    poblacion = resolverPoblacionCercana(punto.lat, punto.lng)?.nombre;
+    poblacion = resolverPoblacionCercana(punto.lat, punto.lng, 35, provinciaId)?.nombre;
   }
   const full: PuntoConsulta = {
     lat: punto.lat,

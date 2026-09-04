@@ -6,6 +6,7 @@
   "scripts": {
     "sync:icv": "node scripts/build_icv_geojson.mjs",
     "sync:sevilla": "node scripts/build_sevilla_pesca_geojson.mjs",
+    "assert": "node scripts/assert_especies_por_provincia.mjs && node scripts/assert_camara_por_provincia.mjs && node scripts/assert_prevision_punto_mapa.mjs && node scripts/assert_repaso_errores.mjs",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
