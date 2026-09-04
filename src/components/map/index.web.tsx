@@ -248,7 +248,8 @@ export default function MapView({
   pescaWms = "icv",
 }: MapViewProps) {
   inyectarCssMapa();
-  const inicio = initialRegion || region || { latitude: 40.12, longitude: -0.35, latitudeDelta: 1.15 };
+  // Sin fallback a Castellón: la pantalla debe pasar regionMapa de la provincia activa.
+  const inicio = initialRegion || region || { latitude: 40, longitude: -3.5, latitudeDelta: 8, longitudeDelta: 8 };
 
   return (
     <View style={[{ flex: 1 }, style]}>

@@ -53,6 +53,8 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const cambiarProvincia = useCallback(async () => {
+    // Solo limpia la elección en UI/storage. El runtime se reasigna en
+    // elegirProvincia; no dejamos Castellón por defecto a medias.
     setProvinciaId(null);
     await AsyncStorage.removeItem(CLAVE_PROVINCIA);
   }, []);

@@ -1,4 +1,25 @@
+import type { RegionMapa } from "../provincias/types";
 import { getProvinciaActiva } from "../provincias/runtime";
+
+/**
+ * ¿El punto cae dentro del encuadre de mapa de la provincia?
+ * Usa un margen relativo para no cortar bordes del delta.
+ */
+export function puntoEnRegionMapa(
+  lat: number,
+  lng: number,
+  region: RegionMapa,
+  margenRelativo = 0.2
+): boolean {
+  const halfLat = (region.latitudeDelta / 2) * (1 + margenRelativo);
+  const halfLng = (region.longitudeDelta / 2) * (1 + margenRelativo);
+  return (
+    lat >= region.latitude - halfLat &&
+    lat <= region.latitude + halfLat &&
+    lng >= region.longitude - halfLng &&
+    lng <= region.longitude + halfLng
+  );
+}
 
 /** Distancia en km entre dos coordenadas (fórmula de Haversine). */
 export function distanciaKm(
