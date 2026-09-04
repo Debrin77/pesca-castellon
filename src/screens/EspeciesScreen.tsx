@@ -97,15 +97,20 @@ export default function EspeciesScreen({ navigation }: Props) {
     setCamara(camaraProvincia(provincia.regionMapa));
   }, [provinciaId, provincia.regionMapa]);
 
-  function cambiarModo(siguiente: ModoEspecies) {
+  function cambiarModo(siguiente: ModoEspecies, opts?: { abrirCatalogo?: boolean }) {
     if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
     setFichaAbierta(false);
     if (siguiente === "costa") {
       setCatalogo("mar");
       setCamara(camaraCosta(provincia));
+      // Acceso directo: al pulsar Costa se ven las especies de orilla sin pasos extra.
+      if (opts?.abrirCatalogo !== false) {
+        setCatalogoAbierto(true);
+      }
     } else {
       setCatalogo("rio");
+      setCatalogoAbierto(false);
       setCamara(camaraProvincia(provincia.regionMapa));
     }
   }
@@ -222,7 +227,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modoBtn, costa && styles.modoBtnOnMar]}
-            onPress={() => cambiarModo("costa")}
+            onPress={() => cambiarModo("costa", { abrirCatalogo: true })}
             accessibilityRole="button"
             accessibilityLabel="Costa orilla"
           >
@@ -326,20 +331,20 @@ export default function EspeciesScreen({ navigation }: Props) {
           {soloContinental
             ? `Toca un tramo o embalse de ${provincia.nombre}: las especies se abren a pantalla completa.`
             : costa
-              ? "Elige Costa arriba, toca una playa o pulsa «Ver especies de orilla»."
+              ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
               : `Toca río o cambia a Costa (orilla) para ver lubina, dorada, sargo…`}
         </Text>
+        {!soloContinental && costa ? (
+          <TouchableOpacity
+            style={styles.ctaOrilla}
+            onPress={abrirCatalogoOrilla}
+            accessibilityRole="button"
+            accessibilityLabel="Ver especies de orilla"
+          >
+            <Text style={styles.ctaOrillaTxt}>Ver especies de orilla</Text>
+          </TouchableOpacity>
+        ) : null}
         <View style={styles.pieRow}>
-          {!soloContinental && costa ? (
-            <TouchableOpacity
-              style={[styles.pieBtn, styles.pieBtnMar]}
-              onPress={abrirCatalogoOrilla}
-              accessibilityRole="button"
-              accessibilityLabel="Ver especies de orilla"
-            >
-              <Text style={styles.pieBtnMarTxt}>Ver especies de orilla</Text>
-            </TouchableOpacity>
-          ) : null}
           {consulta && !fichaAbierta ? (
             <TouchableOpacity style={styles.pieBtn} onPress={() => setFichaAbierta(true)}>
               <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
@@ -540,10 +545,20 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   hint: { fontSize: 12, color: COLORS.textSecondary, lineHeight: 17, textAlign: "center", marginTop: 4 },
+  ctaOrilla: {
+    marginTop: 10,
+    minHeight: 48,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.waterDark,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  ctaOrillaTxt: { color: "#fff", fontWeight: "800", fontSize: 16, textAlign: "center" },
   pieRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 8 },
   pieBtn: {
-    flex: 1,
-    minWidth: 120,
+    flexGrow: 1,
+    flexBasis: 140,
     minHeight: 42,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primaryLight,
@@ -552,7 +567,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   pieBtnTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 14 },
-  pieBtnMar: { backgroundColor: COLORS.waterDark, flexGrow: 1.4 },
+  pieBtnMar: { backgroundColor: COLORS.waterDark },
   pieBtnMarTxt: { color: "#fff", fontWeight: "800", fontSize: 14, textAlign: "center" },
   pieBtnGhost: { backgroundColor: COLORS.waterLight },
   pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },

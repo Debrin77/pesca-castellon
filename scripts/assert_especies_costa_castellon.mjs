@@ -81,6 +81,12 @@ if (!especies.includes("Costa (orilla)") || !especies.includes("Ver especies de 
 if (!especies.includes("abrirCatalogoOrilla") || !especies.includes('setCatalogo("mar")')) {
   fail("EspeciesScreen debe abrir el catálogo de orilla (mar) de forma directa");
 }
+if (!especies.includes("abrirCatalogo: true") && !especies.includes("setCatalogoAbierto(true)")) {
+  fail("EspeciesScreen al elegir Costa debe abrir el catálogo de orilla");
+}
+if (!especies.includes("ctaOrilla")) {
+  fail("EspeciesScreen debe tener CTA visible Ver especies de orilla");
+}
 if (!especies.includes("regionCosta") && !especies.includes("camaraCosta")) {
   fail("EspeciesScreen debe enfocar la costa al elegir modo costa");
 }
