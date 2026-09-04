@@ -67,7 +67,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarId, setMostrarId] = useState(false);
 
-  const [especieId, setEspecieId] = useState(speciesCatalog[0]?.id ?? "");
+  const [especieId, setEspecieId] = useState("");
   const [nombreLugar, setNombreLugar] = useState("");
   const [tallaCm, setTallaCm] = useState("");
   const [pesoKg, setPesoKg] = useState("");
@@ -124,13 +124,20 @@ export default function MyCatchesScreen({ navigation }: Props) {
   }, [route.params, navigation]);
 
   useEffect(() => {
+    if (!especieId) {
+      setCupoInfo(null);
+      return;
+    }
     const sp = speciesCatalog.find((s: any) => s.id === especieId);
     void resumenCupoHoy(especieId, sp?.cupo).then(setCupoInfo);
   }, [especieId, capturas, speciesCatalog]);
 
   useEffect(() => {
-    setEspecieId(speciesCatalog[0]?.id ?? "");
-    setModalidad(provincia.continentalOnly ? "orilla_continental" : "orilla_continental");
+    // No forzar la primera del catálogo (p. ej. trucha común / siluro): el usuario elige.
+    setEspecieId("");
+    setModalidad("orilla_continental");
+    setMostrarFormulario(false);
+    setMostrarId(false);
   }, [provincia.id]);
 
   async function exportarGpx() {
@@ -145,6 +152,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
   }
 
   async function handleGuardarCaptura() {
+    if (!especieId) {
+      Alert.alert("Especie", "Elige primero la especie de la captura.");
+      return;
+    }
     await guardarCaptura({
       especieId,
       fecha: new Date().toISOString().slice(0, 10),
@@ -166,6 +177,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setLatCaptura("");
     setLngCaptura("");
     setMostrarCoordsCaptura(false);
+    setEspecieId("");
     setMostrarFormulario(false);
     setMostrarId(false);
     cargar();
@@ -379,6 +391,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   filtroAmbito={provincia.continentalOnly ? "continental" : "ambos"}
                 />
                 <Text style={styles.formLabel}>Especie</Text>
+                {!especieId ? (
+                  <Text style={styles.cupoMeta}>Elige la especie (no hay preselección).</Text>
+                ) : null}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
                   {speciesCatalog.map((s: any) => (
                     <TouchableOpacity
