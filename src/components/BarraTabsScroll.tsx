@@ -21,14 +21,12 @@ const ICONO_POR_TAB: Record<string, NombreIcono> = {
   Inicio: "home",
   Mapa: "water",
   Especies: "fish",
-  Aparejos: "construct",
-  Consejos: "book",
   Previsión: "partly-sunny",
   Capturas: "bookmark",
 };
 
-/** Ancho grande a propósito: en móvil solo caben 3–4 → hay que deslizar. */
-const ANCHO_ITEM = 96;
+/** Ancho pensado para 5 tabs visibles sin forzar scroll en la mayoría de móviles. */
+const ANCHO_ITEM = 78;
 
 /**
  * Barra inferior con scroll + aspecto liquid-glass (vidrio esmerilado).

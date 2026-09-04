@@ -35,8 +35,6 @@ const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const ZonasLibresStack = createNativeStackNavigator();
 const EspeciesStack = createNativeStackNavigator();
-const AparejosStack = createNativeStackNavigator();
-const ConsejosStack = createNativeStackNavigator();
 const PrevisionStack = createNativeStackNavigator();
 const CapturasStack = createNativeStackNavigator();
 
@@ -65,6 +63,8 @@ function HomeStackScreen() {
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
       <HomeStack.Screen name="SalgoAPescar" component={SalgoAPescarScreen} options={{ title: "Salgo a pescar" }} />
+      <HomeStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
+      <HomeStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
     </HomeStack.Navigator>
   );
 }
@@ -80,6 +80,7 @@ function ZonasLibresStackScreen() {
       />
       <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <ZonasLibresStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
+      <ZonasLibresStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
     </ZonasLibresStack.Navigator>
   );
 }
@@ -95,23 +96,8 @@ function EspeciesStackScreen() {
       />
       <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <EspeciesStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
+      <EspeciesStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
     </EspeciesStack.Navigator>
-  );
-}
-
-function AparejosStackScreen() {
-  return (
-    <AparejosStack.Navigator screenOptions={stackScreenOptions}>
-      <AparejosStack.Screen name="AparejosMain" component={AparejosScreen} options={{ title: "Aparejos" }} />
-    </AparejosStack.Navigator>
-  );
-}
-
-function ConsejosStackScreen() {
-  return (
-    <ConsejosStack.Navigator screenOptions={stackScreenOptions}>
-      <ConsejosStack.Screen name="ConsejosMain" component={ConsejosScreen} options={{ title: "Consejos" }} />
-    </ConsejosStack.Navigator>
   );
 }
 
@@ -153,8 +139,6 @@ const TAB_RAIZ: Record<string, { stack: string; screen: string }> = {
   Inicio: { stack: "Inicio", screen: "HomeMain" },
   Mapa: { stack: "Mapa", screen: "ZonasLibresMain" },
   Especies: { stack: "Especies", screen: "EspeciesMain" },
-  Aparejos: { stack: "Aparejos", screen: "AparejosMain" },
-  Consejos: { stack: "Consejos", screen: "ConsejosMain" },
   Previsión: { stack: "Previsión", screen: "PrevisionMain" },
   Capturas: { stack: "Capturas", screen: "CapturasMain" },
 };
@@ -208,8 +192,6 @@ function AppNavegacion({ provinciaKey }: { provinciaKey: string }) {
         <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
         <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
         <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
-        <Tab.Screen name="Aparejos" component={AparejosStackScreen} options={{ title: "Aparejos" }} listeners={listenerIrArriba("Aparejos")} />
-        <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
         <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
         <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
       </Tab.Navigator>
