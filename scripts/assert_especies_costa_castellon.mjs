@@ -72,6 +72,31 @@ const especies = read("src/screens/EspeciesScreen.tsx");
 if (!especies.includes("especiesOrillaParaSeleccion")) {
   fail("EspeciesScreen catálogo mar debe usar las 15 usuales");
 }
+if (!especies.includes('cambiarModo("costa")') && !especies.includes("cambiarModo(siguiente")) {
+  fail("EspeciesScreen debe poder cambiar a modo costa");
+}
+if (!especies.includes("Costa (orilla)") || !especies.includes("Ver especies de orilla")) {
+  fail("EspeciesScreen debe mostrar toggle Costa y botón Ver especies de orilla");
+}
+if (!especies.includes("abrirCatalogoOrilla") || !especies.includes('setCatalogo("mar")')) {
+  fail("EspeciesScreen debe abrir el catálogo de orilla (mar) de forma directa");
+}
+if (!especies.includes("abrirCatalogo: true") && !especies.includes("setCatalogoAbierto(true)")) {
+  fail("EspeciesScreen al elegir Costa debe abrir el catálogo de orilla");
+}
+if (!especies.includes("ctaOrilla")) {
+  fail("EspeciesScreen debe tener CTA visible Ver especies de orilla");
+}
+if (!especies.includes("regionCosta") && !especies.includes("camaraCosta")) {
+  fail("EspeciesScreen debe enfocar la costa al elegir modo costa");
+}
+if (!/costa &&\s*\n?\s*playas\.map/.test(especies) && !especies.includes("costa &&") ) {
+  fail("EspeciesScreen debe mostrar playas en modo costa (sin esperar una consulta previa)");
+}
+// El modo costa no puede depender solo de consulta.ambito (antes las playas no aparecían nunca).
+if (/const costa = !soloContinental && consulta\?\.ambito === "maritimo"/.test(especies)) {
+  fail("EspeciesScreen: costa no debe depender solo de la consulta; usar modo Ríos/Costa");
+}
 
 const aparejos = read("src/screens/AparejosScreen.tsx");
 if (!aparejos.includes("especiesOrillaParaSeleccion")) {
