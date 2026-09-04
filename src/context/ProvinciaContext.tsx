@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LISTA_PROVINCIAS, provinciaPorId, esProvinciaId, type ProvinciaConfig, type ProvinciaId } from "../provincias";
-import { setProvinciaActiva } from "../provincias/runtime";
+import { clearProvinciaActiva, setProvinciaActiva } from "../provincias/runtime";
 
 const CLAVE_PROVINCIA = "@pesca_app/provincia_activa";
 
@@ -53,9 +53,8 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const cambiarProvincia = useCallback(async () => {
-    // Solo limpia la elección en UI/storage. El runtime se reasigna en
-    // elegirProvincia; no dejamos Castellón por defecto a medias.
     setProvinciaId(null);
+    clearProvinciaActiva();
     await AsyncStorage.removeItem(CLAVE_PROVINCIA);
   }, []);
 

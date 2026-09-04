@@ -225,7 +225,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       );
       return;
     }
-    evaluarPunto(loc.lat, loc.lng);
+    // Una sola escritura de punto (gps): no pasar por evaluarPunto (fuente mapa).
+    const r = consultarToqueMapa(loc.lat, loc.lng);
+    if (!soloContinental && r.ambito === "maritimo") {
+      setModo("costa");
+    } else {
+      setModo("continental");
+    }
+    mostrarFicha(r);
+    setMarcador(pos);
     setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
     void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
   }

@@ -102,8 +102,10 @@ export default function PrevisionScreen() {
     etiqueta?: string;
     poblacion?: string;
   } | null>(null);
+  const cargaIdRef = useRef(0);
 
   const cargar = useCallback(async () => {
+    const idCarga = ++cargaIdRef.current;
     setCargando(true);
     setPermisoDenegado(false);
 
@@ -122,8 +124,10 @@ export default function PrevisionScreen() {
       poblacion = punto.poblacion;
     } else {
       const ok = await solicitarPermisoUbicacion();
+      if (idCarga !== cargaIdRef.current) return;
       if (ok) {
         const loc = await obtenerUbicacionActual();
+        if (idCarga !== cargaIdRef.current) return;
         if (loc) {
           lat = loc.lat;
           lng = loc.lng;
@@ -144,7 +148,7 @@ export default function PrevisionScreen() {
     }
 
     if (!poblacion && fuente !== "gps") {
-      poblacion = resolverPoblacionCercana(lat, lng)?.nombre;
+      poblacion = resolverPoblacionCercana(lat, lng, 35, provincia.id)?.nombre;
     }
 
     const oleajeCfg = provincia.oleaje;
@@ -160,6 +164,7 @@ export default function PrevisionScreen() {
         ? obtenerOleaje(oleajeLat, oleajeLng)
         : Promise.resolve([] as { hora: string; alturaM: number }[]),
     ]);
+    if (idCarga !== cargaIdRef.current) return;
     setDias(prevision);
     setHoras(horario);
     setIndice(ind);

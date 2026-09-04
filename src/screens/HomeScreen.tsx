@@ -103,6 +103,7 @@ export default function HomeScreen({ navigation }: Props) {
   );
 
   useEffect(() => {
+    if (!puntoListo) return;
     let vivo = true;
     const embalsesPanel = provincia.embalsesPanel;
     const tieneSaih = provincia.tieneSaih;
@@ -181,11 +182,12 @@ export default function HomeScreen({ navigation }: Props) {
             setSaihPanel(cacheLocal.saih as SaihChip[]);
           }
         }
-      } else {
+      } else if (vivo) {
         setSaihPanel([]);
       }
 
-      await cargar(conectado);
+      if (!vivo) return;
+      await cargar(conectado, () => vivo);
     }
 
     bootstrap();
@@ -194,13 +196,16 @@ export default function HomeScreen({ navigation }: Props) {
     };
   }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo]);
 
-  async function cargar(conectadoParam?: boolean) {
+  async function cargar(conectadoParam?: boolean, sigueVivo?: () => boolean) {
+    const okVivo = () => !sigueVivo || sigueVivo();
     setCargando(true);
     const conectado = conectadoParam ?? (await hayConexion());
+    if (!okVivo()) return;
     setOnline(conectado);
 
     if (!conectado) {
       const cacheLocal = await leerCacheOffline();
+      if (!okVivo()) return;
       setCache(cacheLocal);
       if (cacheLocal) {
         aplicarCache(cacheLocal, {
@@ -222,6 +227,7 @@ export default function HomeScreen({ navigation }: Props) {
       setPermisoDenegado(false);
     } else {
       const ok = await solicitarPermisoUbicacion();
+      if (!okVivo()) return;
       if (!ok) {
         setPermisoDenegado(true);
         // Sin GPS: al menos centro de provincia para no dejar el inicio vacío.
@@ -232,6 +238,7 @@ export default function HomeScreen({ navigation }: Props) {
       } else {
         setPermisoDenegado(false);
         loc = await obtenerUbicacionActual();
+        if (!okVivo()) return;
         if (!loc) {
           loc = {
             lat: provincia.regionMapa.latitude,
@@ -242,16 +249,19 @@ export default function HomeScreen({ navigation }: Props) {
     }
 
     if (loc) {
+      if (!okVivo()) return;
       setUbicacion(loc);
       const [c, indice] = await Promise.all([
         obtenerClimaActual(loc.lat, loc.lng),
         calcularIndicePesca(loc.lat, loc.lng, 3),
       ]);
+      if (!okVivo()) return;
       setClima(c);
       const dia = indice.length > 0 ? indice[0] : null;
       if (dia) {
         setIndiceHoy(dia);
         const permisoNotif = await solicitarPermisoNotificaciones();
+        if (!okVivo()) return;
         if (permisoNotif) await programarAlertasPesca(indice);
       }
       await guardarCacheOffline({
@@ -259,10 +269,12 @@ export default function HomeScreen({ navigation }: Props) {
         indiceHoy: dia,
         ubicacion: loc,
       });
+      if (!okVivo()) return;
       const cacheActualizado = await leerCacheOffline();
+      if (!okVivo()) return;
       setCache(cacheActualizado);
     }
-    setCargando(false);
+    if (okVivo()) setCargando(false);
   }
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
@@ -286,7 +298,7 @@ export default function HomeScreen({ navigation }: Props) {
     if (punto?.etiqueta) return punto.etiqueta;
     if (punto) return etiquetaFuente(punto.fuente);
     if (ubicacion && permisoDenegado) {
-      const p = resolverPoblacionCercana(ubicacion.lat, ubicacion.lng)?.nombre;
+      const p = resolverPoblacionCercana(ubicacion.lat, ubicacion.lng, 35, provincia.id)?.nombre;
       return p ? `Centro · ${p}` : `Centro de ${provincia.nombre}`;
     }
     return "Tu ubicación";

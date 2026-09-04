@@ -1,5 +1,7 @@
 import { distanciaKm } from "./geoService";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { provinciaPorId } from "../provincias";
+import type { ProvinciaId } from "../provincias/types";
 
 export type PoblacionResuelta = {
   nombre: string;
@@ -11,15 +13,15 @@ export type PoblacionResuelta = {
 
 /**
  * Población de referencia para un punto del mapa: municipio del tramo/zona
- * más cercano en el catálogo de la provincia activa.
- * Evita ambigüedad en la previsión cuando no se usa GPS.
+ * más cercano en el catálogo de la provincia indicada (o la activa).
  */
 export function resolverPoblacionCercana(
   lat: number,
   lng: number,
-  radioMaxKm = 35
+  radioMaxKm = 35,
+  provinciaId?: ProvinciaId
 ): PoblacionResuelta | null {
-  const provincia = getProvinciaActiva();
+  const provincia = provinciaId ? provinciaPorId(provinciaId) : getProvinciaActiva();
   let mejor: PoblacionResuelta | null = null;
 
   for (const t of provincia.tramos as any[]) {
