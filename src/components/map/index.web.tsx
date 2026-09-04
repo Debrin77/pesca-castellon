@@ -346,12 +346,11 @@ export default function MapView({
               attribution="© Instituto Hidrográfico de la Marina — no válido para navegación"
             />
           </LayersControl.Overlay>
-          {showRadar && radarUrl ? (
-            <LayersControl.Overlay checked name="Radar lluvia">
-              <TileLayer url={radarUrl} opacity={0.65} attribution="RainViewer" zIndex={400} />
-            </LayersControl.Overlay>
-          ) : null}
         </LayersControl>
+        {/* Radar fuera del LayersControl: al activar desde Campo de hoy se ve al instante. */}
+        {showRadar && radarUrl ? (
+          <TileLayer url={radarUrl} opacity={0.65} attribution="RainViewer" zIndex={400} />
+        ) : null}
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
         <SincronizarRegion region={region} disabled={!!fitCoordinates?.length || !!cameraTarget} />

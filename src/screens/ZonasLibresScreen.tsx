@@ -146,16 +146,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         navigation.setParams?.({ centrarEn: undefined });
       }
 
-      if (p.activarRadar) {
-        setCapas((prev) => ({ ...prev, radar: true }));
-        navigation.setParams?.({ activarRadar: undefined });
-      }
-
       if (pickActivo) {
         navigation.setParams?.({ modoAnadirPunto: undefined, motivoPick: undefined });
       }
     }, [route.params, navigation, fijarPunto])
   );
+
+  // Activar radar también si ya estamos en el mapa (params sin re-montar).
+  useEffect(() => {
+    const activar = !!(route.params as ParamsMapa | undefined)?.activarRadar;
+    if (!activar) return;
+    setCapas((prev) => ({ ...prev, radar: true }));
+    navigation.setParams?.({ activarRadar: undefined });
+  }, [route.params, navigation]);
 
   useEffect(() => {
     if (!capas.radar) return;

@@ -9,7 +9,7 @@ import {
   Alert,
   Image,
 } from "react-native";
-import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
+import { useFocusEffect, useRoute, useScrollToTop } from "@react-navigation/native";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import {
@@ -54,6 +54,7 @@ function nombrePuntoPorDefecto(): string {
 }
 
 export default function MyCatchesScreen({ navigation }: Props) {
+  const route = useRoute<any>();
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const speciesCatalog = provincia.species as any[];
@@ -109,6 +110,18 @@ export default function MyCatchesScreen({ navigation }: Props) {
       }
     }, [cargar])
   );
+
+  // Campo de hoy → «Especies con foto / rasgos»
+  useEffect(() => {
+    if (!route.params?.abrirIdentificar) return;
+    setTab("capturas");
+    setMostrarFormulario(true);
+    setMostrarId(true);
+    navigation.setParams?.({ abrirIdentificar: undefined });
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
+  }, [route.params, navigation]);
 
   useEffect(() => {
     const sp = speciesCatalog.find((s: any) => s.id === especieId);

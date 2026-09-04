@@ -97,6 +97,26 @@ if (!mapa.includes("activarRadar") || !mapa.includes("Radar lluvia")) {
   fallos++;
 }
 
+const campo = fs.readFileSync(path.join(root, "src/components/PanelCampoHoy.tsx"), "utf8");
+if (campo.includes('navigate("Prevision")') || !campo.includes('"Previsión"')) {
+  console.error("FAIL PanelCampoHoy debe navegar a la pestaña Previsión (con tilde)");
+  fallos++;
+}
+if (!campo.includes("activarRadar: true")) {
+  console.error("FAIL PanelCampoHoy sin activarRadar: true");
+  fallos++;
+}
+if (!campo.includes("abrirIdentificar") || !campo.includes("EspeciesMain")) {
+  console.error("FAIL PanelCampoHoy sin enlace a identificar especie / catálogo Especies");
+  fallos++;
+}
+
+const catchesNav = fs.readFileSync(path.join(root, "src/screens/MyCatchesScreen.tsx"), "utf8");
+if (!catchesNav.includes("abrirIdentificar")) {
+  console.error("FAIL MyCatches sin abrirIdentificar desde Campo de hoy");
+  fallos++;
+}
+
 const tide = fs.readFileSync(path.join(root, "src/services/tideService.ts"), "utf8");
 if (tide.includes("sevilla_costa_ref")) {
   console.error("FAIL tideService no debe cruzar referencia atlántica en Sevilla continental");
