@@ -43,8 +43,20 @@ const RASGOS: Record<
   mugilidos: { ambito: "mar", forma: "cilindrico", colorDominante: "plateado", tamano: "medio", keywords: ["lisa", "mugil"] },
   lubina: { ambito: "mar", forma: "alargado", colorDominante: "plateado", tamano: "medio", keywords: ["róbalo", "lineas"] },
   dorada: { ambito: "mar", forma: "comprimido", colorDominante: "plateado", tamano: "medio", keywords: ["punto negro", "oro"] },
+  sargo: { ambito: "mar", forma: "comprimido", colorDominante: "plateado", tamano: "medio", keywords: ["bandas", "roca"] },
+  mojarra: { ambito: "mar", forma: "comprimido", colorDominante: "plateado", tamano: "pequeno", keywords: ["rockfishing"] },
+  herrera: { ambito: "mar", forma: "comprimido", colorDominante: "plateado", tamano: "pequeno", keywords: ["surfcasting", "arena"] },
+  oblada: { ambito: "mar", forma: "comprimido", colorDominante: "plateado", tamano: "pequeno", keywords: ["escollera"] },
+  salema: { ambito: "mar", forma: "comprimido", colorDominante: "dorado", tamano: "medio", keywords: ["algas", "salpa"] },
+  llisa: { ambito: "mar", forma: "cilindrico", colorDominante: "plateado", tamano: "medio", keywords: ["lisa", "mugil"] },
+  mabra: { ambito: "mar", forma: "cilindrico", colorDominante: "plateado", tamano: "medio", keywords: ["lisa", "mabra"] },
+  jurel: { ambito: "mar", forma: "alargado", colorDominante: "plateado", tamano: "medio", keywords: ["chicharro"] },
+  caballa: { ambito: "mar", forma: "alargado", colorDominante: "plateado", tamano: "medio", keywords: ["verdes", "rayas"] },
   sepia: { ambito: "mar", forma: "plano", colorDominante: "variable", tamano: "medio", keywords: ["cefalópodo"] },
+  calamar: { ambito: "mar", forma: "alargado", colorDominante: "variable", tamano: "medio", keywords: ["eging", "tentáculos"] },
   pulpo: { ambito: "mar", forma: "plano", colorDominante: "variable", tamano: "medio", keywords: ["tentáculos"] },
+  salmonete: { ambito: "mar", forma: "alargado", colorDominante: "rojizo", tamano: "pequeno", keywords: ["barbillas", "rojo"] },
+  cangrejo_azul: { ambito: "mar", forma: "plano", colorDominante: "variable", tamano: "medio", keywords: ["cangrejo", "invasora"] },
 };
 
 function scoreAmbito(want: AmbitoId, have?: AmbitoId): number {

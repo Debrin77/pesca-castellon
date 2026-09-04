@@ -37,6 +37,23 @@ const ESPECIE_CARA: Record<string, CaraVisual> = {
   siluro: { emoji: "👹", gradiente: ["#b42318", "#24352c"], etiqueta: "Invasora" },
   anguila: { emoji: "🐍", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Migradora" },
   mugilidos: { emoji: "🌊", gradiente: ["#2a7a94", "#13485a"], etiqueta: "Estuario / mar" },
+  // Orilla Castellón (15 usuales + invasora)
+  lubina: { emoji: "🐟", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Orilla · mar" },
+  dorada: { emoji: "🐠", gradiente: ["#1a6f8a", "#13485a"], etiqueta: "Orilla · mar" },
+  sargo: { emoji: "🐡", gradiente: ["#2a7a94", "#0c2c20"], etiqueta: "Roca / escollera" },
+  mojarra: { emoji: "🐟", gradiente: ["#2a7a94", "#1a5640"], etiqueta: "Rockfishing" },
+  herrera: { emoji: "🐠", gradiente: ["#1a6f8a", "#0e4456"], etiqueta: "Surfcasting" },
+  oblada: { emoji: "🐟", gradiente: ["#2a7a94", "#13485a"], etiqueta: "Escollera" },
+  salema: { emoji: "🐠", gradiente: ["#1a5640", "#0e4456"], etiqueta: "Roca / algas" },
+  llisa: { emoji: "🌊", gradiente: ["#2a7a94", "#13485a"], etiqueta: "Playa / golas" },
+  mabra: { emoji: "🌊", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Surfcasting" },
+  jurel: { emoji: "🐟", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Spinning orilla" },
+  caballa: { emoji: "🐟", gradiente: ["#1a6f8a", "#13485a"], etiqueta: "Espigón" },
+  sepia: { emoji: "🦑", gradiente: ["#2a7a94", "#24352c"], etiqueta: "Cefalópodo" },
+  calamar: { emoji: "🦑", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Eging" },
+  pulpo: { emoji: "🐙", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Roca" },
+  salmonete: { emoji: "🐠", gradiente: ["#c45c12", "#0e4456"], etiqueta: "Arena / piedra" },
+  cangrejo_azul: { emoji: "🦀", gradiente: ["#c45c12", "#0c2c20"], etiqueta: "Invasora" },
 };
 
 export function caraDeZona(zone: { id?: string; tipo?: string; nombre?: string } | null): CaraVisual {

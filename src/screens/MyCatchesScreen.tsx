@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -36,6 +36,10 @@ import {
   consumirPickUbicacion,
   iniciarPickUbicacion,
 } from "../services/ubicacionPendiente";
+import {
+  catalogoParaModalidad,
+  resolverEspecie,
+} from "../services/catalogoEspeciesService";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
@@ -79,6 +83,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [mostrarCoordsCaptura, setMostrarCoordsCaptura] = useState(false);
   const [latCaptura, setLatCaptura] = useState("");
   const [lngCaptura, setLngCaptura] = useState("");
+
+  const catalogoSeleccion = useMemo(
+    () =>
+      catalogoParaModalidad(modalidad, speciesCatalog, {
+        continentalOnly: provincia.continentalOnly,
+      }),
+    [modalidad, speciesCatalog, provincia.continentalOnly]
+  );
 
   const [mostrarFormPunto, setMostrarFormPunto] = useState(false);
   const [nombrePunto, setNombrePunto] = useState("");
@@ -128,9 +140,16 @@ export default function MyCatchesScreen({ navigation }: Props) {
       setCupoInfo(null);
       return;
     }
-    const sp = speciesCatalog.find((s: any) => s.id === especieId);
-    void resumenCupoHoy(especieId, sp?.cupo).then(setCupoInfo);
+    const sp = resolverEspecie(especieId, speciesCatalog);
+    void resumenCupoHoy(especieId, (sp as any)?.cupo).then(setCupoInfo);
   }, [especieId, capturas, speciesCatalog]);
+
+  useEffect(() => {
+    // Si la modalidad cambia (río ↔ mar), quitar especie que no esté en el catálogo actual.
+    if (especieId && !catalogoSeleccion.some((s) => s.id === especieId)) {
+      setEspecieId("");
+    }
+  }, [catalogoSeleccion, especieId]);
 
   useEffect(() => {
     // No forzar la primera del catálogo (p. ej. trucha común / siluro): el usuario elige.
@@ -300,7 +319,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
   }
 
   function especieInfo(id: string) {
-    return speciesCatalog.find((s: any) => s.id === id);
+    return resolverEspecie(id, speciesCatalog);
+  }
+
+  function cambiarModalidad(m: ModalidadPesca) {
+    setModalidad(m);
   }
 
   return (
@@ -331,7 +354,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
           </TouchableOpacity>
           {cupoInfo ? (
             <View style={styles.cupoBox}>
-              <Text style={styles.cupoTitle}>Cupo del día · {speciesCatalog.find((s: any) => s.id === especieId)?.nombre ?? especieId}</Text>
+              <Text style={styles.cupoTitle}>
+                Cupo del día · {resolverEspecie(especieId, speciesCatalog)?.nombre ?? especieId}
+              </Text>
               <Text style={styles.cupoMeta}>
                 Hoy: {cupoInfo.retenidasHoy}
                 {cupoInfo.maxUnidades != null ? ` / ${cupoInfo.maxUnidades} ud` : " capturas"}
@@ -387,22 +412,26 @@ export default function MyCatchesScreen({ navigation }: Props) {
               <View style={styles.formCard}>
                 <SelectorModalidad
                   value={modalidad}
-                  onChange={setModalidad}
+                  onChange={cambiarModalidad}
                   filtroAmbito={provincia.continentalOnly ? "continental" : "ambos"}
                 />
                 <Text style={styles.formLabel}>Especie</Text>
                 {!especieId ? (
-                  <Text style={styles.cupoMeta}>Elige la especie (no hay preselección).</Text>
+                  <Text style={styles.cupoMeta}>
+                    {modalidad === "orilla_mar" || modalidad === "submarina"
+                      ? "Elige una de las 15 especies de costa más usuales (o invasora)."
+                      : "Elige la especie (no hay preselección)."}
+                  </Text>
                 ) : null}
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
-                  {speciesCatalog.map((s: any) => (
+                  {catalogoSeleccion.map((s: any) => (
                     <TouchableOpacity
                       key={s.id}
                       style={[styles.chip, especieId === s.id && styles.chipActive]}
                       onPress={() => setEspecieId(s.id)}
                     >
                       <Text style={[styles.chipText, especieId === s.id && styles.chipTextActive]}>
-                        {s.icono} {s.nombre}
+                        {s.icono ?? caraDeEspecie(s).emoji} {s.nombre}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -422,7 +451,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
 
                 {mostrarId ? (
                   <IdentificarEspecie
-                    catalogo={speciesCatalog}
+                    catalogo={catalogoSeleccion}
                     fotoUri={fotoUri}
                     onElegir={(id) => {
                       setEspecieId(id);

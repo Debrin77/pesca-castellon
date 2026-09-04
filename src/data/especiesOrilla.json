@@ -1,5 +1,22 @@
 {
   "fuenteTallas": "RD 560/1995 anexo II (caladero mediterráneo), texto consolidado BOE. Decreto 41/2013 remite al RD 347/2011 para especies autorizadas. Si hay norma autonómica más estricta o cartel, gana esa.",
+  "usualesIds": [
+    "lubina",
+    "dorada",
+    "sargo",
+    "mojarra",
+    "herrera",
+    "oblada",
+    "salema",
+    "llisa",
+    "mabra",
+    "jurel",
+    "caballa",
+    "sepia",
+    "calamar",
+    "pulpo",
+    "salmonete"
+  ],
   "noCapturar": [
     {
       "id": "datil_mar",
