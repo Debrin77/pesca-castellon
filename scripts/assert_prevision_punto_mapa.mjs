@@ -43,6 +43,13 @@ else ok("Previsión tiene Usar mi GPS");
 if (!home.includes("usePuntoConsulta")) fail("Inicio debe usar punto de consulta para clima");
 else ok("Inicio usa punto de consulta");
 
+const salgo = readFileSync(join(root, "src/screens/SalgoAPescarScreen.tsx"), "utf8");
+if (!salgo.includes("fijarPunto") || !salgo.includes("usePuntoConsulta")) {
+  fail("Salgo a pescar debe publicar/leer punto de consulta");
+} else {
+  ok("Salgo a pescar usa punto de consulta");
+}
+
 if (!prev.includes("Población de referencia") && !prev.includes("poblacion")) {
   fail("Previsión debe mostrar población de referencia");
 } else {

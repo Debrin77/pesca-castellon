@@ -1,10 +1,10 @@
 /**
- * Puente ligero entre Capturas ↔ Mapa cuando el usuario elige
- * "pulsar en el mapa" para un punto o una captura.
+ * Puente ligero entre pantallas ↔ Mapa cuando el usuario elige
+ * "pulsar en el mapa" (punto, captura o «Salgo a pescar»).
  * No persiste: solo vive mientras dura la navegación.
  */
 
-export type MotivoUbicacionPendiente = "punto" | "captura";
+export type MotivoUbicacionPendiente = "punto" | "captura" | "salgo";
 
 export type UbicacionElegida = {
   lat: number;

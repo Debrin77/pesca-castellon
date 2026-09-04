@@ -23,7 +23,7 @@ import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
 import PanelCampoHoy from "../components/PanelCampoHoy";
-import { consultarPuntoPesca } from "../services/consultaPescaService";
+import { consultarToqueMapa } from "../services/consultaCostaService";
 import {
   AvisoSeguridad,
   obtenerAvisosSeguridadPesca,
@@ -280,7 +280,7 @@ export default function HomeScreen({ navigation }: Props) {
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
-  const consultaViva = ubicacion ? consultarPuntoPesca(ubicacion.lat, ubicacion.lng) : null;
+  const consultaViva = ubicacion ? consultarToqueMapa(ubicacion.lat, ubicacion.lng) : null;
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const alertasClima =
     clima
@@ -447,7 +447,7 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
             ) : (
               <Text style={styles.sinConsulta}>
-                Activa la ubicación o toca el mapa para el veredicto del tramo.
+                Activa la ubicación, toca el mapa o elige zona/coordenadas en «Salgo a pescar».
               </Text>
             )}
 
