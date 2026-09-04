@@ -74,7 +74,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     navigation.setOptions({
       title: costa
         ? `Especies · Costa · ${provincia.nombre}`
-        : `Especies · ${provincia.nombre}`,
+        : `Especies · Ríos · ${provincia.nombre}`,
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
     });
   }, [costa, mar, navigation, provincia.nombre]);
@@ -110,8 +110,13 @@ export default function EspeciesScreen({ navigation }: Props) {
       }
     } else {
       setCatalogo("rio");
-      setCatalogoAbierto(false);
       setCamara(camaraProvincia(provincia.regionMapa));
+      // Equivalente continental: al pulsar Ríos se ven las especies de ríos/embalses.
+      if (opts?.abrirCatalogo) {
+        setCatalogoAbierto(true);
+      } else {
+        setCatalogoAbierto(false);
+      }
     }
   }
 
@@ -122,6 +127,14 @@ export default function EspeciesScreen({ navigation }: Props) {
     setCatalogoAbierto(true);
     setFichaAbierta(false);
     setCamara(camaraCosta(provincia));
+  }
+
+  function abrirCatalogoContinental() {
+    setModo("continental");
+    setCatalogo("rio");
+    setCatalogoAbierto(true);
+    setFichaAbierta(false);
+    setCamara(camaraProvincia(provincia.regionMapa));
   }
 
   function abrirCatalogo() {
@@ -219,7 +232,7 @@ export default function EspeciesScreen({ navigation }: Props) {
         <View style={[styles.modoBar, costa && styles.modoBarMar]}>
           <TouchableOpacity
             style={[styles.modoBtn, !costa && styles.modoBtnOnBosque]}
-            onPress={() => cambiarModo("continental")}
+            onPress={() => cambiarModo("continental", { abrirCatalogo: true })}
             accessibilityRole="button"
             accessibilityLabel="Ríos y embalses"
           >
@@ -322,19 +335,19 @@ export default function EspeciesScreen({ navigation }: Props) {
           <Text style={[styles.provinciaChipTxt, costa && styles.provinciaChipTxtMar]}>
             {costa
               ? `Costa · ${provincia.nombre} · ${nEspeciesChip} especies de orilla`
-              : `Provincia · ${provincia.nombre} · ${nEspeciesChip} especies`}
+              : `Ríos · ${provincia.nombre} · ${nEspeciesChip} especies continentales`}
           </Text>
         </View>
         {avisoFuera ? <Text style={styles.avisoFuera}>{avisoFuera}</Text> : null}
         <LeyendaMapa modo={costa ? "costa" : "continental"} />
         <Text style={styles.hint}>
-          {soloContinental
-            ? `Toca un tramo o embalse de ${provincia.nombre}: las especies se abren a pantalla completa.`
-            : costa
-              ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
-              : `Toca río o cambia a Costa (orilla) para ver lubina, dorada, sargo…`}
+          {costa
+            ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
+            : soloContinental
+              ? `Catálogo continental de ${provincia.nombre}. Toca un tramo o embalse en el mapa.`
+              : `Catálogo de ríos y embalses. Cambia a Costa (orilla) para lubina, dorada, sargo…`}
         </Text>
-        {!soloContinental && costa ? (
+        {costa ? (
           <TouchableOpacity
             style={styles.ctaOrilla}
             onPress={abrirCatalogoOrilla}
@@ -343,7 +356,16 @@ export default function EspeciesScreen({ navigation }: Props) {
           >
             <Text style={styles.ctaOrillaTxt}>Ver especies de orilla</Text>
           </TouchableOpacity>
-        ) : null}
+        ) : (
+          <TouchableOpacity
+            style={styles.ctaContinental}
+            onPress={abrirCatalogoContinental}
+            accessibilityRole="button"
+            accessibilityLabel="Ver especies de ríos y embalses"
+          >
+            <Text style={styles.ctaContinentalTxt}>Ver especies de ríos y embalses</Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.pieRow}>
           {consulta && !fichaAbierta ? (
             <TouchableOpacity style={styles.pieBtn} onPress={() => setFichaAbierta(true)}>
@@ -354,10 +376,12 @@ export default function EspeciesScreen({ navigation }: Props) {
             style={[styles.pieBtn, costa ? styles.pieBtnGhostMar : styles.pieBtnGhost]}
             onPress={abrirCatalogo}
             accessibilityRole="button"
-            accessibilityLabel={costa ? `Catálogo de orilla de ${provincia.nombre}` : `Catálogo de ${provincia.nombre}`}
+            accessibilityLabel={
+              costa ? `Catálogo de orilla de ${provincia.nombre}` : `Catálogo continental de ${provincia.nombre}`
+            }
           >
             <Text style={costa ? styles.pieBtnGhostMarTxt : styles.pieBtnGhostTxt}>
-              {costa ? "Catálogo orilla" : "Catálogo"}
+              {costa ? "Catálogo orilla" : "Catálogo ríos"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -404,7 +428,18 @@ export default function EspeciesScreen({ navigation }: Props) {
               <TouchableOpacity style={[styles.pieBtn, styles.pieBtnMar, { marginTop: 12 }]} onPress={abrirCatalogoOrilla}>
                 <Text style={styles.pieBtnMarTxt}>Ver las 15 especies de orilla</Text>
               </TouchableOpacity>
-            ) : null}
+            ) : (
+              <TouchableOpacity
+                style={[styles.pieBtn, { marginTop: 12 }]}
+                onPress={abrirCatalogoContinental}
+                accessibilityRole="button"
+                accessibilityLabel="Ver especies continentales"
+              >
+                <Text style={styles.pieBtnTxt}>
+                  Ver especies de ríos y embalses ({speciesCatalog.length})
+                </Text>
+              </TouchableOpacity>
+            )}
           </>
         ) : null}
       </VentanaConsulta>
@@ -414,7 +449,7 @@ export default function EspeciesScreen({ navigation }: Props) {
         titulo={
           catalogo === "mar" || catalogo === "tallas" || catalogo === "no"
             ? `Catálogo orilla · ${provincia.nombre}`
-            : `Catálogo · ${provincia.nombre}`
+            : `Catálogo ríos · ${provincia.nombre}`
         }
         onCerrar={() => setCatalogoAbierto(false)}
         acento={catalogo === "rio" ? "bosque" : "mar"}
@@ -422,14 +457,19 @@ export default function EspeciesScreen({ navigation }: Props) {
         <Text style={styles.catalogoIntro}>
           {catalogo === "mar"
             ? `Las especies más usuales desde orilla en ${provincia.nombre}. Tallas legales del Mediterráneo.`
-            : `Fichas solo de ${provincia.nombre}. Cada provincia tiene su propio listado y normativa.`}
+            : `Especies de pesca continental en ${provincia.nombre}: ríos, embalses y tramos. Cada provincia tiene su propio listado y normativa.`}
         </Text>
         <View style={styles.modoBarCatalogo}>
           <TouchableOpacity
             style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOnBosque]}
-            onPress={() => setCatalogo("rio")}
+            onPress={() => {
+              setCatalogo("rio");
+              setModo("continental");
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Ríos y embalses catálogo"
           >
-            <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos</Text>
+            <Text style={[styles.modoTxt, catalogo === "rio" && styles.modoTxtOn]}>Ríos y embalses</Text>
           </TouchableOpacity>
           {!soloContinental ? (
             <>
@@ -555,6 +595,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   ctaOrillaTxt: { color: "#fff", fontWeight: "800", fontSize: 16, textAlign: "center" },
+  ctaContinental: {
+    marginTop: 10,
+    minHeight: 48,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.primaryDark,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  ctaContinentalTxt: { color: "#fff", fontWeight: "800", fontSize: 16, textAlign: "center" },
   pieRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 8 },
   pieBtn: {
     flexGrow: 1,
