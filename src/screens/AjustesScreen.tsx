@@ -22,6 +22,9 @@ import {
   setBiometriaActiva,
 } from "../services/accesoService";
 import { COLORS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import PanelOfflineMapa from "../components/PanelOfflineMapa";
+import PescaRecBanner from "../components/PescaRecBanner";
+import CalendarioConcursos from "../components/CalendarioConcursos";
 
 function avisar(titulo: string, mensaje: string) {
   if (Platform.OS === "web" && typeof window !== "undefined") {
@@ -147,6 +150,10 @@ export default function AjustesScreen() {
           <Text style={styles.btnTxt}>Cambiar provincia</Text>
         </TouchableOpacity>
       </View>
+
+      <PanelOfflineMapa />
+      <CalendarioConcursos provinciaId={provincia.id} limite={6} />
+      {!provincia.continentalOnly ? <PescaRecBanner /> : null}
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Acceso a la app</Text>

@@ -22,6 +22,9 @@ import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
+import PescaRecBanner from "../components/PescaRecBanner";
+import CalendarioConcursos from "../components/CalendarioConcursos";
+import PanelOfflineMapa from "../components/PanelOfflineMapa";
 import { consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
@@ -408,12 +411,22 @@ export default function HomeScreen({ navigation }: Props) {
               error={avisosError}
             />
             <LicenseBanner onPress={() => navigation.navigate("License")} />
+            {!provincia.continentalOnly ? (
+              <View style={{ marginTop: 8 }}>
+                <PescaRecBanner />
+              </View>
+            ) : null}
           </View>
+        </ListaAnimada>
+
+        <ListaAnimada index={2}>
+          <CalendarioConcursos provinciaId={provincia.id} />
+          <PanelOfflineMapa />
         </ListaAnimada>
 
         {/* Bloque embalses / favoritos */}
         {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
-          <ListaAnimada index={2}>
+          <ListaAnimada index={3}>
             <View style={styles.bloque}>
               <Text style={styles.bloqueTitulo}>Embalses y favoritos</Text>
 

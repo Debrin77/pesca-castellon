@@ -11,6 +11,7 @@ import {
   Marker as LeafletMarker,
   Circle as LeafletCircle,
   Polygon as LeafletPolygon,
+  Polyline as LeafletPolyline,
   Popup,
   useMap,
   useMapEvents,
@@ -233,6 +234,11 @@ interface MapViewProps {
   accent?: "bosque" | "mar";
   /** Capa WMS oficial de pesca continental. */
   pescaWms?: "icv" | "rediam" | "none";
+  /** Radar RainViewer (plantilla {z}/{x}/{y}). */
+  radarUrl?: string | null;
+  showRadar?: boolean;
+  /** Forzar capa batimetría EMODnet visible. */
+  showBathymetry?: boolean;
 }
 
 export default function MapView({
@@ -246,6 +252,9 @@ export default function MapView({
   cameraTarget,
   accent = "bosque",
   pescaWms = "icv",
+  radarUrl = null,
+  showRadar = false,
+  showBathymetry = false,
 }: MapViewProps) {
   inyectarCssMapa();
   // Sin fallback a Castellón: la pantalla debe pasar regionMapa de la provincia activa.
@@ -317,7 +326,7 @@ export default function MapView({
               />
             </LayersControl.Overlay>
           ) : null}
-          <LayersControl.Overlay name="Profundidad EMODnet (no navegar)">
+          <LayersControl.Overlay checked={showBathymetry} name="Profundidad EMODnet (no navegar)">
             <WMSTileLayer
               url="https://ows.emodnet-bathymetry.eu/wms"
               layers="mean_atlas_land"
@@ -337,6 +346,11 @@ export default function MapView({
               attribution="© Instituto Hidrográfico de la Marina — no válido para navegación"
             />
           </LayersControl.Overlay>
+          {showRadar && radarUrl ? (
+            <LayersControl.Overlay checked name="Radar lluvia">
+              <TileLayer url={radarUrl} opacity={0.65} attribution="RainViewer" zIndex={400} />
+            </LayersControl.Overlay>
+          ) : null}
         </LayersControl>
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
@@ -436,6 +450,26 @@ export function Polygon({
         fillOpacity: strokeWidth >= 4 ? 0.4 : 0.28,
         interactive: false,
       }}
+    />
+  );
+}
+
+interface PolylineProps {
+  coordinates: { latitude: number; longitude: number }[];
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+
+export function Polyline({
+  coordinates,
+  strokeColor = "#1a6f8a",
+  strokeWidth = 4,
+}: PolylineProps) {
+  if (coordinates.length < 2) return null;
+  return (
+    <LeafletPolyline
+      positions={coordinates.map((c) => [c.latitude, c.longitude] as [number, number])}
+      pathOptions={{ color: strokeColor, weight: strokeWidth, opacity: 0.9 }}
     />
   );
 }

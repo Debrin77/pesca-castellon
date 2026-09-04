@@ -23,6 +23,9 @@ import {
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
+import { calcularSolunarDia, DiaSolunar } from "../services/solunarService";
+import { calcularMareaHoy, claveMareaProvincia, ResumenMarea } from "../services/tideService";
+import VentanasSolunarMarea from "../components/VentanasSolunarMarea";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -95,6 +98,8 @@ export default function PrevisionScreen() {
   const [permisoDenegado, setPermisoDenegado] = useState(false);
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [oleaje, setOleaje] = useState<{ hora: string; alturaM: number }[]>([]);
+  const [solunar, setSolunar] = useState<DiaSolunar | null>(null);
+  const [marea, setMarea] = useState<ResumenMarea | null>(null);
   const [origen, setOrigen] = useState<{
     lat: number;
     lng: number;
@@ -202,11 +207,23 @@ export default function PrevisionScreen() {
     ? detectarAlertas({
         codigoTiempo: dia.codigoTiempo,
         vientoMaxKmh: dia.vientoMaxKmh,
+        rafagaMaxKmh: dia.rafagaMaxKmh,
         probabilidadLluvia: dia.probabilidadLluvia,
         tempMax: dia.tempMax,
         tempMin: dia.tempMin,
       })
     : [];
+
+  useEffect(() => {
+    if (!dia) {
+      setSolunar(null);
+      return;
+    }
+    const lat = origen?.lat ?? provincia.regionMapa.latitude;
+    setSolunar(calcularSolunarDia(dia.fecha, lat));
+    const clave = claveMareaProvincia(provincia.id, provincia.continentalOnly);
+    setMarea(clave ? calcularMareaHoy(clave) : null);
+  }, [dia?.fecha, origen?.lat, provincia.id, provincia.continentalOnly, provincia.regionMapa.latitude]);
 
   const horasDia = useMemo(() => {
     if (!dia) return [];
@@ -382,14 +399,18 @@ export default function PrevisionScreen() {
               <Text style={styles.metricValue}>
                 {dia.probabilidadLluvia !== null ? `${dia.probabilidadLluvia}%` : "—"}
               </Text>
-              <Text style={styles.glassHint}>Prob. máxima</Text>
+              <Text style={styles.glassHint}>
+                {dia.precipitacionMm != null ? `${dia.precipitacionMm.toFixed(1)} mm` : "Prob. máxima"}
+              </Text>
             </View>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Viento</Text>
               <Text style={styles.metricValue}>
                 {dia.vientoMaxKmh !== null ? `${Math.round(dia.vientoMaxKmh)}` : "—"}
               </Text>
-              <Text style={styles.glassHint}>km/h racha</Text>
+              <Text style={styles.glassHint}>
+                {dia.rafagaMaxKmh != null ? `ráfaga ${Math.round(dia.rafagaMaxKmh)} km/h` : "km/h máx"}
+              </Text>
             </View>
             <View style={[styles.metric, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.glassLabel}>Luna</Text>
@@ -431,7 +452,11 @@ export default function PrevisionScreen() {
                       <IconoMeteo codigo={h.codigoTiempo} size={48} etiqueta={th.texto} />
                       <Text style={styles.hourTemp}>{Math.round(h.temperatura)}°</Text>
                       <Text style={styles.hourRain} numberOfLines={2}>
-                        {h.probabilidadLluvia !== null ? `${h.probabilidadLluvia}% lluvia` : climaCorto(th.texto)}
+                        {h.rafagaKmh != null
+                          ? `ráfaga ${Math.round(h.rafagaKmh)}`
+                          : h.probabilidadLluvia !== null
+                            ? `${h.probabilidadLluvia}% lluvia`
+                            : climaCorto(th.texto)}
                       </Text>
                     </View>
                   );
@@ -473,7 +498,17 @@ export default function PrevisionScreen() {
             </View>
           ) : null}
 
-          <Text style={styles.fuente}>Datos de Open-Meteo. Los avisos no sustituyen a AEMET.</Text>
+          <VentanasSolunarMarea
+            solunar={solunar}
+            marea={marea}
+            oleajeNota={
+              provincia.oleaje
+                ? "En costa, combina solunar con oleaje y viento (radar en el mapa)."
+                : "En continental, el solunar es orientación; mira también el índice y el SAIH."
+            }
+          />
+
+          <Text style={styles.fuente}>Datos de Open-Meteo + solunar/marea locales. Los avisos no sustituyen a AEMET.</Text>
         </>
       )}
     </ScrollView>

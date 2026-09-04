@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -27,9 +27,15 @@ import {
   eliminarFavorito,
 } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
+import { construirGpx, exportarYCompartirGpx } from "../services/gpxService";
+import { obtenerTracks } from "../services/trackService";
+import { resumenCupoHoy, CupoEspecieInfo } from "../services/cupoService";
+import type { ModalidadPesca } from "../data/modalidades";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
+import IdentificarEspecie from "../components/IdentificarEspecie";
+import SelectorModalidad from "../components/SelectorModalidad";
 import { LinearGradient } from "expo-linear-gradient";
 
 type Tab = "favoritos" | "puntos" | "capturas";
@@ -49,6 +55,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarId, setMostrarId] = useState(false);
 
   const [especieId, setEspecieId] = useState(speciesCatalog[0]?.id ?? "");
   const [nombreLugar, setNombreLugar] = useState("");
@@ -57,6 +64,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [notas, setNotas] = useState("");
   const [fotoUri, setFotoUri] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
+  const [cupoInfo, setCupoInfo] = useState<CupoEspecieInfo | null>(null);
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -70,6 +79,22 @@ export default function MyCatchesScreen({ navigation }: Props) {
     }, [cargar])
   );
 
+  useEffect(() => {
+    const sp = speciesCatalog.find((s: any) => s.id === especieId);
+    void resumenCupoHoy(especieId, sp?.cupo).then(setCupoInfo);
+  }, [especieId, capturas, speciesCatalog]);
+
+  async function exportarGpx() {
+    const tracks = await obtenerTracks();
+    const gpx = construirGpx({
+      nombre: `Pesca ${provincia.nombre}`,
+      puntos,
+      capturas,
+      tracks,
+    });
+    await exportarYCompartirGpx(`pesca-${provincia.id}-${new Date().toISOString().slice(0, 10)}.gpx`, gpx);
+  }
+
   async function handleGuardarCaptura() {
     await guardarCaptura({
       especieId,
@@ -81,6 +106,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
       fotoUri: fotoUri || null,
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
+      modalidad,
     });
     setNombreLugar("");
     setTallaCm("");
@@ -89,6 +115,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setFotoUri(null);
     setCoords(null);
     setMostrarFormulario(false);
+    setMostrarId(false);
     cargar();
   }
 
@@ -162,6 +189,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
       </View>
 
       <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+        <TouchableOpacity style={styles.gpxBtn} onPress={() => void exportarGpx()} accessibilityRole="button" accessibilityLabel="Exportar GPX">
+          <Text style={styles.gpxBtnText}>Exportar GPX (puntos + capturas + rutas)</Text>
+        </TouchableOpacity>
+
         {tab === "favoritos" && (
           <>
             <Text style={styles.lead}>
@@ -204,6 +235,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
               </TouchableOpacity>
             ) : (
               <View style={styles.formCard}>
+                <SelectorModalidad value={modalidad} onChange={setModalidad} />
                 <Text style={styles.formLabel}>Especie</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
                   {speciesCatalog.map((s: any) => (
@@ -218,6 +250,34 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
+                {cupoInfo?.aviso ? <Text style={styles.cupoWarn}>{cupoInfo.aviso}</Text> : null}
+                {cupoInfo && (cupoInfo.maxUnidades != null || cupoInfo.maxKg != null) ? (
+                  <Text style={styles.cupoMeta}>
+                    Hoy: {cupoInfo.retenidasHoy}
+                    {cupoInfo.maxUnidades != null ? ` / ${cupoInfo.maxUnidades} ud` : " capturas"}
+                    {cupoInfo.maxKg != null ? ` · ${cupoInfo.kgHoy.toFixed(1)}/${cupoInfo.maxKg} kg` : ""}
+                    {" · "}
+                    {cupoInfo.cupoTexto}
+                  </Text>
+                ) : cupoInfo ? (
+                  <Text style={styles.cupoMeta}>Cupo legal: {cupoInfo.cupoTexto}</Text>
+                ) : null}
+
+                {mostrarId ? (
+                  <IdentificarEspecie
+                    catalogo={speciesCatalog}
+                    fotoUri={fotoUri}
+                    onElegir={(id) => {
+                      setEspecieId(id);
+                      setMostrarId(false);
+                    }}
+                    onCerrar={() => setMostrarId(false)}
+                  />
+                ) : (
+                  <TouchableOpacity style={styles.photoBtn} onPress={() => setMostrarId(true)}>
+                    <Text style={styles.photoBtnTxt}>Identificar por rasgos / foto</Text>
+                  </TouchableOpacity>
+                )}
 
                 <Text style={styles.formLabel}>Lugar (opcional)</Text>
                 <TextInput style={styles.input} value={nombreLugar} onChangeText={setNombreLugar} placeholder="Ej. Embalse de Arenós" />
@@ -436,6 +496,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.mist,
   },
   photoBtnTxt: { fontWeight: "700", color: COLORS.textSecondary, fontSize: 12 },
+  gpxBtn: {
+    backgroundColor: COLORS.water,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  gpxBtnText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  cupoWarn: { color: COLORS.danger, fontSize: 12, fontWeight: "700", marginBottom: 6 },
+  cupoMeta: { color: COLORS.textSecondary, fontSize: 11.5, marginBottom: 8, lineHeight: 16 },
   fotoPreview: {
     width: "100%",
     height: 160,

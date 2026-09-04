@@ -60,6 +60,36 @@ export interface ConsultaPesca {
   especiesHabituales?: string;
   especiesIds?: string[];
   sitiosCosta?: { nombre: string; especies: string; cuando: string; detalle: string }[];
+  /** Proveniencia legal visible en el veredicto (fuente + vigencia + fecha de consulta). */
+  fuenteNormativaDetalle?: {
+    titulo: string;
+    vigenciaNota: string;
+    urlOrden?: string;
+    consultadoEn: string;
+  };
+}
+
+function stampFuente(ambito: "continental" | "maritimo" = "continental"): ConsultaPesca["fuenteNormativaDetalle"] {
+  const provincia = getProvinciaActiva();
+  const hoy = new Date().toISOString().slice(0, 10);
+  if (ambito === "maritimo") {
+    return {
+      titulo: "Decreto 41/2013 + RD 347/2011 / RD 560/1995 (marítima)",
+      vigenciaNota: "Pesca desde tierra CV; tallas BOE Mediterráneo. Verifica cartel y PescaREC si aplica.",
+      urlOrden: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
+      consultadoEn: hoy,
+    };
+  }
+  return {
+    titulo: provincia.fuenteNormativa.titulo,
+    vigenciaNota: provincia.fuenteNormativa.vigenciaNota,
+    urlOrden: provincia.fuenteNormativa.urlOrden,
+    consultadoEn: hoy,
+  };
+}
+
+export function fuenteDetalleConsulta(ambito: "continental" | "maritimo" = "continental") {
+  return stampFuente(ambito);
 }
 
 const COLORES: Record<VeredictoPesca, string> = {
@@ -200,6 +230,8 @@ function evaluarTramo(
     fuenteGeometria,
     confianza,
     especiesIds: t.especies,
+    ambito: "continental" as const,
+    fuenteNormativaDetalle: stampFuente("continental"),
   };
 
   if (t.aprovechamiento === "VP") {
@@ -362,6 +394,8 @@ export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new 
       sePuedePescarHoy: false,
       fuenteGeometria: "ninguna",
       confianza: "aproximada",
+      ambito: "continental",
+      fuenteNormativaDetalle: stampFuente("continental"),
       restriccionesHoy: [
         provincia.notaConsultaAprox,
         provincia.continentalOnly
