@@ -115,6 +115,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
     void resumenCupoHoy(especieId, sp?.cupo).then(setCupoInfo);
   }, [especieId, capturas, speciesCatalog]);
 
+  useEffect(() => {
+    setEspecieId(speciesCatalog[0]?.id ?? "");
+    setModalidad(provincia.continentalOnly ? "orilla_continental" : "orilla_continental");
+  }, [provincia.id]);
+
   async function exportarGpx() {
     const tracks = await obtenerTracks();
     const gpx = construirGpx({
