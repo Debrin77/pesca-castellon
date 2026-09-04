@@ -21,6 +21,10 @@ function read(rel) {
 const coords = read("src/services/coordsUtils.ts");
 if (!/export function parsearLatLng/.test(coords)) fail("coordsUtils debe exportar parsearLatLng");
 if (!/lat < -90 || lat > 90/.test(coords)) fail("parsearLatLng debe validar rango de latitud");
+if (!/!latStr \|\| !lngStr/.test(coords) && !/Introduce latitud y longitud/.test(coords)) {
+  fail("parsearLatLng debe rechazar campos vacíos");
+}
+if (!/aNumero/.test(coords)) fail("parsearLatLng debe parsear con aNumero (no Number vacío → 0)");
 
 const pendiente = read("src/services/ubicacionPendiente.ts");
 if (!/iniciarPickUbicacion/.test(pendiente)) fail("falta iniciarPickUbicacion");

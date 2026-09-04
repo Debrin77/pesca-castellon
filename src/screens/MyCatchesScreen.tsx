@@ -364,7 +364,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           style={styles.input}
                           value={latCaptura}
                           onChangeText={setLatCaptura}
-                          keyboardType="numeric"
+                          keyboardType="numbers-and-punctuation"
                           placeholder="39.986"
                           autoCapitalize="none"
                         />
@@ -375,7 +375,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           style={styles.input}
                           value={lngCaptura}
                           onChangeText={setLngCaptura}
-                          keyboardType="numeric"
+                          keyboardType="numbers-and-punctuation"
                           placeholder="-0.049"
                           autoCapitalize="none"
                         />
@@ -494,7 +494,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       style={styles.input}
                       value={latPunto}
                       onChangeText={setLatPunto}
-                      keyboardType="numeric"
+                      keyboardType="numbers-and-punctuation"
                       placeholder={provincia.id === "sevilla" ? "37.389" : "39.986"}
                       autoCapitalize="none"
                     />
@@ -505,7 +505,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       style={styles.input}
                       value={lngPunto}
                       onChangeText={setLngPunto}
-                      keyboardType="numeric"
+                      keyboardType="numbers-and-punctuation"
                       placeholder={provincia.id === "sevilla" ? "-5.985" : "-0.049"}
                       autoCapitalize="none"
                     />

@@ -2,8 +2,14 @@
 
 export type Coords = { lat: number; lng: number };
 
-function aNumero(raw: string): number {
-  return Number(raw.trim().replace(",", "."));
+/** Devuelve null si el texto no es un número válido (rechaza vacío → 0). */
+function aNumero(raw: string): number | null {
+  const t = raw.trim();
+  if (!t) return null;
+  // Entero o decimal con punto/coma; signo opcional
+  if (!/^-?\d+([.,]\d+)?$/.test(t)) return null;
+  const n = Number(t.replace(",", "."));
+  return Number.isFinite(n) ? n : null;
 }
 
 /**
@@ -35,9 +41,13 @@ export function parsearLatLng(
     }
   }
 
+  if (!latStr || !lngStr) {
+    return { ok: false, error: "Introduce latitud y longitud numéricas (ej. 39.986 y −0.049)." };
+  }
+
   const lat = aNumero(latStr);
   const lng = aNumero(lngStr);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+  if (lat == null || lng == null) {
     return { ok: false, error: "Introduce latitud y longitud numéricas (ej. 39.986 y −0.049)." };
   }
   if (lat < -90 || lat > 90) {
