@@ -15,8 +15,18 @@ interface Props {
   navigation: any;
 }
 
+/** Navegación a otra pestaña (desde el stack de Inicio). */
+function irATab(
+  navigation: any,
+  tab: string,
+  screen: string,
+  params?: Record<string, unknown>
+) {
+  navigation.navigate(tab, params ? { screen, params } : { screen });
+}
+
 /**
- * Hub visible en Inicio: solunar, radar, GPX, PescaREC, cupos/permisos,
+ * Hub visible en Inicio: solunar, radar, ID especie, GPX, PescaREC, cupos/permisos,
  * concursos, offline y fuente normativa — filtrado por provincia activa.
  */
 export default function PanelCampoHoy({ navigation }: Props) {
@@ -49,13 +59,32 @@ export default function PanelCampoHoy({ navigation }: Props) {
       </Text>
 
       {/* 2 · Solunar / marea */}
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => irATab(navigation, "Previsión", "PrevisionMain")}
+        accessibilityRole="button"
+        accessibilityLabel="Abrir previsión solunar"
+      >
         <Text style={styles.cardTitle}>
           Solunar {solunar.iconoLuna} · {solunar.fase}
         </Text>
         <Text style={styles.cardBody}>
           Mejor ventana: {solunar.mejorHoraInicio}–{solunar.mejorHoraFin}
         </Text>
+        <View style={styles.ventanasRow}>
+          {solunar.ventanas.map((v, i) => (
+            <View
+              key={`${v.inicio}-${i}`}
+              style={[styles.ventanaChip, v.tipo === "mayor" ? styles.ventanaMayor : styles.ventanaMenor]}
+            >
+              <Text style={styles.ventanaTipo}>{v.tipo === "mayor" ? "MAYOR" : "MENOR"}</Text>
+              <Text style={styles.ventanaHora}>
+                {v.inicio}–{v.fin}
+              </Text>
+            </View>
+          ))}
+        </View>
         {marea ? (
           <Text style={styles.cardMeta}>
             Marea {marea.puerto}
@@ -69,52 +98,68 @@ export default function PanelCampoHoy({ navigation }: Props) {
               : "Sin estación de marea para esta provincia."}
           </Text>
         )}
-        <TouchableOpacity
-          style={styles.linkBtn}
-          onPress={() => navigation.navigate("Prevision")}
-          accessibilityRole="button"
-          accessibilityLabel="Abrir previsión solunar"
-        >
-          <Text style={styles.linkTxt}>Ver ventanas en Previsión →</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.linkTxt}>Ver ventanas en Previsión →</Text>
+      </TouchableOpacity>
 
       {/* 3 · Radar + ráfagas */}
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() =>
+          irATab(navigation, "Mapa", "ZonasLibresMain", { activarRadar: true })
+        }
+        accessibilityRole="button"
+        accessibilityLabel="Abrir mapa con radar"
+      >
         <Text style={styles.cardTitle}>Radar de lluvia y ráfagas</Text>
         <Text style={styles.cardBody}>
-          En el mapa, chip «Radar lluvia». Las ráfagas salen en Previsión (viento / por horas).
+          Abre el mapa con el chip «Radar lluvia» activado. Las ráfagas salen en Previsión (viento /
+          por horas).
+        </Text>
+        <Text style={styles.linkTxt}>Abrir mapa con radar →</Text>
+      </TouchableOpacity>
+
+      {/* 4 · ID especie por rasgos / foto */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Especies con foto / rasgos</Text>
+        <Text style={styles.cardBody}>
+          Identifica la captura por rasgos (y foto opcional) del catálogo de {provincia.nombre}.
+          También puedes abrir el catálogo visual en Especies.
         </Text>
         <TouchableOpacity
           style={styles.linkBtn}
           onPress={() =>
-            navigation.navigate("Mapa", {
-              screen: "ZonasLibresMain",
-              params: { activarRadar: true },
-            })
+            irATab(navigation, "Capturas", "CapturasMain", { abrirIdentificar: true })
           }
           accessibilityRole="button"
-          accessibilityLabel="Abrir mapa con radar"
+          accessibilityLabel="Identificar especie por rasgos o foto"
         >
-          <Text style={styles.linkTxt}>Abrir mapa con radar →</Text>
+          <Text style={styles.linkTxtInline}>Identificar en Capturas →</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.linkBtn}
+          onPress={() => irATab(navigation, "Especies", "EspeciesMain")}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir catálogo de especies"
+        >
+          <Text style={styles.linkTxtAlt}>Ver catálogo de especies →</Text>
         </TouchableOpacity>
       </View>
 
       {/* 5 · GPX */}
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => irATab(navigation, "Capturas", "CapturasMain")}
+        accessibilityRole="button"
+        accessibilityLabel="Ir a capturas para exportar GPX"
+      >
         <Text style={styles.cardTitle}>Exportar GPX</Text>
         <Text style={styles.cardBody}>
           Puntos, capturas con GPS y rutas de {provincia.nombre} (solo este dispositivo).
         </Text>
-        <TouchableOpacity
-          style={styles.linkBtn}
-          onPress={() => navigation.navigate("Capturas")}
-          accessibilityRole="button"
-          accessibilityLabel="Ir a capturas para exportar GPX"
-        >
-          <Text style={styles.linkTxt}>Ir a Capturas → Exportar GPX</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.linkTxt}>Ir a Capturas → Exportar GPX</Text>
+      </TouchableOpacity>
 
       {/* 7 · PescaREC */}
       {provincia.continentalOnly ? (
@@ -152,7 +197,7 @@ export default function PanelCampoHoy({ navigation }: Props) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.linkBtn}
-          onPress={() => navigation.navigate("Capturas")}
+          onPress={() => irATab(navigation, "Capturas", "CapturasMain")}
           accessibilityRole="button"
         >
           <Text style={styles.linkTxt}>Diario de capturas (cupo del día) →</Text>
@@ -167,21 +212,20 @@ export default function PanelCampoHoy({ navigation }: Props) {
       <CalendarioConcursos provinciaId={provincia.id} limite={3} />
 
       {/* 10 · Modalidades / tracks */}
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => irATab(navigation, "Mapa", "ZonasLibresMain")}
+        accessibilityRole="button"
+      >
         <Text style={styles.cardTitle}>Modalidad y rutas GPS</Text>
         <Text style={styles.cardBody}>
           En el mapa: selector de modalidad
           {provincia.continentalOnly ? " (solo continental)" : " (río / mar / kayak…)"} y botón
           «Grabar ruta». Las rutas se exportan en el GPX.
         </Text>
-        <TouchableOpacity
-          style={styles.linkBtn}
-          onPress={() => navigation.navigate("Mapa")}
-          accessibilityRole="button"
-        >
-          <Text style={styles.linkTxt}>Abrir mapa →</Text>
-        </TouchableOpacity>
-      </View>
+        <Text style={styles.linkTxt}>Abrir mapa →</Text>
+      </TouchableOpacity>
 
       {/* 11 · Offline */}
       <PanelOfflineMapa />
@@ -233,6 +277,14 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 13.5, fontWeight: "800", color: COLORS.textPrimary },
   cardBody: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 4, lineHeight: 17 },
   cardMeta: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 4, lineHeight: 16 },
+  ventanasRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 },
+  ventanaChip: { borderRadius: RADIUS.sm, paddingHorizontal: 8, paddingVertical: 6, minWidth: 72 },
+  ventanaMayor: { backgroundColor: COLORS.primaryLight },
+  ventanaMenor: { backgroundColor: COLORS.waterLight },
+  ventanaTipo: { fontSize: 9, fontWeight: "800", color: COLORS.textMuted, letterSpacing: 0.4 },
+  ventanaHora: { fontSize: 12, fontWeight: "800", color: COLORS.textPrimary, marginTop: 1 },
   linkBtn: { marginTop: 8 },
-  linkTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 13 },
+  linkTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 13, marginTop: 8 },
+  linkTxtInline: { color: COLORS.waterDark, fontWeight: "800", fontSize: 13 },
+  linkTxtAlt: { color: COLORS.primary, fontWeight: "800", fontSize: 13 },
 });
