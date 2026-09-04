@@ -1,0 +1,229 @@
+{
+  "aviso": "Lugares que se citan una y otra vez en webs y foros de pesca de Sevilla/Andalucía (Artes de Pesca, Hay Pesca, Iberpesca, Fishsurfing, blogs de licencia). No son la Orden de vedas ni un GPS secreto. El nivel del embalse (SAIH CHG) cambia el sitio. Refugios y vedados no llevan recomendaciones.",
+  "porTramo": {
+    "sev-embalse_de_cala": [
+      {
+        "nombre": "Lagos del Serrano — orillas suaves y accesos fáciles",
+        "especies": "Carpa, barbo; bass ocasional",
+        "cuando": "Primavera y otoño; evita fines de semana de baño",
+        "detalle": "El Cala (Lagos del Serrano) es el embalse más citado junto a Sevilla capital por cercanía (A-66 / El Ronquillo). Inglés o coup: tallas modestas, muchas picadas. El lucio dejó de ser el reclamo hace años; el bass se recupera a medias. No cruces datos con Minilla: son vasos distintos."
+      },
+      {
+        "nombre": "Orillas menos pisadas (madrugada / última hora)",
+        "especies": "Black bass",
+        "cuando": "Alba y atardecer; fuera del pico de excursionistas",
+        "detalle": "Citado como escenario asequible, no de récords. Vinilo o crank cuando baja la gente. Mira el SAIH E64: los grandes cambios de cota han lastrado la pesca."
+      }
+    ],
+    "sev-embalse_de_la_minilla": [
+      {
+        "nombre": "Contraembalse / charcón bajo la presa",
+        "especies": "Barbo comizo, carpa, bass",
+        "cuando": "Mañanas; freza de barbo en primavera",
+        "detalle": "La literatura divide Minilla en contraembalse, vaso y cola. El charcón del contraembalse es el punto más citado para barbos grandes y carpas. No confundir con Cala (otro embalse aguas arriba en la misma comarca)."
+      },
+      {
+        "nombre": "Cola del embalse (acceso desde El Ronquillo)",
+        "especies": "Barbo al desove, carpa royal",
+        "cuando": "Primavera en orilla; eclosiones de insectos",
+        "detalle": "Aparcamiento alquitranado y playas familiares. Coup y fondo. Mucha presión y basura en temporada: no es el embalse de big-bass de Sevilla."
+      },
+      {
+        "nombre": "Reculas laterales del vaso",
+        "especies": "Carpa, bass, barbo",
+        "cuando": "Alba; evita botellones de tarde",
+        "detalle": "Pequeñas reculas donde se prueba spinning y fondo. Acceso desde Las Pajanosas a menudo peatonal (valla en la antigua estación)."
+      }
+    ],
+    "sev-embalse_del_pintado": [
+      {
+        "nombre": "Margen izquierdo de la presa",
+        "especies": "Carpa (carpfishing)",
+        "cuando": "Sep–nov y abr–jun; madrugada",
+        "detalle": "Punto clásico de carpa en El Pintado (SE-179, Cazalla / Real de la Jara). No es Torre del Águila ni José Torán."
+      },
+      {
+        "nombre": "Entradas del Viar y del Vendoval (norte)",
+        "especies": "Black bass, barbo",
+        "cuando": "Primavera y otoño",
+        "detalle": "La zona más citada para bass (hasta ~2 kg, talla media). Barbo en desembocaduras de torrentes. Terreno: playas, roca y plantas sumergidas."
+      },
+      {
+        "nombre": "Orillas con matorral mediterráneo sumergido",
+        "especies": "Black bass",
+        "cuando": "Abr–jun al amanecer",
+        "detalle": "Texas / crank en cobertura. Menos presión que Bembézar (Córdoba), pero accesos duros: no inventes caminos de otros embalses."
+      }
+    ],
+    "sev-embalse_de_jose_toran": [
+      {
+        "nombre": "Casa arrumbada / contenedores (antes de Venta Las Palomas)",
+        "especies": "Carpa, barbo (talla media, muchas picadas)",
+        "cuando": "Todo el año; invierno selecciona mejor talla",
+        "detalle": "Zona A habitual de concursos: pasada la presa, primera entrada a la izquierda. Profundidad cerca de orilla (~3 m). Torán = Guadalbarcar / Puebla de los Infantes, no Puebla de Cazalla."
+      },
+      {
+        "nombre": "Pasada Venta Las Palomas (sombra y poca pendiente)",
+        "especies": "Black bass",
+        "cuando": "Orilla o embarcación; primavera",
+        "detalle": "Zona B citada para bass. Árboles sumergidos en todo el vaso. Navegación eléctrica habitual; muchas piezas medianas, pocas trophy de carpa."
+      },
+      {
+        "nombre": "La isla y arroyo El Cordobés",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Mañanas; evita saturación de concursos",
+        "detalle": "Zonas C/D frente a la orilla de la casa arrumbada. Accesos SE-7102 / SE-7103."
+      }
+    ],
+    "sev-embalse_de_la_puebla_de_cazalla": [
+      {
+        "nombre": "Orillas norte (camino desde Puerto de la Encina)",
+        "especies": "Carpa, barbo; bass difícil",
+        "cuando": "Invierno (carpa mayor); primavera bass",
+        "detalle": "Embalse del Corbones. Accesos malos; la carretera a la presa ha estado cortada. Cortados y vegetación: bass presente pero «difícil». No mezclar con José Torán (otro vaso, otra comarca)."
+      },
+      {
+        "nombre": "Desembocaduras de arroyos y cobertura sumergida",
+        "especies": "Black bass",
+        "cuando": "Primavera-otoño; vinilo en sombra",
+        "detalle": "Citado en Iberpesca/Hay Pesca. Antes fue paraíso de boga; hoy carpa pequeña + algún bass de kilo."
+      }
+    ],
+    "sev-embalse_de_torre_del_aguila": [
+      {
+        "nombre": "Camino de los eucaliptos (entrada a la izquierda)",
+        "especies": "Carpa, barbo, black bass",
+        "cuando": "Feb–jun y sep–nov; evita verano de motos acuáticas",
+        "detalle": "Zona más pescada del Águila (Palmar de Troya / Utrera): profundidad aceptable, coup y carpfishing. Embalse irregular: mira SAIH E68 (a menudo bajo por riego)."
+      },
+      {
+        "nombre": "Tramo eucaliptos → presa (poco fondo)",
+        "especies": "Carpa",
+        "cuando": "Cuando hay lámina; no flotador en seco",
+        "detalle": "Citado como muy somero: mala zona de float. La orilla junto a la presa tiene poco sitio. No confundir con afluentes vedados (Santiago, Montero/Salado) que desembocan aquí."
+      }
+    ],
+    "sev-embalse_agrio": [
+      {
+        "nombre": "Cola del río Agrio",
+        "especies": "Barbo, carpa",
+        "cuando": "Primavera; fondo / precebado para carpa",
+        "detalle": "Aznalcóllar–Agrio (no es el refugio del Guadiamar aguas abajo). Punto más activo para ciprínidos según Hay Pesca."
+      },
+      {
+        "nombre": "Brazos y orillas con matorral",
+        "especies": "Black bass (talla media ~0,5 kg)",
+        "cuando": "Abr–jun amanecer; agua a menudo turbia",
+        "detalle": "Orillas despejadas: el pez te ve. Vinilos de varios colores. Acceso SE-530 hacia Castillo de las Guardas; pocos accesos cómodos."
+      }
+    ],
+    "sev-embalse_huesna": [
+      {
+        "nombre": "Acceso complejo turístico Huéznar / zona A (final SE-197)",
+        "especies": "Carpa, barbo, bass; cacho sin muerte",
+        "cuando": "Primavera-otoño; spinning de bass por épocas",
+        "detalle": "Huésna (El Pedroso). Accesos públicos limitados (fincas). No es el refugio de la Rivera del Huéznar ni Melonares (refugio). SAIH: E56 Huesna."
+      }
+    ],
+    "sev-embalse_de_gergal": [
+      {
+        "nombre": "Ruta del Agua / Venta La Cantina (Guillena)",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Invierno y entre semana (menos gente)",
+        "detalle": "Citado como embalse tranquilo cerca de Sevilla. Menos fichas de «hotspot» que Minilla o Cala: no inventamos puntas concretas. Cruce de presa citado en guías locales."
+      }
+    ],
+    "sev-embalse_del_retortillo": [
+      {
+        "nombre": "Orillas planas con árboles sumergidos (fuera del refugio)",
+        "especies": "Black bass, carpa, barbo, boga",
+        "cuando": "Primavera-otoño; pato/float tube citado",
+        "detalle": "Retortillo (Sevilla/Córdoba). Buena carpa/barbo y bass en palos. OBLIGATORIO: margen con refugio entre arroyos El Higuillo y Las Ánimas — no pesques ahí. SAIH E39 está en la página Córdoba del SAIH CHG."
+      }
+    ],
+    "sev-tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en": [
+      {
+        "nombre": "Paseo de la O / Torneo / puestos de Triana",
+        "especies": "Carpa, barbo, carpín; bass en cobertura",
+        "cuando": "Mañanas; días de competición en puestos",
+        "detalle": "Tramo urbano más citado del Guadalquivir en Sevilla. Coup y carpfishing en puestos. Bass en pantalanes y pilares."
+      },
+      {
+        "nombre": "Puente del Alamillo → Huevo de Colón",
+        "especies": "Black bass (alburno como pasto)",
+        "cuando": "Alba; crank blanco si hay alburnos",
+        "detalle": "Tramo de dársena citado para spinning. La Autoridad Portuaria no permite pesca desde embarcación en la dársena."
+      },
+      {
+        "nombre": "Punta del Verde / Lago Azul (Quinto Centenario)",
+        "especies": "Bass; lubina/lisas según marea salobre",
+        "cuando": "Acceso por carretera de El Copero",
+        "detalle": "Lengua recuperada para la pesca tras años de restricción. No es Coria ni Gelves: quédate en este tramo del anexo."
+      }
+    ],
+    "sev-guadalquivir_villaverde": [
+      {
+        "nombre": "Orillas del Guadalquivir en Villaverde del Río",
+        "especies": "Ciprínidos, bass (tramo citado en listados andaluces)",
+        "cuando": "Con caudal estable; confirma señalización",
+        "detalle": "Aguas libres art. 5.2. Poco desglose de puntas en foros frente a la dársena sevillana: no copiamos sitios de Chapina aquí."
+      }
+    ],
+    "sev-guadalquivir_coria": [
+      {
+        "nombre": "Ribera y entorno del trasbordador (Coria del Río)",
+        "especies": "Albur/lisa, ciprínidos; histórico de estuario",
+        "cuando": "Según caudal y salinidad",
+        "detalle": "Tradición de ribera coriana (albur). El esturión desapareció tras la presa de Alcalá. No es el tramo Barqueta–Chapina."
+      }
+    ],
+    "sev-guadalquivir_gelves": [
+      {
+        "nombre": "Orilla de Gelves frente al cauce",
+        "especies": "Ciprínidos, especies de transición",
+        "cuando": "Mañanas con agua quieta",
+        "detalle": "Citado en el entorno metropolitano. Mantén sitios de Punta del Verde / Chapina en su propio tramo."
+      }
+    ],
+    "sev-guadalquivir_lora": [
+      {
+        "nombre": "Orillas del Guadalquivir en Lora del Río",
+        "especies": "Ciprínidos",
+        "cuando": "Con lámina y acceso público",
+        "detalle": "Poco hotspot documentado aparte del río genérico. No uses puntos de José Torán (Guadalbarcar) aquí."
+      }
+    ],
+    "sev-viar_melonares_cantillana": [
+      {
+        "nombre": "Río Viar entre pie de Melonares y Cantillana",
+        "especies": "Black bass, ciprínidos",
+        "cuando": "Primavera-otoño; corriente moderada",
+        "detalle": "Tramo de río (no el vaso de Melonares: Melonares es refugio). Listado histórico de bass en Andalucía. Remansos y uniones de corriente."
+      }
+    ],
+    "sev-guadaira_alcala": [
+      {
+        "nombre": "Tablas y accesos urbanos en Alcalá de Guadaíra",
+        "especies": "Ciprínidos",
+        "cuando": "Con caudal; evita tramos sucios o señalizados",
+        "detalle": "Aguas libres. Cobertura en foros menor que Guadalquivir/embalses: no inventamos puntas de otros ríos."
+      }
+    ],
+    "sev-embalse_molinos_castilblanco": [
+      {
+        "nombre": "Orillas accesibles de Los Molinos (Castilblanco)",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Primavera-otoño",
+        "detalle": "Aparece en listados de bass de Sevilla. Sin ficha SAIH CHG propia (no está en EmbalSE/EmbalCO): no inventamos nivel. No cruces con Cala/Gergal."
+      }
+    ],
+    "sev-penaflor_azud": [
+      {
+        "nombre": "Azud / pie de presa de Peñaflor",
+        "especies": "Ciprínidos en corriente oxigenada",
+        "cuando": "Con suelta o caudal visible",
+        "detalle": "E53 Peñaflor figura en el SAIH CHG como punto de caudal del tronco, no como panel de embalse con %: no mostramos falso % aquí. No copies sitios de Torán."
+      }
+    ]
+  }
+}

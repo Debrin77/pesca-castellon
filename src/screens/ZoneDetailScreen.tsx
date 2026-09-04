@@ -40,7 +40,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
   useEffect(() => {
     let activo = true;
     setCargando(true);
-    getEstadoHidrologico(zone?.saihNombre ?? null, zone?.saihFichaId).then((data) => {
+    const red = zone?.saihFuente === "chg" ? "chg" : "chj";
+    getEstadoHidrologico(zone?.saihNombre ?? null, zone?.saihFichaId, red, zone?.saihUrl).then((data) => {
       if (activo) {
         setHidro(data);
         setCargando(false);
@@ -49,7 +50,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
     return () => {
       activo = false;
     };
-  }, [zoneId, zone?.saihNombre, zone?.saihFichaId]);
+  }, [zoneId, zone?.saihNombre, zone?.saihFichaId, zone?.saihFuente, zone?.saihUrl]);
 
   useFocusEffect(
     useCallback(() => {
@@ -122,7 +123,11 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 
       {provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId) ? (
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Estado del embalse (SAIH Júcar)</Text>
+        <Text style={styles.cardTitle}>
+          {zone.saihFuente === "chg"
+            ? "Estado del embalse (SAIH Guadalquivir)"
+            : "Estado del embalse (SAIH Júcar)"}
+        </Text>
         {cargando ? (
           <ActivityIndicator color={COLORS.water} />
         ) : hidro ? (
@@ -164,7 +169,9 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             <Text style={styles.cardNote}>
               {hidro.fuente === "simulado"
                 ? "No se pudo consultar el SAIH ahora mismo — dato de ejemplo. En web puede fallar por CORS; reintenta o abre la ficha oficial."
-                : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
+                : hidro.fuente === "saih_chg"
+                  ? "Fuente en vivo: SAIH Confederación Hidrográfica del Guadalquivir"
+                  : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
             </Text>
             {hidro.urlFicha && (
               <Text style={styles.linkText} onPress={() => Linking.openURL(hidro.urlFicha!)}>

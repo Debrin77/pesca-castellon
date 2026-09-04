@@ -13,7 +13,7 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
-import { getResumenEmbalsesCastellon } from "../services/saihService";
+import { getResumenEmbalses } from "../services/saihService";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
@@ -159,7 +159,7 @@ export default function HomeScreen({ navigation }: Props) {
 
       if (tieneSaih && embalsesPanel.length > 0) {
         try {
-          const rows = await getResumenEmbalsesCastellon(embalsesPanel);
+          const rows = await getResumenEmbalses(embalsesPanel);
           if (!vivo) return;
           const panel: SaihChip[] = rows.map((r) => {
             const meta =
@@ -422,7 +422,9 @@ export default function HomeScreen({ navigation }: Props) {
                   <View style={styles.sectionRow}>
                     <Text style={styles.sectionTitle}>Embalses SAIH</Text>
                     <Text style={styles.sectionMeta}>
-                      {saihPanel.some((s) => s.fuente === "saih_chj") ? "en vivo" : "ejemplo / reintentar"}
+                      {saihPanel.some((s) => s.fuente === "saih_chj" || s.fuente === "saih_chg")
+                        ? "en vivo"
+                        : "ejemplo / reintentar"}
                     </Text>
                   </View>
                   <ScrollView
