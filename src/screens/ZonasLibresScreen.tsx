@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import {
@@ -23,6 +23,7 @@ import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
+import { puntoEnRegionMapa } from "../services/geoService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
@@ -55,10 +56,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: mar ? "Mapa · Costa" : "Mapa",
+      title: mar ? `Mapa · Costa · ${provincia.nombre}` : `Mapa · ${provincia.nombre}`,
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
     });
-  }, [mar, navigation]);
+  }, [mar, navigation, provincia.nombre]);
 
   useEffect(() => {
     setModo("continental");
@@ -91,17 +92,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       if (loc) {
         const pos = { latitude: loc.lat, longitude: loc.lng };
         setYo(pos);
-        const c = consultarToqueMapa(loc.lat, loc.lng);
-        setConsulta(c);
-        if (!soloContinental && c.ambito === "maritimo") setModo("costa");
-        setMarcador(pos);
+        if (puntoEnRegionMapa(loc.lat, loc.lng, provincia.regionMapa)) {
+          const c = consultarToqueMapa(loc.lat, loc.lng);
+          setConsulta(c);
+          if (!soloContinental && c.ambito === "maritimo") setModo("costa");
+          setMarcador(pos);
+        }
       }
       cancelar = await suscribirseUbicacion((lat, lng) => {
         setYo({ latitude: lat, longitude: lng });
       });
     })();
     return () => cancelar?.();
-  }, [soloContinental]);
+  }, [soloContinental, provincia.regionMapa]);
 
   function toggleCapa(capa: keyof typeof capas) {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
@@ -207,6 +210,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     if (!loc) return;
     const pos = { latitude: loc.lat, longitude: loc.lng };
     setYo(pos);
+    if (!puntoEnRegionMapa(loc.lat, loc.lng, provincia.regionMapa)) {
+      const r = provincia.regionMapa;
+      setCamara({ latitude: r.latitude, longitude: r.longitude, zoom: 9, nonce: Date.now() });
+      Alert.alert(
+        `Fuera de ${provincia.nombre}`,
+        `Tu GPS está fuera de ${provincia.nombre}. El mapa sigue mostrando esta provincia.`
+      );
+      return;
+    }
     evaluarPunto(loc.lat, loc.lng);
     setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 14, nonce: Date.now() });
   }
