@@ -35,7 +35,9 @@ import {
   mensajeOfflineCorto,
 } from "../services/offlineService";
 import { useProvincia } from "../context/ProvinciaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { etiquetaFuente } from "../services/puntoConsultaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
@@ -71,6 +73,7 @@ function aplicarCache(cache: CacheOffline, setters: {
 export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
+  const { punto, listo: puntoListo } = usePuntoConsulta();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
@@ -129,7 +132,11 @@ export default function HomeScreen({ navigation }: Props) {
       // En línea (o sin caché): cargar avisos + SAIH + clima/índice
       setAvisosCargando(true);
       try {
-        const lista = await obtenerAvisosSeguridadPesca();
+        const cerca =
+          punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
+            ? { lat: punto.lat, lng: punto.lng }
+            : null;
+        const lista = await obtenerAvisosSeguridadPesca(cerca);
         if (!vivo) return;
         setAvisosSeguridad(lista);
         setAvisosError(null);
@@ -184,7 +191,7 @@ export default function HomeScreen({ navigation }: Props) {
     return () => {
       vivo = false;
     };
-  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel]);
+  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo]);
 
   async function cargar(conectadoParam?: boolean) {
     setCargando(true);
@@ -207,14 +214,32 @@ export default function HomeScreen({ navigation }: Props) {
       return;
     }
 
-    const ok = await solicitarPermisoUbicacion();
-    if (!ok) {
-      setPermisoDenegado(true);
-      setCargando(false);
-      return;
+    // Prioridad: punto del mapa → GPS → centro provincia.
+    let loc: { lat: number; lng: number } | null = null;
+    if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
+      loc = { lat: punto.lat, lng: punto.lng };
+      setPermisoDenegado(false);
+    } else {
+      const ok = await solicitarPermisoUbicacion();
+      if (!ok) {
+        setPermisoDenegado(true);
+        // Sin GPS: al menos centro de provincia para no dejar el inicio vacío.
+        loc = {
+          lat: provincia.regionMapa.latitude,
+          lng: provincia.regionMapa.longitude,
+        };
+      } else {
+        setPermisoDenegado(false);
+        loc = await obtenerUbicacionActual();
+        if (!loc) {
+          loc = {
+            lat: provincia.regionMapa.latitude,
+            lng: provincia.regionMapa.longitude,
+          };
+        }
+      }
     }
-    setPermisoDenegado(false);
-    const loc = await obtenerUbicacionActual();
+
     if (loc) {
       setUbicacion(loc);
       const [c, indice] = await Promise.all([
@@ -250,6 +275,9 @@ export default function HomeScreen({ navigation }: Props) {
           vientoMaxKmh: clima.velocidadVientoKmh,
         })
       : [];
+  const etiquetaClima =
+    punto?.etiqueta ??
+    (punto ? etiquetaFuente(punto.fuente) : permisoDenegado ? `Centro de ${provincia.nombre}` : "Tu ubicación");
 
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
@@ -258,10 +286,10 @@ export default function HomeScreen({ navigation }: Props) {
 
         {cargando ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 28 }} />
-        ) : permisoDenegado ? (
+        ) : !clima && permisoDenegado && !punto ? (
           <View style={{ alignItems: "center", marginVertical: 16 }}>
             <Text style={styles.weatherFallback}>
-              Activa la ubicación para ver el clima y el índice de pesca
+              Activa la ubicación o toca un tramo en el mapa para ver el clima
             </Text>
             <TouchableOpacity style={styles.retryChip} onPress={() => cargar()}>
               <Text style={styles.retryChipText}>Reintentar</Text>
@@ -269,6 +297,9 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         ) : (
           <>
+            <Text style={styles.climaOrigen} numberOfLines={1}>
+              {etiquetaClima}
+            </Text>
             <View style={styles.heroClima}>
               {tiempo && clima ? (
                 <>
@@ -540,6 +571,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontWeight: "600",
     letterSpacing: 0.2,
+  },
+  climaOrigen: {
+    color: "rgba(255,255,255,0.95)",
+    fontSize: 13,
+    fontWeight: "800",
+    textAlign: "center",
+    marginTop: 4,
   },
   heroClima: {
     alignItems: "center",
