@@ -52,7 +52,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         emoji: "🗺️",
         titulo: "El mapa es tu herramienta",
         texto:
-          "En Inicio ves el pulso del día y «Salgo a pescar». El mapa da el veredicto al pulsar un tramo. Aparejos y nudos están a un toque desde Inicio.",
+          "En Inicio ves el pulso del día y «Salgo a pescar» (elige GPS, mapa, coordenadas o zona). El mapa da el veredicto al pulsar un tramo. Aparejos y nudos están a un toque desde Inicio.",
       },
     ],
     [

@@ -387,18 +387,40 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     navigation.navigate("Capturas", { screen: "CapturasMain" });
   }
 
+  function usarUbicacionParaSalgo() {
+    if (!marcador) {
+      Alert.alert("Mapa", "Pulsa primero un sitio o zona en el mapa.");
+      return;
+    }
+    const lat = marcador.latitude;
+    const lng = marcador.longitude;
+    const etiqueta = consulta?.titulo?.trim() || formatearCoords(lat, lng);
+    void fijarPunto({ lat, lng, fuente: "mapa", etiqueta });
+    resolverPickUbicacion({ lat, lng, etiqueta });
+    setModoAnadir(false);
+    setMotivoPick(null);
+    setFichaAbierta(false);
+    navigation.navigate("Inicio", { screen: "SalgoAPescar" });
+  }
+
   return (
     <View style={[styles.container, mar && styles.containerMar]}>
       {modoAnadir ? (
         <View style={styles.bannerAnadir}>
           <View style={{ flex: 1, paddingRight: 8 }}>
             <Text style={styles.bannerAnadirTitulo}>
-              {motivoPick === "captura" ? "Ubicación de la captura" : "Añadir punto en el mapa"}
+              {motivoPick === "captura"
+                ? "Ubicación de la captura"
+                : motivoPick === "salgo"
+                  ? "Dónde vas a pescar"
+                  : "Añadir punto en el mapa"}
             </Text>
             <Text style={styles.bannerAnadirTxt}>
               {motivoPick === "captura"
                 ? "Pulsa el mapa y confirma la ubicación en la ficha."
-                : `Toca cualquier sitio de ${provincia.nombre} y pulsa «Guardar este punto».`}
+                : motivoPick === "salgo"
+                  ? `Toca una zona o cualquier punto de ${provincia.nombre} y confirma en la ficha.`
+                  : `Toca cualquier sitio de ${provincia.nombre} y pulsa «Guardar este punto».`}
             </Text>
           </View>
           <TouchableOpacity onPress={salirModoAnadir} accessibilityRole="button" accessibilityLabel="Cancelar">
@@ -713,7 +735,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         ) : null}
         <Text style={styles.hint}>
           {modoAnadir
-            ? motivoPick === "captura"
+            ? motivoPick === "captura" || motivoPick === "salgo"
               ? "Pulsa el mapa · en la ficha elige «Usar esta ubicación»."
               : "Pulsa el mapa · en la ficha elige «Guardar este punto»."
             : mar
@@ -757,11 +779,18 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                     <Text style={styles.saveSpotButtonText}>Usar esta ubicación</Text>
                   </TouchableOpacity>
                 ) : null}
-                <TouchableOpacity style={styles.saveSpotButton} onPress={guardarMarcadorComoPunto}>
-                  <Text style={styles.saveSpotButtonText}>
-                    {motivoPick === "punto" ? "Guardar este punto y volver" : "Guardar este punto"}
-                  </Text>
-                </TouchableOpacity>
+                {motivoPick === "salgo" ? (
+                  <TouchableOpacity style={styles.saveSpotButton} onPress={usarUbicacionParaSalgo}>
+                    <Text style={styles.saveSpotButtonText}>Usar esta ubicación</Text>
+                  </TouchableOpacity>
+                ) : null}
+                {motivoPick !== "salgo" ? (
+                  <TouchableOpacity style={styles.saveSpotButton} onPress={guardarMarcadorComoPunto}>
+                    <Text style={styles.saveSpotButtonText}>
+                      {motivoPick === "punto" ? "Guardar este punto y volver" : "Guardar este punto"}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
               </>
             )}
           </>
