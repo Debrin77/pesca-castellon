@@ -110,6 +110,10 @@ if (!campo.includes("abrirIdentificar") || !campo.includes("EspeciesMain")) {
   console.error("FAIL PanelCampoHoy sin enlace a identificar especie / catálogo Especies");
   fallos++;
 }
+if (!campo.includes("Para salir hoy") || !campo.includes("Más herramientas de campo")) {
+  console.error("FAIL PanelCampoHoy debe mostrar ritual «Para salir hoy» con herramientas plegadas");
+  fallos++;
+}
 
 const catchesNav = fs.readFileSync(path.join(root, "src/screens/MyCatchesScreen.tsx"), "utf8");
 if (!catchesNav.includes("abrirIdentificar")) {

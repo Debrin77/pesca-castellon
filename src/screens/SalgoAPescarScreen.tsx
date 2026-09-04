@@ -101,7 +101,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                         : undefined
                     }
                     onAparejos={(id) =>
-                      navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } })
+                      navigation.navigate("Aparejos", { especieId: id })
                     }
                   />
                 </>

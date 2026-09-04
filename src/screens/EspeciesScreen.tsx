@@ -127,7 +127,7 @@ export default function EspeciesScreen({ navigation }: Props) {
   function irAparejos(especieId: string) {
     setFichaAbierta(false);
     setCatalogoAbierto(false);
-    navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId } });
+    navigation.navigate("Aparejos", { especieId });
   }
 
   const especiesConsulta =

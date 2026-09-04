@@ -309,14 +309,15 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
+        <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
         {cargando ? (
-          <ActivityIndicator color="#fff" style={{ marginVertical: 28 }} />
+          <ActivityIndicator color="#fff" style={{ marginVertical: 24 }} />
         ) : !clima && permisoDenegado && !punto ? (
-          <View style={{ alignItems: "center", marginVertical: 16 }}>
+          <View style={{ alignItems: "center", marginVertical: 12 }}>
             <Text style={styles.weatherFallback}>
-              Activa la ubicación o toca un tramo en el mapa para ver el clima
+              Activa la ubicación o toca un tramo en el mapa para ver el pulso del día
             </Text>
             <TouchableOpacity style={styles.retryChip} onPress={() => cargar()}>
               <Text style={styles.retryChipText}>Reintentar</Text>
@@ -327,33 +328,49 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.climaOrigen} numberOfLines={1}>
               {etiquetaClima}
             </Text>
-            <View style={styles.heroClima}>
-              {tiempo && clima ? (
-                <>
-                  <Text style={styles.weatherIcon}>{tiempo.icono}</Text>
-                  <Text style={styles.weatherTemp}>{Math.round(clima.temperatura)}°</Text>
-                  <Text style={styles.weatherDesc}>{tiempo.texto}</Text>
-                </>
-              ) : (
-                <Text style={styles.weatherFallback}>Sin datos de clima</Text>
-              )}
-            </View>
 
-            {indiceHoy && catInfo && (
-              <View style={styles.indexBlock}>
-                <Text style={styles.indexLabel}>Índice de pesca</Text>
-                <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
-                <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
-                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
-                    {catInfo.icono} {catInfo.texto}
-                    <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
-                  </Text>
+            {indiceHoy && catInfo ? (
+              <View style={styles.pulsoRow}>
+                <View style={styles.pulsoIndice}>
+                  <Text style={styles.indexLabel}>Índice de pesca</Text>
+                  <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
+                  <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
+                    <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
+                      {catInfo.icono} {catInfo.texto}
+                      <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
+                    </Text>
+                  </View>
                 </View>
+                <View style={styles.pulsoClima}>
+                  {tiempo && clima ? (
+                    <>
+                      <Text style={styles.weatherIconSm}>{tiempo.icono}</Text>
+                      <Text style={styles.weatherTempSm}>{Math.round(clima.temperatura)}°</Text>
+                      <Text style={styles.weatherDescSm} numberOfLines={2}>
+                        {tiempo.texto}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text style={styles.weatherFallback}>Sin clima</Text>
+                  )}
+                </View>
+              </View>
+            ) : (
+              <View style={styles.heroClima}>
+                {tiempo && clima ? (
+                  <>
+                    <Text style={styles.weatherIcon}>{tiempo.icono}</Text>
+                    <Text style={styles.weatherTemp}>{Math.round(clima.temperatura)}°</Text>
+                    <Text style={styles.weatherDesc}>{tiempo.texto}</Text>
+                  </>
+                ) : (
+                  <Text style={styles.weatherFallback}>Sin datos de clima</Text>
+                )}
               </View>
             )}
 
             {clima ? (
-              <Text style={styles.climaOrigen} numberOfLines={2}>
+              <Text style={styles.climaMeta} numberOfLines={1}>
                 Viento {Math.round(clima.velocidadVientoKmh)} km/h
                 {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
                 {clima.precipitacionMm != null && clima.precipitacionMm > 0
@@ -404,15 +421,59 @@ export default function HomeScreen({ navigation }: Props) {
           >
             <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
               <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-              <Text style={styles.ctaSalgoSub}>Ubicación · veredicto · checklist</Text>
+              <Text style={styles.ctaSalgoSub}>Veredicto · checklist · punto</Text>
             </LinearGradient>
           </PulsePress>
         </ListaAnimada>
 
-        {/* Bloque seguridad */}
+        {/* Veredicto del tramo — lo práctico, arriba */}
         <ListaAnimada index={1}>
           <View style={styles.bloque}>
-            <Text style={styles.bloqueTitulo}>Seguridad y normativa</Text>
+            <Text style={styles.bloqueTitulo}>Tu tramo</Text>
+            {consultaViva ? (
+              <View style={{ marginBottom: 12 }}>
+                <ConsultaPescaCard
+                  consulta={consultaViva}
+                  onFicha={
+                    consultaViva.tramo?.fichaId
+                      ? () =>
+                          navigation.navigate("ZoneDetail", {
+                            zoneId: consultaViva.tramo!.fichaId,
+                          })
+                      : undefined
+                  }
+                  onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+                />
+              </View>
+            ) : (
+              <Text style={styles.sinConsulta}>
+                Activa la ubicación o toca el mapa para el veredicto del tramo.
+              </Text>
+            )}
+
+            <PulsePress onPress={() => navigation.navigate("Mapa")} style={styles.mapaCta}>
+              <View style={styles.mapaCtaRow}>
+                <View style={styles.mapaCtaGlyph}>
+                  <Text style={styles.mapaCtaIcon}>◉</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
+                  <Text style={styles.mapaCtaSub}>
+                    {provincia.continentalOnly
+                      ? "Cotos, vedados y consulta al pulsar"
+                      : "Cotos, vedados, costa y consulta al pulsar"}
+                  </Text>
+                </View>
+                <Text style={styles.chevron}>›</Text>
+              </View>
+            </PulsePress>
+          </View>
+        </ListaAnimada>
+
+        {/* Seguridad compacta */}
+        <ListaAnimada index={2}>
+          <View style={styles.bloque}>
+            <Text style={styles.bloqueTitulo}>Antes de salir</Text>
             <TemporadaBanner />
             <PanelAvisosSeguridad
               avisos={avisosSeguridad}
@@ -423,15 +484,11 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        <ListaAnimada index={2}>
-          <PanelCampoHoy navigation={navigation} />
-        </ListaAnimada>
-
-        {/* Bloque embalses / favoritos */}
+        {/* Sitios personales / embalses */}
         {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
           <ListaAnimada index={3}>
             <View style={styles.bloque}>
-              <Text style={styles.bloqueTitulo}>Embalses y favoritos</Text>
+              <Text style={styles.bloqueTitulo}>Tus sitios</Text>
 
               {saihPanel.length > 0 && (
                 <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
@@ -467,8 +524,10 @@ export default function HomeScreen({ navigation }: Props) {
               {(favoritos.length > 0 || puntos.length > 0) && (
                 <View>
                   <View style={styles.sectionRow}>
-                    <Text style={styles.sectionTitle}>Tus favoritos</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("Capturas")}>
+                    <Text style={styles.sectionTitle}>Favoritos y puntos</Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+                    >
                       <Text style={styles.linkMini}>Ver todo</Text>
                     </TouchableOpacity>
                   </View>
@@ -513,61 +572,10 @@ export default function HomeScreen({ navigation }: Props) {
           </ListaAnimada>
         )}
 
-        {/* Bloque dónde estoy */}
-        <ListaAnimada index={3}>
-          <View style={styles.bloque}>
-            <Text style={styles.bloqueTitulo}>Dónde estoy</Text>
-            {consultaViva ? (
-              <View style={{ marginBottom: 12 }}>
-                <ConsultaPescaCard
-                  consulta={consultaViva}
-                  onFicha={
-                    consultaViva.tramo?.fichaId
-                      ? () =>
-                          navigation.navigate("ZoneDetail", {
-                            zoneId: consultaViva.tramo!.fichaId,
-                          })
-                      : undefined
-                  }
-                  onAparejos={(id) =>
-                    navigation.navigate("Aparejos", {
-                      screen: "AparejosMain",
-                      params: { especieId: id },
-                    })
-                  }
-                />
-              </View>
-            ) : (
-              <Text style={styles.sinConsulta}>
-                Activa la ubicación para ver el veredicto del tramo donde estás. El mapa completo
-                está en la pestaña Mapa.
-              </Text>
-            )}
-
-            <PulsePress
-              onPress={() => navigation.navigate("Mapa")}
-              style={styles.mapaCta}
-            >
-              <View style={styles.mapaCtaRow}>
-                <View style={styles.mapaCtaGlyph}>
-                  <Text style={styles.mapaCtaIcon}>◉</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
-                  <Text style={styles.mapaCtaSub}>
-                    {provincia.continentalOnly
-                      ? "Cotos, vedados y consulta al pulsar"
-                      : "Cotos, vedados, costa y consulta al pulsar"}
-                  </Text>
-                </View>
-                <Text style={styles.chevron}>›</Text>
-              </View>
-            </PulsePress>
-          </View>
+        <ListaAnimada index={4}>
+          <PanelCampoHoy navigation={navigation} />
         </ListaAnimada>
 
-        {/* Enlaces secundarios: fuera de ListaAnimada para que en web
-            no queden con opacity 0 / sin clics (p. ej. Cambiar provincia). */}
         <View style={styles.linksRow}>
           <TouchableOpacity
             style={styles.linkChip}
@@ -579,11 +587,11 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Consejos", { screen: "ConsejosMain" })}
+            onPress={() => navigation.navigate("Consejos")}
             accessibilityRole="button"
             accessibilityLabel="Consejos: nudos y montaje"
           >
-            <Text style={styles.linkChipTxt}>Nudos y montaje</Text>
+            <Text style={styles.linkChipTxt}>Nudos</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
@@ -603,10 +611,18 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   hero: {
     paddingTop: SPACING.xl,
-    paddingBottom: SPACING.xxl + 8,
+    paddingBottom: SPACING.xl + 4,
     paddingHorizontal: SPACING.lg,
     borderBottomLeftRadius: RADIUS.xl,
     borderBottomRightRadius: RADIUS.xl,
+  },
+  brandPulse: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "rgba(255,255,255,0.78)",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginBottom: 2,
   },
   dateText: {
     fontSize: 15,
@@ -621,13 +637,43 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "800",
     textAlign: "center",
-    marginTop: 4,
+    marginTop: 8,
+  },
+  climaMeta: {
+    color: "rgba(255,255,255,0.88)",
+    fontSize: 12.5,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  pulsoRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    gap: 12,
+    marginTop: 14,
+  },
+  pulsoIndice: {
+    flex: 1.35,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pulsoClima: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.22)",
   },
   heroClima: {
     alignItems: "center",
     marginTop: 8,
   },
   weatherIcon: { fontSize: 42, marginBottom: -4 },
+  weatherIconSm: { fontSize: 28, marginBottom: 0 },
   weatherTemp: {
     fontSize: 72,
     fontWeight: "200",
@@ -635,11 +681,25 @@ const styles = StyleSheet.create({
     letterSpacing: -2,
     lineHeight: 80,
   },
+  weatherTempSm: {
+    fontSize: 36,
+    fontWeight: "200",
+    color: "#fff",
+    letterSpacing: -1,
+    lineHeight: 40,
+  },
   weatherDesc: {
     fontSize: 17,
     color: "rgba(255,255,255,0.95)",
     fontWeight: "500",
     marginTop: -2,
+  },
+  weatherDescSm: {
+    fontSize: 12.5,
+    color: "rgba(255,255,255,0.92)",
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 2,
   },
   weatherFallback: { color: "#fff", fontSize: 13, textAlign: "center" },
   retryChip: {
@@ -650,33 +710,29 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
   },
   retryChipText: { color: "#fff", fontWeight: "700", fontSize: 12 },
-  indexBlock: {
-    alignItems: "center",
-    marginTop: 20,
-  },
   indexLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: "rgba(255,255,255,0.9)",
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
   },
   indexScore: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: "200",
     color: "#fff",
-    letterSpacing: -1,
-    lineHeight: 54,
+    letterSpacing: -1.5,
+    lineHeight: 60,
     marginTop: 2,
   },
   indexCatPill: {
     marginTop: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
     borderRadius: RADIUS.pill,
   },
   indexCategoria: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
   },
   indexMoon: {
@@ -684,7 +740,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   alertRow: {
-    marginTop: 14,
+    marginTop: 12,
     gap: 8,
   },
   weatherAlert: {

@@ -82,7 +82,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     misPuntos: true,
     radar: false,
     batimetria: false,
-    tracks: true,
+    tracks: false,
   });
   const [localizando, setLocalizando] = useState(false);
   const [modo, setModo] = useState<"continental" | "costa">("continental");
@@ -95,6 +95,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
   const [modoAnadir, setModoAnadir] = useState(false);
   const [motivoPick, setMotivoPick] = useState<MotivoUbicacionPendiente | null>(null);
+  const [capasExtra, setCapasExtra] = useState(false);
   const mar = !soloContinental && modo === "costa";
 
   useLayoutEffect(() => {
@@ -157,6 +158,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     const activar = !!(route.params as ParamsMapa | undefined)?.activarRadar;
     if (!activar) return;
     setCapas((prev) => ({ ...prev, radar: true }));
+    setCapasExtra(true);
     navigation.setParams?.({ activarRadar: undefined });
   }, [route.params, navigation]);
 
@@ -476,7 +478,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         </View>
       ) : null}
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center" }}>
         {mar ? (
           <>
             <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipMar]} onPress={() => toggleCapa("zpl")}>
@@ -505,12 +507,24 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.layerChip, capas.radar && styles.layerChipActive]} onPress={() => toggleCapa("radar")}>
-          <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>
-            {capas.radar ? "Radar ON" : "Radar lluvia"}
+        <TouchableOpacity
+          style={[styles.layerChip, (capasExtra || capas.radar || capas.tracks || capas.batimetria) && styles.layerChipActive]}
+          onPress={() => setCapasExtra((v) => !v)}
+          accessibilityRole="button"
+          accessibilityLabel={capasExtra ? "Ocultar más capas" : "Más capas del mapa"}
+        >
+          <Text style={[styles.layerChipText, capasExtra && styles.layerChipTextActive]}>
+            {capasExtra ? "Menos ▲" : "Más capas ▼"}
           </Text>
         </TouchableOpacity>
-        {mar ? (
+        {capasExtra || capas.radar ? (
+          <TouchableOpacity style={[styles.layerChip, capas.radar && styles.layerChipActive]} onPress={() => toggleCapa("radar")}>
+            <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>
+              {capas.radar ? "Radar ON" : "Radar lluvia"}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {capasExtra && mar ? (
           <TouchableOpacity
             style={[styles.layerChip, capas.batimetria && styles.layerChipMar]}
             onPress={() => toggleCapa("batimetria")}
@@ -518,40 +532,58 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Text style={[styles.layerChipText, capas.batimetria && { color: PIN.playa }]}>Profundidad</Text>
           </TouchableOpacity>
         ) : null}
-        <TouchableOpacity style={[styles.layerChip, capas.tracks && styles.layerChipActive]} onPress={() => toggleCapa("tracks")}>
-          <Text style={[styles.layerChipText, capas.tracks && styles.layerChipTextActive]}>Rutas</Text>
-        </TouchableOpacity>
+        {capasExtra ? (
+          <TouchableOpacity style={[styles.layerChip, capas.tracks && styles.layerChipActive]} onPress={() => toggleCapa("tracks")}>
+            <Text style={[styles.layerChipText, capas.tracks && styles.layerChipTextActive]}>Rutas</Text>
+          </TouchableOpacity>
+        ) : null}
       </ScrollView>
 
-      <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
-        <SelectorModalidad
-          value={modalidad}
-          onChange={setModalidad}
-          filtroAmbito={mar ? "maritimo" : "continental"}
-        />
-        <TouchableOpacity
-          style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start" }]}
-          onPress={async () => {
-            if (grabandoId) {
+      {capasExtra ? (
+        <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
+          <SelectorModalidad
+            value={modalidad}
+            onChange={setModalidad}
+            filtroAmbito={mar ? "maritimo" : "continental"}
+          />
+          <TouchableOpacity
+            style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start" }]}
+            onPress={async () => {
+              if (grabandoId) {
+                await finalizarTrack(grabandoId);
+                setGrabandoId(null);
+                setTracks(await obtenerTracks());
+                Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
+                return;
+              }
+              const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
+              setGrabandoId(t.id);
+              setTracks(await obtenerTracks());
+              Alert.alert("Grabando ruta", "Se añaden puntos con tu GPS. Pulsa de nuevo para finalizar.");
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={grabandoId ? "Finalizar ruta GPS" : "Grabar ruta GPS"}
+          >
+            <Text style={[styles.layerChipText, grabandoId ? styles.layerChipTextActive : null]}>
+              {grabandoId ? "■ Parar ruta" : "● Grabar ruta"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : grabandoId ? (
+        <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
+          <TouchableOpacity
+            style={[styles.layerChip, styles.layerChipActive, { alignSelf: "flex-start" }]}
+            onPress={async () => {
               await finalizarTrack(grabandoId);
               setGrabandoId(null);
               setTracks(await obtenerTracks());
               Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
-              return;
-            }
-            const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
-            setGrabandoId(t.id);
-            setTracks(await obtenerTracks());
-            Alert.alert("Grabando ruta", "Se añaden puntos con tu GPS. Pulsa de nuevo para finalizar.");
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={grabandoId ? "Finalizar ruta GPS" : "Grabar ruta GPS"}
-        >
-          <Text style={[styles.layerChipText, grabandoId ? styles.layerChipTextActive : null]}>
-            {grabandoId ? "■ Parar ruta" : "● Grabar ruta"}
-          </Text>
-        </TouchableOpacity>
-      </View>
+            }}
+          >
+            <Text style={[styles.layerChipText, styles.layerChipTextActive]}>■ Parar ruta</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <View style={styles.mapWrap}>
         <MapView
@@ -715,7 +747,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               }
               onAparejos={(id) => {
                 setFichaAbierta(false);
-                navigation.navigate("Aparejos", { screen: "AparejosMain", params: { especieId: id } });
+                navigation.navigate("Aparejos", { especieId: id });
               }}
             />
             {(consulta.tramo || consulta.ambito === "maritimo" || marcador) && (
