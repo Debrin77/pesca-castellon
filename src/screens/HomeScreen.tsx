@@ -6,6 +6,9 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
@@ -17,6 +20,7 @@ import { getResumenEmbalses } from "../services/saihService";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import { etiquetaHoy } from "../components/SemaforoVeredicto";
 import TemporadaBanner from "../components/TemporadaBanner";
 import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import BannerOffline from "../components/BannerOffline";
@@ -24,6 +28,7 @@ import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
 import PanelCampoHoy from "../components/PanelCampoHoy";
 import { consultarToqueMapa } from "../services/consultaCostaService";
+import { colorSemaforo } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
   obtenerAvisosSeguridadPesca,
@@ -42,6 +47,9 @@ import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
 
 interface Props {
@@ -77,6 +85,8 @@ export default function HomeScreen({ navigation }: Props) {
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, listo: puntoListo } = usePuntoConsulta();
   const scrollRef = useRef<ScrollView>(null);
+  const heroHRef = useRef(0);
+  const tramoYRef = useRef(0);
   useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
   const [clima, setClima] = useState<ClimaActual | null>(null);
@@ -91,6 +101,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [avisosError, setAvisosError] = useState<string | null>(null);
   const [online, setOnline] = useState(true);
   const [cache, setCache] = useState<CacheOffline | null>(null);
+  const [detalleTramo, setDetalleTramo] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: provincia.nombreApp });
@@ -102,6 +113,11 @@ export default function HomeScreen({ navigation }: Props) {
       obtenerPuntosGuardados().then(setPuntos);
     }, [])
   );
+
+  // Al cambiar de punto, el detalle vuelve a plegarse (gesto = expandir)
+  useEffect(() => {
+    setDetalleTramo(false);
+  }, [punto?.lat, punto?.lng, punto?.fuente]);
 
   useEffect(() => {
     if (!puntoListo) return;
@@ -281,6 +297,7 @@ export default function HomeScreen({ navigation }: Props) {
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
   const consultaViva = ubicacion ? consultarToqueMapa(ubicacion.lat, ubicacion.lng) : null;
+  const hoyEtiqueta = consultaViva ? etiquetaHoy(consultaViva) : null;
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const alertasClima =
     clima
@@ -306,9 +323,27 @@ export default function HomeScreen({ navigation }: Props) {
     return "Tu ubicación";
   })();
 
+  function abrirVeredictoRapido() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setDetalleTramo(true);
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: Math.max(0, tramoYRef.current - 12), animated: true });
+    });
+  }
+
+  function toggleDetalleTramo() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setDetalleTramo((v) => !v);
+  }
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
-      <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
+      <LinearGradient
+        colors={[...GRADIENTS.primary]}
+        style={styles.hero}
+        onLayout={(e) => {
+          heroHRef.current = e.nativeEvent.layout.height;
+        }}
+      >
         <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
 
@@ -393,6 +428,37 @@ export default function HomeScreen({ navigation }: Props) {
                 ))}
               </View>
             )}
+
+            {consultaViva && hoyEtiqueta ? (
+              <TouchableOpacity
+                style={[styles.veredictoRapido, { backgroundColor: colorSemaforo(consultaViva) }]}
+                onPress={abrirVeredictoRapido}
+                activeOpacity={0.88}
+                accessibilityRole="button"
+                accessibilityLabel={`Veredicto del punto: ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
+              >
+                <View style={styles.veredictoRapidoTxt}>
+                  <Text style={styles.veredictoRapidoKicker}>Veredicto del punto</Text>
+                  <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
+                  <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
+                    {hoyEtiqueta.sub}
+                    {consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}
+                  </Text>
+                </View>
+                <Text style={styles.veredictoRapidoChevron}>›</Text>
+              </TouchableOpacity>
+            ) : !cargando ? (
+              <TouchableOpacity
+                style={styles.veredictoRapidoVacio}
+                onPress={() => navigation.navigate("Mapa")}
+                activeOpacity={0.88}
+                accessibilityRole="button"
+                accessibilityLabel="Elegir punto en el mapa para el veredicto"
+              >
+                <Text style={styles.veredictoRapidoKicker}>Veredicto del punto</Text>
+                <Text style={styles.veredictoRapidoSub}>Toca el mapa o Salgo a pescar para decidir el punto</Text>
+              </TouchableOpacity>
+            ) : null}
           </>
         )}
       </LinearGradient>
@@ -421,19 +487,29 @@ export default function HomeScreen({ navigation }: Props) {
           >
             <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
               <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-              <Text style={styles.ctaSalgoSub}>Veredicto · checklist · punto</Text>
+              <Text style={styles.ctaSalgoSub}>Checklist · cambiar punto · GPS o mapa</Text>
             </LinearGradient>
           </PulsePress>
         </ListaAnimada>
 
-        {/* Veredicto del tramo — lo práctico, arriba */}
+        {/* Veredicto del tramo — detalle bajo demanda */}
         <ListaAnimada index={1}>
-          <View style={styles.bloque}>
+          <View
+            style={styles.bloque}
+            onLayout={(e) => {
+              // y relativo al body; body va tras el hero con marginTop negativo
+              tramoYRef.current =
+                heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
+            }}
+          >
             <Text style={styles.bloqueTitulo}>Tu tramo</Text>
             {consultaViva ? (
               <View style={{ marginBottom: 12 }}>
                 <ConsultaPescaCard
                   consulta={consultaViva}
+                  compacto
+                  expandido={detalleTramo}
+                  onToggleDetalle={toggleDetalleTramo}
                   onFicha={
                     consultaViva.tramo?.fichaId
                       ? () =>
@@ -753,6 +829,53 @@ const styles = StyleSheet.create({
   },
   weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
+  veredictoRapido: {
+    marginTop: 14,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
+  },
+  veredictoRapidoVacio: {
+    marginTop: 14,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: "rgba(255,255,255,0.14)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
+  },
+  veredictoRapidoTxt: { flex: 1 },
+  veredictoRapidoKicker: {
+    color: "rgba(255,255,255,0.88)",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
+  },
+  veredictoRapidoTitulo: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    marginTop: 2,
+  },
+  veredictoRapidoSub: {
+    color: "rgba(255,255,255,0.95)",
+    fontSize: 12.5,
+    fontWeight: "600",
+    marginTop: 2,
+  },
+  veredictoRapidoChevron: {
+    color: "#fff",
+    fontSize: 28,
+    fontWeight: "300",
+    marginTop: -2,
+  },
   body: {
     paddingHorizontal: SPACING.lg,
     marginTop: -SPACING.md,
