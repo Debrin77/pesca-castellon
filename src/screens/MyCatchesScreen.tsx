@@ -511,9 +511,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           style={styles.input}
                           value={latCaptura}
                           onChangeText={setLatCaptura}
-                          keyboardType="numbers-and-punctuation"
-                          placeholder="39.986"
-                          autoCapitalize="none"
+                          keyboardType="default"
+                          placeholder={provincia.id === "sevilla" ? '37°45\'55" N' : "39.986"}
+                          autoCapitalize="characters"
+                          autoCorrect={false}
                         />
                       </View>
                       <View style={{ flex: 1 }}>
@@ -522,12 +523,16 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           style={styles.input}
                           value={lngCaptura}
                           onChangeText={setLngCaptura}
-                          keyboardType="numbers-and-punctuation"
-                          placeholder="-0.049"
-                          autoCapitalize="none"
+                          keyboardType="default"
+                          placeholder={provincia.id === "sevilla" ? '5°27\'40" O' : "-0.049"}
+                          autoCapitalize="characters"
+                          autoCorrect={false}
                         />
                       </View>
                     </View>
+                    <Text style={styles.hintMini}>
+                      {"Decimal (−5.46) o sexagesimal (5°27'40\" O). La O es oeste."}
+                    </Text>
                     <TouchableOpacity style={styles.secondaryBtn} onPress={aplicarCoordsCapturaManual}>
                       <Text style={styles.secondaryBtnTxt}>Usar estas coordenadas</Text>
                     </TouchableOpacity>
@@ -641,9 +646,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       style={styles.input}
                       value={latPunto}
                       onChangeText={setLatPunto}
-                      keyboardType="numbers-and-punctuation"
-                      placeholder={provincia.id === "sevilla" ? "37.389" : "39.986"}
-                      autoCapitalize="none"
+                      keyboardType="default"
+                      placeholder={provincia.id === "sevilla" ? '37°45\'55" N' : "39.986"}
+                      autoCapitalize="characters"
+                      autoCorrect={false}
                     />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -652,12 +658,16 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       style={styles.input}
                       value={lngPunto}
                       onChangeText={setLngPunto}
-                      keyboardType="numbers-and-punctuation"
-                      placeholder={provincia.id === "sevilla" ? "-5.985" : "-0.049"}
-                      autoCapitalize="none"
+                      keyboardType="default"
+                      placeholder={provincia.id === "sevilla" ? '5°27\'40" O' : "-0.049"}
+                      autoCapitalize="characters"
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
+                <Text style={styles.hintMini}>
+                  {"Decimal (−5.46) o sexagesimal (5°27'40\" O). La O es oeste."}
+                </Text>
                 <Text style={styles.formLabel}>Notas (opcional)</Text>
                 <TextInput
                   style={[styles.input, { height: 56 }]}
