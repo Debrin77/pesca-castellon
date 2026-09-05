@@ -61,20 +61,49 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const tramos = provincia.tramos as TramoOficial[];
   const playas = soloContinental ? [] : todasLasPlayas();
   const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
-  const [modo, setModo] = useState<ModoEspecies>("continental");
-  const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
-  const [marcador, setMarcador] = useState<LatLng | null>(null);
+
+  const puntoSeed =
+    punto &&
+    (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
+    puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)
+      ? punto
+      : null;
+  const consultaSeed = useMemo(
+    () => (puntoSeed ? consultarToqueMapa(puntoSeed.lat, puntoSeed.lng) : null),
+    // Solo semilla inicial: el resto lo hidrata el efecto / foco.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const [modo, setModo] = useState<ModoEspecies>(() =>
+    !soloContinental && consultaSeed?.ambito === "maritimo" ? "costa" : "continental"
+  );
+  const [consulta, setConsulta] = useState<ConsultaPesca | null>(() => consultaSeed);
+  const [marcador, setMarcador] = useState<LatLng | null>(() =>
+    puntoSeed ? { latitude: puntoSeed.lat, longitude: puntoSeed.lng } : null
+  );
   const [cargandoUbicacion, setCargandoUbicacion] = useState(false);
-  const [fichaAbierta, setFichaAbierta] = useState(false);
+  const [fichaAbierta, setFichaAbierta] = useState(() => !!consultaSeed);
   const [catalogoAbierto, setCatalogoAbierto] = useState(false);
-  const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">("rio");
-  const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
+  const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">(() =>
+    !soloContinental && consultaSeed?.ambito === "maritimo" ? "mar" : "rio"
+  );
+  const [camara, setCamara] = useState<
+    { latitude: number; longitude: number; zoom: number; nonce: number } | undefined
+  >(() =>
+    puntoSeed
+      ? { latitude: puntoSeed.lat, longitude: puntoSeed.lng, zoom: 13, nonce: Date.now() }
+      : undefined
+  );
   const [avisoFuera, setAvisoFuera] = useState<string | null>(null);
   /** Evita reaplicar el mismo punto compartido en cada foco. */
-  const puntoAplicadoRef = useRef<string | null>(null);
+  const puntoAplicadoRef = useRef<string | null>(
+    puntoSeed ? `${puntoSeed.lat.toFixed(5)},${puntoSeed.lng.toFixed(5)}` : null
+  );
 
   const costa = !soloContinental && modo === "costa";
   const mar = costa || (!soloContinental && catalogoAbierto && catalogo === "mar");
+  const provinciaAnteriorRef = useRef<string | null>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -91,8 +120,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     }
   }, [soloContinental, catalogo]);
 
-  // Al cambiar de provincia: mapa y catálogo anclados a ese territorio.
+  // Solo al CAMBIAR de provincia (no en el montaje: conserva semilla del punto ya elegido).
   useEffect(() => {
+    const prev = provinciaAnteriorRef.current;
+    provinciaAnteriorRef.current = provinciaId ?? null;
+    if (prev == null || prev === provinciaId) {
+      return;
+    }
     setConsulta(null);
     setMarcador(null);
     setFichaAbierta(false);
@@ -103,6 +137,12 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     setCamara(camaraProvincia(provincia.regionMapa));
     puntoAplicadoRef.current = null;
   }, [provinciaId, provincia.regionMapa]);
+
+  // Cámara inicial si no hay punto sembrado.
+  useEffect(() => {
+    if (!camara) setCamara(camaraProvincia(provincia.regionMapa));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /** Aplica un punto ya elegido (Salgo a pescar / Mapa / Inicio) sin volver a pedirlo. */
   const aplicarPuntoCompartido = useCallback(
@@ -149,27 +189,24 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         navigation.setParams?.({ abrirConsulta: undefined });
       }
 
-      const t = setTimeout(() => {
-        if (
-          punto &&
-          (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
-          puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)
-        ) {
-          const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
-          if (puntoAplicadoRef.current !== clave) {
-            aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
-          } else {
-            setCatalogoAbierto(false);
-            setFichaAbierta(true);
-          }
-          return;
-        }
-        if (pedidoExplicito) {
+      if (
+        punto &&
+        (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
+        puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)
+      ) {
+        const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+        if (puntoAplicadoRef.current !== clave) {
+          aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
+        } else {
           setCatalogoAbierto(false);
           setFichaAbierta(true);
         }
-      }, 0);
-      return () => clearTimeout(t);
+        return;
+      }
+      if (pedidoExplicito) {
+        setCatalogoAbierto(false);
+        setFichaAbierta(true);
+      }
     }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido])
   );
 
