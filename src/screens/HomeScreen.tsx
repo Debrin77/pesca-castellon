@@ -93,6 +93,8 @@ export default function HomeScreen({ navigation }: Props) {
   const [clima, setClima] = useState<ClimaActual | null>(null);
   const [indiceHoy, setIndiceHoy] = useState<IndicePescaDia | null>(null);
   const [cargando, setCargando] = useState(true);
+  /** Refresco en segundo plano tras mostrar caché (no tapa el hero). */
+  const [actualizando, setActualizando] = useState(false);
   const [permisoDenegado, setPermisoDenegado] = useState(false);
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
@@ -120,22 +122,14 @@ export default function HomeScreen({ navigation }: Props) {
     setDetalleTramo(false);
   }, [punto?.lat, punto?.lng, punto?.fuente]);
 
+  // Mostrar clima/índice de la última sesión al instante (antes incluso de puntoListo).
   useEffect(() => {
-    if (!puntoListo) return;
     let vivo = true;
-    const embalsesPanel = provincia.embalsesPanel;
-    const tieneSaih = provincia.tieneSaih;
-
-    async function bootstrap() {
-      const conectado = await hayConexion();
-      if (!vivo) return;
-      setOnline(conectado);
-
+    (async () => {
       const cacheLocal = await leerCacheOffline();
-      if (!vivo) return;
+      if (!vivo || !cacheLocal) return;
       setCache(cacheLocal);
-
-      if (!conectado && cacheLocal) {
+      if (cacheLocal.clima || cacheLocal.indiceHoy) {
         aplicarCache(cacheLocal, {
           setClima,
           setIndiceHoy,
@@ -143,39 +137,81 @@ export default function HomeScreen({ navigation }: Props) {
           setAvisosSeguridad,
           setUbicacion,
         });
+        setCargando(false);
+      }
+    })();
+    return () => {
+      vivo = false;
+    };
+  }, [provincia.id]);
+
+
+  useEffect(() => {
+    if (!puntoListo) return;
+    let vivo = true;
+    const embalsesPanel = provincia.embalsesPanel;
+    const tieneSaih = provincia.tieneSaih;
+
+    async function bootstrap() {
+      const [conectado, cacheLocal] = await Promise.all([hayConexion(), leerCacheOffline()]);
+      if (!vivo) return;
+      setOnline(conectado);
+      setCache(cacheLocal);
+
+      const hayPulsoCache = !!(cacheLocal?.clima || cacheLocal?.indiceHoy);
+      if (cacheLocal && hayPulsoCache) {
+        // Stale-while-revalidate: pintar ya y refrescar en segundo plano.
+        aplicarCache(cacheLocal, {
+          setClima,
+          setIndiceHoy,
+          setSaihPanel,
+          setAvisosSeguridad,
+          setUbicacion,
+        });
+        setCargando(false);
+      }
+
+      if (!conectado) {
         setAvisosCargando(false);
         setAvisosError(null);
         setCargando(false);
+        setActualizando(false);
         return;
       }
 
-      // En línea (o sin caché): cargar avisos + SAIH + clima/índice
-      setAvisosCargando(true);
-      try {
-        const cerca =
-          punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
-            ? { lat: punto.lat, lng: punto.lng }
-            : null;
-        const lista = await obtenerAvisosSeguridadPesca(cerca);
-        if (!vivo) return;
-        setAvisosSeguridad(lista);
-        setAvisosError(null);
-        if (conectado) {
-          await guardarCacheOffline({ avisos: lista });
-        }
-      } catch {
-        if (!vivo) return;
-        if (cacheLocal?.avisos) {
-          setAvisosSeguridad(cacheLocal.avisos as AvisoSeguridad[]);
+      setActualizando(true);
+
+      const cerca =
+        punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
+          ? { lat: punto.lat, lng: punto.lng }
+          : null;
+
+      async function cargarAvisos() {
+        setAvisosCargando(true);
+        try {
+          const lista = await obtenerAvisosSeguridadPesca(cerca);
+          if (!vivo) return;
+          setAvisosSeguridad(lista);
           setAvisosError(null);
-        } else {
-          setAvisosError("No se pudieron cargar los avisos");
+          await guardarCacheOffline({ avisos: lista });
+        } catch {
+          if (!vivo) return;
+          if (cacheLocal?.avisos) {
+            setAvisosSeguridad(cacheLocal.avisos as AvisoSeguridad[]);
+            setAvisosError(null);
+          } else {
+            setAvisosError("No se pudieron cargar los avisos");
+          }
+        } finally {
+          if (vivo) setAvisosCargando(false);
         }
-      } finally {
-        if (vivo) setAvisosCargando(false);
       }
 
-      if (tieneSaih && embalsesPanel.length > 0) {
+      async function cargarSaih() {
+        if (!tieneSaih || embalsesPanel.length === 0) {
+          if (vivo) setSaihPanel([]);
+          return;
+        }
         try {
           const rows = await getResumenEmbalses(embalsesPanel);
           if (!vivo) return;
@@ -191,21 +227,22 @@ export default function HomeScreen({ navigation }: Props) {
             };
           });
           setSaihPanel(panel);
-          if (conectado) {
-            await guardarCacheOffline({ saih: panel });
-          }
+          await guardarCacheOffline({ saih: panel });
         } catch {
           if (!vivo) return;
           if (cacheLocal && Array.isArray(cacheLocal.saih)) {
             setSaihPanel(cacheLocal.saih as SaihChip[]);
           }
         }
-      } else if (vivo) {
-        setSaihPanel([]);
       }
 
-      if (!vivo) return;
-      await cargar(conectado, () => vivo);
+      // Clima/índice en paralelo con avisos y SAIH (no esperar a los avisos).
+      await Promise.all([
+        cargar(true, () => vivo, { silencioso: hayPulsoCache }),
+        cargarAvisos(),
+        cargarSaih(),
+      ]);
+      if (vivo) setActualizando(false);
     }
 
     bootstrap();
@@ -214,9 +251,14 @@ export default function HomeScreen({ navigation }: Props) {
     };
   }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo]);
 
-  async function cargar(conectadoParam?: boolean, sigueVivo?: () => boolean) {
+  async function cargar(
+    conectadoParam?: boolean,
+    sigueVivo?: () => boolean,
+    opts?: { silencioso?: boolean }
+  ) {
     const okVivo = () => !sigueVivo || sigueVivo();
-    setCargando(true);
+    const silencioso = !!opts?.silencioso;
+    if (!silencioso) setCargando(true);
     const conectado = conectadoParam ?? (await hayConexion());
     if (!okVivo()) return;
     setOnline(conectado);
@@ -276,21 +318,31 @@ export default function HomeScreen({ navigation }: Props) {
       if (!okVivo()) return;
       setClima(c);
       const dia = indice.length > 0 ? indice[0] : null;
-      if (dia) {
-        setIndiceHoy(dia);
-        const permisoNotif = await solicitarPermisoNotificaciones();
+      if (dia) setIndiceHoy(dia);
+      // Pintar ya: los permisos de notificación no deben bloquear el hero.
+      if (okVivo()) setCargando(false);
+
+      void (async () => {
+        try {
+          if (dia) {
+            const permisoNotif = await solicitarPermisoNotificaciones();
+            if (!okVivo()) return;
+            if (permisoNotif) await programarAlertasPesca(indice);
+          }
+        } catch {
+          /* no bloquear el pulso */
+        }
         if (!okVivo()) return;
-        if (permisoNotif) await programarAlertasPesca(indice);
-      }
-      await guardarCacheOffline({
-        clima: c,
-        indiceHoy: dia,
-        ubicacion: loc,
-      });
-      if (!okVivo()) return;
-      const cacheActualizado = await leerCacheOffline();
-      if (!okVivo()) return;
-      setCache(cacheActualizado);
+        await guardarCacheOffline({
+          clima: c,
+          indiceHoy: dia,
+          ubicacion: loc,
+        });
+        const cacheActualizado = await leerCacheOffline();
+        if (!okVivo()) return;
+        setCache(cacheActualizado);
+      })();
+      return;
     }
     if (okVivo()) setCargando(false);
   }
@@ -347,8 +399,13 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
+        {actualizando ? (
+          <Text style={styles.actualizandoTxt} accessibilityLabel="Actualizando clima e índice">
+            Actualizando…
+          </Text>
+        ) : null}
 
-        {cargando ? (
+        {cargando && !clima && !indiceHoy ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 24 }} />
         ) : !clima && permisoDenegado && !punto ? (
           <View style={{ alignItems: "center", marginVertical: 12 }}>
@@ -708,6 +765,13 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginBottom: 4,
     fontWeight: "600",
+    letterSpacing: 0.2,
+  },
+  actualizandoTxt: {
+    color: "rgba(255,255,255,0.85)",
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 4,
     letterSpacing: 0.2,
   },
   climaOrigen: {

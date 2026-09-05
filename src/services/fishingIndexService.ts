@@ -118,7 +118,18 @@ function agregarPorDia(horas: string[], presiones: number[], nubes: number[]): R
   return resultado;
 }
 
+const TTL_INDICE_MS = 5 * 60 * 1000;
+const memoIndice = new Map<string, { at: number; data: IndicePescaDia[] }>();
+
+function claveIndice(lat: number, lng: number, dias: number): string {
+  return `${lat.toFixed(2)},${lng.toFixed(2)}:${dias}`;
+}
+
 export async function calcularIndicePesca(lat: number, lng: number, dias: number = 3): Promise<IndicePescaDia[]> {
+  const clave = claveIndice(lat, lng, dias);
+  const hit = memoIndice.get(clave);
+  if (hit && Date.now() - hit.at < TTL_INDICE_MS) return hit.data;
+
   try {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
@@ -168,10 +179,11 @@ export async function calcularIndicePesca(lat: number, lng: number, dias: number
       });
     }
 
+    memoIndice.set(clave, { at: Date.now(), data: resultado });
     return resultado;
   } catch (err) {
     console.warn("Error calculando índice de pesca:", err);
-    return [];
+    return hit?.data ?? [];
   }
 }
 
