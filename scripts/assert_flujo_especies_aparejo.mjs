@@ -18,6 +18,16 @@ function read(rel) {
   return fs.readFileSync(path.join(root, rel), "utf8");
 }
 
+const nav = read("src/navigation/irATab.ts");
+if (!nav.includes("irAEspeciesDelPunto") || !nav.includes("pedirAbrirConsultaEspecies")) {
+  fail("irATab debe pedir abrir consulta especies (singleton + navigate)");
+}
+
+const pendiente = read("src/services/especiesPendiente.ts");
+if (!pendiente.includes("pedirAbrirConsultaEspecies") || !pendiente.includes("consumirAbrirConsultaEspecies")) {
+  fail("especiesPendiente debe exponer pedir/consumir abrir consulta");
+}
+
 const especies = read("src/screens/EspeciesScreen.tsx");
 for (const needle of [
   "aplicarPuntoCompartido",
@@ -26,6 +36,7 @@ for (const needle of [
   "puntoAplicadoRef",
   "Ver especies de este punto",
   "Punto ya elegido",
+  "consumirAbrirConsultaEspecies",
 ]) {
   if (!especies.includes(needle)) fail(`EspeciesScreen sin ${needle}`);
 }
@@ -37,11 +48,6 @@ if (!especies.includes("punto.fuente") || !especies.includes("usePuntoConsulta")
 const card = read("src/components/ConsultaPescaCard.tsx");
 for (const needle of ["onEspecies", "Ver especies de este punto", "Ver aparejo de la especie destacada"]) {
   if (!card.includes(needle)) fail(`ConsultaPescaCard sin ${needle}`);
-}
-
-const nav = read("src/navigation/irATab.ts");
-if (!nav.includes("irAEspeciesDelPunto") || !nav.includes("abrirConsulta: true")) {
-  fail("irATab debe exponer irAEspeciesDelPunto con abrirConsulta");
 }
 
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");

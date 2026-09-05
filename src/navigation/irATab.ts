@@ -2,6 +2,8 @@
  * Navegación a una pestaña con pantalla anidada (y params opcionales).
  * Evita marear al usuario: el punto ya elegido se reutiliza vía params / contexto.
  */
+import { pedirAbrirConsultaEspecies } from "../services/especiesPendiente";
+
 export function irATab(
   navigation: { navigate: (...args: any[]) => void; getParent?: () => any },
   tab: string,
@@ -22,5 +24,6 @@ export function irAEspeciesDelPunto(navigation: {
   navigate: (...args: any[]) => void;
   getParent?: () => any;
 }) {
+  pedirAbrirConsultaEspecies();
   irATab(navigation, "Especies", "EspeciesMain", { abrirConsulta: true });
 }

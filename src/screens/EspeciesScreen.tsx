@@ -25,6 +25,7 @@ import LeyendaMapa from "../components/LeyendaMapa";
 import ListaTallasMinimas from "../components/ListaTallasMinimas";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
+import { consumirAbrirConsultaEspecies } from "../services/especiesPendiente";
 
 type LatLng = { latitude: number; longitude: number };
 type ModoEspecies = "continental" | "costa";
@@ -90,7 +91,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     }
   }, [soloContinental, catalogo]);
 
-  // Al entrar o al cambiar de provincia: mapa y catálogo anclados a ese territorio.
+  // Al cambiar de provincia: mapa y catálogo anclados a ese territorio.
   useEffect(() => {
     setConsulta(null);
     setMarcador(null);
@@ -126,31 +127,47 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     [soloContinental]
   );
 
-  // Si ya hay punto de consulta (p. ej. desde «Salgo a pescar»), muestra especies — no el mapa vacío.
+  // Hidratar siempre que haya punto compartido (no depender solo del foco / params entre tabs).
+  useEffect(() => {
+    if (!punto || (punto.fuente !== "mapa" && punto.fuente !== "zona" && punto.fuente !== "gps")) {
+      return;
+    }
+    if (!puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)) {
+      return;
+    }
+    const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+    if (puntoAplicadoRef.current === clave) return;
+    aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
+  }, [punto, provincia.regionMapa, aplicarPuntoCompartido]);
+
+  // Botón «Especies» / foco: abrir la ficha del punto (singleton + params por si el foco gana la carrera).
   useFocusEffect(
     useCallback(() => {
-      const forzarAbrir = route?.params?.abrirConsulta === true;
-      if (forzarAbrir) {
+      const forzarAbrir =
+        consumirAbrirConsultaEspecies() || route?.params?.abrirConsulta === true;
+      if (route?.params?.abrirConsulta) {
         navigation.setParams?.({ abrirConsulta: undefined });
       }
+      if (!forzarAbrir) return;
 
-      if (!punto || (punto.fuente !== "mapa" && punto.fuente !== "zona" && punto.fuente !== "gps")) {
-        return;
-      }
-      if (!puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)) {
-        return;
-      }
-
-      const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
-      const yaAplicado = puntoAplicadoRef.current === clave;
-      if (!yaAplicado) {
-        aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
-        return;
-      }
-      if (forzarAbrir) {
+      const abrir = () => {
+        if (
+          punto &&
+          (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
+          puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)
+        ) {
+          const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+          if (puntoAplicadoRef.current !== clave) {
+            aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
+            return;
+          }
+        }
         setCatalogoAbierto(false);
         setFichaAbierta(true);
-      }
+      };
+      // Diferir un tick: gana al reset de provincia del mismo montaje.
+      const t = setTimeout(abrir, 0);
+      return () => clearTimeout(t);
     }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido])
   );
 
