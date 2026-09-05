@@ -52,7 +52,18 @@ export function descripcionTiempo(codigo: number): { icono: string; texto: strin
   return mapa[codigo] ?? { icono: "🌡️", texto: "Sin datos" };
 }
 
+const TTL_CLIMA_MS = 5 * 60 * 1000;
+const memoClima = new Map<string, { at: number; data: ClimaActual }>();
+
+function claveCoords(lat: number, lng: number): string {
+  return `${lat.toFixed(2)},${lng.toFixed(2)}`;
+}
+
 export async function obtenerClimaActual(lat: number, lng: number): Promise<ClimaActual | null> {
+  const clave = claveCoords(lat, lng);
+  const hit = memoClima.get(clave);
+  if (hit && Date.now() - hit.at < TTL_CLIMA_MS) return hit.data;
+
   try {
     const url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
@@ -62,7 +73,7 @@ export async function obtenerClimaActual(lat: number, lng: number): Promise<Clim
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
     const data = await res.json();
     const c = data.current;
-    return {
+    const out: ClimaActual = {
       temperatura: c.temperature_2m,
       sensacionTermica: c.apparent_temperature ?? c.temperature_2m,
       velocidadVientoKmh: c.wind_speed_10m,
@@ -71,9 +82,11 @@ export async function obtenerClimaActual(lat: number, lng: number): Promise<Clim
       esDeDia: c.is_day === 1,
       precipitacionMm: c.precipitation ?? null,
     };
+    memoClima.set(clave, { at: Date.now(), data: out });
+    return out;
   } catch (err) {
     console.warn("Error obteniendo clima actual:", err);
-    return null;
+    return hit?.data ?? null;
   }
 }
 

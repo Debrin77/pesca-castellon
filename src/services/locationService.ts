@@ -22,13 +22,25 @@ function desdeNavegador(): Promise<{ lat: number; lng: number } | null> {
     navigator.geolocation.getCurrentPosition(
       (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
       () => resolve(null),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 8000 }
+      // Baja precisión + edad: el pulso de Inicio no debe esperar un GPS fino.
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 }
     );
   });
 }
 
+/**
+ * Ubicación para el pulso de Inicio: prioriza la última conocida (instantánea)
+ * y solo si no hay, pide un fix nuevo con precisión equilibrada.
+ */
 export async function obtenerUbicacionActual(): Promise<{ lat: number; lng: number } | null> {
   try {
+    const conocida = await Location.getLastKnownPositionAsync({
+      maxAge: 5 * 60 * 1000,
+      requiredAccuracy: 1000,
+    });
+    if (conocida?.coords) {
+      return { lat: conocida.coords.latitude, lng: conocida.coords.longitude };
+    }
     const loc = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });
