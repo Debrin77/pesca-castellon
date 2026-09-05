@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
 import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
@@ -30,6 +31,7 @@ type ModoEspecies = "continental" | "costa";
 
 interface Props {
   navigation: any;
+  route?: { params?: { abrirConsulta?: boolean } };
 }
 
 function camaraProvincia(region: { latitude: number; longitude: number }) {
@@ -48,9 +50,9 @@ function camaraCosta(provincia: {
   return { latitude: c.latitude, longitude: c.longitude, zoom: c.zoom, nonce: Date.now() };
 }
 
-export default function EspeciesScreen({ navigation }: Props) {
+export default function EspeciesScreen({ navigation, route }: Props) {
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
-  const { fijarPunto } = usePuntoConsulta();
+  const { punto, fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
@@ -67,6 +69,8 @@ export default function EspeciesScreen({ navigation }: Props) {
   const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">("rio");
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [avisoFuera, setAvisoFuera] = useState<string | null>(null);
+  /** Evita reaplicar el mismo punto compartido en cada foco. */
+  const puntoAplicadoRef = useRef<string | null>(null);
 
   const costa = !soloContinental && modo === "costa";
   const mar = costa || (!soloContinental && catalogoAbierto && catalogo === "mar");
@@ -96,7 +100,59 @@ export default function EspeciesScreen({ navigation }: Props) {
     setModo("continental");
     setAvisoFuera(null);
     setCamara(camaraProvincia(provincia.regionMapa));
+    puntoAplicadoRef.current = null;
   }, [provinciaId, provincia.regionMapa]);
+
+  /** Aplica un punto ya elegido (Salgo a pescar / Mapa / Inicio) sin volver a pedirlo. */
+  const aplicarPuntoCompartido = useCallback(
+    (lat: number, lng: number, opts?: { abrirFicha?: boolean }) => {
+      const r = consultarToqueMapa(lat, lng);
+      setConsulta(r);
+      setMarcador({ latitude: lat, longitude: lng });
+      if (!soloContinental && r.ambito === "maritimo") {
+        setModo("costa");
+        setCatalogo("mar");
+      } else {
+        setModo("continental");
+        setCatalogo("rio");
+      }
+      setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
+      setCatalogoAbierto(false);
+      if (opts?.abrirFicha !== false) {
+        setFichaAbierta(true);
+      }
+      puntoAplicadoRef.current = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    },
+    [soloContinental]
+  );
+
+  // Si ya hay punto de consulta (p. ej. desde «Salgo a pescar»), muestra especies — no el mapa vacío.
+  useFocusEffect(
+    useCallback(() => {
+      const forzarAbrir = route?.params?.abrirConsulta === true;
+      if (forzarAbrir) {
+        navigation.setParams?.({ abrirConsulta: undefined });
+      }
+
+      if (!punto || (punto.fuente !== "mapa" && punto.fuente !== "zona" && punto.fuente !== "gps")) {
+        return;
+      }
+      if (!puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)) {
+        return;
+      }
+
+      const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+      const yaAplicado = puntoAplicadoRef.current === clave;
+      if (!yaAplicado) {
+        aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
+        return;
+      }
+      if (forzarAbrir) {
+        setCatalogoAbierto(false);
+        setFichaAbierta(true);
+      }
+    }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido])
+  );
 
   function cambiarModo(siguiente: ModoEspecies, opts?: { abrirCatalogo?: boolean }) {
     if (soloContinental && siguiente === "costa") return;
@@ -178,6 +234,7 @@ export default function EspeciesScreen({ navigation }: Props) {
           setMarcador({ latitude: loc.lat, longitude: loc.lng });
           setCamara({ latitude: loc.lat, longitude: loc.lng, zoom: 13, nonce: Date.now() });
           void fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
+          puntoAplicadoRef.current = `${loc.lat.toFixed(5)},${loc.lng.toFixed(5)}`;
         }
       }
     }
@@ -197,6 +254,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     }
     setFichaAbierta(true);
     setCamara({ latitude: lat, longitude: lng, zoom: 13, nonce: Date.now() });
+    puntoAplicadoRef.current = `${lat.toFixed(5)},${lng.toFixed(5)}`;
     void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
   }
 
@@ -206,6 +264,7 @@ export default function EspeciesScreen({ navigation }: Props) {
     setModo("continental");
     setCatalogo("rio");
     setFichaAbierta(true);
+    puntoAplicadoRef.current = `${z.lat.toFixed(5)},${z.lng.toFixed(5)}`;
     void fijarPunto({ lat: z.lat, lng: z.lng, fuente: "zona", etiqueta: z.nombre });
   }
 
@@ -364,13 +423,29 @@ export default function EspeciesScreen({ navigation }: Props) {
         {avisoFuera ? <Text style={styles.avisoFuera}>{avisoFuera}</Text> : null}
         <LeyendaMapa modo={costa ? "costa" : "continental"} />
         <Text style={styles.hint}>
-          {costa
-            ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
-            : soloContinental
-              ? `Catálogo continental de ${provincia.nombre}. Toca un tramo o embalse en el mapa.`
-              : `Catálogo de ríos y embalses. Cambia a Costa (orilla) para lubina, dorada, sargo…`}
+          {consulta
+            ? "Punto ya elegido. Abre las especies de este sitio o el catálogo completo."
+            : costa
+              ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
+              : soloContinental
+                ? `Catálogo continental de ${provincia.nombre}. Toca un tramo o embalse en el mapa.`
+                : `Catálogo de ríos y embalses. Cambia a Costa (orilla) para lubina, dorada, sargo…`}
         </Text>
-        {costa ? (
+        {consulta && !fichaAbierta ? (
+          <TouchableOpacity
+            style={costa ? styles.ctaOrilla : styles.ctaContinental}
+            onPress={() => {
+              setCatalogoAbierto(false);
+              setFichaAbierta(true);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Ver especies de este punto"
+          >
+            <Text style={costa ? styles.ctaOrillaTxt : styles.ctaContinentalTxt}>
+              Ver especies de este punto
+            </Text>
+          </TouchableOpacity>
+        ) : costa ? (
           <TouchableOpacity
             style={styles.ctaOrilla}
             onPress={abrirCatalogoOrilla}

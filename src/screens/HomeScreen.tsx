@@ -45,6 +45,7 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
+import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -518,6 +519,7 @@ export default function HomeScreen({ navigation }: Props) {
                           })
                       : undefined
                   }
+                  onEspecies={() => irAEspeciesDelPunto(navigation)}
                   onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
                 />
               </View>

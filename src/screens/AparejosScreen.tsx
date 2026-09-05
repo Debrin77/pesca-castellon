@@ -125,6 +125,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
             key={s.id}
             style={[styles.chip, seleccionada === s.id && (mar ? styles.chipActiveMar : styles.chipActiveBosque)]}
             onPress={() => setSeleccionada(s.id)}
+            accessibilityRole="button"
+            accessibilityLabel={`Equipo para ${s.nombre}`}
           >
             <GraficoEspecie id={s.id} nombre={s.nombre} size={28} />
             <Text style={[styles.chipText, seleccionada === s.id && styles.chipTextActive]} numberOfLines={1}>
@@ -135,6 +137,9 @@ export default function AparejosScreen({ route, navigation }: Props) {
       </ScrollView>
 
       <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 110 }}>
+        <Text style={styles.ambitoHint}>
+          Equipo recomendado por especie. El sitio de pesca ya lo elegiste en Inicio o Mapa.
+        </Text>
         {sp ? (
           <ListaAnimada key={`${ambito}-${sp.id}`} replayKey={`${ambito}-${sp.id}`} index={0}>
             <LinearGradient
@@ -308,6 +313,13 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 13, color: COLORS.primaryDark, fontWeight: "700", flexShrink: 1 },
   chipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
   content: { flex: 1 },
+  ambitoHint: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+    marginBottom: 12,
+    fontWeight: "600",
+  },
   headerCard: {
     borderRadius: RADIUS.xl,
     padding: 22,

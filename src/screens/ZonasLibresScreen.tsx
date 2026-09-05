@@ -48,6 +48,7 @@ import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
+import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -881,6 +882,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                     }
                   : undefined
               }
+              onEspecies={() => {
+                setFichaAbierta(false);
+                irAEspeciesDelPunto(navigation);
+              }}
               onAparejos={(id) => {
                 setFichaAbierta(false);
                 navigation.navigate("Aparejos", { especieId: id });
