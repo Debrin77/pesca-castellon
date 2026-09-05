@@ -18,6 +18,9 @@ import { colorSemaforo } from "../services/consultaPescaService";
 interface Props {
   consulta: ConsultaPesca;
   onFicha?: () => void;
+  /** Lista de especies del punto ya elegido (no vuelve a pedir el mapa). */
+  onEspecies?: () => void;
+  /** Equipo recomendado de la especie destacada del tramo. */
   onAparejos?: (especieId: string) => void;
   /** Resumen corto: semáforo + título; el resto tras «Ver detalle». */
   compacto?: boolean;
@@ -29,6 +32,7 @@ interface Props {
 export default function ConsultaPescaCard({
   consulta,
   onFicha,
+  onEspecies,
   onAparejos,
   compacto = false,
   expandido,
@@ -233,8 +237,23 @@ export default function ConsultaPescaCard({
                   <Text style={styles.btnText}>Ficha del agua</Text>
                 </TouchableOpacity>
               ) : null}
+              {onEspecies ? (
+                <TouchableOpacity
+                  onPress={onEspecies}
+                  style={styles.btnGhost}
+                  accessibilityRole="button"
+                  accessibilityLabel="Ver especies de este punto"
+                >
+                  <Text style={[styles.btnGhostText, { color: acento }]}>Especies</Text>
+                </TouchableOpacity>
+              ) : null}
               {especieDestacada && onAparejos ? (
-                <TouchableOpacity onPress={() => onAparejos(especieDestacada)} style={styles.btnGhost}>
+                <TouchableOpacity
+                  onPress={() => onAparejos(especieDestacada)}
+                  style={styles.btnGhost}
+                  accessibilityRole="button"
+                  accessibilityLabel="Ver aparejo de la especie destacada"
+                >
                   <Text style={[styles.btnGhostText, { color: acento }]}>Aparejo</Text>
                 </TouchableOpacity>
               ) : null}

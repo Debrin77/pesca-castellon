@@ -38,6 +38,7 @@ import type { FuentePuntoConsulta } from "../services/puntoConsultaService";
 import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import ListaAnimada from "../components/ListaAnimada";
+import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
 
 interface Props {
@@ -456,6 +457,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                         ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })
                         : undefined
                     }
+                    onEspecies={() => irAEspeciesDelPunto(navigation)}
                     onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
                   />
                 </>

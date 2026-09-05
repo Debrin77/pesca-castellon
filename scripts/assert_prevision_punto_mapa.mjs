@@ -34,6 +34,12 @@ else ok("Mapa publica fijarPunto");
 if (!esp.includes("fijarPunto")) fail("Especies debe publicar punto de consulta");
 else ok("Especies publica fijarPunto");
 
+if (!esp.includes("aplicarPuntoCompartido") || !esp.includes("abrirConsulta")) {
+  fail("Especies debe reutilizar el punto compartido y abrir la ficha");
+} else {
+  ok("Especies reutiliza punto compartido (abrirConsulta)");
+}
+
 if (!prev.includes("usePuntoConsulta")) fail("Previsión debe leer punto de consulta");
 else ok("Previsión usa usePuntoConsulta");
 
