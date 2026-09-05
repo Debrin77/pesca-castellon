@@ -75,10 +75,19 @@ for (const needle of [
   "provincia.nombre",
   'motivoPick: "punto"',
   'motivoPick: "captura"',
+  "asegurarPuntoParaCaptura",
+  "puntoId",
 ]) {
   if (!catches.includes(needle) && !new RegExp(needle).test(catches)) {
     fail(`MyCatchesScreen no incluye ${needle}`);
   }
+}
+
+if (!/asegurarPuntoParaCaptura/.test(catches) || !/puntoId/.test(catches)) {
+  fail("Al guardar captura con coords debe crear/enlazar un punto (puntoId)");
+}
+if (!/RADIO_REUTILIZAR_PUNTO_KM|0\.075/.test(catches)) {
+  fail("Debe reutilizar un punto cercano al registrar capturas en el mismo sitio");
 }
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
