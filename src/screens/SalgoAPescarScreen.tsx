@@ -21,10 +21,15 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import {
   obtenerFavoritos,
   obtenerPuntosGuardados,
+  obtenerCapturas,
   type FavoritoZona,
   type PuntoGuardado,
+  type Captura,
 } from "../services/storageService";
 import { formatearCoords, parsearLatLng } from "../services/coordsUtils";
+import { asegurarCoordsEnProvincia } from "../services/geoService";
+import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
+import { resolverEspecie } from "../services/catalogoEspeciesService";
 import {
   consumirPickUbicacion,
   iniciarPickUbicacion,
@@ -64,7 +69,15 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [lngTxt, setLngTxt] = useState("");
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
+  const [capturas, setCapturas] = useState<Captura[]>([]);
   const [gpsCargando, setGpsCargando] = useState(false);
+
+  const sitiosPersonales = listarSitiosPersonales(puntos, capturas, {
+    region: provincia.regionMapa,
+    nombreEspecie: (id) =>
+      resolverEspecie(id, provincia.species as { id: string; nombre: string }[])?.nombre ?? id,
+    limite: 10,
+  });
 
   const zonasRapidas = [...(provincia.zones as { id: string; nombre: string; lat: number; lng: number; tipo?: string }[])]
     .sort((a, b) => {
@@ -81,6 +94,15 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       fuente: FuentePuntoConsulta;
       etiqueta?: string;
     }) => {
+      const enProvincia = asegurarCoordsEnProvincia(args.lat, args.lng, {
+        region: provincia.regionMapa,
+        nombre: provincia.nombre,
+      });
+      if (!enProvincia.ok) {
+        Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+        setElegirUbicacion(true);
+        return;
+      }
       setCargando(true);
       setError(null);
       setElegirUbicacion(false);
@@ -107,13 +129,14 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setCargando(false);
       }
     },
-    [fijarPunto]
+    [fijarPunto, provincia.regionMapa, provincia.nombre]
   );
 
   useFocusEffect(
     useCallback(() => {
       void obtenerFavoritos().then(setFavoritos);
       void obtenerPuntosGuardados().then(setPuntos);
+      void obtenerCapturas().then(setCapturas);
       const elegida = consumirPickUbicacion("salgo");
       if (elegida) {
         void aplicarUbicacion({
@@ -342,24 +365,27 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               </>
             ) : null}
 
-            {puntos.length > 0 ? (
+            {sitiosPersonales.length > 0 ? (
               <>
-                <Text style={styles.sectionLabel}>Tus puntos</Text>
-                {puntos.slice(0, 6).map((p) => (
+                <Text style={styles.sectionLabel}>Tus puntos y capturas</Text>
+                {sitiosPersonales.slice(0, 8).map((s) => (
                   <TouchableOpacity
-                    key={p.id}
+                    key={s.id}
                     style={styles.listItem}
                     onPress={() =>
                       void aplicarUbicacion({
-                        lat: p.lat,
-                        lng: p.lng,
+                        lat: s.lat,
+                        lng: s.lng,
                         fuente: "mapa",
-                        etiqueta: p.nombre,
+                        etiqueta: s.titulo,
                       })
                     }
                   >
-                    <Text style={styles.listItemTxt}>{p.nombre}</Text>
-                    <Text style={styles.listItemMeta}>{formatearCoords(p.lat, p.lng)}</Text>
+                    <Text style={styles.listItemTxt}>
+                      {s.tipo === "captura" ? "🎣 " : ""}
+                      {s.titulo}
+                    </Text>
+                    <Text style={styles.listItemMeta}>{s.meta}</Text>
                   </TouchableOpacity>
                 ))}
               </>

@@ -31,6 +31,7 @@ import { obtenerTracks } from "../services/trackService";
 import { resumenCupoHoy, CupoEspecieInfo } from "../services/cupoService";
 import type { ModalidadPesca } from "../data/modalidades";
 import { formatearCoords, parsearLatLng } from "../services/coordsUtils";
+import { asegurarCoordsEnProvincia } from "../services/geoService";
 import {
   cancelarPickUbicacion,
   consumirPickUbicacion,
@@ -115,12 +116,20 @@ export default function MyCatchesScreen({ navigation }: Props) {
       }
       const elegidaCaptura = consumirPickUbicacion("captura");
       if (elegidaCaptura) {
+        const enProvincia = asegurarCoordsEnProvincia(elegidaCaptura.lat, elegidaCaptura.lng, {
+          region: provincia.regionMapa,
+          nombre: provincia.nombre,
+        });
         setTab("capturas");
         setMostrarFormulario(true);
-        setCoords({ lat: elegidaCaptura.lat, lng: elegidaCaptura.lng });
-        setNombreLugar((prev) => prev || elegidaCaptura.etiqueta || "");
+        if (enProvincia.ok) {
+          setCoords({ lat: elegidaCaptura.lat, lng: elegidaCaptura.lng });
+          setNombreLugar((prev) => prev || elegidaCaptura.etiqueta || "");
+        } else {
+          Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+        }
       }
-    }, [cargar])
+    }, [cargar, provincia.regionMapa, provincia.nombre])
   );
 
   // Campo de hoy → «Especies con foto / rasgos»
@@ -235,6 +244,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("Ubicación", "No se pudo obtener tu posición.");
       return;
     }
+    const enProvincia = asegurarCoordsEnProvincia(loc.lat, loc.lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
     setCoords(loc);
     setMostrarCoordsCaptura(false);
   }
@@ -243,6 +260,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
     const r = parsearLatLng(latCaptura, lngCaptura);
     if (!r.ok) {
       Alert.alert("Coordenadas", r.error);
+      return;
+    }
+    const enProvincia = asegurarCoordsEnProvincia(r.coords.lat, r.coords.lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
     setCoords(r.coords);
@@ -268,6 +293,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("No se pudo obtener tu ubicación", "Inténtalo de nuevo en un momento.");
       return;
     }
+    const enProvincia = asegurarCoordsEnProvincia(loc.lat, loc.lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
     await guardarPunto({
       nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
       lat: loc.lat,
@@ -285,6 +318,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
     const r = parsearLatLng(latPunto, lngPunto);
     if (!r.ok) {
       Alert.alert("Coordenadas", r.error);
+      return;
+    }
+    const enProvincia = asegurarCoordsEnProvincia(r.coords.lat, r.coords.lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
     await guardarPunto({
@@ -315,6 +356,22 @@ export default function MyCatchesScreen({ navigation }: Props) {
     navigation.navigate("Mapa", {
       screen: "ZonasLibresMain",
       params: { centrarEn: { lat: p.lat, lng: p.lng, nombre: p.nombre } },
+    });
+  }
+
+  function verCapturaEnMapa(c: Captura) {
+    if (c.lat == null || c.lng == null) return;
+    cancelarPickUbicacion();
+    const sp = especieInfo(c.especieId);
+    navigation.navigate("Mapa", {
+      screen: "ZonasLibresMain",
+      params: {
+        centrarEn: {
+          lat: c.lat,
+          lng: c.lng,
+          nombre: c.nombreLugar?.trim() || sp?.nombre || "Captura",
+        },
+      },
     });
   }
 
@@ -597,6 +654,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
                         </Text>
                       )}
                       {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
+                      {c.lat != null && c.lng != null ? (
+                        <TouchableOpacity onPress={() => verCapturaEnMapa(c)}>
+                          <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
                   </View>
                 </ListaAnimada>
@@ -608,8 +670,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
         {tab === "puntos" && (
           <>
             <Text style={styles.lead}>
-              Guarda sitios de {provincia.nombre} para volver otro día: por GPS del teléfono, pulsando el mapa o
-              escribiendo latitud y longitud. Cada provincia tiene su propia lista.
+              Guarda sitios de {provincia.nombre} (GPS, mapa o coordenadas dentro de la provincia).
+              Aparecen en Mapa → Mis sitios y en la capa «Mis puntos».
             </Text>
 
             <View style={styles.methodRow}>

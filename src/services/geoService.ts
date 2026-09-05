@@ -21,6 +21,28 @@ export function puntoEnRegionMapa(
   );
 }
 
+/**
+ * Valida que lat/lng caigan dentro del mapa de la provincia activa
+ * (o la región/nombre que se pasen). Usar antes de guardar punto/captura
+ * o de confirmar una ubicación elegida.
+ */
+export function asegurarCoordsEnProvincia(
+  lat: number,
+  lng: number,
+  opts?: { region?: RegionMapa; nombre?: string }
+): { ok: true } | { ok: false; error: string } {
+  const provincia = getProvinciaActiva();
+  const region = opts?.region ?? provincia.regionMapa;
+  const nombre = opts?.nombre ?? provincia.nombre;
+  if (!puntoEnRegionMapa(lat, lng, region)) {
+    return {
+      ok: false,
+      error: `Las coordenadas quedan fuera de ${nombre}. Elige un punto dentro de la provincia seleccionada.`,
+    };
+  }
+  return { ok: true };
+}
+
 /** Distancia en km entre dos coordenadas (fórmula de Haversine). */
 export function distanciaKm(
   lat1: number,
