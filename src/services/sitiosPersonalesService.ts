@@ -55,6 +55,8 @@ export function listarSitiosPersonales(
 
   for (const c of capturas) {
     if (!capturaConCoords(c)) continue;
+    // Si la captura ya está enlazada a un punto guardado, el marcador del punto basta.
+    if (c.puntoId) continue;
     if (!dentro(c.lat, c.lng)) continue;
     const especie =
       opts.nombreEspecie?.(c.especieId) ?? c.especieId.replace(/_/g, " ");

@@ -34,6 +34,9 @@ if (!/export function listarSitiosPersonales/.test(sitios)) {
 if (!/tipo: "punto" \| "captura"/.test(sitios) && !/"punto"/.test(sitios)) {
   fail("sitiosPersonales debe tipar punto|captura");
 }
+if (!/c\.puntoId/.test(sitios)) {
+  fail("listarSitiosPersonales debe omitir capturas ya enlazadas a un punto (puntoId)");
+}
 
 const busqueda = read("src/services/busquedaService.ts");
 if (!/"punto"/.test(busqueda) || !/"captura"/.test(busqueda)) {
@@ -61,6 +64,8 @@ for (const needle of [
   "asegurarCoordsEnProvincia",
   "verCapturaEnMapa",
   "Fuera de ${provincia.nombre}",
+  "asegurarPuntoParaCaptura",
+  "puntoId",
 ]) {
   if (!catches.includes(needle)) fail(`MyCatchesScreen no incluye ${needle}`);
 }

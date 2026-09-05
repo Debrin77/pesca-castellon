@@ -31,7 +31,7 @@ import { obtenerTracks } from "../services/trackService";
 import { resumenCupoHoy, CupoEspecieInfo } from "../services/cupoService";
 import type { ModalidadPesca } from "../data/modalidades";
 import { formatearCoords, parsearLatLng } from "../services/coordsUtils";
-import { asegurarCoordsEnProvincia } from "../services/geoService";
+import { asegurarCoordsEnProvincia, distanciaKm } from "../services/geoService";
 import {
   cancelarPickUbicacion,
   consumirPickUbicacion,
@@ -56,6 +56,34 @@ interface Props {
 
 function nombrePuntoPorDefecto(): string {
   return `Punto del ${new Date().toLocaleDateString("es-ES")}`;
+}
+
+/** ~75 m: reutilizar un punto cercano al registrar otra captura en el mismo sitio. */
+const RADIO_REUTILIZAR_PUNTO_KM = 0.075;
+
+async function asegurarPuntoParaCaptura(opts: {
+  lat: number;
+  lng: number;
+  nombre: string;
+  notas?: string;
+}): Promise<PuntoGuardado> {
+  const existentes = await obtenerPuntosGuardados();
+  let mejor: PuntoGuardado | null = null;
+  let mejorDist = Infinity;
+  for (const p of existentes) {
+    const d = distanciaKm(opts.lat, opts.lng, p.lat, p.lng);
+    if (d <= RADIO_REUTILIZAR_PUNTO_KM && d < mejorDist) {
+      mejor = p;
+      mejorDist = d;
+    }
+  }
+  if (mejor) return mejor;
+  return guardarPunto({
+    nombre: opts.nombre,
+    lat: opts.lat,
+    lng: opts.lng,
+    notas: opts.notas,
+  });
 }
 
 export default function MyCatchesScreen({ navigation }: Props) {
@@ -184,9 +212,24 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("Especie", "Elige primero la especie de la captura.");
       return;
     }
+    let puntoId: string | null = null;
+    if (coords) {
+      const sp = resolverEspecie(especieId, speciesCatalog);
+      const nombre =
+        nombreLugar.trim() ||
+        (sp?.nombre ? `Captura · ${sp.nombre}` : nombrePuntoPorDefecto());
+      const punto = await asegurarPuntoParaCaptura({
+        lat: coords.lat,
+        lng: coords.lng,
+        nombre,
+        notas: notas.trim() || undefined,
+      });
+      puntoId = punto.id;
+    }
     await guardarCaptura({
       especieId,
       fecha: new Date().toISOString().slice(0, 10),
+      puntoId,
       nombreLugar: nombreLugar || undefined,
       tallaCm: tallaCm ? parseFloat(tallaCm) : null,
       pesoKg: pesoKg ? parseFloat(pesoKg) : null,
@@ -555,9 +598,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 </View>
                 {coords ? (
-                  <Text style={styles.coordsOk}>📍 {formatearCoords(coords.lat, coords.lng)}</Text>
+                  <Text style={styles.coordsOk}>
+                    📍 {formatearCoords(coords.lat, coords.lng)} · se guardará también como punto
+                  </Text>
                 ) : (
-                  <Text style={styles.hintMini}>Sin ubicación · elige GPS, mapa o coordenadas</Text>
+                  <Text style={styles.hintMini}>
+                    Sin ubicación · GPS, mapa o coords también crean un punto de pesca
+                  </Text>
                 )}
                 {mostrarCoordsCaptura && (
                   <View style={styles.coordsBox}>
