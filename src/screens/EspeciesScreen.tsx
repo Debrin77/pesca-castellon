@@ -140,17 +140,16 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
   }, [punto, provincia.regionMapa, aplicarPuntoCompartido]);
 
-  // Botón «Especies» / foco: abrir la ficha del punto (singleton + params por si el foco gana la carrera).
+  // Al entrar en Especies con punto ya elegido → lista de especies (tab o botón).
   useFocusEffect(
     useCallback(() => {
-      const forzarAbrir =
+      const pedidoExplicito =
         consumirAbrirConsultaEspecies() || route?.params?.abrirConsulta === true;
       if (route?.params?.abrirConsulta) {
         navigation.setParams?.({ abrirConsulta: undefined });
       }
-      if (!forzarAbrir) return;
 
-      const abrir = () => {
+      const t = setTimeout(() => {
         if (
           punto &&
           (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
@@ -159,14 +158,17 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
           if (puntoAplicadoRef.current !== clave) {
             aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
-            return;
+          } else {
+            setCatalogoAbierto(false);
+            setFichaAbierta(true);
           }
+          return;
         }
-        setCatalogoAbierto(false);
-        setFichaAbierta(true);
-      };
-      // Diferir un tick: gana al reset de provincia del mismo montaje.
-      const t = setTimeout(abrir, 0);
+        if (pedidoExplicito) {
+          setCatalogoAbierto(false);
+          setFichaAbierta(true);
+        }
+      }, 0);
       return () => clearTimeout(t);
     }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido])
   );
