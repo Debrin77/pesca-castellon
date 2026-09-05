@@ -280,9 +280,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       style={styles.input}
                       value={latTxt}
                       onChangeText={setLatTxt}
-                      keyboardType="numbers-and-punctuation"
-                      placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
-                      autoCapitalize="none"
+                      keyboardType="default"
+                      placeholder={
+                        provincia.id === "sevilla" ? '37°45\'55" N' : String(provincia.regionMapa.latitude.toFixed(3))
+                      }
+                      autoCapitalize="characters"
+                      autoCorrect={false}
                     />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -291,12 +294,18 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       style={styles.input}
                       value={lngTxt}
                       onChangeText={setLngTxt}
-                      keyboardType="numbers-and-punctuation"
-                      placeholder={String(provincia.regionMapa.longitude.toFixed(3))}
-                      autoCapitalize="none"
+                      keyboardType="default"
+                      placeholder={
+                        provincia.id === "sevilla" ? '5°27\'40" O' : String(provincia.regionMapa.longitude.toFixed(3))
+                      }
+                      autoCapitalize="characters"
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
+                <Text style={styles.hint}>
+                  {"Decimal (−5.46) o sexagesimal (5°27'40\" O). La O es oeste."}
+                </Text>
                 <TouchableOpacity style={styles.btnSecondary} onPress={aplicarCoordsManual}>
                   <Text style={styles.btnSecondaryTxt}>Usar estas coordenadas</Text>
                 </TouchableOpacity>

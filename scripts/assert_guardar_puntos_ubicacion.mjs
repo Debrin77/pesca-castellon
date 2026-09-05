@@ -25,6 +25,36 @@ if (!/!latStr \|\| !lngStr/.test(coords) && !/Introduce latitud y longitud/.test
   fail("parsearLatLng debe rechazar campos vacíos");
 }
 if (!/aNumero/.test(coords)) fail("parsearLatLng debe parsear con aNumero (no Number vacío → 0)");
+if (!/Oeste|hemisferio|sexagesimal|°/.test(coords)) {
+  fail("coordsUtils debe aceptar sexagesimal DMS y hemisferio O/Oeste");
+}
+if (!/split\(\/;\|,\/\)/.test(coords) && !/split\(\/;\|,/.test(coords)) {
+  fail("parsearLatLng debe separar lat/lng por coma o punto y coma");
+}
+
+// Runtime: el ejemplo real del usuario (Sevilla) debe parsear y quedar al oeste
+{
+  const { spawnSync } = await import("child_process");
+  const probe = `
+    import { parsearLatLng } from ${JSON.stringify(path.join(root, "src/services/coordsUtils.ts"))};
+    const r = parsearLatLng("37°45'55.489\\" N", "5°27'40.669\\" O");
+    if (!r.ok) { console.error(r.error); process.exit(2); }
+    const el = 37 + 45 / 60 + 55.489 / 3600;
+    const eg = -(5 + 27 / 60 + 40.669 / 3600);
+    if (Math.abs(r.coords.lat - el) > 1e-6 || Math.abs(r.coords.lng - eg) > 1e-6) {
+      console.error(JSON.stringify(r.coords));
+      process.exit(3);
+    }
+    if (r.coords.lng >= 0) process.exit(4);
+    console.log("ok");
+  `;
+  const run = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", probe], {
+    encoding: "utf8",
+  });
+  if (run.status !== 0) {
+    fail(`DMS runtime (37°45'55.489" N / 5°27'40.669" O): ${run.stderr || run.stdout || run.status}`);
+  }
+}
 
 const pendiente = read("src/services/ubicacionPendiente.ts");
 if (!/iniciarPickUbicacion/.test(pendiente)) fail("falta iniciarPickUbicacion");
