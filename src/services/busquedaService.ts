@@ -1,12 +1,21 @@
 /**
- * Índice de búsqueda unificado: tramos oficiales + fichas de zona + playas,
- * por nombre, río, cuenca, municipio y código de anexo.
+ * Índice de búsqueda unificado: tramos oficiales + fichas de zona + playas
+ * + sitios personales (puntos / capturas con GPS), por nombre, río, cuenca,
+ * municipio y código de anexo.
  */
 import { getProvinciaActiva } from "../provincias/runtime";
 import { todasLasPlayas } from "./consultaCostaService";
 import { todosLosTramos, TramoOficial } from "./consultaPescaService";
+import type { SitioPersonal } from "./sitiosPersonalesService";
 
-export type TipoSugerencia = "tramo" | "ficha" | "playa" | "municipio" | "cuenca";
+export type TipoSugerencia =
+  | "tramo"
+  | "ficha"
+  | "playa"
+  | "municipio"
+  | "cuenca"
+  | "punto"
+  | "captura";
 
 export interface SugerenciaBusqueda {
   id: string;
@@ -60,14 +69,45 @@ export function municipiosConocidos(): string[] {
 
 export function buscarZonas(
   texto: string,
-  opts: { modo?: "continental" | "costa"; cuenca?: string | null; limite?: number } = {}
+  opts: {
+    modo?: "continental" | "costa";
+    cuenca?: string | null;
+    limite?: number;
+    /** Puntos y capturas de la provincia activa (ya filtrados si aplica). */
+    sitiosPersonales?: SitioPersonal[];
+  } = {}
 ): SugerenciaBusqueda[] {
   const q = norm(texto);
-  if (!q && !opts.cuenca) return [];
+  if (!q && !opts.cuenca && !(opts.sitiosPersonales?.length)) return [];
   const limite = opts.limite ?? 10;
   const out: SugerenciaBusqueda[] = [];
   const provincia = getProvinciaActiva();
   const zones = provincia.zones as any[];
+
+  // Sitios personales primero: el usuario busca «su» punto o captura.
+  if (opts.sitiosPersonales?.length) {
+    for (const s of opts.sitiosPersonales) {
+      const hit =
+        !q ||
+        coincide(s.titulo, q) ||
+        coincide(s.meta, q) ||
+        coincide(s.tipo, q);
+      if (!hit) continue;
+      out.push({
+        id: s.id,
+        tipo: s.tipo,
+        titulo: s.titulo,
+        meta: s.meta,
+        lat: s.lat,
+        lng: s.lng,
+      });
+    }
+  }
+
+  // Sin texto ni cuenca: solo devolvemos sitios personales (acceso rápido).
+  if (!q && !opts.cuenca) {
+    return out.slice(0, limite);
+  }
 
   if (opts.modo !== "costa") {
     for (const t of todosLosTramos() as (TramoOficial & { municipios?: string[]; cuenca?: string })[]) {

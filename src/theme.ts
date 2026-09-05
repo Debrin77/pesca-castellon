@@ -52,6 +52,8 @@ export const PIN = {
   puerto: COLORS.puerto,
   yo: COLORS.water,
   spot: COLORS.gold,
+  /** Capturas geolocalizadas en el mapa. */
+  captura: COLORS.water,
 };
 
 export const GRADIENTS = {

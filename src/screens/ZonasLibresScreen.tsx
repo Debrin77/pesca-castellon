@@ -11,7 +11,7 @@ import {
   TramoOficial,
   tramoUsaRadioAnexo,
 } from "../services/consultaPescaService";
-import { obtenerPuntosGuardados, guardarPunto, PuntoGuardado } from "../services/storageService";
+import { obtenerPuntosGuardados, obtenerCapturas, guardarPunto, PuntoGuardado, Captura } from "../services/storageService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import { formatearCoords } from "../services/coordsUtils";
 import {
@@ -32,7 +32,8 @@ import LeyendaMapa from "../components/LeyendaMapa";
 import SelectorModalidad from "../components/SelectorModalidad";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
-import { puntoEnRegionMapa } from "../services/geoService";
+import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
+import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
 import { obtenerRadar } from "../services/radarService";
 import {
   anadirPuntoTrack,
@@ -46,6 +47,7 @@ import type { ModalidadPesca } from "../data/modalidades";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { resolverEspecie } from "../services/catalogoEspeciesService";
 import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
@@ -75,6 +77,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [marcador, setMarcador] = useState<LatLng | null>(null);
   const [yo, setYo] = useState<LatLng | null>(null);
   const [puntosPersonales, setPuntosPersonales] = useState<PuntoGuardado[]>([]);
+  const [capturasPersonales, setCapturasPersonales] = useState<Captura[]>([]);
+  const [mostrarSitios, setMostrarSitios] = useState(false);
   const [capas, setCapas] = useState({
     zpl: true,
     zpc: true,
@@ -124,6 +128,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   useFocusEffect(
     useCallback(() => {
       obtenerPuntosGuardados().then(setPuntosPersonales);
+      obtenerCapturas().then(setCapturasPersonales);
       obtenerTracks().then((t) => {
         setTracks(t);
         setGrabandoId(trackActivo(t)?.id ?? null);
@@ -219,17 +224,42 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     });
   }, [tramos, capas]);
 
+  const sitiosPersonales = useMemo(() => {
+    const species = provincia.species as { id: string; nombre: string }[];
+    return listarSitiosPersonales(puntosPersonales, capturasPersonales, {
+      region: provincia.regionMapa,
+      nombreEspecie: (id) => resolverEspecie(id, species)?.nombre ?? id,
+      limite: 40,
+    });
+  }, [puntosPersonales, capturasPersonales, provincia.regionMapa, provincia.species]);
+
   const sugerencias = useMemo(() => {
-    if (!busqueda.trim() && !cuencaFiltro) return [];
+    const haySitios = mostrarSitios || !!busqueda.trim();
+    if (!busqueda.trim() && !cuencaFiltro && !haySitios) return [];
     return buscarZonas(busqueda, {
       modo,
       cuenca: modo === "continental" ? cuencaFiltro : null,
-      limite: 10,
+      limite: 12,
+      sitiosPersonales: haySitios || !!busqueda.trim() ? sitiosPersonales : undefined,
     });
-  }, [busqueda, modo, cuencaFiltro]);
+  }, [busqueda, modo, cuencaFiltro, sitiosPersonales, mostrarSitios]);
 
   function aplicarSugerencia(s: SugerenciaBusqueda) {
     setBusqueda(s.titulo);
+    setMostrarSitios(false);
+    if (s.tipo === "punto" || s.tipo === "captura") {
+      if (s.lat != null && s.lng != null) {
+        setCapas((prev) => ({ ...prev, misPuntos: true }));
+        evaluarPunto(s.lat, s.lng);
+        void fijarPunto({
+          lat: s.lat,
+          lng: s.lng,
+          fuente: "mapa",
+          etiqueta: s.titulo,
+        });
+      }
+      return;
+    }
     if (s.tipo === "playa" && s.playaId) {
       if (soloContinental) return;
       evaluarPlaya(s.playaId);
@@ -350,6 +380,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }
     const lat = marcador.latitude;
     const lng = marcador.longitude;
+    const enProvincia = asegurarCoordsEnProvincia(lat, lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
     const nombre = consulta?.titulo?.trim() || `Punto del ${new Date().toLocaleDateString("es-ES")}`;
     await guardarPunto({
       nombre,
@@ -379,6 +417,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }
     const lat = marcador.latitude;
     const lng = marcador.longitude;
+    const enProvincia = asegurarCoordsEnProvincia(lat, lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
     const etiqueta = consulta?.titulo?.trim() || formatearCoords(lat, lng);
     resolverPickUbicacion({ lat, lng, etiqueta });
     setModoAnadir(false);
@@ -394,6 +440,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     }
     const lat = marcador.latitude;
     const lng = marcador.longitude;
+    const enProvincia = asegurarCoordsEnProvincia(lat, lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
     const etiqueta = consulta?.titulo?.trim() || formatearCoords(lat, lng);
     void fijarPunto({ lat, lng, fuente: "mapa", etiqueta });
     resolverPickUbicacion({ lat, lng, etiqueta });
@@ -450,13 +504,34 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             mar
               ? "Busca playa o municipio (Benicàssim, Grao, Nules…)"
               : provincia.id === "sevilla"
-                ? "Busca embalse o río (Guadalquivir, Minilla, Cala…)"
-                : "Busca tramo, municipio o cuenca (Onda, Palancia, Teresa…)"
+                ? "Busca embalse, río o tus puntos"
+                : "Busca tramo, municipio o tus puntos"
           }
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
-          onChangeText={setBusqueda}
+          onChangeText={(t) => {
+            setBusqueda(t);
+            if (t.trim()) setMostrarSitios(false);
+          }}
+          onFocus={() => {
+            if (!busqueda.trim() && sitiosPersonales.length > 0) setMostrarSitios(true);
+          }}
         />
+        {sitiosPersonales.length > 0 ? (
+          <TouchableOpacity
+            style={[styles.sitiosChip, (mostrarSitios || !!busqueda.trim()) && styles.sitiosChipOn]}
+            onPress={() => {
+              setMostrarSitios((v) => !v);
+              if (busqueda.trim()) setBusqueda("");
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Ver mis puntos y capturas guardados"
+          >
+            <Text style={[styles.sitiosChipTxt, (mostrarSitios || !!busqueda.trim()) && styles.sitiosChipTxtOn]}>
+              Mis sitios ({sitiosPersonales.length})
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         {!mar && (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.cuencaRow}>
             <TouchableOpacity
@@ -541,7 +616,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </>
         )}
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
-          <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>Mis puntos</Text>
+          <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>
+            Mis puntos{sitiosPersonales.length ? ` (${sitiosPersonales.length})` : ""}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.layerChip, (capasExtra || capas.radar || capas.tracks || capas.batimetria) && styles.layerChipActive]}
@@ -711,14 +788,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             />
           ))}
           {capas.misPuntos &&
-            puntosPersonales.map((p) => (
+            sitiosPersonales.map((s) => (
               <Marker
-                key={p.id}
-                coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={PIN.spot}
-                identifier="spot"
-                title={p.nombre}
-                onPress={() => evaluarPunto(p.lat, p.lng)}
+                key={s.id}
+                coordinate={{ latitude: s.lat, longitude: s.lng }}
+                pinColor={s.tipo === "captura" ? PIN.captura : PIN.spot}
+                identifier={s.tipo === "captura" ? "captura" : "spot"}
+                title={s.titulo}
+                onPress={() => {
+                  evaluarPunto(s.lat, s.lng);
+                  void fijarPunto({ lat: s.lat, lng: s.lng, fuente: "mapa", etiqueta: s.titulo });
+                }}
               />
             ))}
           {capas.tracks &&
@@ -844,6 +924,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  sitiosChip: {
+    alignSelf: "flex-start",
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: RADIUS.sm,
+    backgroundColor: COLORS.mist,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  sitiosChipOn: {
+    backgroundColor: COLORS.primaryLight,
+    borderColor: COLORS.primary,
+  },
+  sitiosChipTxt: { fontSize: 12.5, fontWeight: "700", color: COLORS.textSecondary },
+  sitiosChipTxtOn: { color: COLORS.primaryDark },
   suggestionsBox: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,

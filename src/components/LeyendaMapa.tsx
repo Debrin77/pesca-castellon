@@ -9,11 +9,15 @@ const ITEMS: Record<Modo, { color: string; label: string }[]> = {
     { color: PIN.libre, label: "Libre" },
     { color: PIN.coto, label: "Coto" },
     { color: PIN.vedado, label: "Vedado" },
+    { color: PIN.spot, label: "Punto" },
+    { color: PIN.captura, label: "Captura" },
   ],
   costa: [
     { color: PIN.playa, label: "Playa" },
     { color: PIN.vedado, label: "Vedado" },
     { color: PIN.puerto, label: "Puerto" },
+    { color: PIN.spot, label: "Punto" },
+    { color: PIN.captura, label: "Captura" },
   ],
 };
 
