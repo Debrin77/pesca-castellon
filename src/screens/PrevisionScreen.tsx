@@ -24,7 +24,6 @@ import {
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { EJE_METEO } from "../data/ejesLegalMeteo";
-import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import { calcularSolunarDia, DiaSolunar } from "../services/solunarService";
 import { calcularMareaHoy, claveMareaProvincia, ResumenMarea } from "../services/tideService";
 import VentanasSolunarMarea from "../components/VentanasSolunarMarea";
@@ -376,7 +375,6 @@ export default function PrevisionScreen() {
             <ListaAnimada replayKey={`idx-${dia.fecha}`} index={1}>
               <View style={[styles.glassCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
                 <View style={styles.indexHead}>
-                  <EjeLegalMeteo eje="meteo" compacto />
                   <Text style={styles.glassLabel}>{EJE_METEO.indexLabel}</Text>
                 <Text style={styles.glassHint}>No es permiso legal · solo clima y luna</Text>
                   <Text style={styles.glassStrong}>
