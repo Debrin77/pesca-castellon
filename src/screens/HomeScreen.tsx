@@ -711,7 +711,6 @@ export default function HomeScreen({ navigation }: Props) {
               {saihPanel.length > 0 && (
                 <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
                   <View style={styles.sectionRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                       <Text style={styles.sectionTitle}>Embalses</Text>
                       <TerminoAyuda id="saih" />
@@ -804,11 +803,16 @@ export default function HomeScreen({ navigation }: Props) {
         <View style={styles.linksRow}>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+            onPress={() =>
+              navigation.navigate("Capturas", {
+                screen: "CapturasMain",
+                params: { abrirCapturaRapida: true },
+              })
+            }
             accessibilityRole="button"
-            accessibilityLabel="Capturas"
+            accessibilityLabel="Captura rápida"
           >
-            <Text style={styles.linkChipTxt}>Capturas</Text>
+            <Text style={styles.linkChipTxt}>+ Captura</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}

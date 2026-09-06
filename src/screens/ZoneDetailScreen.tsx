@@ -159,10 +159,11 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
           <TerminoAyuda id="saih" />
           <Text style={styles.cardTitle}>
-          {zone.saihFuente === "chg"
-            ? "Estado del embalse (SAIH Guadalquivir)"
-            : "Estado del embalse (SAIH Júcar)"}
-        </Text>
+            {zone.saihFuente === "chg"
+              ? "Estado del embalse (SAIH Guadalquivir)"
+              : "Estado del embalse (SAIH Júcar)"}
+          </Text>
+        </View>
         {cargando ? (
           <ActivityIndicator color={COLORS.water} />
         ) : hidro ? (

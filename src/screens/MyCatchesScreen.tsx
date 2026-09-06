@@ -883,7 +883,6 @@ export default function MyCatchesScreen({ navigation }: Props) {
           </>
         )}
       </ScrollView>
-    </View>
 
       {!mostrarFormulario ? (
         <TouchableOpacity
@@ -906,6 +905,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
           <Text style={styles.fabCapturaTxt}>＋</Text>
         </TouchableOpacity>
       ) : null}
+    </View>
   );
 }
 
