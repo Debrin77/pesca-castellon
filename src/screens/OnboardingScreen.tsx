@@ -13,7 +13,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { marcarOnboardingVisto } from "../services/offlineService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { COLORS, GRADIENTS, RADIUS, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
+import OndaAgua from "../components/OndaAgua";
 
 const { width } = Dimensions.get("window");
 
@@ -75,6 +76,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <LinearGradient colors={[...GRADIENTS.primary]} style={styles.root}>
+      <OndaAgua intensidad={0.85} />
       <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
       <ScrollView
         ref={scrollRef}
@@ -125,15 +127,17 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingTop: 64, paddingBottom: 28 },
+  root: { flex: 1, paddingTop: 64, paddingBottom: 28, overflow: "hidden" },
   brand: {
     textAlign: "center",
-    color: "#e8f5ee",
+    color: "#fff",
     fontWeight: "800",
-    letterSpacing: 1,
+    fontFamily: FONTS.extrabold,
+    letterSpacing: 0.8,
     textTransform: "uppercase",
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 12,
+    zIndex: 1,
   },
   slide: {
     paddingHorizontal: SPACING.xl,
@@ -145,6 +149,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 28,
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     textAlign: "center",
     letterSpacing: -0.4,
     marginBottom: 12,
@@ -155,9 +160,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     textAlign: "center",
     fontWeight: "600",
+    fontFamily: FONTS.semibold,
     maxWidth: 340,
   },
-  dots: { flexDirection: "row", justifyContent: "center", gap: 8, marginVertical: 18 },
+  dots: { flexDirection: "row", justifyContent: "center", gap: 8, marginVertical: 18, zIndex: 1 },
   dot: {
     width: 8,
     height: 8,
@@ -171,8 +177,9 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     paddingVertical: 14,
     alignItems: "center",
+    zIndex: 1,
   },
-  ctaTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 16 },
-  skip: { alignItems: "center", marginTop: 12, height: 36, justifyContent: "center" },
+  ctaTxt: { color: COLORS.primaryDark, fontWeight: "800", fontFamily: FONTS.extrabold, fontSize: 16 },
+  skip: { alignItems: "center", marginTop: 12, height: 36, justifyContent: "center", zIndex: 1 },
   skipTxt: { color: "#e8f5ee", fontWeight: "700" },
 });

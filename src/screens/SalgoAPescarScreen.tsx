@@ -43,12 +43,15 @@ import {
   consejoIdMontajeEspecie,
   montajesParaEspecie,
 } from "../data/montajesEspecie";
-import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import ChecklistInteractivo, { itemsDesdeTextos } from "../components/ChecklistInteractivo";
 import SheetPermisoGps from "../components/SheetPermisoGps";
 import { sitiosFacilesDe } from "../data/sitiosFaciles";
+import OndaAgua from "../components/OndaAgua";
+import PasoSalida from "../components/PasoSalida";
+import PulsePress from "../components/PulsePress";
 
 interface Props {
   navigation: any;
@@ -253,6 +256,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     : undefined;
   const consejoMontaje = especieDestacada ? consejoIdMontajeEspecie(especieDestacada) : undefined;
   const montajeTipico = especieDestacada ? montajesParaEspecie(especieDestacada)[0] : undefined;
+  const pasoVisual = elegirUbicacion || !hayResultado ? 0 : Math.min(paso + 1, 3);
+  const labelsPaso = ["Sitio", "Normativa", "Clima", "Checklist"];
 
   function irMontaje(especieId: string) {
     const consejoId = consejoIdMontajeEspecie(especieId);
@@ -269,18 +274,13 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     />
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
+        <OndaAgua intensidad={1} />
         <Text style={styles.kicker}>Modo salida</Text>
         <Text style={styles.title}>Salgo a pescar</Text>
-        <Text style={styles.sub}>Primero normativa (¿puedo?), luego clima (¿pinta?) y checklist.</Text>
-        <View style={styles.steps}>
-          {["Sitio", "Normativa", "Clima"].map((t, i) => (
-            <View key={t} style={[styles.step, paso >= i && styles.stepOn]}>
-              <Text style={[styles.stepTxt, paso >= i && styles.stepTxtOn]}>
-                {i + 1}. {t}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <Text style={styles.sub}>
+          Prepara la jornada: dónde, si puedes, si pinta y qué llevar.
+        </Text>
+        <PasoSalida pasos={labelsPaso} activo={pasoVisual} sobreOscuro />
       </LinearGradient>
 
       {elegirUbicacion ? (
@@ -313,35 +313,36 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
             ) : null}
 
             <View style={styles.methodRow}>
-              <TouchableOpacity
-                style={styles.methodBtn}
+              <PulsePress
                 onPress={() => void usarGps()}
                 disabled={gpsCargando}
-                accessibilityRole="button"
+                style={styles.methodBtn}
                 accessibilityLabel="Usar GPS"
               >
                 {gpsCargando ? (
                   <ActivityIndicator color={COLORS.primary} />
                 ) : (
-                  <Text style={styles.methodBtnTxt}>GPS</Text>
+                  <>
+                    <Text style={styles.methodGlyph}>◉</Text>
+                    <Text style={styles.methodBtnTxt}>GPS</Text>
+                    <Text style={styles.methodHint}>Aquí</Text>
+                  </>
                 )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.methodBtn}
-                onPress={irAMapa}
-                accessibilityRole="button"
-                accessibilityLabel="Elegir en el mapa"
-              >
+              </PulsePress>
+              <PulsePress onPress={irAMapa} style={styles.methodBtn} accessibilityLabel="Elegir en el mapa">
+                <Text style={styles.methodGlyph}>▦</Text>
                 <Text style={styles.methodBtnTxt}>Mapa</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.methodBtn}
+                <Text style={styles.methodHint}>Tocar</Text>
+              </PulsePress>
+              <PulsePress
                 onPress={() => setMostrarCoords((v) => !v)}
-                accessibilityRole="button"
+                style={[styles.methodBtn, mostrarCoords && styles.methodBtnOn]}
                 accessibilityLabel="Introducir coordenadas"
               >
+                <Text style={styles.methodGlyph}>⌗</Text>
                 <Text style={styles.methodBtnTxt}>Coords</Text>
-              </TouchableOpacity>
+                <Text style={styles.methodHint}>Manual</Text>
+              </PulsePress>
             </View>
 
             {mostrarCoords ? (
@@ -555,8 +556,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               <TouchableOpacity style={styles.btnGhost} onPress={cambiarUbicacion}>
                 <Text style={styles.btnGhostTxt}>Cambiar ubicación</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btnGhost} onPress={() => setPaso(1)}>
-                <Text style={styles.btnGhostTxt}>Continuar →</Text>
+              <TouchableOpacity style={styles.btn} onPress={() => setPaso(1)}>
+                <Text style={styles.btnTxt}>Continuar → clima</Text>
               </TouchableOpacity>
             </View>
           </ListaAnimada>
@@ -601,8 +602,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 >
                   <Text style={styles.btnGhostTxt}>Ver previsión completa</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btnGhost} onPress={() => setPaso(2)}>
-                  <Text style={styles.btnGhostTxt}>Ir al checklist →</Text>
+                <TouchableOpacity style={styles.btn} onPress={() => setPaso(2)}>
+                  <Text style={styles.btnTxt}>Ir al checklist →</Text>
                 </TouchableOpacity>
               </View>
             </ListaAnimada>
@@ -661,27 +662,36 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     padding: SPACING.lg,
     marginBottom: 14,
+    overflow: "hidden",
     ...SHADOW,
   },
   kicker: {
     color: "#e8f5ee",
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     fontSize: 11,
     letterSpacing: 0.8,
     textTransform: "uppercase",
+    zIndex: 1,
   },
-  title: { color: "#fff", fontSize: 28, fontWeight: "800", marginTop: 4 },
-  sub: { color: "#eef7f1", marginTop: 6, fontSize: 14, lineHeight: 20 },
-  steps: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 14 },
-  step: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: RADIUS.pill,
-    backgroundColor: "rgba(255,255,255,0.18)",
+  title: {
+    color: "#fff",
+    fontSize: 30,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    marginTop: 4,
+    letterSpacing: -0.3,
+    zIndex: 1,
   },
-  stepOn: { backgroundColor: "rgba(255,255,255,0.35)" },
-  stepTxt: { color: "#e8f5ee", fontSize: 11, fontWeight: "700" },
-  stepTxtOn: { color: "#fff" },
+  sub: {
+    color: "#eef7f1",
+    marginTop: 6,
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: FONTS.semibold,
+    fontWeight: "600",
+    zIndex: 1,
+  },
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
@@ -698,7 +708,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     lineHeight: 16,
   },
-  cardTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 10 },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    color: COLORS.textPrimary,
+    marginBottom: 10,
+  },
   hint: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 12 },
   muted: { color: COLORS.textSecondary, fontSize: 13 },
   error: { color: COLORS.danger, fontWeight: "700", marginTop: 10, marginBottom: 4 },
@@ -708,13 +724,37 @@ const styles = StyleSheet.create({
   methodBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.water,
     borderRadius: RADIUS.md,
-    paddingVertical: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 6,
     alignItems: "center",
-    backgroundColor: COLORS.mist,
+    backgroundColor: COLORS.waterLight,
+    minHeight: 88,
+    justifyContent: "center",
   },
-  methodBtnTxt: { color: COLORS.primary, fontWeight: "800", fontSize: 14 },
+  methodBtnOn: {
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight,
+  },
+  methodGlyph: {
+    fontSize: 18,
+    color: COLORS.waterDark,
+    fontWeight: "800",
+    marginBottom: 4,
+  },
+  methodBtnTxt: {
+    color: COLORS.primaryDark,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    fontSize: 14,
+  },
+  methodHint: {
+    marginTop: 2,
+    fontSize: 11,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
   puntoActual: {
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.md,
@@ -762,7 +802,6 @@ const styles = StyleSheet.create({
   indexBox: { borderRadius: RADIUS.md, padding: 14 },
   indexBig: { fontSize: 22, fontWeight: "800" },
   indexMeta: { marginTop: 4, color: COLORS.textSecondary, fontWeight: "700" },
-  check: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 20, marginBottom: 6 },
   btn: {
     marginTop: 12,
     backgroundColor: COLORS.primary,
@@ -770,7 +809,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     alignItems: "center",
   },
-  btnTxt: { color: "#fff", fontWeight: "800" },
+  btnTxt: { color: "#fff", fontWeight: "800", fontFamily: FONTS.extrabold },
   btnSecondary: {
     marginTop: 8,
     borderWidth: 1.5,
@@ -792,4 +831,14 @@ const styles = StyleSheet.create({
   },
   montajeCtaTitle: { fontSize: 15, fontWeight: "800", color: COLORS.waterDark },
   montajeCtaSub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, lineHeight: 17 },
+  zonaChip: {
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  zonaChipTitle: { fontSize: 14, fontWeight: "800", color: COLORS.textPrimary },
+  zonaChipMeta: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2, lineHeight: 16 },
 });

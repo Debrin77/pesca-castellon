@@ -109,8 +109,32 @@ export default function ChecklistInteractivo({
     return null;
   }
 
+  const hechos = items.filter((it) => ticks[it.id]).length;
+  const total = items.length;
+  const pct = total > 0 ? hechos / total : 0;
+  const listo = total > 0 && hechos === total;
+
   return (
     <View style={styles.wrap}>
+      <View style={styles.progreso} accessibilityLabel={`Checklist ${hechos} de ${total}`}>
+        <View style={styles.progresoTop}>
+          <Text style={styles.progresoLbl}>Preparación</Text>
+          <Text style={styles.progresoNum}>
+            {hechos}/{total}
+          </Text>
+        </View>
+        <View style={styles.barra}>
+          <View style={[styles.barraFill, { width: `${Math.round(pct * 100)}%` }]} />
+        </View>
+      </View>
+
+      {listo ? (
+        <View style={styles.listo} accessibilityLiveRegion="polite">
+          <Text style={styles.listoTitle}>Listo para salir</Text>
+          <Text style={styles.listoSub}>Checklist completa. Buena pesca y respeta la normativa.</Text>
+        </View>
+      ) : null}
+
       {items.map((item) => {
         const on = !!ticks[item.id];
         const label = etiquetaAccion(item.accion);
@@ -147,6 +171,44 @@ export default function ChecklistInteractivo({
 
 const styles = StyleSheet.create({
   wrap: { gap: 8 },
+  progreso: { marginBottom: 4 },
+  progresoTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  progresoLbl: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: COLORS.textMuted,
+  },
+  progresoNum: { fontSize: 13, fontWeight: "800", color: COLORS.primary },
+  barra: {
+    height: 6,
+    borderRadius: 999,
+    backgroundColor: COLORS.mist,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  barraFill: {
+    height: "100%",
+    backgroundColor: COLORS.water,
+    borderRadius: 999,
+  },
+  listo: {
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#c5d9cc",
+    marginBottom: 4,
+  },
+  listoTitle: { fontSize: 15, fontWeight: "800", color: COLORS.primary },
+  listoSub: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 2, lineHeight: 17 },
   row: {
     borderWidth: 1,
     borderColor: COLORS.border,
