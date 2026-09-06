@@ -7,11 +7,15 @@ export default function PulsePress({
   children,
   style,
   disabled,
+  accessibilityRole,
+  accessibilityLabel,
 }: {
   onPress?: () => void;
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  accessibilityRole?: "button" | "link" | "none";
+  accessibilityLabel?: string;
 }) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -37,7 +41,14 @@ export default function PulsePress({
   }
 
   return (
-    <Pressable onPress={onPress} onPressIn={down} onPressOut={up} disabled={disabled}>
+    <Pressable
+      onPress={onPress}
+      onPressIn={down}
+      onPressOut={up}
+      disabled={disabled}
+      accessibilityRole={accessibilityRole ?? "button"}
+      accessibilityLabel={accessibilityLabel}
+    >
       <Animated.View style={[style, { transform: [{ scale }] }]}>{children}</Animated.View>
     </Pressable>
   );

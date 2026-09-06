@@ -55,7 +55,9 @@ import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
-import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import AtmosferaMeteo from "../components/AtmosferaMeteo";
+import OndaAgua from "../components/OndaAgua";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -456,6 +458,8 @@ export default function HomeScreen({ navigation }: Props) {
           heroHRef.current = e.nativeEvent.layout.height;
         }}
       >
+        <AtmosferaMeteo codigo={clima?.codigoTiempo ?? 2} />
+        <OndaAgua intensidad={0.85} />
         <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
         <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
         {actualizando ? (
@@ -607,8 +611,17 @@ export default function HomeScreen({ navigation }: Props) {
             style={styles.ctaSalgo}
           >
             <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
-              <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-              <Text style={styles.ctaSalgoSub}>Checklist y punto del día</Text>
+              <OndaAgua intensidad={0.9} />
+              <View style={styles.ctaSalgoRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
+                  <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
+                  <Text style={styles.ctaSalgoSub}>Checklist y punto del día</Text>
+                </View>
+                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
+                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
+                </View>
+              </View>
             </LinearGradient>
           </PulsePress>
         </ListaAnimada>
@@ -895,14 +908,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     borderBottomLeftRadius: RADIUS.xl,
     borderBottomRightRadius: RADIUS.xl,
+    overflow: "hidden",
   },
   brandPulse: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: "800",
-    color: "rgba(255,255,255,0.78)",
-    letterSpacing: 0.8,
+    fontFamily: FONTS.extrabold,
+    color: "#fff",
+    letterSpacing: 0.6,
     textTransform: "uppercase",
     marginBottom: 2,
+    zIndex: 1,
   },
   dateText: {
     fontSize: 15,
@@ -910,7 +926,9 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     marginBottom: 4,
     fontWeight: "600",
+    fontFamily: FONTS.semibold,
     letterSpacing: 0.2,
+    zIndex: 1,
   },
   actualizandoTxt: {
     color: "rgba(255,255,255,0.85)",
@@ -1132,21 +1150,54 @@ const styles = StyleSheet.create({
   },
   ctaSalgoInner: {
     paddingVertical: 18,
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     borderRadius: RADIUS.lg,
+    overflow: "hidden",
+  },
+  ctaSalgoRow: {
+    flexDirection: "row",
     alignItems: "center",
+    gap: 12,
+    zIndex: 1,
+  },
+  ctaSalgoKicker: {
+    fontSize: 11,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    color: "rgba(255,255,255,0.82)",
+    marginBottom: 2,
   },
   ctaSalgoTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     color: "#fff",
     letterSpacing: 0.2,
   },
   ctaSalgoSub: {
-    fontSize: 12.5,
-    color: "#ffffff",
+    fontSize: 13,
+    color: "rgba(255,255,255,0.95)",
     fontWeight: "700",
+    fontFamily: FONTS.bold,
     marginTop: 3,
+  },
+  ctaSalgoArrow: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.22)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ctaSalgoArrowTxt: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "300",
+    marginTop: -1,
   },
   bloque: {
     marginBottom: SPACING.xl,

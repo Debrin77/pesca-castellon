@@ -4,8 +4,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { elegirRecomendacionHoy, RecomendacionHoy } from "../utils/recomendacionHoy";
 import { CATEGORIA_INFO } from "../services/fishingIndexService";
 import type { FavoritoZona, PuntoGuardado } from "../services/storageService";
-import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 import PulsePress from "./PulsePress";
+import OndaAgua from "./OndaAgua";
 
 type Props = {
   favoritos: FavoritoZona[];
@@ -78,19 +79,25 @@ export default function RecomendacionHoyCard({
   return (
     <PulsePress onPress={() => onAbrir(rec)} style={styles.wrap}>
       <LinearGradient colors={[...GRADIENTS.water]} style={styles.inner}>
-        <Text style={styles.kicker}>Hoy te conviene</Text>
-        <Text style={styles.nombre} numberOfLines={2}>
-          {rec.candidato.nombre}
-        </Text>
-        <View style={[styles.pill, { backgroundColor: cat.fondo }]}>
-          <Text style={[styles.pillTxt, { color: cat.color }]}>
-            {cat.texto} · {rec.dia.puntuacion}
-            {rec.dia.iconoLuna ? ` ${rec.dia.iconoLuna}` : ""}
-          </Text>
+        <OndaAgua intensidad={0.75} />
+        <View style={styles.row}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.kicker}>Hoy te conviene</Text>
+            <Text style={styles.nombre} numberOfLines={2}>
+              {rec.candidato.nombre}
+            </Text>
+            <View style={[styles.pill, { backgroundColor: cat.fondo }]}>
+              <Text style={[styles.pillTxt, { color: cat.color }]}>
+                {cat.texto} · {rec.dia.puntuacion}
+                {rec.dia.iconoLuna ? ` ${rec.dia.iconoLuna}` : ""}
+              </Text>
+            </View>
+            <Text style={styles.sub} numberOfLines={2}>
+              Condiciones (clima) frente a tus sitios · toca para abrir
+            </Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
         </View>
-        <Text style={styles.sub} numberOfLines={2}>
-          Condiciones (clima) frente a tus sitios · toca para abrir
-        </Text>
       </LinearGradient>
     </PulsePress>
   );
@@ -103,16 +110,25 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
     ...SHADOW_SOFT,
   },
-  inner: { paddingVertical: SPACING.lg, paddingHorizontal: SPACING.lg },
+  inner: { paddingVertical: SPACING.lg, paddingHorizontal: SPACING.lg, overflow: "hidden" },
+  row: { flexDirection: "row", alignItems: "center", gap: 8, zIndex: 1 },
   kicker: {
     fontSize: 11,
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     letterSpacing: 0.9,
     textTransform: "uppercase",
     color: "rgba(255,255,255,0.82)",
     marginBottom: 6,
   },
-  nombre: { fontSize: 22, fontWeight: "800", color: "#fff", lineHeight: 28, marginBottom: 10 },
+  nombre: {
+    fontSize: 22,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    color: "#fff",
+    lineHeight: 28,
+    marginBottom: 10,
+  },
   pill: {
     alignSelf: "flex-start",
     paddingHorizontal: 10,
@@ -122,6 +138,7 @@ const styles = StyleSheet.create({
   },
   pillTxt: { fontSize: 13, fontWeight: "800" },
   sub: { fontSize: 13, color: "rgba(255,255,255,0.88)", lineHeight: 18 },
+  chevron: { color: "#fff", fontSize: 32, fontWeight: "200", marginTop: -4 },
   vacio: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,

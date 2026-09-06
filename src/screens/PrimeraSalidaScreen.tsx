@@ -13,7 +13,8 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { sitiosFacilesDe, type SitioFacil } from "../data/sitiosFaciles";
 import { marcarPrimeraSalidaHecha, marcarLicenciaOk } from "../services/primeraSalidaService";
-import { COLORS, GRADIENTS, RADIUS, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
+import OndaAgua from "../components/OndaAgua";
 
 type Props = { navigation: any };
 
@@ -56,6 +57,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
 
   return (
     <LinearGradient colors={[...GRADIENTS.primary]} style={styles.root}>
+      <OndaAgua intensidad={0.9} />
       <Text style={styles.brand}>{provincia.nombreApp}</Text>
       <Text style={styles.kicker}>
         MI PRIMERA SALIDA · {paso + 1}/{total}
@@ -242,24 +244,28 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingTop: 56 },
+  root: { flex: 1, paddingTop: 56, overflow: "hidden" },
   brand: {
     color: "#fff",
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     textAlign: "center",
     letterSpacing: 0.3,
+    zIndex: 1,
   },
   kicker: {
     color: "rgba(255,255,255,0.85)",
     fontSize: 11,
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     letterSpacing: 0.8,
     textAlign: "center",
     marginTop: 6,
     marginBottom: 12,
+    zIndex: 1,
   },
-  body: { paddingHorizontal: SPACING.md, paddingBottom: 40 },
+  body: { paddingHorizontal: SPACING.md, paddingBottom: 40, zIndex: 1 },
   card: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
