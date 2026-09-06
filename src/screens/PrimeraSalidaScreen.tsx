@@ -150,15 +150,20 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
                 </TouchableOpacity>
               ))
             )}
-            <TouchableOpacity
-              style={[styles.cta, sitiosVisibles.length > 0 && !sitio && styles.ctaOff]}
-              disabled={sitiosVisibles.length > 0 && !sitio}
-              onPress={() => setPaso(3)}
-            >
-              <Text style={styles.ctaTxt}>
-                {sitio ? "Usar este sitio · seguir" : "Seguir sin sitio concreto"}
-              </Text>
-            </TouchableOpacity>
+            {sitio ? (
+              <TouchableOpacity style={styles.cta} onPress={() => setPaso(3)}>
+                <Text style={styles.ctaTxt}>Usar este sitio · seguir</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.cta}
+                onPress={() => setPaso(3)}
+                accessibilityRole="button"
+                accessibilityLabel="Seguir sin sitio concreto"
+              >
+                <Text style={styles.ctaTxt}>Seguir sin sitio concreto</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity onPress={() => setPaso(1)}>
               <Text style={styles.back}>← Volver</Text>
             </TouchableOpacity>

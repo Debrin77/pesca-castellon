@@ -31,7 +31,25 @@ must("src/screens/PrimeraSalidaScreen.tsx", [
   "nudo-palomar",
   "PescaREC",
   "marcarPrimeraSalidaHecha",
+  "Seguir sin sitio concreto",
+  "Usar este sitio · seguir",
 ]);
+
+// El CTA «Seguir sin sitio concreto» no debe quedar disabled cuando hay opciones.
+{
+  const t = read("src/screens/PrimeraSalidaScreen.tsx");
+  const i = t.indexOf("Seguir sin sitio concreto");
+  if (i < 0) fail("PrimeraSalidaScreen sin «Seguir sin sitio concreto»");
+  else {
+    const ventana = t.slice(Math.max(0, i - 280), i + 80);
+    if (
+      /disabled=\{sitiosVisibles\.length > 0 && !sitio\}/.test(ventana) ||
+      /disabled=\{sitiosVisibles\.length > 0 && !sitio\}/.test(t)
+    ) {
+      fail("«Seguir sin sitio concreto» no debe desactivarse si hay sitios visibles");
+    }
+  }
+}
 
 must("src/screens/HomeScreen.tsx", [
   "BannerLicenciaPendiente",
