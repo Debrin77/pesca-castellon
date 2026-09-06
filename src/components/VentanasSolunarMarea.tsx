@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { DiaSolunar } from "../services/solunarService";
 import { ResumenMarea } from "../services/tideService";
 import { COLORS, RADIUS } from "../theme";
+import TerminoAyuda from "./TerminoAyuda";
 
 interface Props {
   solunar: DiaSolunar | null;
@@ -32,7 +33,7 @@ export default function VentanasSolunarMarea({
       {solunar ? (
         <>
           <Text style={[styles.title, glass && styles.textGlass]} accessibilityRole="header">
-            Solunar · {solunar.iconoLuna} {solunar.fase}
+                         · {solunar.iconoLuna} {solunar.fase}
           </Text>
           <Text style={[styles.sub, glass && styles.subGlass]}>
             Mejor ventana orientativa: {solunar.mejorHoraInicio}–{solunar.mejorHoraFin}

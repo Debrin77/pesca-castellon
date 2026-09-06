@@ -13,9 +13,11 @@ interface Props {
   avisos: AvisoSeguridad[];
   cargando?: boolean;
   error?: string | null;
+  /** Solo el aviso más grave + contador. */
+  compacto?: boolean;
 }
 
-export default function PanelAvisosSeguridad({ avisos, cargando, error }: Props) {
+export default function PanelAvisosSeguridad({ avisos, cargando, error, compacto }: Props) {
   if (cargando) {
     return (
       <View style={styles.box}>
@@ -56,7 +58,7 @@ export default function PanelAvisosSeguridad({ avisos, cargando, error }: Props)
     <View style={styles.box}>
       <Text style={styles.kicker}>Seguridad · avisos oficiales</Text>
       <Text style={styles.lead}>Hay avisos que afectan a quien pesca en río, embalse u orilla. Léelos antes de salir.</Text>
-      {avisos.map((a) => {
+      {(compacto ? avisos.slice(0, 1) : avisos).map((a) => {
         const color = colorSeveridad(a.severidad);
         return (
           <View key={a.id} style={[styles.card, { borderLeftColor: color }]}>
@@ -99,6 +101,9 @@ export default function PanelAvisosSeguridad({ avisos, cargando, error }: Props)
           </View>
         );
       })}
+      {compacto && avisos.length > 1 ? (
+        <Text style={styles.meta}>+{avisos.length - 1} aviso(s) más · despliega «Antes de salir»</Text>
+      ) : null}
     </View>
   );
 }

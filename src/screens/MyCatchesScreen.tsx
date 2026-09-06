@@ -173,6 +173,29 @@ export default function MyCatchesScreen({ navigation }: Props) {
   }, [route.params, navigation]);
 
   useEffect(() => {
+    if (!route.params?.abrirCapturaRapida) return;
+    setTab("capturas");
+    setMostrarFormulario(true);
+    navigation.setParams?.({ abrirCapturaRapida: undefined });
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
+    void (async () => {
+      try {
+        await anadirUbicacionCapturaGps();
+      } catch {
+        /* GPS opcional */
+      }
+      try {
+        await tomarFotoCamara();
+      } catch {
+        /* cámara opcional */
+      }
+    })();
+  }, [route.params, navigation]);
+
+
+  useEffect(() => {
     if (!especieId) {
       setCupoInfo(null);
       return;
@@ -275,6 +298,28 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("Foto", "No se pudo abrir la galería en este entorno.");
     }
   }
+
+  async function tomarFotoCamara() {
+    try {
+      const ImagePicker = await import("expo-image-picker");
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Cámara", "Necesitas permitir la cámara para la captura rápida.");
+        return;
+      }
+      const res = await ImagePicker.launchCameraAsync({
+        quality: 0.7,
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+      if (!res.canceled && res.assets?.[0]?.uri) {
+        setFotoUri(res.assets[0].uri);
+      }
+    } catch {
+      Alert.alert("Cámara", "No se pudo abrir la cámara en este entorno.");
+    }
+  }
+
 
   async function anadirUbicacionCapturaGps() {
     const ok = await solicitarPermisoUbicacion();
@@ -644,6 +689,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 )}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
+                  <TouchableOpacity style={styles.photoBtn} onPress={tomarFotoCamara}>
+                    <Text style={styles.photoBtnTxt}>{fotoUri ? "Nueva foto (cámara)" : "Foto con cámara"}</Text>
+                  </TouchableOpacity>
                   <TouchableOpacity style={styles.photoBtn} onPress={elegirFoto}>
                     <Text style={styles.photoBtnTxt}>{fotoUri ? "Cambiar foto" : "Añadir foto"}</Text>
                   </TouchableOpacity>
@@ -836,10 +884,51 @@ export default function MyCatchesScreen({ navigation }: Props) {
         )}
       </ScrollView>
     </View>
+
+      {!mostrarFormulario ? (
+        <TouchableOpacity
+          style={styles.fabCaptura}
+          onPress={() => {
+            setTab("capturas");
+            setMostrarFormulario(true);
+            void (async () => {
+              try {
+                await anadirUbicacionCapturaGps();
+              } catch {}
+              try {
+                await tomarFotoCamara();
+              } catch {}
+            })();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Captura rápida: foto, especie y GPS"
+        >
+          <Text style={styles.fabCapturaTxt}>＋</Text>
+        </TouchableOpacity>
+      ) : null}
   );
 }
 
 const styles = StyleSheet.create({
+  fabCaptura: {
+    position: 'absolute',
+    right: 18,
+    bottom: 28,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: COLORS.water,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 20,
+    elevation: 6,
+    shadowColor: '#0c2c20',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  fabCapturaTxt: { color: '#fff', fontSize: 28, fontWeight: '700', marginTop: -2 },
+
   container: { flex: 1, backgroundColor: COLORS.background },
   tabBar: {
     flexDirection: "row",
