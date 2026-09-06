@@ -165,6 +165,28 @@ export default function LicenseScreen() {
         ) : null}
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Cartografía · qué está cubierto</Text>
+        <Text style={styles.cardText}>{provincia.coberturaCartografica.resumen}</Text>
+        <Text style={[styles.cardTitle, { marginTop: 12 }]}>Prohibiciones declaradas</Text>
+        <Text style={styles.cardText}>{provincia.coberturaCartografica.prohibiciones}</Text>
+        <Text style={[styles.cardTitle, { marginTop: 12 }]}>Aguas libres / cauces</Text>
+        <Text style={styles.cardText}>{provincia.coberturaCartografica.aguasLibres}</Text>
+        <Text style={[styles.privacy, { marginTop: 8 }]}>
+          «SIN TRAMO» en el semáforo no es veda automática: significa que el punto no está en el catálogo
+          geométrico de la app.
+        </Text>
+        {provincia.coberturaCartografica.urlVisor ? (
+          <TouchableOpacity
+            onPress={() => Linking.openURL(provincia.coberturaCartografica.urlVisor!)}
+            accessibilityRole="link"
+            accessibilityLabel="Abrir visor oficial de cartografía de pesca"
+          >
+            <Text style={styles.link}>Abrir visor / cartografía oficial</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+
       {soloContinental ? (
         <View style={styles.card}>
           <Text style={styles.cardTitle}>PescaREC</Text>
@@ -479,6 +501,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardText: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 18 },
+  link: { fontSize: 13, fontWeight: "700", color: COLORS.primary, marginTop: 10 },
   ambitoBlock: {
     marginBottom: 12,
     paddingBottom: 10,

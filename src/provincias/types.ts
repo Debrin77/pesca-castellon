@@ -84,5 +84,23 @@ export interface ProvinciaConfig {
   requisitosLicencia: RequisitosLicencia;
   /** Texto breve bajo el semáforo / consultas. */
   notaConsultaAprox: string;
+  /**
+   * Qué está cartografiado con certeza y qué no.
+   * Sirve para “fuera de catálogo” y la ficha de Licencias.
+   */
+  coberturaCartografica: {
+    /** Una línea: prohibiciones vs libres. */
+    resumen: string;
+    /** Cotos / refugios / reservas con geometría oficial. */
+    prohibiciones: string;
+    /** Aguas libres: residuales o solo radio del anexo. */
+    aguasLibres: string;
+    /** Clarificaciones útiles (no son “hoy sí”). */
+    fueraCatalogoPermisos: string[];
+    /** Precauciones al estar fuera del catálogo geométrico. */
+    fueraCatalogoPrecauciones: string[];
+    /** Enlace al visor oficial, si existe. */
+    urlVisor?: string;
+  };
   oleaje?: { lat: number; lng: number; etiqueta: string };
 }

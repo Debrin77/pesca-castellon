@@ -451,6 +451,22 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         tags: ["veda"],
       },
       {
+        id: "voc-sin-tramo",
+        titulo: "SIN TRAMO / fuera de catálogo",
+        resumen: "El punto no está en el catálogo geométrico de la app. No es veda automática.",
+        detalle:
+          "En Sevilla el art. 5.2 puede permitir aguas libres no dibujadas (si no es refugio). En Castellón las ZPL usan radio del anexo; un cauce no listado queda en duda. Confirma cartel y fuente oficial.",
+        tags: ["legal", "mapa"],
+      },
+      {
+        id: "voc-art52",
+        titulo: "Art. 5.2 — aguas libres (Andalucía)",
+        resumen: "Toda masa no delimitada como coto o refugio es agua libre.",
+        detalle:
+          "DERA no cartografía todos los cauces. «Sin tramo» no equivale a prohibido: licencia, NIR, seguro RC y comprobar refugios/señalización.",
+        tags: ["legal", "andalucia"],
+      },
+      {
         id: "voc-sin-muerte",
         titulo: "Pesca sin muerte (catch & release)",
         resumen: "Debes devolver el pez vivo al agua de inmediato.",

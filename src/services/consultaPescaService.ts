@@ -382,11 +382,15 @@ export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new 
 
   const hallado = buscarTramoCercano(lat, lng);
   if (!hallado || !hallado.dentro) {
+    const cob = provincia.coberturaCartografica;
+    const cercano = hallado
+      ? `Más cercano en catálogo: ${hallado.tramo.nombre} (${hallado.distanciaKm.toFixed(1)} km).`
+      : null;
     return {
       veredicto: "fuera_catalogo",
       titulo: hallado
-        ? `Fuera de tramo cartografiado (el más cercano: ${hallado.tramo.nombre}, ${hallado.distanciaKm.toFixed(1)} km)`
-        : "Fuera del catálogo de tramos",
+        ? `Sin tramo en el catálogo · cerca: ${hallado.tramo.nombre} (${hallado.distanciaKm.toFixed(1)} km)`
+        : "Sin tramo en el catálogo",
       color: COLORES.fuera_catalogo,
       tramo: hallado?.tramo ?? null,
       distanciaKm: hallado?.distanciaKm ?? null,
@@ -397,16 +401,13 @@ export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new 
       ambito: "continental",
       fuenteNormativaDetalle: stampFuente("continental"),
       restriccionesHoy: [
-        provincia.notaConsultaAprox,
+        ...cob.fueraCatalogoPrecauciones,
+        ...(cercano ? [cercano] : []),
         provincia.continentalOnly
           ? "En esta provincia la guía es solo continental."
           : "En mar rige la normativa marítima, no esta ficha continental.",
       ],
-      permisos: [
-        provincia.id === "sevilla"
-          ? "Si hay un embalse o río a la vista, acércate a la orilla y vuelve a pulsar."
-          : "Si hay un río o embalse a la vista, acércate a la orilla y vuelve a pulsar, o abre el visor GVA de caza y pesca.",
-      ],
+      permisos: [provincia.notaConsultaAprox, ...cob.fueraCatalogoPermisos],
     };
   }
 

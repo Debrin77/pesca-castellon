@@ -45,6 +45,23 @@ export const castellonConfig: ProvinciaConfig = {
     ],
   },
   notaConsultaAprox:
-    "Este punto no cae en un polígono ICV (coto o reserva) ni en el radio de un tramo del anexo I. Puede ser secano, mar o un cauce menor no listado.",
+    "Sin tramo en el catálogo: no cae en polígono ICV (coto/reserva) ni en el radio de un tramo del anexo I. No es veda automática, pero la app no puede dar luz verde.",
+  coberturaCartografica: {
+    resumen:
+      "Prohibiciones (cotos ZPC, reservas ZRTC/ZRA) tienen polígono ICV. Las ZPL y muchos VP del anexo I solo usan radio aproximado: no están todos los cauces dibujados.",
+    prohibiciones:
+      "Cotos (ZPC) y reservas (ZRTC/ZRA) de Castellón: geometría oficial ICV (WFS Caza y Pesca). Si el punto cae ahí, el veredicto es fiable (ámbar/rojo).",
+    aguasLibres:
+      "El ICV de la app no publica polígonos de ZPL. Las zonas libres del anexo I se aproximan con centroide + radio. Un cauce menor no listado puede existir fuera del mapa: confirma anexo DOGV y señalización.",
+    fueraCatalogoPermisos: [
+      "No es veda automática: «sin tramo» = fuera del catálogo geométrico, no «pesca prohibida».",
+      "Si hay río o embalse a la vista, acércate a la orilla y vuelve a consultar, o abre el visor GVA de caza y pesca.",
+    ],
+    fueraCatalogoPrecauciones: [
+      "Puede ser secano, mar u otro ámbito, o un cauce menor no listado en el anexo I.",
+      "Vedados y cotos cartografiados (ICV) sí suelen estar cubiertos: si no salen en rojo/ámbar aquí, no asumas que es libre sin mirar cartel o anexo.",
+    ],
+    urlVisor: "https://terramapas.icv.gva.es/0504_CazaPesca",
+  },
   oleaje: { lat: 39.98, lng: 0.02, etiqueta: "Oleaje frente al Grao" },
 };

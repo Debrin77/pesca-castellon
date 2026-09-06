@@ -46,6 +46,21 @@ export function certezaDeConsulta(
     };
   }
 
+  if (c.fuenteGeometria === "ninguna") {
+    const esSevilla = opts?.provinciaId === "sevilla";
+    return {
+      nivel: "aproximada",
+      sello: "APROXIMADO",
+      etiqueta: "Fuera del catálogo geométrico",
+      aviso: esSevilla
+        ? "No es veda automática. Art. 5.2: confirma que no es refugio ni espacio restringido."
+        : "No es veda automática. Sin polígono ICV ni radio del anexo: confirma cartel o DOGV.",
+      a11y: esSevilla
+        ? "Punto fuera del catálogo DERA. No es veda automática; el artículo 5.2 puede aplicar. Confirma refugios y señalización."
+        : "Punto fuera del catálogo ICV y del anexo. No es veda automática. Confirma señalización.",
+    };
+  }
+
   return {
     nivel: "aproximada",
     sello: "APROXIMADO",

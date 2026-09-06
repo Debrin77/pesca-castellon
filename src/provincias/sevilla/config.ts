@@ -123,5 +123,22 @@ export const sevillaConfig: ProvinciaConfig = {
     ],
   },
   notaConsultaAprox:
-    "Este punto no cae en un polígono oficial DERA (refugio o masa cartografiada) de Sevilla. Puede ser secano, cauce menor o otra provincia. Las aguas libres no listadas siguen el art. 5.2: confirma señalización y espacios protegidos.",
+    "Sin tramo en el catálogo DERA: no cae en refugio ni masa cartografiada. No es veda automática — en Sevilla las aguas libres no listadas pueden seguir el art. 5.2.",
+  coberturaCartografica: {
+    resumen:
+      "Refugios (Anexo IV) tienen polígono DERA. Las aguas libres (art. 5.2) no hace falta que estén todas en el mapa: toda masa no delimitada como coto o refugio es libre, con licencia y resto de normas.",
+    prohibiciones:
+      "Refugios de pesca (Anexo IV / DERA): geometría oficial de la Junta. Si el punto cae en rojo, la pesca está prohibida con carácter permanente.",
+    aguasLibres:
+      "Art. 5.2 Orden 13/01/2023: aguas libres = masa no delimitada como coto o refugio. DERA no dibuja todos los cauces; algunas masas libres van con radio orientativo. Fuera del mapa ≠ prohibido.",
+    fueraCatalogoPermisos: [
+      "No es veda automática: si hay agua continental y no es refugio ni espacio protegido restringido, el art. 5.2 puede permitir pescar (licencia + NIR + seguro RC).",
+      "Si hay embalse o río a la vista, acércate a la orilla y vuelve a consultar, o abre el visor de pesca continental de la Junta.",
+    ],
+    fueraCatalogoPrecauciones: [
+      "Puede ser secano, cauce de otra provincia o zona con señalización local / espacio protegido.",
+      "Art. 6: no pescar a menos de 200 m de presas, escalas y pasos de peces. Confirma carteles.",
+    ],
+    urlVisor: FUENTE_NORMATIVA_ANDALUCIA.urlVisor,
+  },
 };
