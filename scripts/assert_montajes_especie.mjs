@@ -28,19 +28,33 @@ const esperados = [
   "montaje-trucha-cucharilla",
   "montaje-llisa-boya",
   "montaje-sepia-eging",
+  "montaje-jurel-cucharilla",
+  "montaje-pulpo-fondo",
+  "montaje-barbo-feeder",
+  "montaje-siluro-spinning",
 ];
 for (const id of esperados) {
   if (!montajes.includes(`diagramaId: "${id}"`)) fail(`Falta diagrama ${id}`);
-  if (!montajes.includes(`consejoId: "${id}"`) && !montajes.includes(`consejoId: "montaje-`)) {
-    /* consejoId uses same slug */
-  }
   if (!montajes.includes(`"${id}"`)) fail(`Falta id ${id} en montajesEspecie`);
 }
 
 const n = (montajes.match(/consejoId: "/g) || []).length;
-if (n < 8) fail(`Se esperan ≥8 montajes (hay ${n})`);
+if (n < 12) fail(`Se esperan ≥12 montajes (hay ${n})`);
 
-for (const sp of ["lubina", "dorada", "sargo", "carpa", "black_bass", "trucha_comun", "llisa", "sepia"]) {
+for (const sp of [
+  "lubina",
+  "dorada",
+  "sargo",
+  "carpa",
+  "black_bass",
+  "trucha_comun",
+  "llisa",
+  "sepia",
+  "jurel",
+  "pulpo",
+  "barbo",
+  "siluro",
+]) {
   if (!montajes.includes(`"${sp}"`)) fail(`Montaje debe cubrir especie ${sp}`);
 }
 
@@ -90,4 +104,9 @@ if (!pkg.includes("assert_montajes_especie.mjs")) {
   fail("package.json assert debe incluir assert_montajes_especie.mjs");
 }
 
-console.log("OK: montajes visuales por especie (8 estrellas + enlaces)");
+const home = read("src/screens/HomeScreen.tsx");
+if (!home.includes('navigate("Consejos"') || !home.includes("Montajes")) {
+  fail("Inicio debe enlazar Consejos con etiqueta Montajes");
+}
+
+console.log("OK: montajes visuales por especie (12 + enlaces)");

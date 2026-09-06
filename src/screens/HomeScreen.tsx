@@ -722,11 +722,11 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Consejos")}
+            onPress={() => navigation.navigate("Consejos", { categoria: "montajes" })}
             accessibilityRole="button"
             accessibilityLabel="Consejos: montajes por especie, nudos y aparejos"
           >
-            <Text style={styles.linkChipTxt}>Nudos</Text>
+            <Text style={styles.linkChipTxt}>Montajes</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}

@@ -43,7 +43,11 @@ export type IdDiagrama =
   | "montaje-bass-texas"
   | "montaje-trucha-cucharilla"
   | "montaje-llisa-boya"
-  | "montaje-sepia-eging";
+  | "montaje-sepia-eging"
+  | "montaje-jurel-cucharilla"
+  | "montaje-pulpo-fondo"
+  | "montaje-barbo-feeder"
+  | "montaje-siluro-spinning";
 
 export type PasoMedia = {
   source: ImageSourcePropType;
