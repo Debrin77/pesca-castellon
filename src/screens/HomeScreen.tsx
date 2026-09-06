@@ -46,6 +46,7 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
+import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -578,6 +579,11 @@ export default function HomeScreen({ navigation }: Props) {
                   }
                   onEspecies={() => irAEspeciesDelPunto(navigation)}
                   onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+                  onMontaje={(id) => {
+                    const consejoId = consejoIdMontajeEspecie(id);
+                    if (!consejoId) return;
+                    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+                  }}
                 />
               </View>
             ) : (

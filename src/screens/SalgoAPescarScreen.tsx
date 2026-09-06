@@ -39,6 +39,10 @@ import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import ListaAnimada from "../components/ListaAnimada";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
+import {
+  consejoIdMontajeEspecie,
+  montajesParaEspecie,
+} from "../data/montajesEspecie";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
 
 interface Props {
@@ -216,6 +220,19 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
   const cat = indice ? CATEGORIA_INFO[indice.categoria] : null;
   const hayResultado = !!coords && !elegirUbicacion;
+  const especieDestacada = consulta
+    ? consulta.ambito === "maritimo"
+      ? consulta.especiesIds?.[0]
+      : consulta.tramo?.especies?.[0]
+    : undefined;
+  const consejoMontaje = especieDestacada ? consejoIdMontajeEspecie(especieDestacada) : undefined;
+  const montajeTipico = especieDestacada ? montajesParaEspecie(especieDestacada)[0] : undefined;
+
+  function irMontaje(especieId: string) {
+    const consejoId = consejoIdMontajeEspecie(especieId);
+    if (!consejoId) return;
+    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
@@ -459,7 +476,21 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                     }
                     onEspecies={() => irAEspeciesDelPunto(navigation)}
                     onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+                    onMontaje={irMontaje}
                   />
+                  {consejoMontaje && montajeTipico ? (
+                    <TouchableOpacity
+                      style={styles.montajeCta}
+                      onPress={() => irMontaje(especieDestacada!)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Ver montaje típico: ${montajeTipico.titulo}`}
+                    >
+                      <Text style={styles.montajeCtaTitle}>Ver montaje típico</Text>
+                      <Text style={styles.montajeCtaSub}>
+                        Esquema visual · {montajeTipico.titulo}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : null}
                 </>
               ) : (
                 <Text style={styles.muted}>No hay tramo reconocido en este punto.</Text>
@@ -489,6 +520,19 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 ) : (
                   <Text style={styles.muted}>Sin índice (revisa conexión o ubicación).</Text>
                 )}
+                {consejoMontaje && montajeTipico ? (
+                  <TouchableOpacity
+                    style={styles.montajeCta}
+                    onPress={() => irMontaje(especieDestacada!)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Ver montaje típico: ${montajeTipico.titulo}`}
+                  >
+                    <Text style={styles.montajeCtaTitle}>Ver montaje típico</Text>
+                    <Text style={styles.montajeCtaSub}>
+                      Antes de salir · {montajeTipico.titulo}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
                 <TouchableOpacity
                   style={styles.btnGhost}
                   onPress={() => {
@@ -652,4 +696,14 @@ const styles = StyleSheet.create({
   btnSecondaryTxt: { color: COLORS.primary, fontWeight: "800" },
   btnGhost: { marginTop: 10, alignItems: "flex-end" },
   btnGhostTxt: { color: COLORS.water, fontWeight: "800" },
+  montajeCta: {
+    marginTop: 12,
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.lg,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+  },
+  montajeCtaTitle: { fontSize: 15, fontWeight: "800", color: COLORS.waterDark },
+  montajeCtaSub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, lineHeight: 17 },
 });

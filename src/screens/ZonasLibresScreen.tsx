@@ -34,6 +34,7 @@ import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosL
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
+import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { obtenerRadar } from "../services/radarService";
 import {
   anadirPuntoTrack,
@@ -889,6 +890,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               onAparejos={(id) => {
                 setFichaAbierta(false);
                 navigation.navigate("Aparejos", { especieId: id });
+              }}
+              onMontaje={(id) => {
+                setFichaAbierta(false);
+                const consejoId = consejoIdMontajeEspecie(id);
+                if (!consejoId) return;
+                navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
               }}
             />
             {(consulta.tramo || consulta.ambito === "maritimo" || marcador) && (

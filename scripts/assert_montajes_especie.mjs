@@ -99,14 +99,39 @@ if (!app.includes('name="Consejos"') || (app.match(/name="Consejos"/g) || []).le
   fail("Consejos debe estar en Home y Especies (al menos)");
 }
 
+const salgo = read("src/screens/SalgoAPescarScreen.tsx");
+if (
+  !salgo.includes("Ver montaje típico") ||
+  !salgo.includes("consejoIdMontajeEspecie") ||
+  !salgo.includes('categoria: "montajes"') ||
+  !salgo.includes("onMontaje")
+) {
+  fail("SalgoAPescar debe deep-link a montaje típico de la especie destacada");
+}
+
+const card = read("src/components/ConsultaPescaCard.tsx");
+if (!card.includes("onMontaje") || !card.includes("montajeDisponible")) {
+  fail("ConsultaPescaCard debe exponer CTA Montaje cuando hay esquema");
+}
+
+const home = read("src/screens/HomeScreen.tsx");
+if (!home.includes("onMontaje") || !home.includes("consejoIdMontajeEspecie")) {
+  fail("Inicio debe enlazar montaje desde la consulta del tramo");
+}
+
+const mapa = read("src/screens/ZonasLibresScreen.tsx");
+if (!mapa.includes("onMontaje") || !mapa.includes("consejoIdMontajeEspecie")) {
+  fail("Mapa debe enlazar montaje desde la ficha de consulta");
+}
+
 const pkg = read("package.json");
 if (!pkg.includes("assert_montajes_especie.mjs")) {
   fail("package.json assert debe incluir assert_montajes_especie.mjs");
 }
 
-const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes('navigate("Consejos"') || !home.includes("Montajes")) {
+const homeChip = read("src/screens/HomeScreen.tsx");
+if (!homeChip.includes('navigate("Consejos"') || !homeChip.includes("Montajes")) {
   fail("Inicio debe enlazar Consejos con etiqueta Montajes");
 }
 
-console.log("OK: montajes visuales por especie (12 + enlaces)");
+console.log("OK: montajes visuales por especie (12 + enlaces + Salgo a pescar)");
