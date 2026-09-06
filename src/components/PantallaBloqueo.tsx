@@ -3,19 +3,20 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAcceso } from "../context/AccesoContext";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { COLORS, GRADIENTS, RADIUS, SPACING } from "../theme";
+import { FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
 
-/** Capa a pantalla completa mientras la app está bloqueada. */
+const TECLAS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"] as const;
+const MAX_PIN = 8;
+
+/** Capa a pantalla completa mientras la app está bloqueada (PIN + biometría). */
 export default function PantallaBloqueo() {
   const {
     listo,
@@ -27,20 +28,16 @@ export default function PantallaBloqueo() {
   } = useAcceso();
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const [clave, setClave] = useState("");
+  const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [probando, setProbando] = useState(false);
-  const [mostrarClave, setMostrarClave] = useState(false);
 
   useEffect(() => {
     if (!bloqueado || !config.biometriaActiva) return;
     let cancelado = false;
     (async () => {
       setProbando(true);
-      const ok = await desbloquearConBiometria();
-      if (!cancelado && !ok) {
-        /* el usuario puede usar contraseña */
-      }
+      await desbloquearConBiometria();
       if (!cancelado) setProbando(false);
     })();
     return () => {
@@ -48,19 +45,24 @@ export default function PantallaBloqueo() {
     };
   }, [bloqueado, config.biometriaActiva, desbloquearConBiometria]);
 
-  if (!listo || !bloqueado) return null;
+  useEffect(() => {
+    if (!bloqueado || pin.length < 4 || probando) return;
+    const t = setTimeout(async () => {
+      setError(null);
+      setProbando(true);
+      const ok = await desbloquearConContrasena(pin);
+      setProbando(false);
+      if (!ok) {
+        setError("PIN incorrecto");
+        setPin("");
+        return;
+      }
+      setPin("");
+    }, 280);
+    return () => clearTimeout(t);
+  }, [pin, bloqueado, probando, desbloquearConContrasena]);
 
-  async function onDesbloquear() {
-    setError(null);
-    setProbando(true);
-    const ok = await desbloquearConContrasena(clave);
-    setProbando(false);
-    if (!ok) {
-      setError("Contraseña incorrecta");
-      return;
-    }
-    setClave("");
-  }
+  if (!listo || !bloqueado) return null;
 
   async function onBiometria() {
     setError(null);
@@ -70,51 +72,64 @@ export default function PantallaBloqueo() {
     if (!ok) setError("No se pudo verificar con biometría");
   }
 
+  function pulsar(tecla: string) {
+    if (probando) return;
+    if (tecla === "") return;
+    if (tecla === "⌫") {
+      setPin((p) => p.slice(0, -1));
+      setError(null);
+      return;
+    }
+    setPin((prev) => (prev.length >= MAX_PIN ? prev : prev + tecla));
+    setError(null);
+  }
+
+  const puntos = Array.from({ length: Math.max(4, Math.min(Math.max(pin.length, 4), MAX_PIN)) });
+
   return (
     <View style={styles.overlay} accessibilityViewIsModal>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.card}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
-          <Text style={styles.brand}>{provincia.nombreApp || "Pesca"}</Text>
-          <Text style={styles.title}>App bloqueada</Text>
-          <Text style={styles.sub}>Introduce tu contraseña para continuar</Text>
+        <Text style={styles.brand}>{provincia.nombreApp || "Pesca"}</Text>
+        <Text style={styles.title}>App bloqueada</Text>
+        <Text style={styles.sub}>Introduce tu PIN para continuar</Text>
 
-          <TextInput
-            value={clave}
-            onChangeText={setClave}
-            placeholder="Contraseña"
-            placeholderTextColor="#9bb8a8"
-            secureTextEntry={!mostrarClave}
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={styles.input}
-            onSubmitEditing={onDesbloquear}
-            editable={!probando}
-          />
+        <View style={styles.dotsRow} accessibilityLabel={`PIN: ${pin.length} dígitos`}>
+          {puntos.map((_, i) => (
+            <View key={i} style={[styles.dot, i < pin.length && styles.dotOn]} />
+          ))}
+        </View>
 
-          <TouchableOpacity onPress={() => setMostrarClave((v) => !v)} style={styles.linkBtn}>
-            <Text style={styles.link}>{mostrarClave ? "Ocultar" : "Mostrar"} contraseña</Text>
+        {error ? <Text style={styles.error}>{error}</Text> : <View style={{ height: 22 }} />}
+
+        {probando ? (
+          <ActivityIndicator color="#fff" style={{ marginVertical: 18 }} />
+        ) : (
+          <View style={styles.pad}>
+            {TECLAS.map((tecla, idx) => (
+              <TouchableOpacity
+                key={`${tecla}-${idx}`}
+                style={[styles.key, tecla === "" && styles.keyEmpty]}
+                onPress={() => pulsar(tecla)}
+                disabled={tecla === "" || probando}
+                accessibilityLabel={tecla === "⌫" ? "Borrar" : tecla || undefined}
+              >
+                <Text style={styles.keyTxt}>{tecla}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {config.biometriaActiva && biometria.disponible && biometria.enrolada ? (
+          <TouchableOpacity style={styles.bioBtn} onPress={onBiometria} disabled={probando}>
+            <Text style={styles.bioTxt}>Usar {biometria.etiqueta}</Text>
           </TouchableOpacity>
-
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-
-          <TouchableOpacity
-            style={[styles.btn, probando && styles.btnOff]}
-            onPress={onDesbloquear}
-            disabled={probando || clave.trim().length < 4}
-          >
-            {probando ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.btnTxt}>Entrar</Text>
-            )}
-          </TouchableOpacity>
-
-          {config.biometriaActiva && biometria.disponible && biometria.enrolada ? (
-            <TouchableOpacity style={styles.bioBtn} onPress={onBiometria} disabled={probando}>
-              <Text style={styles.bioTxt}>Usar {biometria.etiqueta}</Text>
-            </TouchableOpacity>
-          ) : null}
-        </KeyboardAvoidingView>
+        ) : (
+          <Text style={styles.hint}>
+            {Platform.OS === "web"
+              ? "En el móvil puedes activar Face ID / huella en Ajustes."
+              : "Activa la biometría en Ajustes para entrar más rápido."}
+          </Text>
+        )}
       </LinearGradient>
     </View>
   );
@@ -124,51 +139,85 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 9999,
-    backgroundColor: "rgba(12,44,32,0.55)",
+    backgroundColor: "rgba(12,44,32,0.72)",
     justifyContent: "center",
     padding: SPACING.lg,
   },
   card: {
     borderRadius: RADIUS.xl,
     padding: SPACING.xl,
+    alignItems: "center",
   },
   brand: {
     color: "#e8f5ee",
     fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     fontSize: 13,
     letterSpacing: 0.6,
     textTransform: "uppercase",
     marginBottom: 8,
+    alignSelf: "flex-start",
   },
-  title: { color: "#fff", fontSize: 26, fontWeight: "800" },
-  sub: { color: "#eef7f1", marginTop: 6, marginBottom: 18, fontSize: 14 },
-  input: {
-    backgroundColor: "rgba(255,255,255,0.18)",
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.4)",
+  title: {
     color: "#fff",
-    paddingHorizontal: 14,
-    paddingVertical: Platform.OS === "web" ? 12 : 14,
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 26,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    alignSelf: "flex-start",
   },
-  linkBtn: { alignSelf: "flex-end", marginTop: 8, marginBottom: 8 },
-  link: { color: "#e8f5ee", fontWeight: "700", fontSize: 12 },
-  error: { color: "#ffd0c8", fontWeight: "700", marginBottom: 8 },
-  btn: {
-    backgroundColor: COLORS.success,
-    borderRadius: RADIUS.md,
-    paddingVertical: 14,
-    alignItems: "center",
+  sub: {
+    color: "#eef7f1",
     marginTop: 6,
+    marginBottom: 18,
+    fontSize: 14,
+    fontFamily: FONTS.semibold,
+    alignSelf: "flex-start",
   },
-  btnOff: { opacity: 0.7 },
-  btnTxt: { color: "#fff", fontWeight: "800", fontSize: 16 },
-  bioBtn: {
-    marginTop: 14,
+  dotsRow: { flexDirection: "row", gap: 12, marginBottom: 8, minHeight: 16 },
+  dot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.55)",
+    backgroundColor: "transparent",
+  },
+  dotOn: { backgroundColor: "#fff", borderColor: "#fff" },
+  error: {
+    color: "#ffd0c8",
+    fontWeight: "700",
+    fontFamily: FONTS.bold,
+    marginBottom: 8,
+    height: 22,
+  },
+  pad: {
+    width: "100%",
+    maxWidth: 280,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+    marginTop: 4,
+  },
+  key: {
+    width: 72,
+    height: 52,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     alignItems: "center",
-    paddingVertical: 10,
+    justifyContent: "center",
   },
-  bioTxt: { color: "#fff", fontWeight: "800", fontSize: 15 },
+  keyEmpty: { backgroundColor: "transparent", borderColor: "transparent" },
+  keyTxt: { color: "#fff", fontSize: 22, fontWeight: "700", fontFamily: FONTS.bold },
+  bioBtn: { marginTop: 18, alignItems: "center", paddingVertical: 10 },
+  bioTxt: { color: "#fff", fontWeight: "800", fontFamily: FONTS.extrabold, fontSize: 15 },
+  hint: {
+    marginTop: 16,
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 12,
+    textAlign: "center",
+    fontFamily: FONTS.semibold,
+  },
 });

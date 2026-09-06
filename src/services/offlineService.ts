@@ -4,6 +4,8 @@ import { getProvinciaIdActiva } from "../provincias/runtime";
 
 const CLAVE_CACHE_LEGACY = "@pesca_castellon/cache_offline_v1";
 const CLAVE_ONBOARDING = "@pesca_castellon/onboarding_visto";
+/** Presentación estilo App Store (virtudes). Versionada para poder mostrarla de nuevo tras rediseños. */
+const CLAVE_PRESENTACION_VIRTUDES = "@pesca_castellon/presentacion_virtudes_v1";
 
 function claveCache(): string {
   return `@pesca_app/${getProvinciaIdActiva()}/cache_offline_v1`;
@@ -65,6 +67,20 @@ export async function onboardingVisto(): Promise<boolean> {
 
 export async function marcarOnboardingVisto(): Promise<void> {
   await AsyncStorage.setItem(CLAVE_ONBOARDING, "1");
+}
+
+export async function presentacionVirtudesVista(): Promise<boolean> {
+  return (await AsyncStorage.getItem(CLAVE_PRESENTACION_VIRTUDES)) === "1";
+}
+
+export async function marcarPresentacionVirtudesVista(): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_PRESENTACION_VIRTUDES, "1");
+  // Compat: el onboarding antiguo queda marcado para no duplicar flujos.
+  await AsyncStorage.setItem(CLAVE_ONBOARDING, "1");
+}
+
+export async function reiniciarPresentacionVirtudes(): Promise<void> {
+  await AsyncStorage.removeItem(CLAVE_PRESENTACION_VIRTUDES);
 }
 
 /** Datos locales siempre disponibles sin red (normativa, zonas, especies van en el bundle). */
