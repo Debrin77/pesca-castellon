@@ -44,6 +44,8 @@ import {
   montajesParaEspecie,
 } from "../data/montajesEspecie";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
+import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
+import EjeLegalMeteo from "../components/EjeLegalMeteo";
 
 interface Props {
   navigation: any;
@@ -239,9 +241,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <Text style={styles.kicker}>Modo salida</Text>
         <Text style={styles.title}>Salgo a pescar</Text>
-        <Text style={styles.sub}>En 10 segundos: dónde estás, cómo pinta y qué llevar.</Text>
+        <Text style={styles.sub}>Primero normativa (¿puedo?), luego clima (¿pinta?) y checklist.</Text>
         <View style={styles.steps}>
-          {["Ubicación", "Veredicto", "Checklist"].map((t, i) => (
+          {["Sitio", "Normativa", "Clima"].map((t, i) => (
             <View key={t} style={[styles.step, paso >= i && styles.stepOn]}>
               <Text style={[styles.stepTxt, paso >= i && styles.stepTxtOn]}>
                 {i + 1}. {t}
@@ -254,7 +256,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       {elegirUbicacion ? (
         <ListaAnimada index={0}>
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>1 · Dónde estás</Text>
+            <Text style={styles.cardTitle}>1 · Dónde estás · normativa</Text>
             <Text style={styles.hint}>
               Elige GPS, un punto en el mapa, coordenadas o una zona de {provincia.nombre}.
             </Text>
@@ -448,7 +450,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         <>
           <ListaAnimada index={0}>
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>1 · Dónde estás</Text>
+              <Text style={styles.cardTitle}>1 · Dónde estás · normativa</Text>
               {etiqueta || coords ? (
                 <Text style={styles.lugar}>
                   {etiqueta ?? "Punto elegido"}
@@ -466,6 +468,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               ) : null}
               {consulta ? (
                 <>
+                  <EjeLegalMeteo eje="legal" />
                   <SemaforoVeredicto consulta={consulta} />
                   <ConsultaPescaCard
                     consulta={consulta}
@@ -507,7 +510,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           {paso >= 1 && (
             <ListaAnimada index={1}>
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>2 · Cómo pinta hoy</Text>
+                <Text style={styles.cardTitle}>2 · Condiciones · clima</Text>
+                <EjeLegalMeteo eje="meteo" />
+                <Text style={styles.meteoAviso}>{EJE_METEO.aviso}</Text>
                 {indice && cat ? (
                   <View style={[styles.indexBox, { backgroundColor: cat.fondo }]}>
                     <Text style={[styles.indexBig, { color: cat.color }]}>
@@ -552,7 +557,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           {paso >= 2 && (
             <ListaAnimada index={2}>
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>3 · Checklist rápido</Text>
+                <Text style={styles.cardTitle}>3 · Checklist</Text>
                 {checklist.map((item, i) => (
                   <Text key={i} style={styles.check}>
                     ☐ {item}
@@ -611,6 +616,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     ...SHADOW,
+  },
+  meteoAviso: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+    marginBottom: 10,
+    lineHeight: 16,
   },
   cardTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 10 },
   hint: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 12 },

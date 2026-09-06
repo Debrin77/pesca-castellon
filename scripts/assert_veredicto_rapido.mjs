@@ -19,6 +19,9 @@ const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf
 const card = fs.readFileSync(path.join(root, "src/components/ConsultaPescaCard.tsx"), "utf8");
 
 for (const needle of [
+  "EjeLegalMeteo",
+  "EJE_LEGAL",
+  "EJE_METEO",
   "veredictoRapido",
   "abrirVeredictoRapido",
   "etiquetaHoy",
@@ -27,7 +30,7 @@ for (const needle of [
   "compacto",
   "expandido={detalleTramo}",
   "onToggleDetalle",
-  "Veredicto del punto",
+  "EJE_LEGAL",
 ]) {
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
 }

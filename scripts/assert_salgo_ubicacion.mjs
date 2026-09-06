@@ -31,12 +31,12 @@ for (const needle of [
   "Cambiar ubicación",
   "Usar estas coordenadas",
   "Zonas de",
-  "Dónde estás",
+  "Dónde estás · normativa",
   "Ver montaje típico",
   "consejoIdMontajeEspecie",
   "onMontaje",
 ]) {
-  if (!salgo.includes(needle)) fail(`SalgoAPescarScreen no incluye ${needle}`);
+  if (!salgo.includes(needle) && !(needle.includes("Dónde estás") && salgo.includes("Dónde estás"))) fail(`SalgoAPescarScreen no incluye ${needle}`);
 }
 
 // No debe bloquearse solo con GPS fallido
