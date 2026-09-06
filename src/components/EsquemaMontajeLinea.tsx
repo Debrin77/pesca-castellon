@@ -66,17 +66,34 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
 
 function uriDeAsset(source: ImageSourcePropType): string | null {
   try {
+    let uri: string | null = null;
     if (typeof source === "number") {
       const asset = Asset.fromModule(source);
-      return asset.localUri ?? asset.uri ?? null;
+      uri = asset.localUri ?? asset.uri ?? null;
+    } else if (source && typeof source === "object" && !Array.isArray(source) && "uri" in source) {
+      uri = typeof source.uri === "string" ? source.uri : null;
     }
-    if (source && typeof source === "object" && !Array.isArray(source) && "uri" in source) {
-      return typeof source.uri === "string" ? source.uri : null;
+    if (!uri) return null;
+    // GitHub Pages usa experiments.baseUrl (/pesca-castellon): las URIs absolutas
+    // tipo /assets/... deben respetar el <base href> del documento.
+    if (
+      Platform.OS === "web" &&
+      uri.startsWith("/") &&
+      typeof document !== "undefined"
+    ) {
+      const baseHref = document.querySelector("base")?.href;
+      if (baseHref) {
+        try {
+          uri = new URL(uri.replace(/^\//, ""), baseHref).toString();
+        } catch {
+          /* mantener uri */
+        }
+      }
     }
+    return uri;
   } catch {
     return null;
   }
-  return null;
 }
 
 function FotoPieza({

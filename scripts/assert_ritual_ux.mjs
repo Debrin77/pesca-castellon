@@ -28,14 +28,17 @@ if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido"))
   fail("HomeScreen sin veredicto rápido en el hero (gesto Inicio → detalle)");
 }
 
-// Orden: Salgo a pescar antes de PanelCampoHoy; Tu tramo antes que Ahora
-const iSalgo = home.indexOf("Salgo a pescar");
-const iTramo = home.indexOf("Tu tramo");
+// Orden: CTA Salgo → bloque normativa del tramo → PanelCampoHoy
+const iSalgo = home.indexOf("ctaSalgoTitle}>Salgo a pescar");
+const iTramo =
+  home.indexOf("Normativa del tramo") >= 0
+    ? home.indexOf("Normativa del tramo")
+    : home.indexOf("Tu tramo");
 const iAntes = home.indexOf("Antes de salir");
 const iSitios = home.indexOf("Tus sitios");
 const iCampo = home.indexOf("<PanelCampoHoy");
 if (iSalgo < 0 || iTramo < 0 || iCampo < 0 || !(iSalgo < iTramo && iTramo < iCampo)) {
-  fail("HomeScreen orden ritual: Salgo → Tu tramo → PanelCampoHoy");
+  fail("HomeScreen orden ritual: Salgo → Normativa del tramo → PanelCampoHoy");
 }
 if (iAntes > 0 && iSitios > 0 && !(iAntes < iCampo)) {
   fail("HomeScreen: Antes de salir debería ir antes de Campo/Ahora");
