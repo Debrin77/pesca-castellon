@@ -1,5 +1,13 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Platform,
+  type ImageSourcePropType,
+} from "react-native";
+import { Asset } from "expo-asset";
 import type { MontajeEspecie, PiezaMontaje } from "../data/montajesEspecie";
 import { CREDITO_FOTOS_MONTAJE, fotoDePiezaMontaje } from "../data/montajePiezasMedia";
 import { COLORS, RADIUS } from "../theme";
@@ -9,9 +17,12 @@ type Props = {
   width?: number;
 };
 
+const FOTO = 72;
+
 /**
- * Orden del aparejo con foto real de cada elemento + la misma explicación
- * (etiqueta, detalle, regulación). De la caña al final.
+ * Orden del aparejo con foto real de cada elemento + la misma explicación.
+ * En web: <img> nativo con URI de expo-asset (RN-web oculta el img a opacity:0).
+ * En nativo: Image + require(), como GuiaFotoConsejo.
  */
 export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
   return (
@@ -23,14 +34,11 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
       {montaje.piezas.map((p, i) => (
         <View key={`${p.etiqueta}-${i}`} style={styles.row}>
           <View style={styles.rail}>
-            <View style={styles.fotoFrame}>
-              <Image
-                source={fotoDePiezaMontaje(p)}
-                style={styles.foto}
-                resizeMode="cover"
-                accessibilityLabel={`${etiquetaTipo(p.tipo)}: ${p.etiqueta}`}
-              />
-            </View>
+            <FotoPieza
+              source={fotoDePiezaMontaje(p)}
+              label={`${etiquetaTipo(p.tipo)}: ${p.etiqueta}`}
+              tipo={p.tipo}
+            />
             {i < montaje.piezas.length - 1 ? <View style={styles.line} /> : null}
           </View>
           <View style={styles.chip}>
@@ -52,6 +60,75 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
         </View>
       ) : null}
       <Text style={styles.credito}>{CREDITO_FOTOS_MONTAJE}</Text>
+    </View>
+  );
+}
+
+function uriDeAsset(source: ImageSourcePropType): string | null {
+  try {
+    if (typeof source === "number") {
+      const asset = Asset.fromModule(source);
+      return asset.localUri ?? asset.uri ?? null;
+    }
+    if (source && typeof source === "object" && !Array.isArray(source) && "uri" in source) {
+      return typeof source.uri === "string" ? source.uri : null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function FotoPieza({
+  source,
+  label,
+  tipo,
+}: {
+  source: ImageSourcePropType;
+  label: string;
+  tipo: PiezaMontaje["tipo"];
+}) {
+  const [error, setError] = useState(false);
+  const uri = useMemo(() => uriDeAsset(source), [source]);
+
+  if (error) {
+    return (
+      <View style={[styles.fotoFrame, styles.fotoFallback]} accessibilityLabel={label}>
+        <Text style={styles.fotoFallbackTxt}>{etiquetaTipo(tipo).slice(0, 1)}</Text>
+      </View>
+    );
+  }
+
+  // Web: img real visible (RN-web usa background-image + img a opacity:0).
+  if (Platform.OS === "web" && uri) {
+    return (
+      <View style={styles.fotoFrame} accessibilityLabel={label}>
+        {React.createElement("img", {
+          src: uri,
+          alt: label,
+          draggable: false,
+          onError: () => setError(true),
+          style: {
+            width: FOTO,
+            height: FOTO,
+            objectFit: "cover",
+            display: "block",
+          },
+        })}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.fotoFrame}>
+      <Image
+        source={source}
+        style={styles.foto}
+        resizeMode="cover"
+        accessibilityLabel={label}
+        fadeDuration={0}
+        onError={() => setError(true)}
+      />
     </View>
   );
 }
@@ -79,8 +156,6 @@ function etiquetaTipo(t: PiezaMontaje["tipo"]): string {
   }
 }
 
-const FOTO = 56;
-
 const styles = StyleSheet.create({
   wrap: {
     alignSelf: "center",
@@ -106,11 +181,13 @@ const styles = StyleSheet.create({
     height: FOTO,
     borderRadius: RADIUS.sm,
     overflow: "hidden",
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.waterLight,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  foto: { width: FOTO, height: FOTO },
+  foto: { width: FOTO, height: FOTO, opacity: 1 },
+  fotoFallback: { alignItems: "center", justifyContent: "center" },
+  fotoFallbackTxt: { fontSize: 22, fontWeight: "800", color: COLORS.waterDark },
   line: {
     flex: 1,
     width: 3,
