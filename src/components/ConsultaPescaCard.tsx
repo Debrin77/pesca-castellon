@@ -13,6 +13,7 @@ import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "./ListaAnimada";
 import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
+import { certezaDeConsulta } from "../data/certezaConsulta";
 import { COLORS, RADIUS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 
@@ -48,6 +49,8 @@ export default function ConsultaPescaCard({
   const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada) : false;
   const mar = consulta.ambito === "maritimo";
   const acento = mar ? COLORS.water : COLORS.primary;
+  const certeza = certezaDeConsulta(consulta, { provinciaId: provincia.id });
+  const noOficial = certeza.nivel !== "oficial";
   const fuente = consulta.fuenteNormativaDetalle;
   const permisoInfo =
     consulta.veredicto === "coto"
@@ -78,6 +81,17 @@ export default function ConsultaPescaCard({
           <>
             <View style={[styles.compactoRow, { borderLeftColor: colorSemaforo(consulta) }]}>
               <View style={{ flex: 1 }}>
+                <View
+                  style={[
+                    styles.certezaChip,
+                    noOficial ? styles.certezaChipAprox : styles.certezaChipOficial,
+                  ]}
+                  accessibilityLabel={certeza.a11y}
+                >
+                  <Text style={styles.certezaChipTxt}>
+                    {certeza.sello} · {certeza.etiqueta}
+                  </Text>
+                </View>
                 <Text style={[styles.compactoHoy, { color: colorSemaforo(consulta) }]}>
                   {etiquetaHoy(consulta).texto}
                 </Text>
@@ -93,6 +107,11 @@ export default function ConsultaPescaCard({
                     {etiquetaHoy(consulta).sub}
                   </Text>
                 )}
+                {noOficial ? (
+                  <Text style={styles.certezaAviso} numberOfLines={2}>
+                    {certeza.aviso}
+                  </Text>
+                ) : null}
               </View>
             </View>
             <TouchableOpacity
@@ -107,24 +126,7 @@ export default function ConsultaPescaCard({
         ) : (
           <>
             <SemaforoVeredicto consulta={consulta} />
-            <View
-              style={[
-                styles.pill,
-                { backgroundColor: consulta.confianza === "oficial" ? COLORS.water : COLORS.textMuted },
-              ]}
-            >
-              <Text style={styles.pillText}>
-                {mar
-                  ? "Polígono de consulta (orientativo)"
-                  : consulta.confianza === "oficial"
-                    ? provincia.id === "sevilla"
-                      ? "Polígono DERA / Junta oficial"
-                      : "Polígono ICV oficial"
-                    : provincia.id === "sevilla"
-                      ? "Fuera de polígono DERA (aprox.)"
-                      : "Radio del anexo I (aprox.)"}
-              </Text>
-            </View>
+            {/* La certeza (OFICIAL / ORIENTATIVO) va en el propio semáforo; no repetir pill débil. */}
             <Text style={styles.title}>{consulta.titulo}</Text>
             {consulta.tramo && (
               <Text style={styles.meta}>
@@ -298,8 +300,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  pill: { alignSelf: "flex-start", borderRadius: RADIUS.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: 8 },
-  pillText: { color: "#fff", fontSize: 10, fontWeight: "800", letterSpacing: 0.4, textTransform: "uppercase" },
+  certezaChip: {
+    alignSelf: "flex-start",
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 6,
+  },
+  certezaChipOficial: { backgroundColor: COLORS.primaryDark },
+  certezaChipAprox: { backgroundColor: COLORS.warning },
+  certezaChipTxt: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
+  },
+  certezaAviso: {
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: "700",
+    color: COLORS.warning,
+    lineHeight: 15,
+  },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
   meta: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 4, marginBottom: 8 },
   ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
