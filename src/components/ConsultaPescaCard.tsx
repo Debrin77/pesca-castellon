@@ -28,6 +28,11 @@ interface Props {
   onMontaje?: (especieId: string) => void;
   /** Resumen corto: semáforo + título; el resto tras «Ver detalle». */
   compacto?: boolean;
+  /**
+   * En Inicio el hero ya muestra HOY SÍ/NO: el compacto solo aporta
+   * certeza (OFICIAL/ORIENTATIVO) + ficha, sin repetir el veredicto.
+   */
+  ocultarVeredictoCompacto?: boolean;
   /** Control externo del expandido (Inicio: gesto del hero). */
   expandido?: boolean;
   onToggleDetalle?: () => void;
@@ -40,6 +45,7 @@ export default function ConsultaPescaCard({
   onAparejos,
   onMontaje,
   compacto = false,
+  ocultarVeredictoCompacto = false,
   expandido,
   onToggleDetalle,
 }: Props) {
@@ -92,9 +98,11 @@ export default function ConsultaPescaCard({
                     {certeza.sello} · {certeza.etiqueta}
                   </Text>
                 </View>
-                <Text style={[styles.compactoHoy, { color: colorSemaforo(consulta) }]}>
-                  {etiquetaHoy(consulta).texto}
-                </Text>
+                {!ocultarVeredictoCompacto ? (
+                  <Text style={[styles.compactoHoy, { color: colorSemaforo(consulta) }]}>
+                    {etiquetaHoy(consulta).texto}
+                  </Text>
+                ) : null}
                 <Text style={styles.title} numberOfLines={2}>
                   {consulta.titulo}
                 </Text>
@@ -104,10 +112,10 @@ export default function ConsultaPescaCard({
                   </Text>
                 ) : (
                   <Text style={styles.meta} numberOfLines={1}>
-                    {etiquetaHoy(consulta).sub}
+                    {ocultarVeredictoCompacto ? certeza.aviso : etiquetaHoy(consulta).sub}
                   </Text>
                 )}
-                {noOficial ? (
+                {noOficial && !ocultarVeredictoCompacto ? (
                   <Text style={styles.certezaAviso} numberOfLines={2}>
                     {certeza.aviso}
                   </Text>

@@ -517,7 +517,6 @@ export default function HomeScreen({ navigation }: Props) {
               >
                 <View style={styles.veredictoRapidoTxt}>
                   <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-                  <Text style={styles.veredictoRapidoAviso} numberOfLines={1}>{EJE_LEGAL.aviso}</Text>
                   <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
                   <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
                     {hoyEtiqueta.sub}
@@ -535,8 +534,9 @@ export default function HomeScreen({ navigation }: Props) {
                 accessibilityLabel="Elegir punto en el mapa para el veredicto"
               >
                 <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-                  <Text style={styles.veredictoRapidoAviso} numberOfLines={1}>{EJE_LEGAL.aviso}</Text>
-                <Text style={styles.veredictoRapidoSub}>Toca el mapa o Salgo a pescar para decidir el punto</Text>
+                <Text style={styles.veredictoRapidoSub}>
+                  Elige un punto para saber si puedes pescar hoy
+                </Text>
               </TouchableOpacity>
             ) : null}
           </>
@@ -567,7 +567,7 @@ export default function HomeScreen({ navigation }: Props) {
           >
             <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
               <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-              <Text style={styles.ctaSalgoSub}>Checklist · cambiar punto · GPS o mapa</Text>
+              <Text style={styles.ctaSalgoSub}>Checklist y punto del día</Text>
             </LinearGradient>
           </PulsePress>
         </ListaAnimada>
@@ -613,12 +613,13 @@ export default function HomeScreen({ navigation }: Props) {
                 heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
             }}
           >
-            <Text style={styles.bloqueTitulo}>Normativa del tramo</Text>
+            <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
             {consultaViva ? (
               <View style={{ marginBottom: 12 }}>
                 <ConsultaPescaCard
                   consulta={consultaViva}
                   compacto
+                  ocultarVeredictoCompacto
                   expandido={detalleTramo}
                   onToggleDetalle={toggleDetalleTramo}
                   onFicha={
@@ -640,7 +641,7 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
             ) : (
               <Text style={styles.sinConsulta}>
-                Activa la ubicación, toca el mapa o elige zona/coordenadas en «Salgo a pescar».
+                Sin punto aún. Usa «Salgo a pescar» o el mapa.
               </Text>
             )}
 
