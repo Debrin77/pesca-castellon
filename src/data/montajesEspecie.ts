@@ -32,7 +32,7 @@ export type MontajeEspecie = {
   pasos: string[];
 };
 
-/** Los 8 montajes estrella para novatos en Castellón (río + costa). */
+/** Montajes habituales para novatos (río + costa). Empezar por estos; ampliar con cuidado. */
 export const MONTAJES_ESPECIE: MontajeEspecie[] = [
   {
     id: "lubina-spinning",
@@ -180,7 +180,7 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     titulo: "Trucha · cucharilla UL",
     resumen: "Emerillón + cucharilla n.º 0–2. Río y cabeceras legales.",
     ambito: "rio",
-    especieIds: ["trucha_comun", "trucha_arcoiris", "barbo"],
+    especieIds: ["trucha_comun", "trucha_arcoiris"],
     piezas: [
       { tipo: "linea", etiqueta: "Nylon 0.14–0.18", detalle: "UL" },
       { tipo: "emerillon", etiqueta: "Emerillón micro + snap", detalle: "anti-enredo" },
@@ -251,6 +251,116 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
       "Engancha el egí; comprueba que las coronas giran libres.",
       "Lanza paralelo a la escollera y trabaja el fondo.",
       "Al picar: sube continuo sin golpes secos; usa salabardo si puedes.",
+    ],
+  },
+  {
+    id: "jurel-cucharilla",
+    consejoId: "montaje-jurel-cucharilla",
+    diagramaId: "montaje-jurel-cucharilla",
+    titulo: "Jurel / caballa · cucharilla de orilla",
+    resumen: "Emerillón + cucharilla o metal jig ligero. Pases de cardumen cerca de espigones legales.",
+    ambito: "costa",
+    especieIds: ["jurel", "caballa"],
+    piezas: [
+      { tipo: "linea", etiqueta: "Trenza 0.08–0.12", detalle: "+ bajo flúoro 0.25–0.30" },
+      { tipo: "emerillon", etiqueta: "Emerillón + snap", detalle: "anti-enredo" },
+      { tipo: "senuelo", etiqueta: "Cucharilla / metal 7–21 g", detalle: "brillante o azul" },
+    ],
+    regulacion: [
+      "Recupera constante y algo rápida; el jurel ataca el movimiento.",
+      "Si ves saltos en superficie, acorta pases y usa metal más ligero.",
+      "Fuera de dársena y de zona de baño; espigón solo si es legal.",
+    ],
+    alternativa: "Con agua fría: vinilo pequeño tipo pez a media agua, misma base de snap.",
+    pasos: [
+      "Ata el emerillón al bajo (Palomar).",
+      "Engancha la cucharilla al snap.",
+      "Lanza paralelo a la orilla o hacia el canal y recupera sin pausas largas.",
+      "Cambia de color si en 10 minutos no hay toques.",
+    ],
+  },
+  {
+    id: "pulpo-fondo",
+    consejoId: "montaje-pulpo-fondo",
+    diagramaId: "montaje-pulpo-fondo",
+    titulo: "Pulpo · fondo de roca (caña o mano)",
+    resumen: "Plomo + bajo corto + anzuelo con cebo o jig de pulpo. Solo orilla legal, de día.",
+    ambito: "costa",
+    especieIds: ["pulpo"],
+    piezas: [
+      { tipo: "linea", etiqueta: "Nylon / trenza 0.25–0.35" },
+      { tipo: "plomo", etiqueta: "Oliva / pirámide 40–80 g", detalle: "según corriente" },
+      { tipo: "linea", etiqueta: "Bajo corto 30–50 cm", detalle: "resistente a roca" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo / jig pulpo", detalle: "cebo bien fijado" },
+      { tipo: "cebo", etiqueta: "Sardina / cangrejo / jig", detalle: "cerca de grietas" },
+    ],
+    regulacion: [
+      "Trabaja el fondo: toques suaves; el pulpo «pesa» al enganchar.",
+      "Devuelve el que no llegue a 1 kg (orientación del decreto); cupo 5 kg/día.",
+      "Nunca nasas ni gancho profesional; Irta: pesca a pie vedada.",
+    ],
+    alternativa: "Jig de pulpo sin cebo natural, mismo esquema de plomo + bajo.",
+    pasos: [
+      "Monta plomo y bajo corto con nudo firme.",
+      "Ceba o engacha el jig; lanza junto a escollera legal.",
+      "Deja reposar y da tirones cortos cada 20–30 s.",
+      "Al clavar, mantén tensión constante hasta la orilla.",
+    ],
+  },
+  {
+    id: "barbo-feeder",
+    consejoId: "montaje-barbo-feeder",
+    diagramaId: "montaje-barbo-feeder",
+    titulo: "Barbo · feeder / fondo de río",
+    resumen: "Plomo deslizante o cage + bajo + anzuelo. Donde cebar esté permitido.",
+    ambito: "rio",
+    especieIds: ["barbo"],
+    piezas: [
+      { tipo: "linea", etiqueta: "Nylon 0.22–0.28" },
+      { tipo: "plomo", etiqueta: "Oliva / cage 20–50 g", detalle: "deslizante" },
+      { tipo: "emerillon", etiqueta: "Tope + emerillón" },
+      { tipo: "linea", etiqueta: "Bajo 0.18–0.22", detalle: "40–70 cm" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "sin arponcillo si sueltas" },
+      { tipo: "cebo", etiqueta: "Lombriz / maíz / pellet" },
+    ],
+    regulacion: [
+      "Ajusta el plomo para que aguante la corriente sin rodar.",
+      "Bajo más fino en agua clara; más corto con basura en el cauce.",
+      "Barbo autóctono: sin muerte donde lo marque el cartel.",
+    ],
+    alternativa: "Spinning ligero con cucharilla pequeña en pozas (ver trucha UL).",
+    pasos: [
+      "Pasa la línea por el plomo deslizante.",
+      "Ata emerillón de tope y el bajo con anzuelo.",
+      "Ceba y lanza a la vena o al final de una poza.",
+      "Espera picadas en serie; no claves al primer toque.",
+    ],
+  },
+  {
+    id: "siluro-spinning",
+    consejoId: "montaje-siluro-spinning",
+    diagramaId: "montaje-siluro-spinning",
+    titulo: "Siluro · spinning / fondo pesado",
+    resumen: "Material robusto: trenza gruesa + bajo + vinilo grande o cebo de fondo. Embalse / tramo legal.",
+    ambito: "rio",
+    especieIds: ["siluro"],
+    piezas: [
+      { tipo: "linea", etiqueta: "Trenza 0.20–0.35", detalle: "o nylon muy fuerte" },
+      { tipo: "linea", etiqueta: "Bajo acero / flúoro grueso", detalle: "80–120 cm" },
+      { tipo: "emerillon", etiqueta: "Emerillón + snap XXL" },
+      { tipo: "senuelo", etiqueta: "Vinilo / shad 15–25 cm", detalle: "o montaje de fondo" },
+    ],
+    regulacion: [
+      "Recupera lenta cerca del fondo; pausas largas junto a estructura.",
+      "Comprueba normativa local (invasora / obligación de sacrificio según tramo).",
+      "Caña y carrete de potencia: no improvises con UL.",
+    ],
+    alternativa: "Fondo con pez muerto o pellet grande donde esté permitido cebar.",
+    pasos: [
+      "Monta bajo reforzado al final de la trenza.",
+      "Snap grande + señuelo pesado (o plomo + cebo de fondo).",
+      "Lanza a profundidad (presa, canal, árbol sumergido).",
+      "Clava con decisión y pelea sin aflojar el drag de golpe.",
     ],
   },
 ];
