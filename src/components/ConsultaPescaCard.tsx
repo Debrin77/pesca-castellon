@@ -216,6 +216,22 @@ export default function ConsultaPescaCard({
               <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
             ) : null}
 
+            {consulta.veredicto === "fuera_catalogo" && !mar ? (
+              <View style={styles.coberturaBox}>
+                <Text style={styles.coberturaTitle}>Cobertura del mapa</Text>
+                <Text style={styles.ok}>{provincia.coberturaCartografica.resumen}</Text>
+                {provincia.coberturaCartografica.urlVisor ? (
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(provincia.coberturaCartografica.urlVisor!)}
+                    accessibilityRole="link"
+                    accessibilityLabel="Abrir cartografía oficial"
+                  >
+                    <Text style={[styles.link, { color: acento }]}>Cartografía oficial ›</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            ) : null}
+
             {fuente ? (
               <View style={styles.fuenteBox}>
                 <Text style={styles.fuenteKicker}>NORMATIVA · CONSULTA {fuente.consultadoEn}</Text>
@@ -350,6 +366,16 @@ const styles = StyleSheet.create({
     borderColor: COLORS.warning,
   },
   permisoTitle: { fontSize: 12, fontWeight: "800", color: COLORS.warning, marginBottom: 4 },
+  coberturaBox: {
+    marginTop: 8,
+    marginBottom: 4,
+    padding: 10,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.mist,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  coberturaTitle: { fontSize: 12, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 4 },
   row: { flexDirection: "row", gap: 8, marginTop: 12, flexWrap: "wrap" },
   btn: { backgroundColor: COLORS.primary, borderRadius: RADIUS.sm, paddingHorizontal: 12, paddingVertical: 8 },
   btnText: { color: "#fff", fontWeight: "700", fontSize: 12 },

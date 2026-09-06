@@ -43,9 +43,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         emoji: "🚦",
         titulo: "Lee el semáforo",
         texto: provincia.continentalOnly
-          ? `Verde: aguas libres. Rojo: refugio de pesca (Anexo IV, prohibido). En ${nombreProv} usamos polígonos oficiales DERA de la Junta.`
+          ? `Verde: aguas libres. Rojo: refugio (Anexo IV, prohibido). Gris «SIN TRAMO»: no es veda automática — en ${nombreProv} el art. 5.2 puede aplicar si no es refugio. Polígonos oficiales DERA.`
           : provincia.tieneIcv
-            ? `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). La app usa polígonos y anexos oficiales de ${nombreProv}.`
+            ? `Verde: hoy sí. Rojo: veda. Ámbar: coto (permiso). Gris «SIN TRAMO»: fuera del catálogo geométrico, no es veda automática. Polígonos ICV + anexos de ${nombreProv}.`
             : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
       },
       {

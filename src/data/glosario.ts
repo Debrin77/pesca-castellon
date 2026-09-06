@@ -49,6 +49,20 @@ export const GLOSARIO: Record<string, TerminoGlosario> = {
     resumen: "Tramo no pescable o reserva.",
     detalle: "Prohibido pescar. En el mapa: rojo.",
   },
+  sin_tramo: {
+    id: "sin_tramo",
+    etiqueta: "Sin tramo / fuera de catálogo",
+    resumen: "El punto no cae en polígono oficial ni en el radio de un tramo del catálogo.",
+    detalle:
+      "No es veda automática. En Sevilla el art. 5.2 puede permitir aguas libres no dibujadas. En Castellón las ZPL del anexo usan radio aproximado; un cauce no listado queda en duda. Confirma cartel y fuente oficial.",
+  },
+  art52: {
+    id: "art52",
+    etiqueta: "Art. 5.2 (Andalucía)",
+    resumen: "Aguas libres: toda masa no delimitada como coto o refugio.",
+    detalle:
+      "DERA no cartografía todos los cauces libres. «Sin tramo» en Sevilla no equivale a prohibido: hace falta licencia, NIR, seguro RC y comprobar que no es refugio ni espacio restringido.",
+  },
   ptop: {
     id: "ptop",
     etiqueta: "PTOP",

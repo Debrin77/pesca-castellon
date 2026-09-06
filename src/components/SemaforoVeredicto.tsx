@@ -11,7 +11,15 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
   if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") {
     return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
   }
-  if (c.veredicto === "fuera_catalogo") return { texto: "SIN TRAMO", sub: "No está en el catálogo" };
+  if (c.veredicto === "fuera_catalogo") {
+    const esSevilla = getProvinciaActiva().id === "sevilla";
+    return {
+      texto: "SIN TRAMO",
+      sub: esSevilla
+        ? "No es veda · art. 5.2 puede aplicar"
+        : "No es veda · fuera del catálogo",
+    };
+  }
   if (c.sePuedePescarHoy) {
     return {
       texto: "HOY SÍ",
