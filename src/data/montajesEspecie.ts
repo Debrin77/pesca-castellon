@@ -8,7 +8,7 @@ export type PiezaMontaje = {
   etiqueta: string;
   /** Detalle (talla, gramos, regulación…) */
   detalle?: string;
-  /** Forma visual en el esquema */
+  /** Tipo de elemento → foto en EsquemaMontajeLinea (montajePiezasMedia) */
   tipo: "linea" | "emerillon" | "snap" | "boya" | "plomo" | "anzuelo" | "senuelo" | "cebo";
 };
 

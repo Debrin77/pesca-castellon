@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import type { MontajeEspecie, PiezaMontaje } from "../data/montajesEspecie";
+import { CREDITO_FOTOS_MONTAJE, fotoDePiezaMontaje } from "../data/montajePiezasMedia";
 import { COLORS, RADIUS } from "../theme";
 
 type Props = {
@@ -8,20 +9,9 @@ type Props = {
   width?: number;
 };
 
-const COLOR_PIEZA: Record<PiezaMontaje["tipo"], string> = {
-  linea: COLORS.waterDark,
-  emerillon: "#6B7280",
-  snap: "#4B5563",
-  boya: COLORS.danger,
-  plomo: "#7A8690",
-  anzuelo: COLORS.gold,
-  senuelo: COLORS.primary,
-  cebo: "#C45C12",
-};
-
 /**
- * Esquema vertical de la línea: de la caña al señuelo/cebo.
- * Pensado para que un principiante vea el orden de un vistazo.
+ * Orden del aparejo con foto real de cada elemento + la misma explicación
+ * (etiqueta, detalle, regulación). De la caña al final.
  */
 export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
   return (
@@ -33,10 +23,17 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
       {montaje.piezas.map((p, i) => (
         <View key={`${p.etiqueta}-${i}`} style={styles.row}>
           <View style={styles.rail}>
-            <View style={[styles.dot, { backgroundColor: COLOR_PIEZA[p.tipo] }]} />
+            <View style={styles.fotoFrame}>
+              <Image
+                source={fotoDePiezaMontaje(p)}
+                style={styles.foto}
+                resizeMode="cover"
+                accessibilityLabel={`${etiquetaTipo(p.tipo)}: ${p.etiqueta}`}
+              />
+            </View>
             {i < montaje.piezas.length - 1 ? <View style={styles.line} /> : null}
           </View>
-          <View style={[styles.chip, { borderColor: COLOR_PIEZA[p.tipo] }]}>
+          <View style={styles.chip}>
             <Text style={styles.tipo}>{etiquetaTipo(p.tipo)}</Text>
             <Text style={styles.etiqueta}>{p.etiqueta}</Text>
             {p.detalle ? <Text style={styles.detalle}>{p.detalle}</Text> : null}
@@ -54,6 +51,7 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
           ))}
         </View>
       ) : null}
+      <Text style={styles.credito}>{CREDITO_FOTOS_MONTAJE}</Text>
     </View>
   );
 }
@@ -81,6 +79,8 @@ function etiquetaTipo(t: PiezaMontaje["tipo"]): string {
   }
 }
 
+const FOTO = 56;
+
 const styles = StyleSheet.create({
   wrap: {
     alignSelf: "center",
@@ -99,31 +99,36 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     marginBottom: 10,
   },
-  row: { flexDirection: "row", alignItems: "stretch", minHeight: 52 },
-  rail: { width: 18, alignItems: "center" },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginTop: 14,
-    borderWidth: 2,
-    borderColor: "#fff",
+  row: { flexDirection: "row", alignItems: "stretch", minHeight: FOTO + 12 },
+  rail: { width: FOTO, alignItems: "center" },
+  fotoFrame: {
+    width: FOTO,
+    height: FOTO,
+    borderRadius: RADIUS.sm,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
+  foto: { width: FOTO, height: FOTO },
   line: {
     flex: 1,
     width: 3,
     backgroundColor: COLORS.water,
-    marginTop: 2,
-    marginBottom: 0,
+    marginTop: 4,
+    marginBottom: 2,
     borderRadius: 2,
+    minHeight: 8,
   },
   chip: {
     flex: 1,
-    marginLeft: 8,
-    marginBottom: 8,
+    marginLeft: 10,
+    marginBottom: 10,
+    justifyContent: "center",
     backgroundColor: "#fff",
     borderRadius: RADIUS.sm,
-    borderLeftWidth: 4,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.water,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
@@ -151,4 +156,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   regItem: { fontSize: 12, lineHeight: 17, color: COLORS.textSecondary, marginBottom: 2 },
+  credito: {
+    marginTop: 10,
+    fontSize: 10,
+    color: COLORS.textMuted,
+    lineHeight: 14,
+    fontStyle: "italic",
+  },
 });
