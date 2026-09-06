@@ -19,7 +19,6 @@ const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf
 const card = fs.readFileSync(path.join(root, "src/components/ConsultaPescaCard.tsx"), "utf8");
 
 for (const needle of [
-  "EjeLegalMeteo",
   "EJE_LEGAL",
   "EJE_METEO",
   "veredictoRapido",
@@ -33,6 +32,9 @@ for (const needle of [
   "EJE_LEGAL",
 ]) {
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
+}
+if (home.includes('eje="meteo"')) {
+  fail("Home no debe mostrar «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
 }
 
 // El chip del hero debe ir antes del CTA Salgo (respuesta sin scroll)

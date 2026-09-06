@@ -48,7 +48,6 @@ import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
-import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -427,7 +426,6 @@ export default function HomeScreen({ navigation }: Props) {
 
             {indiceHoy && catInfo ? (
               <View>
-                <EjeLegalMeteo eje="meteo" sobreOscuro compacto />
                 <View style={styles.pulsoRow}>
                 <View style={styles.pulsoIndice}>
                   <Text style={styles.indexLabel}>{EJE_METEO.indexLabel}</Text>

@@ -40,8 +40,11 @@ if (!ejeComp.includes("EJE_LEGAL") || !ejeComp.includes("EJE_METEO")) {
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-for (const n of ["EjeLegalMeteo", 'eje="meteo"', "EJE_LEGAL", "EJE_METEO", "indexLabel", "tituloCorto"]) {
+for (const n of ["EJE_LEGAL", "EJE_METEO", "indexLabel", "tituloCorto"]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+}
+if (home.includes('eje="meteo"') || (home.includes("EjeLegalMeteo") && home.includes('eje="meteo"'))) {
+  fail("Home no debe mostrar la pregunta «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
 }
 if (home.includes(">Índice de pesca<")) {
   fail("Home no debe mostrar «Índice de pesca» sin eje clima");
@@ -57,6 +60,9 @@ if (salgo.includes('["Ubicación", "Veredicto", "Checklist"]')) {
 
 const prev = read("src/screens/PrevisionScreen.tsx");
 if (!prev.includes("EJE_METEO")) fail("PrevisionScreen sin EJE_METEO");
+if (prev.includes('eje="meteo"')) {
+  fail("Previsión no debe mostrar la pregunta «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
+}
 if (!prev.includes("no es permiso legal")) {
   fail("PrevisionScreen debe aclarar que el índice no es permiso legal");
 }
