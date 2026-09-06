@@ -32,6 +32,9 @@ for (const needle of [
   "Usar estas coordenadas",
   "Zonas de",
   "Dónde estás",
+  "Ver montaje típico",
+  "consejoIdMontajeEspecie",
+  "onMontaje",
 ]) {
   if (!salgo.includes(needle)) fail(`SalgoAPescarScreen no incluye ${needle}`);
 }

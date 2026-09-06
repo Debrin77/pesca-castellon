@@ -8,6 +8,7 @@ import { avisoSitiosCosta } from "../services/consultaCostaService";
 import { infoPermisoCoto } from "../data/permisosCoto";
 import { debeMostrarPescaRec } from "../services/pescaRecService";
 import { guardarPermisoDia, tienePermisoHoy } from "../services/cupoService";
+import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "./ListaAnimada";
 import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
@@ -22,6 +23,8 @@ interface Props {
   onEspecies?: () => void;
   /** Equipo recomendado de la especie destacada del tramo. */
   onAparejos?: (especieId: string) => void;
+  /** Esquema visual de línea para la especie destacada (si hay montaje). */
+  onMontaje?: (especieId: string) => void;
   /** Resumen corto: semáforo + título; el resto tras «Ver detalle». */
   compacto?: boolean;
   /** Control externo del expandido (Inicio: gesto del hero). */
@@ -34,6 +37,7 @@ export default function ConsultaPescaCard({
   onFicha,
   onEspecies,
   onAparejos,
+  onMontaje,
   compacto = false,
   expandido,
   onToggleDetalle,
@@ -41,6 +45,7 @@ export default function ConsultaPescaCard({
   const provincia = getProvinciaActiva();
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
+  const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada) : false;
   const mar = consulta.ambito === "maritimo";
   const acento = mar ? COLORS.water : COLORS.primary;
   const fuente = consulta.fuenteNormativaDetalle;
@@ -255,6 +260,16 @@ export default function ConsultaPescaCard({
                   accessibilityLabel="Ver aparejo de la especie destacada"
                 >
                   <Text style={[styles.btnGhostText, { color: acento }]}>Aparejo</Text>
+                </TouchableOpacity>
+              ) : null}
+              {especieDestacada && montajeDisponible && onMontaje ? (
+                <TouchableOpacity
+                  onPress={() => onMontaje(especieDestacada)}
+                  style={styles.btnGhost}
+                  accessibilityRole="button"
+                  accessibilityLabel="Ver montaje típico de la especie destacada"
+                >
+                  <Text style={[styles.btnGhostText, { color: acento }]}>Montaje</Text>
                 </TouchableOpacity>
               ) : null}
               {compacto ? (
