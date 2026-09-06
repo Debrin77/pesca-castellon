@@ -14,6 +14,9 @@ import CaraZona from "../components/CaraZona";
 import { caraDeZona } from "../data/carasVisuales";
 import { sitiosDeFicha } from "../services/sitiosComunidad";
 import { COLORS, RADIUS, SHADOW } from "../theme";
+import { accesoDeZona } from "../data/accesosZonas";
+import { abrirEnMaps } from "../utils/abrirEnMaps";
+import TerminoAyuda from "../components/TerminoAyuda";
 
 interface Props {
   route: { params: { zoneId: string } };
@@ -113,6 +116,36 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         <Text style={styles.mapLinkTxt}>Ver en el mapa →</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.mapsBtn}
+        onPress={() => abrirEnMaps(zone.lat, zone.lng, zone.nombre)}
+        accessibilityRole="button"
+        accessibilityLabel="Abrir en Maps"
+      >
+        <Text style={styles.mapsBtnTxt}>Cómo llegar · abrir en Maps</Text>
+      </TouchableOpacity>
+
+      {accesoDeZona(zone.id) ? (
+        <View style={styles.accesoBox}>
+          <Text style={styles.accesoTitle}>Acceso y aparcamiento</Text>
+          <Text style={styles.accesoResumen}>{accesoDeZona(zone.id)!.resumen}</Text>
+          {accesoDeZona(zone.id)!.puntos.map((p) => (
+            <View key={p.nombre} style={styles.accesoItem}>
+              <Text style={styles.accesoNombre}>{p.nombre}</Text>
+              <Text style={styles.accesoDetalle}>{p.detalle}</Text>
+              {p.lat != null && p.lng != null ? (
+                <TouchableOpacity onPress={() => abrirEnMaps(p.lat!, p.lng!, p.nombre)}>
+                  <Text style={styles.accesoMaps}>Abrir en Maps →</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          ))}
+          {accesoDeZona(zone.id)!.aviso ? (
+            <Text style={styles.accesoAviso}>{accesoDeZona(zone.id)!.aviso}</Text>
+          ) : null}
+        </View>
+      ) : null}
+
       {sitiosDeFicha(zone.id).map((bloque) => (
         <SitiosOrientativos
           key={bloque.tramoNombre}
@@ -123,11 +156,14 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 
       {provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId) ? (
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>
-          {zone.saihFuente === "chg"
-            ? "Estado del embalse (SAIH Guadalquivir)"
-            : "Estado del embalse (SAIH Júcar)"}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap", marginBottom: 6 }}>
+          <TerminoAyuda id="saih" />
+          <Text style={styles.cardTitle}>
+            {zone.saihFuente === "chg"
+              ? "Estado del embalse (SAIH Guadalquivir)"
+              : "Estado del embalse (SAIH Júcar)"}
+          </Text>
+        </View>
         {cargando ? (
           <ActivityIndicator color={COLORS.water} />
         ) : hidro ? (
@@ -244,6 +280,31 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
+  mapsBtn: {
+    marginTop: 10,
+    backgroundColor: COLORS.water,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+  },
+  mapsBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  accesoBox: {
+    marginTop: 14,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  accesoTitle: { fontSize: 16, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 6 },
+  accesoResumen: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 20, marginBottom: 10 },
+  accesoItem: { marginBottom: 10 },
+  accesoNombre: { fontSize: 15, fontWeight: '700', color: COLORS.water },
+  accesoDetalle: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 20, marginTop: 2 },
+  accesoMaps: { marginTop: 4, fontSize: 13, fontWeight: '700', color: COLORS.water },
+  accesoAviso: { fontSize: 12, color: COLORS.textMuted, marginTop: 4, fontStyle: 'italic' },
+
   container: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
   headerCard: {

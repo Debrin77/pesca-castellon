@@ -27,6 +27,9 @@ import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
 import PanelCampoHoy from "../components/PanelCampoHoy";
+import RecomendacionHoyCard from "../components/RecomendacionHoyCard";
+import TerminoAyuda from "../components/TerminoAyuda";
+import type { RecomendacionHoy } from "../utils/recomendacionHoy";
 import { consultarToqueMapa } from "../services/consultaCostaService";
 import { colorSemaforo } from "../services/consultaPescaService";
 import {
@@ -107,10 +110,23 @@ export default function HomeScreen({ navigation }: Props) {
   const [online, setOnline] = useState(true);
   const [cache, setCache] = useState<CacheOffline | null>(null);
   const [detalleTramo, setDetalleTramo] = useState(false);
+  const [antesAbierto, setAntesAbierto] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: provincia.nombreApp });
   }, [navigation, provincia.nombreApp]);
+
+  const coordsFavorito = useCallback(
+    (zonaId: string) => {
+      const z = (provincia.zones as { id: string; lat?: number; lng?: number }[]).find(
+        (x) => x.id === zonaId
+      );
+      if (z?.lat == null || z?.lng == null) return null;
+      return { lat: z.lat, lng: z.lng };
+    },
+    [provincia.zones]
+  );
+
 
   useFocusEffect(
     useCallback(() => {
@@ -478,13 +494,13 @@ export default function HomeScreen({ navigation }: Props) {
 
             {alertasClima.length > 0 && (
               <View style={styles.alertRow}>
-                {alertasClima.map((alerta, idx) => (
+                {alertasClima.slice(0, 1).map((alerta, idx) => (
                   <View
                     key={idx}
                     style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
                   >
                     <Text style={styles.weatherAlertText}>
-                      {alerta.icono} {alerta.texto}
+                      {alerta.icono} {alerta.texto}{alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
                     </Text>
                   </View>
                 ))}
@@ -556,8 +572,39 @@ export default function HomeScreen({ navigation }: Props) {
           </PulsePress>
         </ListaAnimada>
 
-        {/* Veredicto del tramo — detalle bajo demanda */}
         <ListaAnimada index={1}>
+          <RecomendacionHoyCard
+            favoritos={favoritos}
+            puntos={puntos}
+            actual={
+              ubicacion
+                ? { lat: ubicacion.lat, lng: ubicacion.lng, nombre: etiquetaClima }
+                : null
+            }
+            coordsFavorito={coordsFavorito}
+            onExplorarMapa={() => navigation.navigate("Mapa")}
+            onAbrir={(r: RecomendacionHoy) => {
+              if (r.candidato.zoneId) {
+                navigation.navigate("ZoneDetail", { zoneId: r.candidato.zoneId });
+                return;
+              }
+              navigation.navigate("Mapa", {
+                screen: "ZonasLibresMain",
+                params: {
+                  centrarEn: {
+                    lat: r.candidato.lat,
+                    lng: r.candidato.lng,
+                    nombre: r.candidato.nombre,
+                  },
+                },
+              });
+            }}
+          />
+        </ListaAnimada>
+
+
+        {/* Veredicto del tramo — detalle bajo demanda */}
+        <ListaAnimada index={2}>
           <View
             style={styles.bloque}
             onLayout={(e) => {
@@ -617,29 +664,57 @@ export default function HomeScreen({ navigation }: Props) {
         </ListaAnimada>
 
         {/* Seguridad compacta */}
-        <ListaAnimada index={2}>
+        <ListaAnimada index={3}>
           <View style={styles.bloque}>
-            <Text style={styles.bloqueTitulo}>Antes de salir</Text>
+            <TouchableOpacity
+              onPress={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setAntesAbierto((v) => !v);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: antesAbierto }}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={styles.bloqueTitulo}>Antes de salir</Text>
+                <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: -2, marginBottom: 4 }}>
+                  {avisosCargando
+                    ? "Consultando avisos…"
+                    : avisosSeguridad.length === 0
+                      ? "Sin avisos activos · licencia y temporada"
+                      : `${avisosSeguridad.length} aviso${avisosSeguridad.length === 1 ? "" : "s"} · toca para ver`}
+                </Text>
+              </View>
+              <Text style={styles.chevron}>{antesAbierto ? "▲" : "▼"}</Text>
+            </TouchableOpacity>
+            {antesAbierto ? (
+              <>
             <TemporadaBanner />
             <PanelAvisosSeguridad
               avisos={avisosSeguridad}
               cargando={avisosCargando}
               error={avisosError}
+              compacto
             />
             <LicenseBanner onPress={() => navigation.navigate("License")} />
+              </>
+            ) : null}
           </View>
         </ListaAnimada>
 
         {/* Sitios personales / embalses */}
         {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
-          <ListaAnimada index={3}>
+          <ListaAnimada index={4}>
             <View style={styles.bloque}>
               <Text style={styles.bloqueTitulo}>Tus sitios</Text>
 
               {saihPanel.length > 0 && (
                 <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
                   <View style={styles.sectionRow}>
-                    <Text style={styles.sectionTitle}>Embalses SAIH</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={styles.sectionTitle}>Embalses</Text>
+                      <TerminoAyuda id="saih" />
+                    </View>
                     <Text style={styles.sectionMeta}>
                       {saihPanel.some((s) => s.fuente === "saih_chj" || s.fuente === "saih_chg")
                         ? "en vivo"
@@ -672,7 +747,10 @@ export default function HomeScreen({ navigation }: Props) {
                   <View style={styles.sectionRow}>
                     <Text style={styles.sectionTitle}>Favoritos y puntos</Text>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+                      onPress={() => navigation.navigate("Capturas", {
+                screen: "CapturasMain",
+                params: { abrirCapturaRapida: true },
+              })}
                     >
                       <Text style={styles.linkMini}>Ver todo</Text>
                     </TouchableOpacity>
@@ -718,18 +796,23 @@ export default function HomeScreen({ navigation }: Props) {
           </ListaAnimada>
         )}
 
-        <ListaAnimada index={4}>
+        <ListaAnimada index={5}>
           <PanelCampoHoy navigation={navigation} />
         </ListaAnimada>
 
         <View style={styles.linksRow}>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Capturas", { screen: "CapturasMain" })}
+            onPress={() =>
+              navigation.navigate("Capturas", {
+                screen: "CapturasMain",
+                params: { abrirCapturaRapida: true },
+              })
+            }
             accessibilityRole="button"
-            accessibilityLabel="Capturas"
+            accessibilityLabel="Captura rápida"
           >
-            <Text style={styles.linkChipTxt}>Capturas</Text>
+            <Text style={styles.linkChipTxt}>+ Captura</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
@@ -1015,7 +1098,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   bloque: {
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.xl,
   },
   bloqueTitulo: {
     fontSize: 13,

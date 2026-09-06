@@ -10,6 +10,7 @@ import PescaRecBanner from "./PescaRecBanner";
 import PanelOfflineMapa from "./PanelOfflineMapa";
 import CalendarioConcursos from "./CalendarioConcursos";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
+import TerminoAyuda from "./TerminoAyuda";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -77,7 +78,10 @@ export default function PanelCampoHoy({ navigation }: Props) {
           accessibilityRole="button"
           accessibilityLabel="Abrir previsión solunar"
         >
-          <Text style={styles.trioOver}>Solunar {solunar.iconoLuna}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 2 }}>
+            <TerminoAyuda id="solunar" textStyle={styles.trioOver} />
+            <Text style={styles.trioOver}> {solunar.iconoLuna}</Text>
+          </View>
           <Text style={styles.trioBig}>
             {solunar.mejorHoraInicio}–{solunar.mejorHoraFin}
           </Text>

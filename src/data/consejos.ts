@@ -476,6 +476,23 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       },
       {
         id: "voc-saih",
+        id: "voc-solunar",
+        titulo: "Solunar",
+        resumen: "Ventanas mayores/menores según sol y luna (orientativo).",
+        detalle:
+          "Ayuda a elegir franja. No sustituye clima, caudal ni normativa del tramo.",
+        tags: ["meteo"],
+      },
+      {
+        id: "voc-sm",
+        titulo: "SM — sin muerte",
+        resumen: "Debes devolver el pez vivo al agua de inmediato.",
+        detalle:
+          "Obligatoria para trucha común y barbos autóctonos en muchos tramos. Anzuelo sin arponcillo.",
+        tags: ["ética"],
+      },
+      {
+        id: "voc-saih",
         titulo: "SAIH",
         resumen: "Sistema Automático de Información Hidrológica.",
         detalle:
