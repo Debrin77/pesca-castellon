@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -46,6 +46,9 @@ import {
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import EjeLegalMeteo from "../components/EjeLegalMeteo";
+import ChecklistInteractivo, { itemsDesdeTextos } from "../components/ChecklistInteractivo";
+import SheetPermisoGps from "../components/SheetPermisoGps";
+import { sitiosFacilesDe } from "../data/sitiosFaciles";
 
 interface Props {
   navigation: any;
@@ -78,6 +81,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [gpsCargando, setGpsCargando] = useState(false);
+  const [sheetGps, setSheetGps] = useState(false);
+  const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
 
   const sitiosPersonales = listarSitiosPersonales(puntos, capturas, {
     region: provincia.regionMapa,
@@ -85,6 +90,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       resolverEspecie(id, provincia.species as { id: string; nombre: string }[])?.nombre ?? id,
     limite: 10,
   });
+
+  const sitiosFaciles = sitiosFacilesDe(provincia.id as "castellon" | "sevilla");
 
   const zonasRapidas = [...(provincia.zones as { id: string; nombre: string; lat: number; lng: number; tipo?: string }[])]
     .sort((a, b) => {
@@ -156,10 +163,27 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     }, [aplicarUbicacion])
   );
 
+  async function pedirGpsConSheet(): Promise<boolean> {
+    const { gpsSheetVisto, marcarGpsSheetVisto } = await import("../services/primeraSalidaService");
+    if (await gpsSheetVisto()) return solicitarPermisoUbicacion();
+    return new Promise((resolve) => {
+      gpsResolver.current = async (continuar) => {
+        setSheetGps(false);
+        if (!continuar) {
+          resolve(false);
+          return;
+        }
+        await marcarGpsSheetVisto();
+        resolve(await solicitarPermisoUbicacion());
+      };
+      setSheetGps(true);
+    });
+  }
+
   async function usarGps() {
     setGpsCargando(true);
     setError(null);
-    const ok = await solicitarPermisoUbicacion();
+    const ok = await pedirGpsConSheet();
     if (!ok) {
       setGpsCargando(false);
       Alert.alert(
@@ -237,6 +261,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   }
 
   return (
+    <>
+    <SheetPermisoGps
+      visible={sheetGps}
+      onCancelar={() => gpsResolver.current?.(false)}
+      onContinuar={() => gpsResolver.current?.(true)}
+    />
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <Text style={styles.kicker}>Modo salida</Text>
@@ -411,7 +441,31 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               </>
             ) : null}
 
+            {sitiosFaciles.length > 0 ? (
+              <View style={{ marginBottom: 10 }}>
+                <Text style={styles.formLabel}>Sitios fáciles para empezar</Text>
+                {sitiosFaciles.slice(0, 5).map((z) => (
+                  <TouchableOpacity
+                    key={z.id}
+                    style={styles.zonaChip}
+                    onPress={() =>
+                      void aplicarUbicacion({
+                        lat: z.lat,
+                        lng: z.lng,
+                        fuente: "zona",
+                        etiqueta: z.nombre,
+                      })
+                    }
+                  >
+                    <Text style={styles.zonaChipTitle}>{z.nombre}</Text>
+                    <Text style={styles.zonaChipMeta}>{z.porQue}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
+
             {zonasRapidas.length > 0 ? (
+
               <>
                 <Text style={styles.sectionLabel}>Zonas de {provincia.nombre}</Text>
                 {zonasRapidas.map((z) => (
@@ -558,11 +612,30 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
             <ListaAnimada index={2}>
               <View style={styles.card}>
                 <Text style={styles.cardTitle}>3 · Checklist</Text>
-                {checklist.map((item, i) => (
-                  <Text key={i} style={styles.check}>
-                    ☐ {item}
-                  </Text>
-                ))}
+                <Text style={styles.hint}>Marca lo que ya llevas. Los enlaces abren la ficha útil.</Text>
+                <ChecklistInteractivo
+                  provinciaId={provincia.id}
+                  items={itemsDesdeTextos(
+                    checklist,
+                    provincia.id === "castellon"
+                      ? [
+                          {
+                            id: "pesca-rec",
+                            texto: "Si pescas en costa: declara en PescaREC (obligatorio desde 2026).",
+                            accion: { tipo: "pesca_rec" },
+                          },
+                        ]
+                      : []
+                  )}
+                  onLicencia={() => navigation.navigate("License")}
+                  onConsejos={(o) =>
+                    navigation.navigate("Consejos", {
+                      consejoId: o.consejoId,
+                      categoria: o.categoria,
+                    })
+                  }
+                  onMapa={() => navigation.navigate("Mapa")}
+                />
                 <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Mapa")}>
                   <Text style={styles.btnTxt}>Abrir mapa</Text>
                 </TouchableOpacity>
@@ -578,6 +651,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         </>
       ) : null}
     </ScrollView>
+    </>
   );
 }
 

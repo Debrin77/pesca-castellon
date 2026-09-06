@@ -43,16 +43,16 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         emoji: "🚦",
         titulo: "Lee el semáforo",
         texto: provincia.continentalOnly
-          ? `Verde: aguas libres. Rojo: refugio (Anexo IV, prohibido). Gris «SIN TRAMO»: no es veda automática — en ${nombreProv} el art. 5.2 puede aplicar si no es refugio. Polígonos oficiales DERA.`
+          ? `Verde: aguas libres. Rojo: refugio (prohibido). Gris «SIN TRAMO»: no es veda — el mapa no tiene ese tramo dibujado; en ${nombreProv} puede ser agua libre (art. 5.2) si no es refugio. Mira el cartel.`
           : provincia.tieneIcv
-            ? `Verde: hoy sí. Rojo: veda. Ámbar: coto (permiso). Gris «SIN TRAMO»: fuera del catálogo geométrico, no es veda automática. Polígonos ICV + anexos de ${nombreProv}.`
+            ? `Verde: hoy sí. Rojo: veda. Ámbar: coto (permiso). Gris «SIN TRAMO»: no es veda — el tramo no está dibujado; confirma cartel. Detalles ICV/anexos en «Más info» del veredicto.`
             : `Verde: hoy sí. Rojo: veda o prohibido. Ámbar: coto (hace falta permiso). Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
       },
       {
         emoji: "🗺️",
-        titulo: "El mapa es tu herramienta",
+        titulo: "Tu primera salida",
         texto:
-          "En Inicio ves el pulso del día y «Salgo a pescar» (elige GPS, mapa, coordenadas o zona). El mapa da el veredicto al pulsar un tramo. En Consejos: montajes visuales por especie, nudos y aparejos.",
+          "Tras esto te guiamos: licencia → sitio fácil → kit mínimo. En Inicio, «¿Puedo?» es la norma y «¿Pinta?» es el clima (no autoriza). Consejos: montajes, nudos y aparejos.",
       },
     ],
     [

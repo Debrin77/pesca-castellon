@@ -65,12 +65,15 @@ if (svc.includes("Fuera de tramo cartografiado") || svc.includes("Fuera de tramo
 }
 
 const sem = read("src/components/SemaforoVeredicto.tsx");
-for (const n of ["SIN TRAMO", "No es veda", "art. 5.2 puede aplicar", "fuera del catálogo"]) {
+for (const n of ["SIN TRAMO", "No es veda", "cartel"]) {
   if (!sem.includes(n)) fail(`SemaforoVeredicto sin ${n}`);
+}
+if (!sem.includes("art. 5.2") && !sem.includes("agua libre")) {
+  fail("SemaforoVeredicto sin mención a art. 5.2 / agua libre (Sevilla)");
 }
 
 const cert = read("src/data/certezaConsulta.ts");
-for (const n of ['fuenteGeometria === "ninguna"', "No es veda automática", "Art. 5.2"]) {
+for (const n of ['fuenteGeometria === "ninguna"', "No es veda automática", "5.2"]) {
   if (!cert.includes(n)) fail(`certezaConsulta sin ${n}`);
 }
 
@@ -90,8 +93,11 @@ for (const n of [
 }
 
 const onb = read("src/screens/OnboardingScreen.tsx");
-if (!onb.includes("SIN TRAMO") || !onb.includes("no es veda automática")) {
+if (!onb.includes("SIN TRAMO") || (!onb.includes("no es veda") && !onb.includes("No es veda"))) {
   fail("OnboardingScreen no explica SIN TRAMO ≠ veda");
+}
+if (!onb.includes("cartel") && !onb.includes("primera salida")) {
+  fail("OnboardingScreen sin lenguaje llano de SIN TRAMO / primera salida");
 }
 
 const glo = read("src/data/glosario.ts");

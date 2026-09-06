@@ -19,6 +19,9 @@ import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../servic
 import { getResumenEmbalses } from "../services/saihService";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
+import BannerLicenciaPendiente from "../components/BannerLicenciaPendiente";
+import BloqueAprende from "../components/BloqueAprende";
+import SheetPermisoGps from "../components/SheetPermisoGps";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import { etiquetaHoy } from "../components/SemaforoVeredicto";
 import TemporadaBanner from "../components/TemporadaBanner";
@@ -46,6 +49,7 @@ import {
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
@@ -101,6 +105,8 @@ export default function HomeScreen({ navigation }: Props) {
   /** Refresco en segundo plano tras mostrar caché (no tapa el hero). */
   const [actualizando, setActualizando] = useState(false);
   const [permisoDenegado, setPermisoDenegado] = useState(false);
+  const [sheetGps, setSheetGps] = useState(false);
+  const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [saihPanel, setSaihPanel] = useState<SaihChip[]>([]);
@@ -127,6 +133,16 @@ export default function HomeScreen({ navigation }: Props) {
     [provincia.zones]
   );
 
+
+  useEffect(() => {
+    let vivo = true;
+    primeraSalidaHecha().then((hecha) => {
+      if (vivo && !hecha) navigation.navigate("PrimeraSalida");
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [navigation]);
 
   useFocusEffect(
     useCallback(() => {
@@ -304,7 +320,7 @@ export default function HomeScreen({ navigation }: Props) {
       loc = { lat: punto.lat, lng: punto.lng };
       setPermisoDenegado(false);
     } else {
-      const ok = await solicitarPermisoUbicacion();
+      const ok = await pedirGpsConSheet();
       if (!okVivo()) return;
       if (!ok) {
         setPermisoDenegado(true);
@@ -406,8 +422,33 @@ export default function HomeScreen({ navigation }: Props) {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setDetalleTramo((v) => !v);
   }
+
+  async function pedirGpsConSheet(): Promise<boolean> {
+    const { gpsSheetVisto, marcarGpsSheetVisto } = await import("../services/primeraSalidaService");
+    if (await gpsSheetVisto()) {
+      return solicitarPermisoUbicacion();
+    }
+    return new Promise((resolve) => {
+      gpsResolver.current = async (continuar) => {
+        setSheetGps(false);
+        if (!continuar) {
+          resolve(false);
+          return;
+        }
+        await marcarGpsSheetVisto();
+        resolve(await solicitarPermisoUbicacion());
+      };
+      setSheetGps(true);
+    });
+  }
+
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
+      <SheetPermisoGps
+        visible={sheetGps}
+        onCancelar={() => gpsResolver.current?.(false)}
+        onContinuar={() => gpsResolver.current?.(true)}
+      />
       <LinearGradient
         colors={[...GRADIENTS.primary]}
         style={styles.hero}
@@ -444,7 +485,7 @@ export default function HomeScreen({ navigation }: Props) {
               <View>
                 <View style={styles.pulsoRow}>
                 <View style={styles.pulsoIndice}>
-                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel}</Text>
+                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel} · no autoriza</Text>
                   <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
                   <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
                     <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
@@ -571,6 +612,15 @@ export default function HomeScreen({ navigation }: Props) {
             </LinearGradient>
           </PulsePress>
         </ListaAnimada>
+
+        <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
+
+        <BloqueAprende
+          onKit={() => navigation.navigate("Consejos", { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
+          onNudo={() => navigation.navigate("Consejos", { consejoId: "nudo-palomar", categoria: "nudos" })}
+          onSitios={() => navigation.navigate("PrimeraSalida")}
+          onPrimeraSalida={() => navigation.navigate("PrimeraSalida")}
+        />
 
         <ListaAnimada index={1}>
           <RecomendacionHoyCard

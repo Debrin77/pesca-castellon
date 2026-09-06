@@ -16,8 +16,8 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
     return {
       texto: "SIN TRAMO",
       sub: esSevilla
-        ? "No es veda · art. 5.2 puede aplicar"
-        : "No es veda · fuera del catálogo",
+        ? "No es veda · puede ser agua libre (art. 5.2). Mira el cartel"
+        : "No es veda · el tramo no está dibujado. Mira el cartel",
     };
   }
   if (c.sePuedePescarHoy) {

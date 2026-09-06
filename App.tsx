@@ -13,6 +13,7 @@ import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
 import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
+import PrimeraSalidaScreen from "./src/screens/PrimeraSalidaScreen";
 import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
 import { onboardingVisto } from "./src/services/offlineService";
 
@@ -63,6 +64,11 @@ function HomeStackScreen() {
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
       <HomeStack.Screen name="SalgoAPescar" component={SalgoAPescarScreen} options={{ title: "Salgo a pescar" }} />
+      <HomeStack.Screen
+        name="PrimeraSalida"
+        component={PrimeraSalidaScreen}
+        options={{ title: "Mi primera salida", headerShown: false }}
+      />
       <HomeStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
       <HomeStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
     </HomeStack.Navigator>
