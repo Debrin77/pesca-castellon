@@ -210,8 +210,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   );
 }
 
-const PHONE_W = Math.min(W * 0.72, 300);
-const PHONE_H = Math.min(H * 0.38, 340);
+/** Marco tipo captura App Store: domina el alto de la pantalla. */
+const PHONE_W = Math.min(W * 0.82, 340);
+const PHONE_H = Math.min(H * 0.52, 520);
 
 const styles = StyleSheet.create({
   root: { flex: 1, overflow: "hidden", backgroundColor: COLORS.primaryDark },
@@ -255,28 +256,28 @@ const styles = StyleSheet.create({
   },
   titulo: {
     color: "#fff",
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
     textAlign: "center",
-    letterSpacing: -0.5,
-    marginBottom: 10,
+    letterSpacing: -0.4,
+    marginBottom: 8,
   },
   texto: {
     color: "#eef7f1",
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     textAlign: "center",
     fontWeight: "600",
     fontFamily: FONTS.semibold,
-    maxWidth: 360,
-    marginBottom: 18,
-    minHeight: 66,
+    maxWidth: 340,
+    marginBottom: 14,
+    minHeight: 40,
   },
   phone: {
     width: PHONE_W,
     height: PHONE_H,
-    borderRadius: 28,
+    borderRadius: 36,
     backgroundColor: "#0c1a14",
     padding: 8,
     borderWidth: 2,
