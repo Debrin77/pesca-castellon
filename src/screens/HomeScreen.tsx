@@ -47,6 +47,8 @@ import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
+import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
+import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import { COLORS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -424,9 +426,11 @@ export default function HomeScreen({ navigation }: Props) {
             </Text>
 
             {indiceHoy && catInfo ? (
-              <View style={styles.pulsoRow}>
+              <View>
+                <EjeLegalMeteo eje="meteo" sobreOscuro compacto />
+                <View style={styles.pulsoRow}>
                 <View style={styles.pulsoIndice}>
-                  <Text style={styles.indexLabel}>Índice de pesca</Text>
+                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel}</Text>
                   <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
                   <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
                     <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
@@ -448,6 +452,7 @@ export default function HomeScreen({ navigation }: Props) {
                     <Text style={styles.weatherFallback}>Sin clima</Text>
                   )}
                 </View>
+              </View>
               </View>
             ) : (
               <View style={styles.heroClima}>
@@ -494,10 +499,11 @@ export default function HomeScreen({ navigation }: Props) {
                 onPress={abrirVeredictoRapido}
                 activeOpacity={0.88}
                 accessibilityRole="button"
-                accessibilityLabel={`Veredicto del punto: ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
+                accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
               >
                 <View style={styles.veredictoRapidoTxt}>
-                  <Text style={styles.veredictoRapidoKicker}>Veredicto del punto</Text>
+                  <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+                  <Text style={styles.veredictoRapidoAviso} numberOfLines={1}>{EJE_LEGAL.aviso}</Text>
                   <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
                   <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
                     {hoyEtiqueta.sub}
@@ -514,7 +520,8 @@ export default function HomeScreen({ navigation }: Props) {
                 accessibilityRole="button"
                 accessibilityLabel="Elegir punto en el mapa para el veredicto"
               >
-                <Text style={styles.veredictoRapidoKicker}>Veredicto del punto</Text>
+                <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+                  <Text style={styles.veredictoRapidoAviso} numberOfLines={1}>{EJE_LEGAL.aviso}</Text>
                 <Text style={styles.veredictoRapidoSub}>Toca el mapa o Salgo a pescar para decidir el punto</Text>
               </TouchableOpacity>
             ) : null}
@@ -561,7 +568,7 @@ export default function HomeScreen({ navigation }: Props) {
                 heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
             }}
           >
-            <Text style={styles.bloqueTitulo}>Tu tramo</Text>
+            <Text style={styles.bloqueTitulo}>Normativa del tramo</Text>
             {consultaViva ? (
               <View style={{ marginBottom: 12 }}>
                 <ConsultaPescaCard
@@ -922,6 +929,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.28)",
   },
   veredictoRapidoTxt: { flex: 1 },
+  veredictoRapidoAviso: {
+    color: "rgba(255,255,255,0.85)",
+    fontSize: 11,
+    fontWeight: "600",
+    marginTop: 2,
+  },
   veredictoRapidoKicker: {
     color: "rgba(255,255,255,0.88)",
     fontSize: 10,

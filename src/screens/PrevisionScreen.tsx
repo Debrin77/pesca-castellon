@@ -23,6 +23,8 @@ import {
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
+import { EJE_METEO } from "../data/ejesLegalMeteo";
+import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import { calcularSolunarDia, DiaSolunar } from "../services/solunarService";
 import { calcularMareaHoy, claveMareaProvincia, ResumenMarea } from "../services/tideService";
 import VentanasSolunarMarea from "../components/VentanasSolunarMarea";
@@ -84,6 +86,7 @@ function climaCorto(texto: string): string {
   return mapa[texto] ?? texto;
 }
 
+// Aviso producto: el índice climático no es permiso legal.
 export default function PrevisionScreen() {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -361,7 +364,7 @@ export default function PrevisionScreen() {
                         { backgroundColor: CATEGORIA_INFO[iDia.categoria].fondo },
                         { borderColor: CATEGORIA_INFO[iDia.categoria].color },
                       ]}
-                      accessibilityLabel={`Índice de pesca ${CATEGORIA_INFO[iDia.categoria].texto}`}
+                      accessibilityLabel={`Condiciones (clima) ${CATEGORIA_INFO[iDia.categoria].texto}`}
                     />
                   ) : null}
                 </Pressable>
@@ -373,7 +376,9 @@ export default function PrevisionScreen() {
             <ListaAnimada replayKey={`idx-${dia.fecha}`} index={1}>
               <View style={[styles.glassCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
                 <View style={styles.indexHead}>
-                  <Text style={styles.glassLabel}>Índice de pesca</Text>
+                  <EjeLegalMeteo eje="meteo" compacto />
+                  <Text style={styles.glassLabel}>{EJE_METEO.indexLabel}</Text>
+                <Text style={styles.glassHint}>No es permiso legal · solo clima y luna</Text>
                   <Text style={styles.glassStrong}>
                     {ind.puntuacion} · {cat.texto}
                   </Text>
@@ -387,7 +392,7 @@ export default function PrevisionScreen() {
                   />
                 </View>
                 <Text style={styles.glassHint}>
-                  Orientativo (presión, nubes, viento, lluvia y luna). No es un aviso oficial.
+                  No es permiso legal. Orientativo (presión, nubes, viento, lluvia y luna). No es un aviso oficial.
                 </Text>
               </View>
             </ListaAnimada>
