@@ -318,5 +318,53 @@
     "artist": "Danndorfer1914",
     "note": "Shads",
     "url": "https://commons.wikimedia.org/wiki/File:Mehrere_Gummifische_in_Unterschiedlichen_Gr%C3%B6%C3%9Fen,_Farben_und_Formen.jpg"
+  },
+  {
+    "file": "aparejos/boyas.jpg",
+    "commons": "File:Two fishing float types viz Bonnand adjustable air float and painted styrofoam float.jpg",
+    "license": "CC BY 4.0",
+    "artist": "R. Henrik Nilsson",
+    "note": "Boyas modernas (montajes por especie)",
+    "url": "https://commons.wikimedia.org/wiki/File:Two_fishing_float_types_viz_Bonnand_adjustable_air_float_and_painted_styrofoam_float.jpg"
+  },
+  {
+    "file": "aparejos/boyas-stick.jpg",
+    "commons": "File:Schwimmer(Posen).jpg",
+    "license": "CC BY-SA 3.0",
+    "artist": "Frank-Christian Baum",
+    "note": "Boyas stick / sensibles",
+    "url": "https://commons.wikimedia.org/wiki/File:Schwimmer(Posen).jpg"
+  },
+  {
+    "file": "aparejos/linea-nylon.jpg",
+    "commons": "File:GreenFishingLine.jpg",
+    "license": "CC BY 2.0",
+    "artist": "Jay Erickson",
+    "note": "Línea / nylon (elementos de montaje)",
+    "url": "https://commons.wikimedia.org/wiki/File:GreenFishingLine.jpg"
+  },
+  {
+    "file": "aparejos/cebo-gusano.jpg",
+    "commons": "File:Baiting the worm on the hook Claytor Lake State Park no app (16426021766).jpg",
+    "license": "CC BY 2.0",
+    "artist": "vastateparksstaff",
+    "note": "Cebo gusano en anzuelo",
+    "url": "https://commons.wikimedia.org/wiki/File:Baiting_the_worm_on_the_hook_Claytor_Lake_State_Park_no_app_(16426021766).jpg"
+  },
+  {
+    "file": "aparejos/cebo-maiz.jpg",
+    "commons": "File:Corn kernels.jpg",
+    "license": "CC BY-SA 3.0",
+    "artist": "Danielgrad",
+    "note": "Cebo maíz / pellet",
+    "url": "https://commons.wikimedia.org/wiki/File:Corn_kernels.jpg"
+  },
+  {
+    "file": "aparejos/egi-jigs.jpg",
+    "commons": "File:Hand made leather squid jigs.jpg",
+    "license": "CC BY-SA 4.0",
+    "artist": "RoccoTorezz",
+    "note": "Egí / jigs de sepia-calamar",
+    "url": "https://commons.wikimedia.org/wiki/File:Hand_made_leather_squid_jigs.jpg"
   }
 ]

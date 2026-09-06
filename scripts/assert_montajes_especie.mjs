@@ -78,6 +78,28 @@ const esquema = read("src/components/EsquemaMontajeLinea.tsx");
 if (!esquema.includes("Orden del aparejo") || !esquema.includes("Cómo regular")) {
   fail("EsquemaMontajeLinea debe mostrar orden y regulación");
 }
+if (!esquema.includes("fotoDePiezaMontaje") || !esquema.includes("<Image")) {
+  fail("EsquemaMontajeLinea debe usar foto real por elemento (no solo chips de color)");
+}
+
+const piezasMedia = read("src/data/montajePiezasMedia.ts");
+if (!piezasMedia.includes("fotoDePiezaMontaje") || !piezasMedia.includes("linea-nylon.jpg")) {
+  fail("montajePiezasMedia debe mapear tipos de pieza a fotos locales");
+}
+for (const img of [
+  "assets/consejos/aparejos/linea-nylon.jpg",
+  "assets/consejos/aparejos/boyas.jpg",
+  "assets/consejos/aparejos/boyas-stick.jpg",
+  "assets/consejos/aparejos/cebo-gusano.jpg",
+  "assets/consejos/aparejos/cebo-maiz.jpg",
+  "assets/consejos/aparejos/egi-jigs.jpg",
+]) {
+  if (!fs.existsSync(path.join(root, img))) fail(`Falta foto de montaje ${img}`);
+}
+const attrib = read("assets/consejos/licencias/ATTRIBUTION.md");
+for (const name of ["boyas.jpg", "linea-nylon.jpg", "cebo-gusano.jpg", "egi-jigs.jpg"]) {
+  if (!attrib.includes(name)) fail(`ATTRIBUTION.md debe citar ${name}`);
+}
 
 const consejosScreen = read("src/screens/ConsejosScreen.tsx");
 if (!consejosScreen.includes("consejoId") || !consejosScreen.includes("route.params")) {

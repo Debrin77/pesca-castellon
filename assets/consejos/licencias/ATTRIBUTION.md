@@ -39,3 +39,9 @@ Sin croquis ni diagramas esquemáticos: solo foto real.
 - `aparejos/vinilos-varios.jpg` — File:Unterschiedliche Gummiköder für das angeln auf Raubfische.jpg — CC0 — Danndorfer1914
 - `aparejos/vinilos-twister.jpg` — File:Zwei Twister.jpg — CC0 — Danndorfer1914
 - `aparejos/vinilos-peces.jpg` — File:Mehrere Gummifische in Unterschiedlichen Größen, Farben und Formen.jpg — CC0 — Danndorfer1914
+- `aparejos/boyas.jpg` — File:Two fishing float types viz Bonnand adjustable air float and painted styrofoam float.jpg — CC BY 4.0 — R. Henrik Nilsson
+- `aparejos/boyas-stick.jpg` — File:Schwimmer(Posen).jpg — CC BY-SA 3.0 — Frank-Christian Baum
+- `aparejos/linea-nylon.jpg` — File:GreenFishingLine.jpg — CC BY 2.0 — Jay Erickson
+- `aparejos/cebo-gusano.jpg` — File:Baiting the worm on the hook Claytor Lake State Park no app (16426021766).jpg — CC BY 2.0 — vastateparksstaff
+- `aparejos/cebo-maiz.jpg` — File:Corn kernels.jpg — CC BY-SA 3.0 — Danielgrad
+- `aparejos/egi-jigs.jpg` — File:Hand made leather squid jigs.jpg — CC BY-SA 4.0 — RoccoTorezz
