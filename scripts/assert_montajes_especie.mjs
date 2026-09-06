@@ -78,8 +78,11 @@ const esquema = read("src/components/EsquemaMontajeLinea.tsx");
 if (!esquema.includes("Orden del aparejo") || !esquema.includes("Cómo regular")) {
   fail("EsquemaMontajeLinea debe mostrar orden y regulación");
 }
-if (!esquema.includes("fotoDePiezaMontaje") || !esquema.includes("<Image")) {
+if (!esquema.includes("fotoDePiezaMontaje") || !esquema.includes("FotoPieza")) {
   fail("EsquemaMontajeLinea debe usar foto real por elemento (no solo chips de color)");
+}
+if (!esquema.includes("expo-asset") || !esquema.includes('createElement("img"')) {
+  fail("EsquemaMontajeLinea debe resolver URI con expo-asset y pintar <img> en web");
 }
 
 const piezasMedia = read("src/data/montajePiezasMedia.ts");
