@@ -56,53 +56,53 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const slides: Slide[] = useMemo(
     () => [
       {
-        id: "intima",
-        eyebrow: "Tu cuaderno de pesca",
-        titulo: "Personal e íntima",
-        texto: "Sitios, capturas y notas viven en tu móvil. Compartir es opcional — no el motivo.",
-        accent: ["#1c5c42", "#12382c", "#0a2218"],
-        tonoOnda: "claro",
-      },
-      {
-        id: "pin",
-        eyebrow: "Solo tú entras",
-        titulo: "PIN + biometría",
-        texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, la app está cerrada para los demás.",
-        accent: ["#142e24", "#0d1f18", "#07140f"],
-        tonoOnda: "claro",
-      },
-      {
         id: "legal",
-        eyebrow: "¿Puedo pescar aquí?",
-        titulo: "Semáforo claro",
+        eyebrow: "Antes de lanzar la caña",
+        titulo: "¿Puedo aquí?",
         texto: provincia.continentalOnly
           ? `Verde, rojo o «SIN TRAMO». SIN TRAMO no es veda: en ${nombreProv} puede ser agua libre. Mira el cartel en tu primera salida.`
           : provincia.tieneIcv
-            ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — el tramo no está dibujado; confirma cartel."
-            : `Verde, rojo o ámbar. Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
+            ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — confirma el cartel."
+            : `Verde, rojo o ámbar. En ${nombreProv} es orientativo: confirma siempre en la fuente oficial.`,
         accent: ["#176a7c", "#114e5c", "#0b3540"],
         tonoOnda: "agua",
       },
       {
         id: "pinta",
-        eyebrow: "¿Pinta el día?",
-        titulo: "Índice y previsión",
-        texto: "Clima, presión, luna e índice 0–100. «¿Puedo?» es la norma; «¿Pinta?» es el tiempo — no autoriza.",
+        eyebrow: "La norma autoriza · el tiempo orienta",
+        titulo: "Hoy pinta",
+        texto: "Índice 0–100 con clima, presión y luna. «¿Pinta?» no autoriza: solo ayuda a elegir hora.",
         accent: ["#1f6f88", "#155566", "#0d3c48"],
         tonoOnda: "agua",
       },
       {
+        id: "intima",
+        eyebrow: "Sin feed · sin nube obligatoria",
+        titulo: "Personal e íntima",
+        texto: "Sitios y notas en tu móvil. Compartir es opcional — nunca el motivo.",
+        accent: ["#1c5c42", "#12382c", "#0a2218"],
+        tonoOnda: "claro",
+      },
+      {
+        id: "pin",
+        eyebrow: "Cerrada para los demás",
+        titulo: "PIN + biometría",
+        texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, solo tú entras.",
+        accent: ["#142e24", "#0d1f18", "#07140f"],
+        tonoOnda: "claro",
+      },
+      {
         id: "diario",
-        eyebrow: "Tu memoria de campo",
-        titulo: "Capturas y rutas",
-        texto: "Foto, especie, GPS y cupo. Exporta GPX cuando quieras — a Maps, a un amigo o a nadie.",
+        eyebrow: "Memoria de campo",
+        titulo: "Tu diario local",
+        texto: "Foto, especie, GPS y cupo. Exporta GPX a Maps, a un amigo… o a nadie.",
         accent: ["#18523c", "#12382c", "#0c241c"],
         tonoOnda: "claro",
       },
       {
         id: "campo",
-        eyebrow: "Listo para la orilla",
-        titulo: "Salgo a pescar",
+        eyebrow: "De la duda a la orilla",
+        titulo: "Salgo en 5 pasos",
         texto: "Ritual corto para tu primera salida: sitio → norma → clima → montaje → checklist.",
         accent: ["#24382e", "#17261f", "#0e1713"],
         tonoOnda: "claro",
@@ -243,6 +243,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           ))}
         </View>
 
+        {page === slides.length - 1 ? (
+          <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
+        ) : null}
+
         <PulsePress
           style={styles.cta}
           onPress={() => {
@@ -281,7 +285,7 @@ function MockUI({
   if (id === "intima") return <MockIntima nombreProv={nombreProv} activo={activo} />;
   if (id === "pin") return <MockPin activo={activo} />;
   if (id === "legal") return <MockLegal nombreProv={nombreProv} activo={activo} />;
-  if (id === "pinta") return <MockPinta activo={activo} />;
+  if (id === "pinta") return <MockPinta nombreProv={nombreProv} activo={activo} />;
   if (id === "diario") return <MockDiario activo={activo} />;
   return <MockCampo activo={activo} />;
 }
@@ -304,10 +308,14 @@ function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolea
   const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
   return (
     <View style={[m.fill, { backgroundColor: "#f3f6f2" }]}>
+      <View style={m.privBar}>
+        <Text style={m.privBarTxt}>Solo en este móvil · Sin feed · Sin nube</Text>
+      </View>
       <MapaIgnPresentacion
         titulo={`Mis sitios · ${nombreProv}`}
         subtitulo="Privados · sin feed"
         animar={activo}
+        compacto
         marcadores={[
           { x: 28, y: 38, color: COLORS.gold, etiqueta: "María Cristina", tipo: "privado" },
           { x: 58, y: 52, color: COLORS.water, etiqueta: "Orilla secreta", tipo: "privado" },
@@ -390,9 +398,6 @@ function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean
             <Text style={[m.chipTxt, { color: COLORS.warning }]}>SIN TRAMO ≠ veda</Text>
           </View>
           <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
-            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Oficial / orientativo</Text>
-          </View>
-          <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
             <Text style={[m.chipTxt, { color: COLORS.primary }]}>Mira el cartel</Text>
           </View>
         </View>
@@ -401,7 +406,7 @@ function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean
   );
 }
 
-function MockPinta({ activo }: { activo: boolean }) {
+function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv?: string }) {
   const v = useReveal(activo);
   const pulse = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -419,7 +424,9 @@ function MockPinta({ activo }: { activo: boolean }) {
   return (
     <LinearGradient colors={["#0e4456", "#1a6f8a"]} style={[m.fill, { alignItems: "center" }]}>
       <Text style={m.navDisplay}>Hoy en el agua</Text>
-      <Text style={m.navSub}>¿Pinta? · no autoriza</Text>
+      <Text style={m.navSub}>
+        {nombreProv ? `${nombreProv} · ¿Pinta? · no autoriza` : "¿Pinta? · no autoriza"}
+      </Text>
       <Animated.View style={{ opacity: v, transform: [{ scale: ring }], marginTop: 14, alignItems: "center" }}>
         <View style={m.gaugeOuter}>
           <View style={m.gauge}>
@@ -443,6 +450,7 @@ function MockPinta({ activo }: { activo: boolean }) {
       <View style={m.windowBar}>
         <Text style={m.windowTxt}>Mejor ventana 07:00–10:00</Text>
       </View>
+      <Text style={m.pintaDisclaimer}>La norma manda · esto solo orienta</Text>
     </LinearGradient>
   );
 }
@@ -658,10 +666,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   ctaArrow: { fontSize: 16, color: COLORS.primaryDark, fontFamily: FONTS.extrabold },
+  tipCierre: {
+    textAlign: "center",
+    color: "rgba(255,255,255,0.82)",
+    fontFamily: FONTS.semibold,
+    fontSize: 13,
+    marginBottom: 10,
+    letterSpacing: 0.1,
+  },
 });
 
 const m = StyleSheet.create({
   fill: { flex: 1 },
+  privBar: {
+    backgroundColor: COLORS.primaryDark,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    alignItems: "center",
+  },
+  privBarTxt: {
+    color: "rgba(255,255,255,0.92)",
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 11,
+    letterSpacing: 0.2,
+  },
   navDisplay: {
     fontFamily: FONTS.display,
     fontSize: 20,
@@ -824,6 +853,14 @@ const m = StyleSheet.create({
     paddingVertical: 8,
   },
   windowTxt: { color: "#fff", fontFamily: FONTS.bold, fontWeight: "700", fontSize: 12 },
+  pintaDisclaimer: {
+    marginTop: 10,
+    color: "rgba(255,255,255,0.7)",
+    fontFamily: FONTS.semibold,
+    fontSize: 11,
+    textAlign: "center",
+    paddingHorizontal: 16,
+  },
   diarioHeader: { paddingHorizontal: 12, paddingTop: 10 },
   catchCard: {
     flexDirection: "row",
