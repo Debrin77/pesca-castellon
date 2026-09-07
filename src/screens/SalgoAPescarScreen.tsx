@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { calcularIndicePesca, CATEGORIA_INFO, IndicePescaDia } from "../services/fishingIndexService";
 import { consultarToqueMapa } from "../services/consultaCostaService";
@@ -52,6 +52,8 @@ import { sitiosFacilesDe } from "../data/sitiosFaciles";
 import OndaAgua from "../components/OndaAgua";
 import PasoSalida from "../components/PasoSalida";
 import PulsePress from "../components/PulsePress";
+import { etiquetaHoy } from "../components/SemaforoVeredicto";
+import { guardarSalidaHoy, leerSalidaHoy } from "../services/salidaHoyService";
 
 interface Props {
   navigation: any;
@@ -64,6 +66,7 @@ type OrigenUbicacion = FuentePuntoConsulta;
  * Misma lógica de punto que Inicio / Previsión / Mapa (GPS, mapa, coords, zona).
  */
 export default function SalgoAPescarScreen({ navigation }: Props) {
+  const route = useRoute<any>();
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, fijarPunto } = usePuntoConsulta();
@@ -85,7 +88,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [gpsCargando, setGpsCargando] = useState(false);
   const [sheetGps, setSheetGps] = useState(false);
+  const [notaSalida, setNotaSalida] = useState("");
+  const [salidaRegistrada, setSalidaRegistrada] = useState(false);
+  const [guardandoSalida, setGuardandoSalida] = useState(false);
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
+  const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
 
   const sitiosPersonales = listarSitiosPersonales(puntos, capturas, {
     region: provincia.regionMapa,
@@ -138,7 +145,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setOrigen(args.fuente);
         setConsulta(c);
         setIndice(dias[0] ?? null);
-        setPaso(0);
+        setPaso(irChecklistPendiente.current ? 2 : 0);
+        if (irChecklistPendiente.current) {
+          irChecklistPendiente.current = false;
+          navigation.setParams?.({ irAChecklist: undefined });
+        }
       } catch {
         setError("No se pudo consultar este punto. Prueba otra ubicación.");
         setElegirUbicacion(true);
@@ -146,7 +157,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setCargando(false);
       }
     },
-    [fijarPunto, provincia.regionMapa, provincia.nombre]
+    [fijarPunto, provincia.regionMapa, provincia.nombre, navigation]
   );
 
   useFocusEffect(
@@ -154,6 +165,10 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       void obtenerFavoritos().then(setFavoritos);
       void obtenerPuntosGuardados().then(setPuntos);
       void obtenerCapturas().then(setCapturas);
+      void leerSalidaHoy(provincia.id).then((s) => setSalidaRegistrada(!!s));
+      if (route.params?.irAChecklist) {
+        irChecklistPendiente.current = true;
+      }
       const elegida = consumirPickUbicacion("salgo");
       if (elegida) {
         void aplicarUbicacion({
@@ -162,8 +177,19 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           fuente: "mapa",
           etiqueta: elegida.etiqueta,
         });
+      } else if (
+        irChecklistPendiente.current &&
+        punto &&
+        (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
+      ) {
+        void aplicarUbicacion({
+          lat: punto.lat,
+          lng: punto.lng,
+          fuente: punto.fuente,
+          etiqueta: punto.etiqueta,
+        });
       }
-    }, [aplicarUbicacion])
+    }, [aplicarUbicacion, provincia.id, punto, route.params?.irAChecklist])
   );
 
   async function pedirGpsConSheet(): Promise<boolean> {
@@ -263,6 +289,30 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     const consejoId = consejoIdMontajeEspecie(especieId);
     if (!consejoId) return;
     navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+  }
+
+  async function registrarSalidaHoy() {
+    if (!consulta || !coords) return;
+    const hoy = etiquetaHoy(consulta);
+    setGuardandoSalida(true);
+    try {
+      await guardarSalidaHoy({
+        provinciaId: provincia.id,
+        etiqueta: etiqueta || consulta.titulo || "Punto del día",
+        lat: coords.lat,
+        lng: coords.lng,
+        veredictoTexto: hoy.texto,
+        veredictoSub: hoy.sub,
+        tituloTramo: consulta.titulo,
+        nota: notaSalida,
+        checklistCompleta: true,
+      });
+      setSalidaRegistrada(true);
+      setNotaSalida("");
+      Alert.alert("Salida de hoy", "Registrada. En Inicio verás el resumen.");
+    } finally {
+      setGuardandoSalida(false);
+    }
   }
 
   return (
@@ -637,14 +687,53 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                   }
                   onMapa={() => navigation.navigate("Mapa")}
                 />
-                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Mapa")}>
-                  <Text style={styles.btnTxt}>Abrir mapa</Text>
+                <View style={styles.salidaBox}>
+                  <Text style={styles.salidaTitle}>
+                    {salidaRegistrada ? "Salida de hoy registrada ✓" : "Cerrar salida de hoy"}
+                  </Text>
+                  <Text style={styles.salidaSub}>
+                    Guarda sitio + veredicto
+                    {consulta ? ` · ${etiquetaHoy(consulta).texto}` : ""} para el ritual de Inicio.
+                  </Text>
+                  {!salidaRegistrada ? (
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Nota rápida (opcional)"
+                        placeholderTextColor={COLORS.textMuted}
+                        value={notaSalida}
+                        onChangeText={setNotaSalida}
+                        maxLength={140}
+                      />
+                      <TouchableOpacity
+                        style={styles.btn}
+                        onPress={() => void registrarSalidaHoy()}
+                        disabled={guardandoSalida || !consulta || !coords}
+                        accessibilityRole="button"
+                        accessibilityLabel="Registrar salida de hoy"
+                      >
+                        <Text style={styles.btnTxt}>
+                          {guardandoSalida ? "Guardando…" : "Registrar salida de hoy"}
+                        </Text>
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.btnSecondary}
+                      onPress={() => navigation.navigate("HomeMain")}
+                    >
+                      <Text style={styles.btnSecondaryTxt}>Volver a Inicio</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <TouchableOpacity style={styles.btnGhost} onPress={() => navigation.navigate("Mapa")}>
+                  <Text style={styles.btnGhostTxt}>Abrir mapa</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.btnSecondary}
+                  style={styles.btnGhost}
                   onPress={() => navigation.navigate("License")}
                 >
-                  <Text style={styles.btnSecondaryTxt}>Revisar licencias</Text>
+                  <Text style={styles.btnGhostTxt}>Revisar licencias</Text>
                 </TouchableOpacity>
               </View>
             </ListaAnimada>
@@ -821,6 +910,22 @@ const styles = StyleSheet.create({
   btnSecondaryTxt: { color: COLORS.primary, fontWeight: "800" },
   btnGhost: { marginTop: 10, alignItems: "flex-end" },
   btnGhostTxt: { color: COLORS.water, fontWeight: "800" },
+  salidaBox: {
+    marginTop: 14,
+    padding: 14,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+    backgroundColor: COLORS.waterLight,
+  },
+  salidaTitle: { fontSize: 15, fontWeight: "800", color: COLORS.waterDark },
+  salidaSub: {
+    fontSize: 12.5,
+    color: COLORS.textSecondary,
+    marginTop: 4,
+    lineHeight: 17,
+    marginBottom: 4,
+  },
   montajeCta: {
     marginTop: 12,
     backgroundColor: COLORS.waterLight,
