@@ -37,6 +37,10 @@ must("src/screens/OnboardingScreen.tsx", [
   "OndaAgua",
   "FONTS",
   "SIN TRAMO",
+  "MockUI",
+  "Animated",
+  "PulsePress",
+  "HOY SÍ",
 ]);
 
 must("App.tsx", [
