@@ -15,6 +15,8 @@ export default function SelectorModalidad({ value, onChange, filtroAmbito }: Pro
     if (!filtroAmbito || filtroAmbito === "ambos") return true;
     return m.ambito === filtroAmbito || m.ambito === "ambos";
   });
+  const porDefecto: ModalidadPesca =
+    filtroAmbito === "maritimo" ? "orilla_mar" : "orilla_continental";
   const actual = MODALIDADES.find((m) => m.id === value) ?? lista[0];
 
   return (
@@ -25,10 +27,21 @@ export default function SelectorModalidad({ value, onChange, filtroAmbito }: Pro
           <TouchableOpacity
             key={m.id}
             style={[styles.chip, value === m.id && styles.chipOn]}
-            onPress={() => onChange(m.id)}
+            onPress={() => {
+              // Kayak/barco/sub: segundo toque vuelve a orilla (desactivar).
+              if (value === m.id && m.id !== porDefecto) {
+                onChange(porDefecto);
+                return;
+              }
+              onChange(m.id);
+            }}
             accessibilityRole="button"
             accessibilityState={{ selected: value === m.id }}
-            accessibilityLabel={m.etiqueta}
+            accessibilityLabel={
+              value === m.id && m.id !== porDefecto
+                ? `${m.etiqueta} (pulsar para desactivar)`
+                : m.etiqueta
+            }
           >
             <Text style={[styles.chipText, value === m.id && styles.chipTextOn]}>{m.corta}</Text>
           </TouchableOpacity>
