@@ -44,6 +44,13 @@ must("src/screens/OnboardingScreen.tsx", [
   "HOY SÍ",
   "MapaIgnPresentacion",
   "primera salida",
+  "¿Puedo aquí?",
+  "Hoy pinta",
+  "Solo en este móvil",
+  "Salgo a pescar",
+  'id: "legal"',
+  'id: "pinta"',
+  'id: "intima"',
 ]);
 
 must("src/components/MapaIgnPresentacion.tsx", [
