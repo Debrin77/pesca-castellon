@@ -22,7 +22,7 @@ const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
   "ocultarVeredictoCompacto",
   "Detalle del tramo",
-  "Checklist y punto del día",
+  "SiguientePasoCard",
   "veredictoRapido",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);

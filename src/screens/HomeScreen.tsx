@@ -58,6 +58,8 @@ import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
+import SiguientePasoCard from "../components/SiguientePasoCard";
+import type { SiguientePasoAccion } from "../components/SiguientePasoCard";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -648,24 +650,44 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <ListaAnimada index={0}>
-          <PulsePress
+          <SiguientePasoCard
+            provinciaId={provincia.id}
+            checklistTextos={provincia.checklistAntesDePescar}
+            tienePunto={!!consultaViva && !!ubicacion}
+            tieneSitios={favoritos.length > 0 || puntos.length > 0}
+            etiquetaPunto={etiquetaClima}
+            veredictoTexto={hoyEtiqueta?.texto ?? null}
+            veredictoSub={hoyEtiqueta?.sub ?? null}
+            tituloTramo={consultaViva?.titulo ?? null}
+            lat={ubicacion?.lat}
+            lng={ubicacion?.lng}
+            onAccion={(accion: SiguientePasoAccion) => {
+              if (accion.tipo === "mapa") {
+                navigation.navigate("Mapa");
+                return;
+              }
+              if (accion.tipo === "captura") {
+                navigation.navigate("Capturas", {
+                  screen: "CapturasMain",
+                  params: { abrirCapturaRapida: true },
+                });
+                return;
+              }
+              if (accion.tipo === "salgo") {
+                navigation.navigate("SalgoAPescar", {
+                  irAChecklist: !!accion.irAChecklist,
+                });
+              }
+            }}
+          />
+          <TouchableOpacity
+            style={styles.salgoSecundario}
             onPress={() => navigation.navigate("SalgoAPescar")}
-            style={styles.ctaSalgo}
+            accessibilityRole="button"
+            accessibilityLabel="Abrir Salgo a pescar"
           >
-            <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
-              <OndaAgua intensidad={0.9} />
-              <View style={styles.ctaSalgoRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
-                  <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-                  <Text style={styles.ctaSalgoSub}>Checklist y punto del día</Text>
-                </View>
-                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
-                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </PulsePress>
+            <Text style={styles.salgoSecundarioTxt}>Abrir Salgo a pescar →</Text>
+          </TouchableOpacity>
         </ListaAnimada>
 
         <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
@@ -1192,6 +1214,16 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   provinciaCambio: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.water,
+  },
+  salgoSecundario: {
+    alignSelf: "flex-end",
+    paddingVertical: 6,
+    marginBottom: SPACING.sm,
+  },
+  salgoSecundarioTxt: {
     fontSize: 13,
     fontWeight: "800",
     color: COLORS.water,

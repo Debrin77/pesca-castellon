@@ -31,11 +31,15 @@ must("src/theme.ts", ["FONTS", "SourceSans3_800ExtraBold"]);
 
 must("src/screens/HomeScreen.tsx", [
   "AtmosferaMeteo",
-  "OndaAgua",
-  "ctaSalgoKicker",
-  "Preparar salida",
-  "Checklist y punto del día",
+  "SiguientePasoCard",
+  "Abrir Salgo a pescar",
   "FONTS",
+]);
+must("src/components/SiguientePasoCard.tsx", [
+  "OndaAgua",
+  "Siguiente paso",
+  "Registrar salida de hoy",
+  "Salida de hoy",
 ]);
 
 must("src/screens/SalgoAPescarScreen.tsx", [
