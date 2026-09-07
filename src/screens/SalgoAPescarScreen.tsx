@@ -93,6 +93,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [guardandoSalida, setGuardandoSalida] = useState(false);
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
+  /** Evita relanzar «Revisa qué llevar» cuando fijarPunto actualiza `punto` y re-dispara el focus effect. */
+  const autoChecklistLanzado = useRef(false);
+  const aplicandoRef = useRef(false);
 
   const sitiosPersonales = listarSitiosPersonales(puntos, capturas, {
     region: provincia.regionMapa,
@@ -118,6 +121,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       fuente: FuentePuntoConsulta;
       etiqueta?: string;
     }) => {
+      if (aplicandoRef.current) return;
       const enProvincia = asegurarCoordsEnProvincia(args.lat, args.lng, {
         region: provincia.regionMapa,
         nombre: provincia.nombre,
@@ -127,6 +131,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setElegirUbicacion(true);
         return;
       }
+      aplicandoRef.current = true;
       setCargando(true);
       setError(null);
       setElegirUbicacion(false);
@@ -148,16 +153,16 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setPaso(irChecklistPendiente.current ? 2 : 0);
         if (irChecklistPendiente.current) {
           irChecklistPendiente.current = false;
-          navigation.setParams?.({ irAChecklist: undefined });
         }
       } catch {
         setError("No se pudo consultar este punto. Prueba otra ubicación.");
         setElegirUbicacion(true);
       } finally {
+        aplicandoRef.current = false;
         setCargando(false);
       }
     },
-    [fijarPunto, provincia.regionMapa, provincia.nombre, navigation]
+    [fijarPunto, provincia.regionMapa, provincia.nombre]
   );
 
   useFocusEffect(
@@ -166,8 +171,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       void obtenerPuntosGuardados().then(setPuntos);
       void obtenerCapturas().then(setCapturas);
       void leerSalidaHoy(provincia.id).then((s) => setSalidaRegistrada(!!s));
+      // One-shot: consumir el param YA. Si se espera a fijarPunto, `punto` cambia,
+      // el effect se re-ejecuta con irAChecklist aún true y se queda en bucle de carga.
       if (route.params?.irAChecklist) {
         irChecklistPendiente.current = true;
+        autoChecklistLanzado.current = false;
+        navigation.setParams?.({ irAChecklist: undefined });
       }
       const elegida = consumirPickUbicacion("salgo");
       if (elegida) {
@@ -179,9 +188,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         });
       } else if (
         irChecklistPendiente.current &&
+        !autoChecklistLanzado.current &&
         punto &&
         (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
       ) {
+        autoChecklistLanzado.current = true;
         void aplicarUbicacion({
           lat: punto.lat,
           lng: punto.lng,
@@ -189,7 +200,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           etiqueta: punto.etiqueta,
         });
       }
-    }, [aplicarUbicacion, provincia.id, punto, route.params?.irAChecklist])
+    }, [aplicarUbicacion, provincia.id, punto, route.params?.irAChecklist, navigation])
   );
 
   async function pedirGpsConSheet(): Promise<boolean> {
