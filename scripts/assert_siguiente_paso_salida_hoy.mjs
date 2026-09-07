@@ -32,6 +32,7 @@ for (const n of [
   "Termina el checklist",
   "Registrar salida de hoy",
   "irAChecklist",
+  "total === 0",
 ]) {
   if (!card.includes(n)) fail(`SiguientePasoCard sin ${n}`);
 }

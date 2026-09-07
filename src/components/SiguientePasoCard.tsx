@@ -90,8 +90,10 @@ export default function SiguientePasoCard({
       const total = items.length;
       if (total > 0 && hechos >= total) {
         setModo({ id: "registrar" });
+      } else if (total === 0 && tienePunto) {
+        setModo({ id: "registrar" });
       } else {
-        setModo({ id: "checklist", hechos, total });
+        setModo({ id: "checklist", hechos, total: Math.max(total, 1) });
       }
     } finally {
       setCargando(false);
