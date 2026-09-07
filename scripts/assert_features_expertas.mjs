@@ -19,6 +19,7 @@ const required = [
   "src/services/offlineMapService.ts",
   "src/services/cupoService.ts",
   "src/data/concursos.ts",
+  "src/data/clubesPesca.ts",
   "src/data/permisosCoto.ts",
   "src/data/modalidades.ts",
   "src/components/PescaRecBanner.tsx",
@@ -125,6 +126,50 @@ const tide = fs.readFileSync(path.join(root, "src/services/tideService.ts"), "ut
 if (tide.includes("sevilla_costa_ref")) {
   console.error("FAIL tideService no debe cruzar referencia atlántica en Sevilla continental");
   fallos++;
+}
+
+const concursos = fs.readFileSync(path.join(root, "src/data/concursos.ts"), "utf8");
+for (const n of [
+  "federacionpescacv.com",
+  "sevilla.fapd.org",
+  "fapd.org/calendario-de-competiciones-2026",
+  "portal: true",
+  'provinciaId: "castellon"',
+  'provinciaId: "sevilla"',
+  "La Barqueta",
+  "Peñíscola",
+]) {
+  if (!concursos.includes(n)) {
+    console.error(`FAIL concursos.ts sin «${n}»`);
+    fallos++;
+  }
+}
+if (concursos.includes("https://www.fepcv.es/") || concursos.includes("https://www.fapd.es/")) {
+  console.error("FAIL concursos.ts usa URLs federativas antiguas/incorrectas");
+  fallos++;
+}
+
+const clubes = fs.readFileSync(path.join(root, "src/data/clubesPesca.ts"), "utf8");
+for (const n of [
+  "ENLACES_APUNTARSE",
+  "CLUBES_PESCA",
+  "llicencies-federatives",
+  "enlaces-clubes",
+  "San Juan",
+  "clubesParaProvincia",
+]) {
+  if (!clubes.includes(n)) {
+    console.error(`FAIL clubesPesca.ts sin «${n}»`);
+    fallos++;
+  }
+}
+
+const cal = fs.readFileSync(path.join(root, "src/components/CalendarioConcursos.tsx"), "utf8");
+for (const n of ["Apuntarse", "Clubes cercanos", "enlacesApuntarsePara", "clubesParaProvincia"]) {
+  if (!cal.includes(n)) {
+    console.error(`FAIL CalendarioConcursos sin «${n}»`);
+    fallos++;
+  }
 }
 
 if (fallos) {

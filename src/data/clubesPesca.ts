@@ -1,0 +1,173 @@
+import type { ProvinciaId } from "../provincias/types";
+
+export interface ClubPesca {
+  id: string;
+  nombre: string;
+  provinciaId: ProvinciaId;
+  localidad?: string;
+  /** Web del club o ficha federativa. */
+  url?: string;
+  notas?: string;
+}
+
+export interface EnlaceApuntarse {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  url: string;
+  provinciaId: ProvinciaId | "todas";
+}
+
+/**
+ * Clubs y vías oficiales para federarse / inscribirse.
+ * Inscripción a concursos oficiales: casi siempre a través del club.
+ * Actualizado Sep 2026 (FPCV / FAPD Sevilla).
+ */
+export const ENLACES_APUNTARSE: EnlaceApuntarse[] = [
+  {
+    id: "cs-fpcv-licencias",
+    titulo: "Licencias FPCV (club o independiente)",
+    descripcion:
+      "Tramita licencia federativa. Para competir oficiales necesitas club; independiente solo recreo.",
+    url: "https://federacionpescacv.com/llicencies-federatives/",
+    provinciaId: "castellon",
+  },
+  {
+    id: "cs-fpcv-home",
+    titulo: "Federación de Pesca CV (FPCV)",
+    descripcion: "Contacto, clubes, tienda y pagos de inscripciones federadas.",
+    url: "https://federacionpescacv.com/",
+    provinciaId: "castellon",
+  },
+  {
+    id: "cs-fpcv-calendario",
+    titulo: "Convocatorias Castellón / CV 2026",
+    descripcion: "Calendario vivo con enlaces a convocatoria y resultados.",
+    url: "https://federacionpescacv.com/convocatorias-clasificaciones-2026/",
+    provinciaId: "castellon",
+  },
+  {
+    id: "se-fapd-delegacion",
+    titulo: "Delegación FAPD Sevilla",
+    descripcion: "Convocatorias provinciales, boletines y plazos de inscripción.",
+    url: "https://sevilla.fapd.org/",
+    provinciaId: "sevilla",
+  },
+  {
+    id: "se-fapd-clubes",
+    titulo: "Enlaces a clubes FAPD",
+    descripcion: "Directorio de clubes para federarte e inscribirte en pruebas.",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+    provinciaId: "sevilla",
+  },
+  {
+    id: "se-fapd-calendario",
+    titulo: "Calendario Andalucía 2026",
+    descripcion: "Calendario oficial FAPD (PDF por meses y modalidades).",
+    url: "https://fapd.org/calendario-de-competiciones-2026",
+    provinciaId: "sevilla",
+  },
+  {
+    id: "nac-fepyc",
+    titulo: "FEPyC · calendario nacional",
+    descripcion: "Campeonatos de España. Inscripción vía federación autonómica.",
+    url: "https://www.fepyc.es/",
+    provinciaId: "todas",
+  },
+];
+
+/** Clubs de referencia por provincia (inscripción vía federación / club). */
+export const CLUBES_PESCA: ClubPesca[] = [
+  /* Castellón — contacto vía FPCV (listado oficial en federación) */
+  {
+    id: "cs-fpcv-delegacion",
+    nombre: "Delegación FPCV · Castellón",
+    provinciaId: "castellon",
+    localidad: "Castellón",
+    url: "https://federacionpescacv.com/",
+    notas: "Pregunta por clubes federados de la provincia y cómo darte de alta.",
+  },
+  {
+    id: "cs-via-licencias",
+    nombre: "Alta en club / licencia FPCV",
+    provinciaId: "castellon",
+    localidad: "Online",
+    url: "https://federacionpescacv.com/llicencies-federatives/",
+    notas: "Portal de licencias: clubes e independientes.",
+  },
+
+  /* Sevilla — asambleístas / enlaces FAPD */
+  {
+    id: "se-san-juan",
+    nombre: "C.D. Pesca San Juan",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+    notas: "Club activo en ligas provinciales (agua dulce, etc.).",
+  },
+  {
+    id: "se-sanlucar",
+    nombre: "C.D. Sanlúcar la Mayor",
+    provinciaId: "sevilla",
+    localidad: "Sanlúcar la Mayor",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-san-rafael",
+    nombre: "C.D. San Rafael",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-amigos-guadalquivir",
+    nombre: "C.D. Sdad. Amigos del Guadalquivir",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-lunaticos",
+    nombre: "C.D. Pesca Lunáticos",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-alcosa",
+    nombre: "C.D. Pesca Alcosa",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-telefonica",
+    nombre: "Club de Pesca Telefónica",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-castilblanco",
+    nombre: "C.D. Pesca Castilblanco de los Arroyos",
+    provinciaId: "sevilla",
+    localidad: "Castilblanco de los Arroyos",
+    url: "https://sevilla.fapd.org/enlaces-clubes/",
+  },
+  {
+    id: "se-santa-ana",
+    nombre: "Club Santa Ana",
+    provinciaId: "sevilla",
+    localidad: "Sevilla",
+    url: "https://sevilla.fapd.org/",
+    notas: "Activo en Mar-Costa Liga Clubs 2026.",
+  },
+];
+
+export function enlacesApuntarsePara(provinciaId: ProvinciaId): EnlaceApuntarse[] {
+  return ENLACES_APUNTARSE.filter((e) => e.provinciaId === provinciaId || e.provinciaId === "todas");
+}
+
+export function clubesParaProvincia(provinciaId: ProvinciaId): ClubPesca[] {
+  return CLUBES_PESCA.filter((c) => c.provinciaId === provinciaId);
+}

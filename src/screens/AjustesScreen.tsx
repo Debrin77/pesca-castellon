@@ -173,7 +173,7 @@ export default function AjustesScreen() {
       </View>
 
       <PanelOfflineMapa />
-      <CalendarioConcursos provinciaId={provincia.id} limite={6} />
+      <CalendarioConcursos provinciaId={provincia.id} limite={8} />
       {!provincia.continentalOnly ? <PescaRecBanner /> : null}
 
       <View style={styles.card}>

@@ -194,10 +194,10 @@ export default function PanelCampoHoy({ navigation }: Props) {
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Concursos ({nConcursos})</Text>
+            <Text style={styles.cardTitle}>Concursos y clubes ({nConcursos})</Text>
             <Text style={styles.cardBody}>Calendario de {provincia.nombre} (+ nacionales).</Text>
           </View>
-          <CalendarioConcursos provinciaId={provincia.id} limite={3} />
+          <CalendarioConcursos provinciaId={provincia.id} limite={5} />
 
           <TouchableOpacity
             style={styles.card}
