@@ -1,7 +1,15 @@
 import React, { useRef, useEffect } from "react";
-import { Animated, Easing, Pressable, StyleProp, ViewStyle } from "react-native";
+import {
+  Animated,
+  Easing,
+  Platform,
+  Pressable,
+  StyleProp,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 
-/** Pulsación suave al tocar (motion premium ligero). */
+/** Pulsación suave al tocar. En web: TouchableOpacity (Pressable+transform falla el hit-test). */
 export default function PulsePress({
   onPress,
   children,
@@ -22,6 +30,21 @@ export default function PulsePress({
   useEffect(() => {
     return () => scale.stopAnimation();
   }, [scale]);
+
+  if (Platform.OS === "web") {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={disabled}
+        activeOpacity={0.88}
+        accessibilityRole={accessibilityRole ?? "button"}
+        accessibilityLabel={accessibilityLabel}
+        style={style}
+      >
+        {children}
+      </TouchableOpacity>
+    );
+  }
 
   function down() {
     Animated.timing(scale, {
