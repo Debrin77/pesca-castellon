@@ -36,18 +36,31 @@ must("src/screens/OnboardingScreen.tsx", [
   "marcarPresentacionVirtudesVista",
   "OndaAgua",
   "FONTS",
+  "FONTS.display",
   "SIN TRAMO",
   "MockUI",
   "Animated",
   "PulsePress",
   "HOY SÍ",
+  "MapaIgnPresentacion",
+  "primera salida",
 ]);
+
+must("src/components/MapaIgnPresentacion.tsx", [
+  "MapaIgnPresentacion",
+  "Curvas de nivel",
+  "1 km",
+]);
+
+must("src/theme.ts", ["display:", "Fraunces_700Bold", "Fraunces_600SemiBold"]);
 
 must("App.tsx", [
   "presentacionVirtudesVista",
   "OnboardingScreen",
   "PantallaBloqueo",
   "mostrarOnboarding",
+  "Fraunces_700Bold",
+  "Fraunces_600SemiBold",
 ]);
 
 must("src/components/PantallaBloqueo.tsx", [
