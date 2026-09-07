@@ -64,12 +64,19 @@ export default function ConsultaPescaCard({
       : null;
   const [permisoHoy, setPermisoHoy] = useState(false);
   const [internoExpandido, setInternoExpandido] = useState(false);
+  /** Dump legal completo detrás de «Ver normativa completa». */
+  const [normativaCompleta, setNormativaCompleta] = useState(false);
   const mostrarTodo = !compacto || (expandido ?? internoExpandido);
 
   function toggleDetalle() {
     if (onToggleDetalle) onToggleDetalle();
     else setInternoExpandido((v) => !v);
   }
+
+  useEffect(() => {
+    // Al plegar el detalle, la normativa larga vuelve a plegarse.
+    if (!mostrarTodo) setNormativaCompleta(false);
+  }, [mostrarTodo]);
 
   useEffect(() => {
     const mat = consulta.tramo?.matriculaCoto;
@@ -79,6 +86,70 @@ export default function ConsultaPescaCard({
     }
     void tienePermisoHoy(mat).then(setPermisoHoy);
   }, [consulta.tramo?.matriculaCoto, consulta.titulo]);
+
+  // 3 puntos clave: primero avisos, luego permisos (escaneable, no muro de texto).
+  const puntosClave = [
+    ...consulta.restriccionesHoy.map((t) => ({ tipo: "warn" as const, t })),
+    ...consulta.permisos.map((t) => ({ tipo: "ok" as const, t })),
+  ].slice(0, 3);
+  const hayMasNormativa =
+    consulta.permisos.length + consulta.restriccionesHoy.length > puntosClave.length ||
+    !!permisoInfo ||
+    !!fuente ||
+    !!consulta.especiesHabituales ||
+    !!(consulta.tramo?.especies?.length) ||
+    mar ||
+    consulta.veredicto === "fuera_catalogo";
+
+  const acciones = (
+    <View style={styles.row}>
+      {consulta.tramo?.fichaId && onFicha ? (
+        <TouchableOpacity onPress={onFicha} style={[styles.btn, { backgroundColor: acento }]}>
+          <Text style={styles.btnText}>Ficha del agua</Text>
+        </TouchableOpacity>
+      ) : null}
+      {onEspecies ? (
+        <TouchableOpacity
+          onPress={onEspecies}
+          style={styles.btnGhost}
+          accessibilityRole="button"
+          accessibilityLabel="Ver especies de este punto"
+        >
+          <Text style={[styles.btnGhostText, { color: acento }]}>Especies</Text>
+        </TouchableOpacity>
+      ) : null}
+      {especieDestacada && onAparejos ? (
+        <TouchableOpacity
+          onPress={() => onAparejos(especieDestacada)}
+          style={styles.btnGhost}
+          accessibilityRole="button"
+          accessibilityLabel="Ver aparejo de la especie destacada"
+        >
+          <Text style={[styles.btnGhostText, { color: acento }]}>Aparejo</Text>
+        </TouchableOpacity>
+      ) : null}
+      {especieDestacada && montajeDisponible && onMontaje ? (
+        <TouchableOpacity
+          onPress={() => onMontaje(especieDestacada)}
+          style={styles.btnGhost}
+          accessibilityRole="button"
+          accessibilityLabel="Ver montaje típico de la especie destacada"
+        >
+          <Text style={[styles.btnGhostText, { color: acento }]}>Montaje</Text>
+        </TouchableOpacity>
+      ) : null}
+      {compacto ? (
+        <TouchableOpacity
+          onPress={toggleDetalle}
+          style={styles.btnGhost}
+          accessibilityRole="button"
+          accessibilityLabel="Ocultar detalle del tramo"
+        >
+          <Text style={[styles.btnGhostText, { color: acento }]}>Ocultar</Text>
+        </TouchableOpacity>
+      ) : null}
+    </View>
+  );
 
   return (
     <ListaAnimada replayKey={`${consulta.veredicto}-${consulta.titulo}`} index={0}>
@@ -131,6 +202,28 @@ export default function ConsultaPescaCard({
               <Text style={[styles.btnDetalleTxt, { color: acento }]}>Ver detalle ›</Text>
             </TouchableOpacity>
           </>
+        ) : ocultarVeredictoCompacto ? (
+          <>
+            <View
+              style={[
+                styles.certezaChip,
+                noOficial ? styles.certezaChipAprox : styles.certezaChipOficial,
+              ]}
+              accessibilityLabel={certeza.a11y}
+            >
+              <Text style={styles.certezaChipTxt}>
+                {certeza.sello} · {certeza.etiqueta}
+              </Text>
+            </View>
+            <Text style={styles.title}>{consulta.titulo}</Text>
+            {consulta.tramo ? (
+              <Text style={styles.meta}>
+                Tramo {consulta.tramo.codigo} · {consulta.tramo.rio} · {consulta.tramo.vocacion}
+              </Text>
+            ) : (
+              <Text style={styles.meta}>{certeza.aviso}</Text>
+            )}
+          </>
         ) : (
           <>
             <SemaforoVeredicto consulta={consulta} />
@@ -146,169 +239,162 @@ export default function ConsultaPescaCard({
 
         {mostrarTodo ? (
           <>
-            {consulta.permisos.map((p, i) => (
-              <Text key={`p-${i}`} style={styles.ok}>
-                {p}
-              </Text>
-            ))}
-            {consulta.restriccionesHoy.map((p, i) => (
-              <Text key={`r-${i}`} style={styles.warn}>
-                {p}
-              </Text>
-            ))}
-
-            {permisoInfo ? (
-              <View style={styles.permisoBox}>
-                <Text style={styles.permisoTitle}>Permiso de coto</Text>
-                <Text style={styles.ok}>{permisoInfo.comoObtener}</Text>
-                <Text style={styles.fuente}>{permisoInfo.avisoPtop}</Text>
-                {permisoInfo.urlTramite ? (
-                  <TouchableOpacity
-                    onPress={() => Linking.openURL(permisoInfo.urlTramite!)}
-                    accessibilityRole="link"
-                    accessibilityLabel="Abrir trámite de permiso"
-                  >
-                    <Text style={[styles.link, { color: acento }]}>Abrir trámite / sede</Text>
-                  </TouchableOpacity>
-                ) : null}
-                {consulta.tramo?.matriculaCoto ? (
-                  <TouchableOpacity
-                    style={styles.btnGhost}
-                    onPress={async () => {
-                      const mat = consulta.tramo!.matriculaCoto!;
-                      await guardarPermisoDia({
-                        matricula: mat,
-                        fecha: new Date().toISOString().slice(0, 10),
-                        notas: "Marcado en dispositivo (no es el permiso oficial)",
-                      });
-                      setPermisoHoy(true);
-                    }}
-                    accessibilityRole="button"
-                    accessibilityLabel="Marcar permiso del día en el móvil"
-                  >
-                    <Text style={[styles.btnGhostText, { color: acento }]}>
-                      {permisoHoy ? "Permiso del día marcado ✓" : "Marcar permiso del día (local)"}
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-
-            {consulta.especiesHabituales ? (
-              <Text style={[styles.especies, { color: acento }]}>
-                Especies habituales: {consulta.especiesHabituales}
-              </Text>
-            ) : consulta.tramo?.especies?.length ? (
-              <Text style={[styles.especies, { color: acento }]}>
-                Especies habituales: {consulta.tramo.especies.join(" · ")}
-              </Text>
-            ) : null}
-
-            {mar ? (
-              <SitiosOrientativos
-                sitios={consulta.sitiosCosta ?? []}
-                titulo="Dónde se pesca a caña (uso habitual)"
-                aviso={avisoSitiosCosta()}
-              />
-            ) : consulta.tramo &&
-              consulta.veredicto !== "vedado" &&
-              consulta.veredicto !== "reserva_trucha" ? (
-              <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
-            ) : null}
-
-            {consulta.veredicto === "fuera_catalogo" && !mar ? (
-              <View style={styles.coberturaBox}>
-                <Text style={styles.coberturaTitle}>Cobertura del mapa</Text>
-                <Text style={styles.ok}>{provincia.coberturaCartografica.resumen}</Text>
-                {provincia.coberturaCartografica.urlVisor ? (
-                  <TouchableOpacity
-                    onPress={() => Linking.openURL(provincia.coberturaCartografica.urlVisor!)}
-                    accessibilityRole="link"
-                    accessibilityLabel="Abrir cartografía oficial"
-                  >
-                    <Text style={[styles.link, { color: acento }]}>Cartografía oficial ›</Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-
-            {fuente ? (
-              <View style={styles.fuenteBox}>
-                <Text style={styles.fuenteKicker}>NORMATIVA · CONSULTA {fuente.consultadoEn}</Text>
-                <Text style={styles.fuente}>{fuente.titulo}</Text>
-                <Text style={styles.fuente}>{fuente.vigenciaNota}</Text>
-                {fuente.urlOrden ? (
-                  <TouchableOpacity
-                    onPress={() => Linking.openURL(fuente.urlOrden!)}
-                    accessibilityRole="link"
-                  >
-                    <Text style={[styles.link, { color: acento }]}>Ver fuente oficial</Text>
-                  </TouchableOpacity>
-                ) : null}
-                {!mar && provincia.tieneIcv ? (
-                  <Text style={styles.fuente}>{fuentePoligonosOficiales()}</Text>
-                ) : null}
-              </View>
-            ) : mar ? (
-              <Text style={styles.fuente}>Normativa marítima CV / estatal</Text>
+            <Text style={styles.claveKicker}>Lo esencial hoy</Text>
+            {puntosClave.length === 0 ? (
+              <Text style={styles.ok}>Sin avisos extra en este punto.</Text>
             ) : (
-              <>
-                <Text style={styles.fuente}>{provincia.fuenteNormativa.titulo}</Text>
-                {provincia.tieneIcv ? (
-                  <Text style={styles.fuente}>{fuentePoligonosOficiales()}</Text>
-                ) : null}
-              </>
+              puntosClave.map((p, i) => (
+                <Text key={`k-${i}`} style={p.tipo === "warn" ? styles.warn : styles.ok} numberOfLines={3}>
+                  {p.t}
+                </Text>
+              ))
             )}
 
-            {debeMostrarPescaRec(consulta.ambito) ? <PescaRecBanner compacto /> : null}
+            {!normativaCompleta &&
+            (consulta.especiesHabituales || consulta.tramo?.especies?.length) ? (
+              <Text style={[styles.especies, { color: acento }]} numberOfLines={2}>
+                Especies:{" "}
+                {consulta.especiesHabituales ?? consulta.tramo?.especies?.join(" · ")}
+              </Text>
+            ) : null}
 
-            <View style={styles.row}>
-              {consulta.tramo?.fichaId && onFicha ? (
-                <TouchableOpacity onPress={onFicha} style={[styles.btn, { backgroundColor: acento }]}>
-                  <Text style={styles.btnText}>Ficha del agua</Text>
-                </TouchableOpacity>
-              ) : null}
-              {onEspecies ? (
-                <TouchableOpacity
-                  onPress={onEspecies}
-                  style={styles.btnGhost}
-                  accessibilityRole="button"
-                  accessibilityLabel="Ver especies de este punto"
-                >
-                  <Text style={[styles.btnGhostText, { color: acento }]}>Especies</Text>
-                </TouchableOpacity>
-              ) : null}
-              {especieDestacada && onAparejos ? (
-                <TouchableOpacity
-                  onPress={() => onAparejos(especieDestacada)}
-                  style={styles.btnGhost}
-                  accessibilityRole="button"
-                  accessibilityLabel="Ver aparejo de la especie destacada"
-                >
-                  <Text style={[styles.btnGhostText, { color: acento }]}>Aparejo</Text>
-                </TouchableOpacity>
-              ) : null}
-              {especieDestacada && montajeDisponible && onMontaje ? (
-                <TouchableOpacity
-                  onPress={() => onMontaje(especieDestacada)}
-                  style={styles.btnGhost}
-                  accessibilityRole="button"
-                  accessibilityLabel="Ver montaje típico de la especie destacada"
-                >
-                  <Text style={[styles.btnGhostText, { color: acento }]}>Montaje</Text>
-                </TouchableOpacity>
-              ) : null}
-              {compacto ? (
-                <TouchableOpacity
-                  onPress={toggleDetalle}
-                  style={styles.btnGhost}
-                  accessibilityRole="button"
-                  accessibilityLabel="Ocultar detalle del tramo"
-                >
-                  <Text style={[styles.btnGhostText, { color: acento }]}>Ocultar</Text>
-                </TouchableOpacity>
-              ) : null}
-            </View>
+            {hayMasNormativa ? (
+              <TouchableOpacity
+                onPress={() => setNormativaCompleta((v) => !v)}
+                style={styles.btnDetalle}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: normativaCompleta }}
+                accessibilityLabel={
+                  normativaCompleta ? "Ocultar normativa completa" : "Ver normativa completa"
+                }
+              >
+                <Text style={[styles.btnDetalleTxt, { color: acento }]}>
+                  {normativaCompleta ? "Menos normativa ▲" : "Ver normativa completa ›"}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {normativaCompleta ? (
+              <>
+                {consulta.permisos.map((p, i) => (
+                  <Text key={`p-${i}`} style={styles.ok}>
+                    {p}
+                  </Text>
+                ))}
+                {consulta.restriccionesHoy.map((p, i) => (
+                  <Text key={`r-${i}`} style={styles.warn}>
+                    {p}
+                  </Text>
+                ))}
+
+                {permisoInfo ? (
+                  <View style={styles.permisoBox}>
+                    <Text style={styles.permisoTitle}>Permiso de coto</Text>
+                    <Text style={styles.ok}>{permisoInfo.comoObtener}</Text>
+                    <Text style={styles.fuente}>{permisoInfo.avisoPtop}</Text>
+                    {permisoInfo.urlTramite ? (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(permisoInfo.urlTramite!)}
+                        accessibilityRole="link"
+                        accessibilityLabel="Abrir trámite de permiso"
+                      >
+                        <Text style={[styles.link, { color: acento }]}>Abrir trámite / sede</Text>
+                      </TouchableOpacity>
+                    ) : null}
+                    {consulta.tramo?.matriculaCoto ? (
+                      <TouchableOpacity
+                        style={styles.btnGhost}
+                        onPress={async () => {
+                          const mat = consulta.tramo!.matriculaCoto!;
+                          await guardarPermisoDia({
+                            matricula: mat,
+                            fecha: new Date().toISOString().slice(0, 10),
+                            notas: "Marcado en dispositivo (no es el permiso oficial)",
+                          });
+                          setPermisoHoy(true);
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Marcar permiso del día en el móvil"
+                      >
+                        <Text style={[styles.btnGhostText, { color: acento }]}>
+                          {permisoHoy ? "Permiso del día marcado ✓" : "Marcar permiso del día (local)"}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                ) : null}
+
+                {consulta.especiesHabituales ? (
+                  <Text style={[styles.especies, { color: acento }]}>
+                    Especies habituales: {consulta.especiesHabituales}
+                  </Text>
+                ) : consulta.tramo?.especies?.length ? (
+                  <Text style={[styles.especies, { color: acento }]}>
+                    Especies habituales: {consulta.tramo.especies.join(" · ")}
+                  </Text>
+                ) : null}
+
+                {mar ? (
+                  <SitiosOrientativos
+                    sitios={consulta.sitiosCosta ?? []}
+                    titulo="Dónde se pesca a caña (uso habitual)"
+                    aviso={avisoSitiosCosta()}
+                  />
+                ) : consulta.tramo &&
+                  consulta.veredicto !== "vedado" &&
+                  consulta.veredicto !== "reserva_trucha" ? (
+                  <SitiosOrientativos sitios={sitiosDeTramo(consulta.tramo.id)} />
+                ) : null}
+
+                {consulta.veredicto === "fuera_catalogo" && !mar ? (
+                  <View style={styles.coberturaBox}>
+                    <Text style={styles.coberturaTitle}>Cobertura del mapa</Text>
+                    <Text style={styles.ok}>{provincia.coberturaCartografica.resumen}</Text>
+                    {provincia.coberturaCartografica.urlVisor ? (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(provincia.coberturaCartografica.urlVisor!)}
+                        accessibilityRole="link"
+                        accessibilityLabel="Abrir cartografía oficial"
+                      >
+                        <Text style={[styles.link, { color: acento }]}>Cartografía oficial ›</Text>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
+                ) : null}
+
+                {fuente ? (
+                  <View style={styles.fuenteBox}>
+                    <Text style={styles.fuenteKicker}>NORMATIVA · CONSULTA {fuente.consultadoEn}</Text>
+                    <Text style={styles.fuente}>{fuente.titulo}</Text>
+                    <Text style={styles.fuente}>{fuente.vigenciaNota}</Text>
+                    {fuente.urlOrden ? (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(fuente.urlOrden!)}
+                        accessibilityRole="link"
+                      >
+                        <Text style={[styles.link, { color: acento }]}>Ver fuente oficial</Text>
+                      </TouchableOpacity>
+                    ) : null}
+                    {!mar && provincia.tieneIcv ? (
+                      <Text style={styles.fuente}>{fuentePoligonosOficiales()}</Text>
+                    ) : null}
+                  </View>
+                ) : mar ? (
+                  <Text style={styles.fuente}>Normativa marítima CV / estatal</Text>
+                ) : (
+                  <>
+                    <Text style={styles.fuente}>{provincia.fuenteNormativa.titulo}</Text>
+                    {provincia.tieneIcv ? (
+                      <Text style={styles.fuente}>{fuentePoligonosOficiales()}</Text>
+                    ) : null}
+                  </>
+                )}
+
+                {debeMostrarPescaRec(consulta.ambito) ? <PescaRecBanner compacto /> : null}
+              </>
+            ) : null}
+
+            {acciones}
           </>
         ) : null}
       </View>
@@ -349,6 +435,15 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
   meta: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 4, marginBottom: 8 },
+  claveKicker: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: COLORS.textMuted,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    marginBottom: 6,
+    marginTop: 2,
+  },
   ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
   warn: { fontSize: 12.5, color: COLORS.danger, lineHeight: 18, marginBottom: 4, fontWeight: "600" },
   especies: { fontSize: 12, marginTop: 6, fontWeight: "600" },
