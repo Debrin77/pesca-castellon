@@ -99,6 +99,8 @@ export default function HomeScreen({ navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
   const tramoYRef = useRef(0);
+  const tramoAnchorRef = useRef<View>(null);
+  const scrollYRef = useRef(0);
   useScrollToTop(scrollRef);
   const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
   const [clima, setClima] = useState<ClimaActual | null>(null);
@@ -119,6 +121,8 @@ export default function HomeScreen({ navigation }: Props) {
   const [cache, setCache] = useState<CacheOffline | null>(null);
   const [detalleTramo, setDetalleTramo] = useState(false);
   const [antesAbierto, setAntesAbierto] = useState(false);
+  /** Bloque «Aprende» solo si aún no completó la primera salida (menos ruido). */
+  const [mostrarAprende, setMostrarAprende] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: provincia.nombreApp });
@@ -139,7 +143,9 @@ export default function HomeScreen({ navigation }: Props) {
   useEffect(() => {
     let vivo = true;
     primeraSalidaHecha().then((hecha) => {
-      if (vivo && !hecha) navigation.navigate("PrimeraSalida");
+      if (!vivo) return;
+      setMostrarAprende(!hecha);
+      if (!hecha) navigation.navigate("PrimeraSalida");
     });
     return () => {
       vivo = false;
@@ -148,8 +154,15 @@ export default function HomeScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
+      let vivo = true;
+      primeraSalidaHecha().then((hecha) => {
+        if (vivo) setMostrarAprende(!hecha);
+      });
       obtenerFavoritos().then(setFavoritos);
       obtenerPuntosGuardados().then(setPuntos);
+      return () => {
+        vivo = false;
+      };
     }, [])
   );
 
@@ -412,12 +425,32 @@ export default function HomeScreen({ navigation }: Props) {
     return "Tu ubicación";
   })();
 
+  function scrollADetalleTramo(animated = true) {
+    const margen = 10;
+    const ancla = tramoAnchorRef.current;
+    const scroll = scrollRef.current;
+    if (ancla && scroll) {
+      ancla.measureInWindow((_ax, anclaY) => {
+        scroll.measureInWindow((_sx, scrollY) => {
+          // Y en contenido = offset actual + posición visible del ancla respecto al ScrollView
+          const y = Math.max(0, scrollYRef.current + (anclaY - scrollY) - margen);
+          tramoYRef.current = y + margen;
+          scroll.scrollTo({ y, animated });
+        });
+      });
+      return;
+    }
+    if (tramoYRef.current > 0) {
+      scroll?.scrollTo({ y: Math.max(0, tramoYRef.current - margen), animated });
+    }
+  }
+
   function abrirVeredictoRapido() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setDetalleTramo(true);
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ y: Math.max(0, tramoYRef.current - 12), animated: true });
-    });
+    // Doble pase: tras pintar el expandido y tras LayoutAnimation (web/nativo).
+    requestAnimationFrame(() => scrollADetalleTramo(true));
+    setTimeout(() => scrollADetalleTramo(true), Platform.OS === "web" ? 90 : 220);
   }
 
   function toggleDetalleTramo() {
@@ -445,7 +478,15 @@ export default function HomeScreen({ navigation }: Props) {
   }
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 140 }}>
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 140 }}
+      scrollEventThrottle={16}
+      onScroll={(e) => {
+        scrollYRef.current = e.nativeEvent.contentOffset.y;
+      }}
+    >
       <SheetPermisoGps
         visible={sheetGps}
         onCancelar={() => gpsResolver.current?.(false)}
@@ -489,7 +530,8 @@ export default function HomeScreen({ navigation }: Props) {
               <View>
                 <View style={styles.pulsoRow}>
                 <View style={styles.pulsoIndice}>
-                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel} · no autoriza</Text>
+                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel}</Text>
+                  <Text style={styles.indexHint}>Orientativo · no es el permiso</Text>
                   <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
                   <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
                     <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
@@ -628,14 +670,71 @@ export default function HomeScreen({ navigation }: Props) {
 
         <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
 
-        <BloqueAprende
-          onKit={() => navigation.navigate("Consejos", { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
-          onNudo={() => navigation.navigate("Consejos", { consejoId: "nudo-palomar", categoria: "nudos" })}
-          onSitios={() => navigation.navigate("PrimeraSalida")}
-          onPrimeraSalida={() => navigation.navigate("PrimeraSalida")}
-        />
+        {/* Detalle del tramo justo tras el CTA: el chip HOY SÍ cae aquí sin saltar a medias */}
+        <View
+          ref={tramoAnchorRef}
+          collapsable={false}
+          onLayout={(e) => {
+            // Hijo directo de body → y relativo al body (no a ListaAnimada ≈ 0).
+            tramoYRef.current =
+              heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
+          }}
+        >
+          <ListaAnimada index={1}>
+            <View style={styles.bloque}>
+              <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
+              {consultaViva ? (
+                <View style={{ marginBottom: 12 }}>
+                  <ConsultaPescaCard
+                    consulta={consultaViva}
+                    compacto
+                    ocultarVeredictoCompacto
+                    expandido={detalleTramo}
+                    onToggleDetalle={toggleDetalleTramo}
+                    onFicha={
+                      consultaViva.tramo?.fichaId
+                        ? () =>
+                            navigation.navigate("ZoneDetail", {
+                              zoneId: consultaViva.tramo!.fichaId,
+                            })
+                        : undefined
+                    }
+                    onEspecies={() => irAEspeciesDelPunto(navigation)}
+                    onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+                    onMontaje={(id) => {
+                      const consejoId = consejoIdMontajeEspecie(id);
+                      if (!consejoId) return;
+                      navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+                    }}
+                  />
+                </View>
+              ) : (
+                <Text style={styles.sinConsulta}>
+                  Sin punto aún. Usa «Salgo a pescar» o el mapa.
+                </Text>
+              )}
 
-        <ListaAnimada index={1}>
+              <PulsePress onPress={() => navigation.navigate("Mapa")} style={styles.mapaCta}>
+                <View style={styles.mapaCtaRow}>
+                  <View style={styles.mapaCtaGlyph}>
+                    <Text style={styles.mapaCtaIcon}>◉</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
+                    <Text style={styles.mapaCtaSub}>
+                      {provincia.continentalOnly
+                        ? "Cotos, vedados y consulta al pulsar"
+                        : "Cotos, vedados, costa y consulta al pulsar"}
+                    </Text>
+                  </View>
+                  <Text style={styles.chevron}>›</Text>
+                </View>
+              </PulsePress>
+            </View>
+          </ListaAnimada>
+        </View>
+
+        <ListaAnimada index={2}>
           <RecomendacionHoyCard
             favoritos={favoritos}
             puntos={puntos}
@@ -665,67 +764,14 @@ export default function HomeScreen({ navigation }: Props) {
           />
         </ListaAnimada>
 
-
-        {/* Veredicto del tramo — detalle bajo demanda */}
-        <ListaAnimada index={2}>
-          <View
-            style={styles.bloque}
-            onLayout={(e) => {
-              // y relativo al body; body va tras el hero con marginTop negativo
-              tramoYRef.current =
-                heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
-            }}
-          >
-            <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
-            {consultaViva ? (
-              <View style={{ marginBottom: 12 }}>
-                <ConsultaPescaCard
-                  consulta={consultaViva}
-                  compacto
-                  ocultarVeredictoCompacto
-                  expandido={detalleTramo}
-                  onToggleDetalle={toggleDetalleTramo}
-                  onFicha={
-                    consultaViva.tramo?.fichaId
-                      ? () =>
-                          navigation.navigate("ZoneDetail", {
-                            zoneId: consultaViva.tramo!.fichaId,
-                          })
-                      : undefined
-                  }
-                  onEspecies={() => irAEspeciesDelPunto(navigation)}
-                  onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
-                  onMontaje={(id) => {
-                    const consejoId = consejoIdMontajeEspecie(id);
-                    if (!consejoId) return;
-                    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
-                  }}
-                />
-              </View>
-            ) : (
-              <Text style={styles.sinConsulta}>
-                Sin punto aún. Usa «Salgo a pescar» o el mapa.
-              </Text>
-            )}
-
-            <PulsePress onPress={() => navigation.navigate("Mapa")} style={styles.mapaCta}>
-              <View style={styles.mapaCtaRow}>
-                <View style={styles.mapaCtaGlyph}>
-                  <Text style={styles.mapaCtaIcon}>◉</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
-                  <Text style={styles.mapaCtaSub}>
-                    {provincia.continentalOnly
-                      ? "Cotos, vedados y consulta al pulsar"
-                      : "Cotos, vedados, costa y consulta al pulsar"}
-                  </Text>
-                </View>
-                <Text style={styles.chevron}>›</Text>
-              </View>
-            </PulsePress>
-          </View>
-        </ListaAnimada>
+        {mostrarAprende ? (
+          <BloqueAprende
+            onKit={() => navigation.navigate("Consejos", { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
+            onNudo={() => navigation.navigate("Consejos", { consejoId: "nudo-palomar", categoria: "nudos" })}
+            onSitios={() => navigation.navigate("PrimeraSalida")}
+            onPrimeraSalida={() => navigation.navigate("PrimeraSalida")}
+          />
+        ) : null}
 
         {/* Seguridad compacta */}
         <ListaAnimada index={3}>
@@ -903,8 +949,8 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   hero: {
-    paddingTop: SPACING.xl,
-    paddingBottom: SPACING.xl + 4,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.lg + 2,
     paddingHorizontal: SPACING.lg,
     borderBottomLeftRadius: RADIUS.xl,
     borderBottomRightRadius: RADIUS.xl,
@@ -1021,6 +1067,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
+  },
+  indexHint: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.78)",
+    fontWeight: "600",
+    marginTop: 2,
+    marginBottom: 2,
+    textAlign: "center",
   },
   indexScore: {
     fontSize: 56,

@@ -51,23 +51,22 @@ export default function RecomendacionHoyCard({
 
   if (!cargando && !rec && favoritos.length === 0 && puntos.length === 0) {
     return (
-      <View style={styles.vacio}>
-        <Text style={styles.vacioKicker}>Hoy te conviene</Text>
-        <Text style={styles.vacioTitulo}>Aún no tienes sitios guardados</Text>
-        <Text style={styles.vacioSub}>
-          Marca un favorito en una ficha o guarda un punto: aquí te sugeriremos el que mejor pinta.
+      <TouchableOpacity
+        style={styles.vacioLinea}
+        onPress={onExplorarMapa}
+        accessibilityRole="button"
+        accessibilityLabel="Explorar mapa para guardar sitios"
+      >
+        <Text style={styles.vacioLineaTxt}>
+          Sin sitios guardados · <Text style={styles.vacioLineaLink}>explorar mapa →</Text>
         </Text>
-        <TouchableOpacity onPress={onExplorarMapa} accessibilityRole="button">
-          <Text style={styles.vacioLink}>Explorar mapa →</Text>
-        </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     );
   }
 
   if (cargando && !rec) {
     return (
-      <View style={styles.vacio}>
-        <Text style={styles.vacioKicker}>Hoy te conviene</Text>
+      <View style={styles.vacioLinea}>
         <ActivityIndicator color={COLORS.water} />
       </View>
     );
@@ -146,6 +145,20 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
+  },
+  vacioLinea: {
+    marginBottom: SPACING.md,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+  },
+  vacioLineaTxt: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
+  vacioLineaLink: {
+    fontWeight: "800",
+    color: COLORS.waterDark,
   },
   vacioKicker: {
     fontSize: 11,
