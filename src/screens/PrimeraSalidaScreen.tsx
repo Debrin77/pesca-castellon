@@ -103,10 +103,10 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             <Text style={styles.title}>Licencia (imprescindible)</Text>
             <Text style={styles.sub}>
               {medio === "maritimo"
-                ? "En costa necesitas la licencia marítima recreativa desde tierra. Desde 2026, PescaREC puede exigir declaraciones en mar."
+                ? "En costa hace falta la licencia marítima recreativa desde tierra. En mar, PescaREC puede pedir declaraciones."
                 : provincia.requisitosLicencia.seguroObligatorio
-                  ? "En ríos/embalses: licencia continental + NIR + seguro RC obligatorio."
-                  : "En ríos/embalses: licencia continental. En Castellón no se exige seguro RC."}
+                  ? "En ríos/embalses: licencia continental, número de registro y seguro de responsabilidad civil."
+                  : "En ríos/embalses: licencia continental. En Castellón no se pide seguro de responsabilidad civil."}
             </Text>
             <TouchableOpacity style={styles.opt} onPress={() => navigation.navigate("License")}>
               <Text style={styles.optTitle}>Cómo tramitarla / guardarla</Text>
@@ -212,8 +212,8 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             <Text style={styles.title}>Listo para salir</Text>
             <Text style={styles.sub}>
               En Inicio verás «¿Puedo?» (norma) separado de «¿Pinta?» (clima). Usa «Salgo a pescar»
-              para el checklist del día. Si el semáforo dice SIN TRAMO, no es veda automática: mira el
-              cartel.
+              para el checklist. Si el semáforo dice «SIN TRAMO», no es veda: confirma el cartel en
+              el sitio.
             </Text>
             {provincia.id === "castellon" && medio === "maritimo" ? (
               <TouchableOpacity

@@ -97,7 +97,7 @@ function aplicarCache(cache: CacheOffline, setters: {
 export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const { punto, listo: puntoListo } = usePuntoConsulta();
+  const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
   const tramoYRef = useRef(0);
@@ -146,13 +146,13 @@ export default function HomeScreen({ navigation }: Props) {
     let vivo = true;
     primeraSalidaHecha().then((hecha) => {
       if (!vivo) return;
+      // No forzar el wizard: se invita desde «Siguiente paso» / Aprende.
       setMostrarAprende(!hecha);
-      if (!hecha) navigation.navigate("PrimeraSalida");
     });
     return () => {
       vivo = false;
     };
-  }, [navigation]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -331,32 +331,19 @@ export default function HomeScreen({ navigation }: Props) {
       return;
     }
 
-    // Prioridad: punto del mapa → GPS → centro provincia.
+    // Prioridad: punto del mapa → GPS solo si ya hay punto gps → centro provincia.
+    // No pedimos GPS ni notificaciones al entrar: el usuario lo pide al salir / chip.
     let loc: { lat: number; lng: number } | null = null;
     if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
       loc = { lat: punto.lat, lng: punto.lng };
       setPermisoDenegado(false);
     } else {
-      const ok = await pedirGpsConSheet();
-      if (!okVivo()) return;
-      if (!ok) {
-        setPermisoDenegado(true);
-        // Sin GPS: al menos centro de provincia para no dejar el inicio vacío.
-        loc = {
-          lat: provincia.regionMapa.latitude,
-          lng: provincia.regionMapa.longitude,
-        };
-      } else {
-        setPermisoDenegado(false);
-        loc = await obtenerUbicacionActual();
-        if (!okVivo()) return;
-        if (!loc) {
-          loc = {
-            lat: provincia.regionMapa.latitude,
-            lng: provincia.regionMapa.longitude,
-          };
-        }
-      }
+      loc = {
+        lat: provincia.regionMapa.latitude,
+        lng: provincia.regionMapa.longitude,
+      };
+      // Sin diálogo: el centro basta para pintar clima/índice. GPS = gesto explícito.
+      setPermisoDenegado(true);
     }
 
     if (loc) {
@@ -375,11 +362,9 @@ export default function HomeScreen({ navigation }: Props) {
 
       void (async () => {
         try {
-          if (dia) {
-            const permisoNotif = await solicitarPermisoNotificaciones();
-            if (!okVivo()) return;
-            if (permisoNotif) await programarAlertasPesca(indice);
-          }
+          // Cachear sin pedir notificaciones. solicitarPermisoNotificaciones
+          // solo vía activarAlertasBuenDia (gesto del usuario).
+          void activarAlertasBuenDia;
         } catch {
           /* no bloquear el pulso */
         }
@@ -479,6 +464,39 @@ export default function HomeScreen({ navigation }: Props) {
     });
   }
 
+  /** GPS solo cuando el usuario lo pide (no al entrar). */
+  async function usarMiUbicacion() {
+    const ok = await pedirGpsConSheet();
+    if (!ok) return;
+    const loc = await obtenerUbicacionActual();
+    if (!loc) return;
+    setPermisoDenegado(false);
+    setUbicacion(loc);
+    await fijarPunto({ lat: loc.lat, lng: loc.lng, fuente: "gps", etiqueta: "Tu ubicación" });
+    setCargando(true);
+    try {
+      const [c, indice] = await Promise.all([
+        obtenerClimaActual(loc.lat, loc.lng),
+        calcularIndicePesca(loc.lat, loc.lng, 3),
+      ]);
+      setClima(c);
+      const dia = indice.length > 0 ? indice[0] : null;
+      if (dia) setIndiceHoy(dia);
+      await guardarCacheOffline({ clima: c, indiceHoy: dia, ubicacion: loc });
+    } finally {
+      setCargando(false);
+    }
+  }
+
+  /** Notificaciones solo bajo gesto (no al cargar). */
+  async function activarAlertasBuenDia() {
+    if (!indiceHoy || !ubicacion) return;
+    const permisoNotif = await solicitarPermisoNotificaciones();
+    if (!permisoNotif) return;
+    const indice = await calcularIndicePesca(ubicacion.lat, ubicacion.lng, 3);
+    await programarAlertasPesca(indice);
+  }
+
   return (
     <ScrollView
       ref={scrollRef}
@@ -527,6 +545,16 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.climaOrigen} numberOfLines={1}>
               {etiquetaClima}
             </Text>
+            {permisoDenegado && !punto ? (
+              <TouchableOpacity
+                style={styles.gpsChip}
+                onPress={() => void usarMiUbicacion()}
+                accessibilityRole="button"
+                accessibilityLabel="Usar mi ubicación"
+              >
+                <Text style={styles.gpsChipTxt}>Usar mi ubicación</Text>
+              </TouchableOpacity>
+            ) : null}
 
             {indiceHoy && catInfo ? (
               <View>
@@ -653,8 +681,9 @@ export default function HomeScreen({ navigation }: Props) {
           <SiguientePasoCard
             provinciaId={provincia.id}
             checklistTextos={provincia.checklistAntesDePescar}
-            tienePunto={!!consultaViva && !!ubicacion}
+            tienePunto={!!consultaViva && !!ubicacion && !permisoDenegado}
             tieneSitios={favoritos.length > 0 || puntos.length > 0}
+            invitarPrimeraSalida={mostrarAprende}
             etiquetaPunto={etiquetaClima}
             veredictoTexto={hoyEtiqueta?.texto ?? null}
             veredictoSub={hoyEtiqueta?.sub ?? null}
@@ -664,6 +693,10 @@ export default function HomeScreen({ navigation }: Props) {
             onAccion={(accion: SiguientePasoAccion) => {
               if (accion.tipo === "mapa") {
                 navigation.navigate("Mapa");
+                return;
+              }
+              if (accion.tipo === "primera_salida") {
+                navigation.navigate("PrimeraSalida");
                 return;
               }
               if (accion.tipo === "captura") {
@@ -1011,6 +1044,21 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     marginTop: 8,
+  },
+  gpsChip: {
+    alignSelf: "center",
+    marginTop: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: RADIUS.pill,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+  },
+  gpsChipTxt: {
+    color: "#fff",
+    fontSize: 12.5,
+    fontWeight: "800",
   },
   climaMeta: {
     color: "rgba(255,255,255,0.88)",

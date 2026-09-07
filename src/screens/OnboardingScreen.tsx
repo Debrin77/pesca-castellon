@@ -60,7 +60,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         eyebrow: "Antes de lanzar la caña",
         titulo: "¿Puedo aquí?",
         texto: provincia.continentalOnly
-          ? `Verde, rojo o «SIN TRAMO». SIN TRAMO no es veda: en ${nombreProv} puede ser agua libre. Mira el cartel en tu primera salida.`
+          ? `Semáforo claro: verde sí, rojo no. Si sale «SIN TRAMO», no es veda: mira el cartel en tu primera salida en ${nombreProv}.`
           : provincia.tieneIcv
             ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — confirma el cartel."
             : `Verde, rojo o ámbar. En ${nombreProv} es orientativo: confirma siempre en la fuente oficial.`,
