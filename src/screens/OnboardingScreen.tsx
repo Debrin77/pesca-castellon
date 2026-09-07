@@ -103,7 +103,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "campo",
         eyebrow: "De la duda a la orilla",
         titulo: "Salgo en 5 pasos",
-        texto: "Ritual corto para tu primera salida: sitio → norma → clima → montaje → checklist.",
+        texto: "Ritual corto para tu primera salida: sitio → norma → clima → montaje → qué llevar.",
         accent: ["#24382e", "#17261f", "#0e1713"],
         tonoOnda: "claro",
       },
@@ -497,7 +497,7 @@ function MockCampo({ activo }: { activo: boolean }) {
     { n: "1", t: "Dónde voy", done: true },
     { n: "2", t: "¿Puedo? + ¿Pinta?", done: true },
     { n: "3", t: "Montaje de la especie", done: false },
-    { n: "4", t: "Checklist de equipo", done: false },
+    { n: "4", t: "Equipo a llevar", done: false },
   ];
   return (
     <LinearGradient colors={["#f7faf7", "#e6efe8"]} style={m.fill}>

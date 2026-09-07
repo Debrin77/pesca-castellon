@@ -9,7 +9,7 @@ type Props = {
   sobreOscuro?: boolean;
 };
 
-/** Pista de progreso Sitio → Normativa → Clima → Checklist. */
+/** Pista de progreso Sitio → Normativa → Clima → Qué llevar. */
 export default function PasoSalida({ pasos, activo, sobreOscuro = false }: Props) {
   return (
     <View style={styles.row} accessibilityRole="progressbar" accessibilityValue={{ now: activo + 1, min: 1, max: pasos.length }}>

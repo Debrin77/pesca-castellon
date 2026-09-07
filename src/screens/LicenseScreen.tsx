@@ -347,7 +347,7 @@ export default function LicenseScreen() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Checklist antes de salir</Text>
+        <Text style={styles.cardTitle}>Antes de salir</Text>
         {checklist.map((e, i) => (
           <Text key={i} style={styles.bullet}>
             • {e}

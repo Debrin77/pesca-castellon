@@ -30,9 +30,11 @@ if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido"))
 
 // Orden: CTA Salgo → bloque detalle del tramo → PanelCampoHoy
 const iSalgo =
-  home.indexOf("<SiguientePasoCard") >= 0
-    ? home.indexOf("<SiguientePasoCard")
-    : home.indexOf("Abrir Salgo a pescar");
+  home.indexOf("ctaSalgoTitle") >= 0
+    ? home.indexOf("ctaSalgoTitle")
+    : home.indexOf("<SiguientePasoCard") >= 0
+      ? home.indexOf("<SiguientePasoCard")
+      : home.indexOf("Abrir Salgo a pescar");
 const iTramo =
   home.indexOf("Detalle del tramo") >= 0
     ? home.indexOf("Detalle del tramo")
@@ -43,7 +45,7 @@ const iAntes = home.indexOf("Antes de salir");
 const iSitios = home.indexOf("Tus sitios");
 const iCampo = home.indexOf("<PanelCampoHoy");
 if (iSalgo < 0 || iTramo < 0 || iCampo < 0 || !(iSalgo < iTramo && iTramo < iCampo)) {
-  fail("HomeScreen orden ritual: Siguiente paso → Detalle del tramo → PanelCampoHoy");
+  fail("HomeScreen orden ritual: Salgo a pescar → Detalle del tramo → PanelCampoHoy");
 }
 if (iAntes > 0 && iSitios > 0 && !(iAntes < iCampo)) {
   fail("HomeScreen: Antes de salir debería ir antes de Campo/Ahora");

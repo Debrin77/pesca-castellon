@@ -212,7 +212,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             <Text style={styles.title}>Listo para salir</Text>
             <Text style={styles.sub}>
               En Inicio verás «¿Puedo?» (norma) separado de «¿Pinta?» (clima). Usa «Salgo a pescar»
-              para el checklist. Si el semáforo dice «SIN TRAMO», no es veda: confirma el cartel en
+              para la preparación. Si el semáforo dice «SIN TRAMO», no es veda: confirma el cartel en
               el sitio.
             </Text>
             {provincia.id === "castellon" && medio === "maritimo" ? (
