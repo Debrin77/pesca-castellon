@@ -36,6 +36,9 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
         if (esProvinciaId(raw)) {
           setProvinciaActiva(raw);
           setProvinciaId(raw);
+          if (typeof document !== "undefined") {
+            document.title = provinciaPorId(raw).nombreApp;
+          }
         }
       } finally {
         if (vivo) setListo(true);
@@ -50,6 +53,9 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
     setProvinciaActiva(id);
     setProvinciaId(id);
     await AsyncStorage.setItem(CLAVE_PROVINCIA, id);
+    if (typeof document !== "undefined") {
+      document.title = provinciaPorId(id).nombreApp;
+    }
   }, []);
 
   const cambiarProvincia = useCallback(async () => {
