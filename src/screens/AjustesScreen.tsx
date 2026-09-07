@@ -21,6 +21,7 @@ import {
   desactivarBloqueo,
   setBiometriaActiva,
 } from "../services/accesoService";
+import { reiniciarPresentacionVirtudes } from "../services/offlineService";
 import { COLORS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 import PanelOfflineMapa from "../components/PanelOfflineMapa";
 import PescaRecBanner from "../components/PescaRecBanner";
@@ -34,14 +35,22 @@ function avisar(titulo: string, mensaje: string) {
   Alert.alert(titulo, mensaje);
 }
 
+function soloDigitos(v: string): string {
+  return v.replace(/\D/g, "").slice(0, 8);
+}
+
+function esPinValido(v: string): boolean {
+  return /^\d{4,8}$/.test(v.trim());
+}
+
 export default function AjustesScreen() {
   const { config, biometria, refrescar, marcarDesbloqueado } = useAcceso();
   const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const [cargando, setCargando] = useState(false);
-  const [nuevaClave, setNuevaClave] = useState("");
-  const [repetirClave, setRepetirClave] = useState("");
-  const [claveActual, setClaveActual] = useState("");
+  const [nuevoPin, setNuevoPin] = useState("");
+  const [repetirPin, setRepetirPin] = useState("");
+  const [pinActual, setPinActual] = useState("");
   const [modoCambio, setModoCambio] = useState(false);
 
   useFocusEffect(
@@ -51,22 +60,25 @@ export default function AjustesScreen() {
   );
 
   async function activar() {
-    if (nuevaClave.trim().length < 4) {
-      avisar("Contraseña corta", "Usa al menos 4 caracteres.");
+    if (!esPinValido(nuevoPin)) {
+      avisar("PIN inválido", "Usa entre 4 y 8 dígitos numéricos.");
       return;
     }
-    if (nuevaClave !== repetirClave) {
-      avisar("No coinciden", "Las dos contraseñas deben ser iguales.");
+    if (nuevoPin !== repetirPin) {
+      avisar("No coinciden", "Los dos PIN deben ser iguales.");
       return;
     }
     setCargando(true);
     try {
-      await activarBloqueoConContrasena(nuevaClave);
-      setNuevaClave("");
-      setRepetirClave("");
+      await activarBloqueoConContrasena(nuevoPin.trim());
+      setNuevoPin("");
+      setRepetirPin("");
       await refrescar();
       marcarDesbloqueado();
-      avisar("Listo", "La app pedirá contraseña al abrirla o al volver tras unos segundos en segundo plano.");
+      avisar(
+        "Listo",
+        "La app pedirá tu PIN al abrirla o al volver tras unos segundos en segundo plano. Puedes activar Face ID / huella debajo."
+      );
     } catch (e: any) {
       avisar("Error", e?.message ?? "No se pudo activar el bloqueo.");
     } finally {
@@ -75,16 +87,16 @@ export default function AjustesScreen() {
   }
 
   async function desactivar() {
-    if (claveActual.trim().length < 4) {
-      avisar("Contraseña", "Introduce tu contraseña actual para desactivar el bloqueo.");
+    if (pinActual.trim().length < 4) {
+      avisar("PIN", "Introduce tu PIN actual para desactivar el bloqueo.");
       return;
     }
     setCargando(true);
     try {
-      await desactivarBloqueo(claveActual);
-      setClaveActual("");
+      await desactivarBloqueo(pinActual);
+      setPinActual("");
       await refrescar();
-      avisar("Desactivado", "Ya no se pedirá contraseña al entrar.");
+      avisar("Desactivado", "Ya no se pedirá PIN al entrar.");
     } catch (e: any) {
       avisar("Error", e?.message ?? "No se pudo desactivar.");
     } finally {
@@ -92,20 +104,20 @@ export default function AjustesScreen() {
     }
   }
 
-  async function guardarCambioClave() {
-    if (nuevaClave.trim().length < 4 || nuevaClave !== repetirClave) {
-      avisar("Revisa la contraseña", "Mínimo 4 caracteres y deben coincidir.");
+  async function guardarCambioPin() {
+    if (!esPinValido(nuevoPin) || nuevoPin !== repetirPin) {
+      avisar("Revisa el PIN", "Entre 4 y 8 dígitos, y deben coincidir.");
       return;
     }
     setCargando(true);
     try {
-      await cambiarContrasena(claveActual, nuevaClave);
-      setClaveActual("");
-      setNuevaClave("");
-      setRepetirClave("");
+      await cambiarContrasena(pinActual, nuevoPin.trim());
+      setPinActual("");
+      setNuevoPin("");
+      setRepetirPin("");
       setModoCambio(false);
       await refrescar();
-      avisar("Actualizada", "La contraseña se ha cambiado.");
+      avisar("Actualizado", "El PIN se ha cambiado.");
     } catch (e: any) {
       avisar("Error", e?.message ?? "No se pudo cambiar.");
     } finally {
@@ -125,10 +137,19 @@ export default function AjustesScreen() {
     }
   }
 
+  async function verPresentacionOtraVez() {
+    await reiniciarPresentacionVirtudes();
+    avisar(
+      "Presentación",
+      "La próxima vez que abras la app verás de nuevo la presentación de virtudes (puedes cerrarla con la X)."
+    );
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.lead}>
-        Protege capturas, favoritos y puntos guardados en este dispositivo.
+        Tu cuaderno de pesca es personal: PIN, biometria y datos locales en este
+        dispositivo. Compartir un sitio es opcional, no el motivo de la app.
       </Text>
 
       <View style={styles.card}>
@@ -159,7 +180,7 @@ export default function AjustesScreen() {
         <Text style={styles.cardTitle}>Acceso a la app</Text>
         <View style={styles.row}>
           <View style={{ flex: 1, paddingRight: 12 }}>
-            <Text style={styles.rowTitle}>Bloqueo con contraseña</Text>
+            <Text style={styles.rowTitle}>Bloqueo con PIN</Text>
             <Text style={styles.rowSub}>
               {config.bloqueoActivo
                 ? "Activo · se pide al abrir o al volver a la app"
@@ -173,25 +194,29 @@ export default function AjustesScreen() {
 
         {!config.bloqueoActivo ? (
           <View style={styles.form}>
-            <Text style={styles.label}>Nueva contraseña</Text>
+            <Text style={styles.label}>Nuevo PIN (4-8 dígitos)</Text>
             <TextInput
               style={styles.input}
               secureTextEntry
-              value={nuevaClave}
-              onChangeText={setNuevaClave}
-              placeholder="Mínimo 4 caracteres"
+              keyboardType="number-pad"
+              value={nuevoPin}
+              onChangeText={(t) => setNuevoPin(soloDigitos(t))}
+              placeholder="Ej. 2580"
               placeholderTextColor={COLORS.textMuted}
               autoCapitalize="none"
+              maxLength={8}
             />
-            <Text style={styles.label}>Repetir contraseña</Text>
+            <Text style={styles.label}>Repetir PIN</Text>
             <TextInput
               style={styles.input}
               secureTextEntry
-              value={repetirClave}
-              onChangeText={setRepetirClave}
-              placeholder="Repite la contraseña"
+              keyboardType="number-pad"
+              value={repetirPin}
+              onChangeText={(t) => setRepetirPin(soloDigitos(t))}
+              placeholder="Repite el PIN"
               placeholderTextColor={COLORS.textMuted}
               autoCapitalize="none"
+              maxLength={8}
             />
             <TouchableOpacity style={styles.btn} onPress={activar} disabled={cargando}>
               {cargando ? (
@@ -203,21 +228,23 @@ export default function AjustesScreen() {
           </View>
         ) : (
           <View style={styles.form}>
-            <Text style={styles.label}>Contraseña actual</Text>
+            <Text style={styles.label}>PIN actual</Text>
             <TextInput
               style={styles.input}
               secureTextEntry
-              value={claveActual}
-              onChangeText={setClaveActual}
+              keyboardType="number-pad"
+              value={pinActual}
+              onChangeText={(t) => setPinActual(soloDigitos(t))}
               placeholder="Para desactivar o cambiar"
               placeholderTextColor={COLORS.textMuted}
               autoCapitalize="none"
+              maxLength={8}
             />
 
             {!modoCambio ? (
               <>
                 <TouchableOpacity style={styles.btnGhost} onPress={() => setModoCambio(true)}>
-                  <Text style={styles.btnGhostTxt}>Cambiar contraseña</Text>
+                  <Text style={styles.btnGhostTxt}>Cambiar PIN</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnDanger} onPress={desactivar} disabled={cargando}>
                   <Text style={styles.btnTxt}>Desactivar bloqueo</Text>
@@ -225,24 +252,28 @@ export default function AjustesScreen() {
               </>
             ) : (
               <>
-                <Text style={styles.label}>Nueva contraseña</Text>
+                <Text style={styles.label}>Nuevo PIN</Text>
                 <TextInput
                   style={styles.input}
                   secureTextEntry
-                  value={nuevaClave}
-                  onChangeText={setNuevaClave}
+                  keyboardType="number-pad"
+                  value={nuevoPin}
+                  onChangeText={(t) => setNuevoPin(soloDigitos(t))}
                   autoCapitalize="none"
+                  maxLength={8}
                 />
-                <Text style={styles.label}>Repetir nueva</Text>
+                <Text style={styles.label}>Repetir nuevo PIN</Text>
                 <TextInput
                   style={styles.input}
                   secureTextEntry
-                  value={repetirClave}
-                  onChangeText={setRepetirClave}
+                  keyboardType="number-pad"
+                  value={repetirPin}
+                  onChangeText={(t) => setRepetirPin(soloDigitos(t))}
                   autoCapitalize="none"
+                  maxLength={8}
                 />
-                <TouchableOpacity style={styles.btn} onPress={guardarCambioClave} disabled={cargando}>
-                  <Text style={styles.btnTxt}>Guardar nueva contraseña</Text>
+                <TouchableOpacity style={styles.btn} onPress={guardarCambioPin} disabled={cargando}>
+                  <Text style={styles.btnTxt}>Guardar nuevo PIN</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btnGhost} onPress={() => setModoCambio(false)}>
                   <Text style={styles.btnGhostTxt}>Cancelar</Text>
@@ -257,12 +288,12 @@ export default function AjustesScreen() {
         <Text style={styles.cardTitle}>{biometria.etiqueta}</Text>
         <View style={styles.row}>
           <View style={{ flex: 1, paddingRight: 12 }}>
-            <Text style={styles.rowTitle}>Entrar con biometría</Text>
+            <Text style={styles.rowTitle}>Entrar con biometria</Text>
             <Text style={styles.rowSub}>
               {biometria.detalle ||
                 (config.bloqueoActivo
-                  ? "Usa Face ID / huella y, si falla, la contraseña."
-                  : "Activa primero el bloqueo con contraseña.")}
+                  ? "Usa Face ID / huella y, si falla, el PIN."
+                  : "Activa primero el bloqueo con PIN.")}
             </Text>
           </View>
           <Switch
@@ -280,13 +311,24 @@ export default function AjustesScreen() {
         </View>
         {Platform.OS === "web" ? (
           <Text style={styles.note}>
-            En la web puedes usar contraseña. Face ID / huella requiere la app en el móvil.
+            En la web puedes usar el PIN. Face ID / huella requiere la app en el móvil.
           </Text>
         ) : null}
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Presentación</Text>
+        <Text style={styles.rowSub}>
+          Pantallas estilo App Store con las virtudes de la app. Se pueden cerrar
+          con la X de arriba a la derecha.
+        </Text>
+        <TouchableOpacity style={styles.btnGhost} onPress={verPresentacionOtraVez}>
+          <Text style={styles.btnGhostTxt}>Ver presentación otra vez</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.footer}>
-        La contraseña se guarda cifrada (hash) en este dispositivo. No se envía a ningún servidor.
+        El PIN se guarda cifrado (hash) en este dispositivo. No se envía a ningún servidor.
       </Text>
     </ScrollView>
   );

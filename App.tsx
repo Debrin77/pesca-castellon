@@ -15,7 +15,7 @@ import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import PrimeraSalidaScreen from "./src/screens/PrimeraSalidaScreen";
 import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
-import { onboardingVisto } from "./src/services/offlineService";
+import { presentacionVirtudesVista } from "./src/services/offlineService";
 
 aplicarEstilosWeb();
 
@@ -213,7 +213,7 @@ function AppRaiz() {
   const [mostrarOnboarding, setMostrarOnboarding] = useState(false);
 
   useEffect(() => {
-    onboardingVisto().then((visto) => {
+    presentacionVirtudesVista().then((visto) => {
       setMostrarOnboarding(!visto);
       setListoOnboarding(true);
     });
@@ -224,19 +224,23 @@ function AppRaiz() {
   }
 
   if (!provinciaId) {
-    return <SelectorProvinciaScreen />;
+    return (
+      <View style={styles.root}>
+        <SelectorProvinciaScreen />
+        <PantallaBloqueo />
+      </View>
+    );
   }
 
+  // Orden: app (o presentación) debajo; el PIN/biometría siempre por encima.
   return (
     <View style={styles.root}>
       {mostrarOnboarding ? (
         <OnboardingScreen onDone={() => setMostrarOnboarding(false)} />
       ) : (
-        <>
-          <AppNavegacion provinciaKey={provinciaId} />
-          <PantallaBloqueo />
-        </>
+        <AppNavegacion provinciaKey={provinciaId} />
       )}
+      <PantallaBloqueo />
     </View>
   );
 }
