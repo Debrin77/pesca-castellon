@@ -49,7 +49,7 @@ type Modo =
 
 /**
  * Un único «siguiente paso» en Inicio: reduce puertas competidoras
- * y cierra el loop personal (sitio → checklist → salida de hoy).
+ * y cierra el loop personal (sitio → qué llevar → salida de hoy).
  */
 export default function SiguientePasoCard({
   provinciaId,
@@ -178,7 +178,7 @@ export default function SiguientePasoCard({
         <Text style={styles.kicker}>Siguiente paso</Text>
         <Text style={styles.titulo}>Registrar salida de hoy</Text>
         <Text style={styles.sub}>
-          Checklist lista
+          Preparación lista
           {veredictoTexto ? ` · ${veredictoTexto}` : ""}
           {etiquetaPunto ? ` · ${etiquetaPunto}` : ""}
         </Text>
@@ -208,7 +208,7 @@ export default function SiguientePasoCard({
       ? {
           kicker: "Siguiente paso",
           titulo: "Tu primera salida",
-          sub: "Guía corta: sitio fácil, licencia y checklist. O salta y explora el mapa.",
+          sub: "Guía corta: sitio fácil, licencia y qué llevar. O salta y mira el mapa.",
           cta: "Empezar guía",
           accion: { tipo: "primera_salida" } as SiguientePasoAccion,
         }
@@ -231,14 +231,14 @@ export default function SiguientePasoCard({
         : modo.id === "checklist"
           ? {
               kicker: "Siguiente paso",
-              titulo: "Termina el checklist",
+              titulo: "Revisa qué llevar",
               sub: `${modo.hechos}/${modo.total} listos · ${etiquetaPunto ?? "punto elegido"}`,
-              cta: "Continuar checklist",
+              cta: "Continuar preparación",
               accion: { tipo: "salgo", irAChecklist: true } as SiguientePasoAccion,
             }
           : {
               kicker: "Siguiente paso",
-              titulo: "Termina el checklist",
+              titulo: "Revisa qué llevar",
               sub: etiquetaPunto ?? "punto elegido",
               cta: "Continuar",
               accion: { tipo: "salgo" } as SiguientePasoAccion,

@@ -41,11 +41,13 @@ if (iTitulo < 0 || !ventana.includes("ref={tramoAnchorRef}")) {
 }
 
 const iSalgo =
-  home.indexOf("<SiguientePasoCard") >= 0
-    ? home.indexOf("<SiguientePasoCard")
-    : home.indexOf("Abrir Salgo a pescar");
+  home.indexOf("ctaSalgoTitle") >= 0
+    ? home.indexOf("ctaSalgoTitle")
+    : home.indexOf("<SiguientePasoCard") >= 0
+      ? home.indexOf("<SiguientePasoCard")
+      : home.indexOf("Abrir Salgo a pescar");
 if (!(iSalgo >= 0 && iTitulo > iSalgo)) {
-  fail("Detalle del tramo debe ir después del CTA principal (Siguiente paso / Salgo)");
+  fail("Detalle del tramo debe ir después del CTA Salgo a pescar");
 }
 
 // Aprende / recomendación vacía no deben empujar el detalle lejos del chip

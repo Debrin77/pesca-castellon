@@ -116,7 +116,7 @@ export default function ChecklistInteractivo({
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.progreso} accessibilityLabel={`Checklist ${hechos} de ${total}`}>
+      <View style={styles.progreso} accessibilityLabel={`Preparación ${hechos} de ${total}`}>
         <View style={styles.progresoTop}>
           <Text style={styles.progresoLbl}>Preparación</Text>
           <Text style={styles.progresoNum}>
@@ -131,7 +131,7 @@ export default function ChecklistInteractivo({
       {listo ? (
         <View style={styles.listo} accessibilityLiveRegion="polite">
           <Text style={styles.listoTitle}>Listo para salir</Text>
-          <Text style={styles.listoSub}>Checklist completa. Buena pesca y respeta la normativa.</Text>
+          <Text style={styles.listoSub}>Todo marcado. Buena pesca y respeta la normativa.</Text>
         </View>
       ) : null}
 

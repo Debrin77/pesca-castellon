@@ -283,7 +283,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const consejoMontaje = especieDestacada ? consejoIdMontajeEspecie(especieDestacada) : undefined;
   const montajeTipico = especieDestacada ? montajesParaEspecie(especieDestacada)[0] : undefined;
   const pasoVisual = elegirUbicacion || !hayResultado ? 0 : Math.min(paso + 1, 3);
-  const labelsPaso = ["Sitio", "Normativa", "Clima", "Checklist"];
+  const labelsPaso = ["Sitio", "Normativa", "Clima", "Qué llevar"];
 
   function irMontaje(especieId: string) {
     const consejoId = consejoIdMontajeEspecie(especieId);
@@ -653,7 +653,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                   <Text style={styles.btnGhostTxt}>Ver previsión completa</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn} onPress={() => setPaso(2)}>
-                  <Text style={styles.btnTxt}>Ir al checklist →</Text>
+                  <Text style={styles.btnTxt}>Qué llevar →</Text>
                 </TouchableOpacity>
               </View>
             </ListaAnimada>
@@ -662,8 +662,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           {paso >= 2 && (
             <ListaAnimada index={2}>
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>3 · Checklist</Text>
-                <Text style={styles.hint}>Marca lo que ya llevas. Los enlaces abren la ficha útil.</Text>
+                <Text style={styles.cardTitle}>3 · Qué llevar</Text>
+                <Text style={styles.hint}>Marca lo que ya tienes. Los enlaces abren la ficha útil.</Text>
                 <ChecklistInteractivo
                   provinciaId={provincia.id}
                   items={itemsDesdeTextos(

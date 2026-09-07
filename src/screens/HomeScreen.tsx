@@ -678,6 +678,24 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <ListaAnimada index={0}>
+          <PulsePress
+            onPress={() => navigation.navigate("SalgoAPescar")}
+            style={styles.ctaSalgo}
+          >
+            <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
+              <OndaAgua intensidad={0.9} />
+              <View style={styles.ctaSalgoRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
+                  <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
+                  <Text style={styles.ctaSalgoSub}>Punto del día y qué llevar</Text>
+                </View>
+                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
+                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </PulsePress>
           <SiguientePasoCard
             provinciaId={provincia.id}
             checklistTextos={provincia.checklistAntesDePescar}
@@ -713,14 +731,6 @@ export default function HomeScreen({ navigation }: Props) {
               }
             }}
           />
-          <TouchableOpacity
-            style={styles.salgoSecundario}
-            onPress={() => navigation.navigate("SalgoAPescar")}
-            accessibilityRole="button"
-            accessibilityLabel="Abrir Salgo a pescar"
-          >
-            <Text style={styles.salgoSecundarioTxt}>Abrir Salgo a pescar →</Text>
-          </TouchableOpacity>
         </ListaAnimada>
 
         <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
@@ -1262,16 +1272,6 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   provinciaCambio: {
-    fontSize: 13,
-    fontWeight: "800",
-    color: COLORS.water,
-  },
-  salgoSecundario: {
-    alignSelf: "flex-end",
-    paddingVertical: 6,
-    marginBottom: SPACING.sm,
-  },
-  salgoSecundarioTxt: {
     fontSize: 13,
     fontWeight: "800",
     color: COLORS.water,

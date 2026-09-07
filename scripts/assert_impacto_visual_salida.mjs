@@ -32,7 +32,9 @@ must("src/theme.ts", ["FONTS", "SourceSans3_800ExtraBold"]);
 must("src/screens/HomeScreen.tsx", [
   "AtmosferaMeteo",
   "SiguientePasoCard",
-  "Abrir Salgo a pescar",
+  "ctaSalgoTitle",
+  "Salgo a pescar",
+  "Punto del día y qué llevar",
   "FONTS",
 ]);
 must("src/components/SiguientePasoCard.tsx", [
@@ -48,7 +50,7 @@ must("src/screens/SalgoAPescarScreen.tsx", [
   "methodGlyph",
   "labelsPaso",
   "Continuar → clima",
-  "Ir al checklist →",
+  "Qué llevar →",
 ]);
 
 must("src/components/ChecklistInteractivo.tsx", [
