@@ -33,7 +33,7 @@ for (const n of [
   if (!salgo.includes(n)) fail(`SalgoAPescarScreen sin ${n}`);
 }
 
-const idxFocus = salgo.indexOf("useFocusEffect");
+const idxFocus = salgo.indexOf("useFocusEffect(\n");
 const idxClearInFocus = salgo.indexOf("setParams?.({ irAChecklist: undefined })", idxFocus);
 const idxAuto = salgo.indexOf("autoChecklistLanzado.current = true", idxFocus);
 if (idxFocus < 0 || idxClearInFocus < 0 || idxAuto < 0) {
@@ -43,7 +43,7 @@ if (idxFocus < 0 || idxClearInFocus < 0 || idxAuto < 0) {
 }
 
 // El effect NO debe listar `punto` como dependencia (re-entrada al fijarPunto).
-const focusBlock = salgo.slice(idxFocus, idxFocus + 2500);
+const focusBlock = salgo.slice(idxFocus, idxFocus + 2200);
 if (/}, \[aplicarUbicacion, provincia\.id, punto[,\] ]/.test(focusBlock)) {
   fail("SalgoAPescarScreen: useFocusEffect no debe depender de `punto` (bucle con fijarPunto)");
 }
