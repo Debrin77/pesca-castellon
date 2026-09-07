@@ -75,9 +75,12 @@ if (!tabs.includes("ANCHO_ITEM = 78")) {
   fail("BarraTabsScroll debería usar ANCHO_ITEM = 78 para 5 tabs");
 }
 
-// Mapa: capas plegadas
+// Mapa: capas plegadas + cierre visible
 if (!mapa.includes("capasExtra") || !mapa.includes("Más capas")) {
   fail("Mapa sin capasExtra / Más capas");
+}
+if (!mapa.includes("Cerrar ▲") || !mapa.includes("Cerrar más capas") || !mapa.includes("cerrarCapasBtn")) {
+  fail("Mapa debe poder cerrar «Más capas» con control visible (Cerrar)");
 }
 
 if (fallos) {

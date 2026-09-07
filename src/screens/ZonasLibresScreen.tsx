@@ -626,10 +626,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           style={[styles.layerChip, (capasExtra || capas.radar || capas.tracks || capas.batimetria) && styles.layerChipActive]}
           onPress={() => setCapasExtra((v) => !v)}
           accessibilityRole="button"
-          accessibilityLabel={capasExtra ? "Ocultar más capas" : "Más capas del mapa"}
+          accessibilityLabel={capasExtra ? "Cerrar más capas" : "Más capas del mapa"}
         >
           <Text style={[styles.layerChipText, capasExtra && styles.layerChipTextActive]}>
-            {capasExtra ? "Menos ▲" : "Más capas ▼"}
+            {capasExtra ? "Cerrar ▲" : "Más capas ▼"}
           </Text>
         </TouchableOpacity>
         {capasExtra || capas.radar ? (
@@ -655,14 +655,25 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       </ScrollView>
 
       {capasExtra ? (
-        <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
+        <View style={[styles.capasExtraPanel, mar && styles.modoBarMar]}>
+          <View style={styles.capasExtraCabecera}>
+            <Text style={styles.capasExtraTitulo}>Más capas</Text>
+            <TouchableOpacity
+              style={styles.cerrarCapasBtn}
+              onPress={() => setCapasExtra(false)}
+              accessibilityRole="button"
+              accessibilityLabel="Cerrar más capas"
+            >
+              <Text style={styles.cerrarCapasTxt}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
           <SelectorModalidad
             value={modalidad}
             onChange={setModalidad}
             filtroAmbito={mar ? "maritimo" : "continental"}
           />
           <TouchableOpacity
-            style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start" }]}
+            style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start", marginRight: 0 }]}
             onPress={async () => {
               if (grabandoId) {
                 await finalizarTrack(grabandoId);
@@ -1016,6 +1027,30 @@ const styles = StyleSheet.create({
   layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
   layerChipText: { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
+  capasExtraPanel: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 8,
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  capasExtraCabecera: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  capasExtraTitulo: { fontSize: 12, fontWeight: "800", color: COLORS.textMuted },
+  cerrarCapasBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  cerrarCapasTxt: { fontSize: 12, fontWeight: "800", color: COLORS.primaryDark },
   map: { flex: 1 },
   pieMapa: {
     backgroundColor: COLORS.surface,
