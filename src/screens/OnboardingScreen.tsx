@@ -59,7 +59,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "intima",
         eyebrow: "Tu cuaderno de pesca",
         titulo: "Personal e íntima",
-        texto: "Sitios y notas en tu móvil. Compartir es una opción — nunca el motivo.",
+        texto: "Sitios, capturas y notas viven en tu móvil. Compartir es opcional — no el motivo.",
         accent: ["#1c5c42", "#12382c", "#0a2218"],
         tonoOnda: "claro",
       },
@@ -67,7 +67,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "pin",
         eyebrow: "Solo tú entras",
         titulo: "PIN + biometría",
-        texto: "Código de 4–8 dígitos y Face ID / huella. Al abrir o al volver, queda cerrada.",
+        texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, la app está cerrada para los demás.",
         accent: ["#142e24", "#0d1f18", "#07140f"],
         tonoOnda: "claro",
       },
@@ -76,8 +76,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         eyebrow: "¿Puedo pescar aquí?",
         titulo: "Semáforo claro",
         texto: provincia.continentalOnly
-          ? `Verde, rojo o «SIN TRAMO». SIN TRAMO no es veda: en ${nombreProv} mira el cartel.`
-          : "Verde hoy sí · rojo veda · ámbar coto. «SIN TRAMO» no es veda: confirma el cartel.",
+          ? `Verde, rojo o «SIN TRAMO». SIN TRAMO no es veda: en ${nombreProv} puede ser agua libre. Mira el cartel en tu primera salida.`
+          : provincia.tieneIcv
+            ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — el tramo no está dibujado; confirma cartel."
+            : `Verde, rojo o ámbar. Los datos de ${nombreProv} son orientativos: confirma siempre en la fuente oficial.`,
         accent: ["#176a7c", "#114e5c", "#0b3540"],
         tonoOnda: "agua",
       },
@@ -85,7 +87,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "pinta",
         eyebrow: "¿Pinta el día?",
         titulo: "Índice y previsión",
-        texto: "Clima, presión y luna en un índice 0–100. La norma autoriza; el tiempo solo orienta.",
+        texto: "Clima, presión, luna e índice 0–100. «¿Puedo?» es la norma; «¿Pinta?» es el tiempo — no autoriza.",
         accent: ["#1f6f88", "#155566", "#0d3c48"],
         tonoOnda: "agua",
       },
@@ -93,7 +95,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "diario",
         eyebrow: "Tu memoria de campo",
         titulo: "Capturas y rutas",
-        texto: "Foto, especie, GPS y cupo. Exporta GPX cuando quieras — o no lo compartas nunca.",
+        texto: "Foto, especie, GPS y cupo. Exporta GPX cuando quieras — a Maps, a un amigo o a nadie.",
         accent: ["#18523c", "#12382c", "#0c241c"],
         tonoOnda: "claro",
       },
@@ -106,7 +108,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         tonoOnda: "claro",
       },
     ],
-    [provincia.continentalOnly, nombreProv]
+    [provincia.continentalOnly, provincia.tieneIcv, nombreProv]
   );
 
   useEffect(() => {
@@ -386,6 +388,9 @@ function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean
         <View style={m.chipRow}>
           <View style={[m.chip, { backgroundColor: COLORS.warningLight }]}>
             <Text style={[m.chipTxt, { color: COLORS.warning }]}>SIN TRAMO ≠ veda</Text>
+          </View>
+          <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
+            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Oficial / orientativo</Text>
           </View>
           <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
             <Text style={[m.chipTxt, { color: COLORS.primary }]}>Mira el cartel</Text>
