@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, Easing, Platform, ViewStyle } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Platform, View, ViewStyle } from "react-native";
 
 interface Props {
   index?: number;
@@ -9,17 +9,23 @@ interface Props {
 }
 
 /**
- * Entrada escalonada de filas. En web nativeDriver no pinta bien:
- * usamos JS driver para que se vea el fade + el desplazamiento.
- * Si el efecto se cancela a mitad (re-render / unmount), dejamos opacity=1
- * para que los botones del final (p. ej. Ajustes en Inicio) sigan clicables.
+ * Entrada escalonada de filas.
+ * En web, transform+opacity animados rompen el hit-testing (botones «muertos»).
+ * Por eso en web pintamos sin animación de transform y con pointerEvents auto.
  */
 export default function ListaAnimada({ index = 0, replayKey, children, style }: Props) {
-  const op = useRef(new Animated.Value(0)).current;
-  const y = useRef(new Animated.Value(22)).current;
+  const op = useRef(new Animated.Value(Platform.OS === "web" ? 1 : 0)).current;
+  const y = useRef(new Animated.Value(Platform.OS === "web" ? 0 : 22)).current;
   const nativo = Platform.OS !== "web";
+  const [listoWeb] = useState(Platform.OS === "web");
 
   useEffect(() => {
+    if (!nativo) {
+      // Web: sin animación de posición — los toques llegan al botón.
+      op.setValue(1);
+      y.setValue(0);
+      return;
+    }
     op.setValue(0);
     y.setValue(22);
     const delay = Math.min(index, 10) * 55;
@@ -29,14 +35,14 @@ export default function ListaAnimada({ index = 0, replayKey, children, style }: 
         duration: 420,
         delay,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: nativo,
+        useNativeDriver: true,
       }),
       Animated.timing(y, {
         toValue: 0,
         duration: 420,
         delay,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: nativo,
+        useNativeDriver: true,
       }),
     ]);
     anim.start(({ finished }) => {
@@ -52,9 +58,17 @@ export default function ListaAnimada({ index = 0, replayKey, children, style }: 
     };
   }, [index, nativo, op, replayKey, y]);
 
+  if (listoWeb) {
+    return (
+      <View pointerEvents="auto" style={style}>
+        {children}
+      </View>
+    );
+  }
+
   return (
     <Animated.View
-      pointerEvents="box-none"
+      pointerEvents="auto"
       style={[{ opacity: op, transform: [{ translateY: y }] }, style]}
     >
       {children}

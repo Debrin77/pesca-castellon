@@ -677,10 +677,12 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        <ListaAnimada index={0}>
+        <View>
           <PulsePress
             onPress={() => navigation.navigate("SalgoAPescar")}
             style={styles.ctaSalgo}
+            accessibilityRole="button"
+            accessibilityLabel="Salgo a pescar"
           >
             <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
               <OndaAgua intensidad={0.9} />
@@ -731,7 +733,7 @@ export default function HomeScreen({ navigation }: Props) {
               }
             }}
           />
-        </ListaAnimada>
+        </View>
 
         <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
 
