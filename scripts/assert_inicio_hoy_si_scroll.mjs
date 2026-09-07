@@ -40,9 +40,12 @@ if (iTitulo < 0 || !ventana.includes("ref={tramoAnchorRef}")) {
   fail("El ancla del detalle del tramo debe envolver el bloque (ref={tramoAnchorRef})");
 }
 
-const iSalgo = home.indexOf("ctaSalgoTitle}>Salgo a pescar");
+const iSalgo =
+  home.indexOf("<SiguientePasoCard") >= 0
+    ? home.indexOf("<SiguientePasoCard")
+    : home.indexOf("Abrir Salgo a pescar");
 if (!(iSalgo >= 0 && iTitulo > iSalgo)) {
-  fail("Detalle del tramo debe ir después de Salgo a pescar");
+  fail("Detalle del tramo debe ir después del CTA principal (Siguiente paso / Salgo)");
 }
 
 // Aprende / recomendación vacía no deben empujar el detalle lejos del chip

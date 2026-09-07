@@ -20,6 +20,7 @@ export type SiguientePasoAccion =
   | { tipo: "salgo"; irAChecklist?: boolean }
   | { tipo: "mapa" }
   | { tipo: "captura" }
+  | { tipo: "primera_salida" }
   | { tipo: "ninguna" };
 
 type Props = {
@@ -27,6 +28,8 @@ type Props = {
   checklistTextos: string[];
   tienePunto: boolean;
   tieneSitios: boolean;
+  /** Si aún no hizo la guía: el siguiente paso invita a «Mi primera salida». */
+  invitarPrimeraSalida?: boolean;
   etiquetaPunto?: string | null;
   veredictoTexto?: string | null;
   veredictoSub?: string | null;
@@ -37,6 +40,7 @@ type Props = {
 };
 
 type Modo =
+  | { id: "guia" }
   | { id: "sin_sitios" }
   | { id: "sin_punto" }
   | { id: "checklist"; hechos: number; total: number }
@@ -52,6 +56,7 @@ export default function SiguientePasoCard({
   checklistTextos,
   tienePunto,
   tieneSitios,
+  invitarPrimeraSalida = false,
   etiquetaPunto,
   veredictoTexto,
   veredictoSub,
@@ -78,6 +83,10 @@ export default function SiguientePasoCard({
         setModo({ id: "hecha", salida });
         return;
       }
+      if (invitarPrimeraSalida && !tieneSitios && !tienePunto) {
+        setModo({ id: "guia" });
+        return;
+      }
       if (!tieneSitios && !tienePunto) {
         setModo({ id: "sin_sitios" });
         return;
@@ -98,7 +107,7 @@ export default function SiguientePasoCard({
     } finally {
       setCargando(false);
     }
-  }, [provinciaId, tienePunto, tieneSitios, items]);
+  }, [provinciaId, tienePunto, tieneSitios, invitarPrimeraSalida, items]);
 
   useFocusEffect(
     useCallback(() => {
@@ -195,14 +204,22 @@ export default function SiguientePasoCard({
   }
 
   const copy =
-    modo.id === "sin_sitios"
+    modo.id === "guia"
       ? {
           kicker: "Siguiente paso",
-          titulo: "Guarda tu primer sitio",
-          sub: "Un favorito o punto: mañana te diremos cuál pinta mejor.",
-          cta: "Abrir mapa",
-          accion: { tipo: "mapa" } as SiguientePasoAccion,
+          titulo: "Tu primera salida",
+          sub: "Guía corta: sitio fácil, licencia y checklist. O salta y explora el mapa.",
+          cta: "Empezar guía",
+          accion: { tipo: "primera_salida" } as SiguientePasoAccion,
         }
+      : modo.id === "sin_sitios"
+        ? {
+            kicker: "Siguiente paso",
+            titulo: "Guarda tu primer sitio",
+            sub: "Un favorito o punto: mañana te diremos cuál pinta mejor.",
+            cta: "Abrir mapa",
+            accion: { tipo: "mapa" } as SiguientePasoAccion,
+          }
       : modo.id === "sin_punto"
         ? {
             kicker: "Siguiente paso",
@@ -211,13 +228,21 @@ export default function SiguientePasoCard({
             cta: "Salgo a pescar",
             accion: { tipo: "salgo" } as SiguientePasoAccion,
           }
-        : {
-            kicker: "Siguiente paso",
-            titulo: "Termina el checklist",
-            sub: `${modo.hechos}/${modo.total} listos · ${etiquetaPunto ?? "punto elegido"}`,
-            cta: "Continuar checklist",
-            accion: { tipo: "salgo", irAChecklist: true } as SiguientePasoAccion,
-          };
+        : modo.id === "checklist"
+          ? {
+              kicker: "Siguiente paso",
+              titulo: "Termina el checklist",
+              sub: `${modo.hechos}/${modo.total} listos · ${etiquetaPunto ?? "punto elegido"}`,
+              cta: "Continuar checklist",
+              accion: { tipo: "salgo", irAChecklist: true } as SiguientePasoAccion,
+            }
+          : {
+              kicker: "Siguiente paso",
+              titulo: "Termina el checklist",
+              sub: etiquetaPunto ?? "punto elegido",
+              cta: "Continuar",
+              accion: { tipo: "salgo" } as SiguientePasoAccion,
+            };
 
   return (
     <PulsePress onPress={() => onAccion(copy.accion)} style={styles.ctaWrap}>

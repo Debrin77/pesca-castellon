@@ -1,32 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProvincia } from "../context/ProvinciaContext";
 import type { ProvinciaId } from "../provincias";
-import { COLORS, RADIUS, SHADOW, SPACING } from "../theme";
+import { COLORS, FONTS, RADIUS, SHADOW, SPACING } from "../theme";
 
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+/** Copy de puerta: humano primero. La jerga queda detrás de «Más detalles». */
 const COPY: Record<
   ProvinciaId,
-  { kicker: string; detalle: string; chips: string[] }
+  { kicker: string; detalle: string; chips: string[]; tecnico: string }
 > = {
   castellon: {
     kicker: "Comunitat Valenciana",
-    detalle:
-      "Ríos, embalses y orilla de mar. Polígonos ICV, cotos y previsión con oleaje. Sin seguro RC obligatorio.",
-    chips: ["Continental", "Costa", "Sin seguro RC"],
+    detalle: "Costa, ríos y embalses. Normativa y mapa locales listos al entrar.",
+    chips: ["Costa", "Ríos", "Embalses"],
+    tecnico:
+      "Mapa con tramos oficiales (ICV), cotos y orilla. No se exige seguro RC. Previsión con oleaje en costa.",
   },
   sevilla: {
     kicker: "Andalucía",
-    detalle:
-      "Continental: Guadalquivir, Guadaíra, embalses y azudes (Peñaflor…). Polígonos DERA + aguas libres art. 5.2. Licencia Junta + NIR + seguro RC.",
-    chips: ["Continental", "Seguro RC", "DERA / art. 5.2"],
+    detalle: "Ríos, azudes y embalses. Licencia de la Junta y mapa local al entrar.",
+    chips: ["Ríos", "Embalses", "Licencia Junta"],
+    tecnico:
+      "Cartografía DERA y aguas libres (art. 5.2). Licencia continental + NIR + seguro RC obligatorio.",
   },
 };
 
@@ -38,6 +48,14 @@ interface Props {
 export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
   const insets = useSafeAreaInsets();
   const { provincias, elegirProvincia } = useProvincia();
+  const [tecnicosAbiertos, setTecnicosAbiertos] = useState<Partial<Record<ProvinciaId, boolean>>>(
+    {}
+  );
+
+  function toggleTecnico(id: ProvinciaId) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setTecnicosAbiertos((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
 
   return (
     <LinearGradient
@@ -49,7 +67,10 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: Math.max(insets.top, 24) + 12, paddingBottom: Math.max(insets.bottom, 24) + 16 },
+          {
+            paddingTop: Math.max(insets.top, 24) + 12,
+            paddingBottom: Math.max(insets.bottom, 24) + 16,
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -58,35 +79,48 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
           {desdeAjustes ? "Cambiar provincia" : "¿Dónde vas a pescar?"}
         </Text>
         <Text style={styles.sub}>
-          Elige la provincia. Cargamos el mapa, la normativa y las especies de ese territorio. Puedes
-          cambiarla cuando quieras desde Ajustes.
+          Elige tu zona. Cargamos mapa, especies y normas de ese territorio. Puedes cambiarla luego
+          en Ajustes.
         </Text>
 
         {provincias.map((p) => {
           const copy = COPY[p.id];
+          const abierto = !!tecnicosAbiertos[p.id];
           return (
-            <TouchableOpacity
-              key={p.id}
-              style={styles.card}
-              activeOpacity={0.88}
-              onPress={() => elegirProvincia(p.id)}
-              accessibilityRole="button"
-              accessibilityLabel={`Pescar en ${p.nombre}`}
-            >
-              <View style={styles.cardTop}>
-                <Text style={styles.cardKicker}>{copy.kicker}</Text>
-                <Text style={styles.cardNombre}>{p.nombre}</Text>
-              </View>
-              <Text style={styles.cardDetalle}>{copy.detalle}</Text>
-              <View style={styles.chipRow}>
-                {copy.chips.map((c) => (
-                  <View key={c} style={styles.chip}>
-                    <Text style={styles.chipTxt}>{c}</Text>
-                  </View>
-                ))}
-              </View>
-              <Text style={styles.cta}>Entrar →</Text>
-            </TouchableOpacity>
+            <View key={p.id} style={styles.card}>
+              <TouchableOpacity
+                activeOpacity={0.88}
+                onPress={() => elegirProvincia(p.id)}
+                accessibilityRole="button"
+                accessibilityLabel={`Pescar en ${p.nombre}`}
+              >
+                <View style={styles.cardTop}>
+                  <Text style={styles.cardKicker}>{copy.kicker}</Text>
+                  <Text style={styles.cardNombre}>{p.nombre}</Text>
+                </View>
+                <Text style={styles.cardDetalle}>{copy.detalle}</Text>
+                <View style={styles.chipRow}>
+                  {copy.chips.map((c) => (
+                    <View key={c} style={styles.chip}>
+                      <Text style={styles.chipTxt}>{c}</Text>
+                    </View>
+                  ))}
+                </View>
+                <Text style={styles.cta}>Entrar →</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => toggleTecnico(p.id)}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: abierto }}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={styles.masInfo}
+              >
+                <Text style={styles.masInfoTxt}>
+                  {abierto ? "Menos detalles ▲" : "Más detalles técnicos ›"}
+                </Text>
+              </TouchableOpacity>
+              {abierto ? <Text style={styles.tecnico}>{copy.tecnico}</Text> : null}
+            </View>
           );
         })}
       </ScrollView>
@@ -106,7 +140,7 @@ const styles = StyleSheet.create({
     color: COLORS.gold,
     fontSize: 42,
     fontWeight: "800",
-    fontFamily: "SourceSans3_800ExtraBold",
+    fontFamily: FONTS.extrabold,
     letterSpacing: 1,
     marginBottom: 4,
   },
@@ -114,13 +148,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 26,
     fontWeight: "700",
-    fontFamily: "SourceSans3_700Bold",
+    fontFamily: FONTS.bold,
     marginBottom: 10,
   },
   sub: {
     color: "rgba(255,255,255,0.88)",
     fontSize: 16,
-    fontFamily: "SourceSans3_400Regular",
+    fontFamily: FONTS.regular,
     marginBottom: 28,
     lineHeight: 22,
   },
@@ -136,7 +170,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 12,
     fontWeight: "700",
-    fontFamily: "SourceSans3_700Bold",
+    fontFamily: FONTS.bold,
     textTransform: "uppercase",
     letterSpacing: 0.6,
     marginBottom: 2,
@@ -145,12 +179,12 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontSize: 24,
     fontWeight: "700",
-    fontFamily: "SourceSans3_700Bold",
+    fontFamily: FONTS.bold,
   },
   cardDetalle: {
-    color: COLORS.textMuted,
+    color: COLORS.textSecondary,
     fontSize: 15,
-    fontFamily: "SourceSans3_400Regular",
+    fontFamily: FONTS.regular,
     marginBottom: 12,
     lineHeight: 21,
   },
@@ -165,12 +199,26 @@ const styles = StyleSheet.create({
     color: COLORS.primaryDark,
     fontSize: 12,
     fontWeight: "600",
-    fontFamily: "SourceSans3_600SemiBold",
+    fontFamily: FONTS.semibold,
   },
   cta: {
     color: COLORS.primary,
     fontWeight: "700",
-    fontFamily: "SourceSans3_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 16,
+  },
+  masInfo: { marginTop: 12 },
+  masInfoTxt: {
+    color: COLORS.textMuted,
+    fontSize: 12.5,
+    fontWeight: "700",
+    fontFamily: FONTS.bold,
+  },
+  tecnico: {
+    marginTop: 6,
+    fontSize: 12.5,
+    lineHeight: 18,
+    color: COLORS.textSecondary,
+    fontFamily: FONTS.regular,
   },
 });
