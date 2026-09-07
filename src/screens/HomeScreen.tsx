@@ -481,7 +481,7 @@ export default function HomeScreen({ navigation }: Props) {
     <ScrollView
       ref={scrollRef}
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: 140 }}
+      contentContainerStyle={{ paddingBottom: 120 }}
       scrollEventThrottle={16}
       onScroll={(e) => {
         scrollYRef.current = e.nativeEvent.contentOffset.y;
