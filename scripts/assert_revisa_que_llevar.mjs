@@ -1,7 +1,6 @@
 /**
- * Assert: «Revisa qué llevar» (irAChecklist) no se queda en bucle de carga.
- * El focus effect debe consumir el param one-shot antes de fijarPunto;
- * si no, al actualizar `punto` se re-lanza aplicarUbicacion sin fin.
+ * Assert: «Revisa qué llevar» (irAChecklist) no se queda en bucle de carga
+ * y salta al paso «Qué llevar».
  */
 import fs from "fs";
 import path from "path";
@@ -25,12 +24,15 @@ for (const n of [
   "irChecklistPendiente",
   "autoChecklistLanzado",
   "aplicandoRef",
+  "puntoRef",
+  "saltarAChecklist",
+  "irAlChecklistUi",
   "setParams?.({ irAChecklist: undefined })",
+  "opts?: { irAChecklist?: boolean }",
 ]) {
   if (!salgo.includes(n)) fail(`SalgoAPescarScreen sin ${n}`);
 }
 
-// Debe limpiar el param al entrar (antes del await), no solo al final de aplicarUbicacion.
 const idxFocus = salgo.indexOf("useFocusEffect");
 const idxClearInFocus = salgo.indexOf("setParams?.({ irAChecklist: undefined })", idxFocus);
 const idxAuto = salgo.indexOf("autoChecklistLanzado.current = true", idxFocus);
@@ -40,8 +42,16 @@ if (idxFocus < 0 || idxClearInFocus < 0 || idxAuto < 0) {
   fail("SalgoAPescarScreen: debe limpiar irAChecklist antes de lanzar autoChecklist");
 }
 
-if (!salgo.includes("!autoChecklistLanzado.current")) {
-  fail("SalgoAPescarScreen: el auto-checklist debe guardarse con !autoChecklistLanzado.current");
+// El effect NO debe listar `punto` como dependencia (re-entrada al fijarPunto).
+const focusBlock = salgo.slice(idxFocus, idxFocus + 2500);
+if (/}, \[aplicarUbicacion, provincia\.id, punto[,\] ]/.test(focusBlock)) {
+  fail("SalgoAPescarScreen: useFocusEffect no debe depender de `punto` (bucle con fijarPunto)");
+}
+if (!focusBlock.includes("puntoRef.current")) {
+  fail("SalgoAPescarScreen: auto-checklist debe leer el punto vía puntoRef");
+}
+if (!focusBlock.includes("{ irAChecklist: true }")) {
+  fail("SalgoAPescarScreen: auto-checklist debe pasar irAChecklist: true a aplicarUbicacion");
 }
 
 const card = read("src/components/SiguientePasoCard.tsx");
