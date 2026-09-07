@@ -6,6 +6,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts, SourceSans3_400Regular, SourceSans3_600SemiBold, SourceSans3_700Bold, SourceSans3_800ExtraBold } from "@expo-google-fonts/source-sans-3";
+import {
+  Fraunces_600SemiBold,
+  Fraunces_600SemiBold_Italic,
+  Fraunces_700Bold,
+} from "@expo-google-fonts/fraunces";
 import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
@@ -251,6 +256,9 @@ export default function App() {
     SourceSans3_600SemiBold,
     SourceSans3_700Bold,
     SourceSans3_800ExtraBold,
+    Fraunces_600SemiBold,
+    Fraunces_600SemiBold_Italic,
+    Fraunces_700Bold,
   });
 
   if (!fontsLoaded) {
