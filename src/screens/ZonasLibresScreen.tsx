@@ -900,11 +900,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               {radarHoraCorta
                 ? `${radarTipo ?? "Radar"} · ${radarHoraCorta}${radarFechaPlaca ? ` · ${radarFechaPlaca}` : ""}`
                 : "Radar lluvia (cargando…)"}
-            </Text>
-            <Text style={styles.radarBannerSub} numberOfLines={1}>
-              {radarFechaPlaca
-                ? `Para ${radarFechaPlaca} · RainViewer · no es aviso AEMET`
-                : "RainViewer · no es aviso AEMET"}
+              {" · RainViewer"}
             </Text>
           </View>
         ) : null}
@@ -1115,20 +1111,16 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 2,
     backgroundColor: COLORS.waterDark,
-    borderRadius: RADIUS.md,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    alignSelf: "center",
   },
   radarBannerTitle: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "800",
-  },
-  radarBannerSub: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
-    fontWeight: "600",
-    marginTop: 2,
+    textAlign: "center",
   },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
