@@ -64,7 +64,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const playas = soloContinental ? [] : todasLasPlayas();
   const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
   // Barra de tabs flotante (~80) + margen; los CTAs del pie deben quedar por encima.
-  const piePadBottom = 88 + Math.max(insets.bottom, 8);
+  const piePadBottom = 110 + Math.max(insets.bottom, 12);
 
   const puntoSeed =
     punto &&
