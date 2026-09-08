@@ -1,7 +1,7 @@
 /**
- * Especies: el pie bajo «Ver especies de este punto» (última consulta / catálogo)
- * no debe quedar atrapado detrás de la barra de tabs. Hace falta ScrollView +
- * spacer/padding suficiente, como en el mapa.
+ * Especies: «Ver última consulta» y «Catálogo» deben verse por encima de la
+ * barra de tabs. El pie es fijo (no queda bajo el overlay) con paddingBottom
+ * según safe area + hueco de tabs; el mapa cede altura (flex).
  */
 import fs from "fs";
 import path from "path";
@@ -17,15 +17,18 @@ function fail(msg) {
 
 const src = fs.readFileSync(path.join(root, "src/screens/EspeciesScreen.tsx"), "utf8");
 
-if (!src.includes("ScrollView")) fail("EspeciesScreen debe usar ScrollView para el pie");
-if (!src.includes("scrollMapa")) fail("EspeciesScreen sin scrollMapa (mismo patrón que Mapa)");
-if (!src.includes("altoMapa")) fail("EspeciesScreen debe dar altura fija al mapa (no flex sin scroll)");
-if (!src.includes("pieSpacer") && !/paddingBottom:\s*(1[1-9]\d|[2-9]\d{2})/.test(src)) {
-  fail("EspeciesScreen necesita pieSpacer o paddingBottom alto para la barra de tabs");
+if (!src.includes("useSafeAreaInsets")) {
+  fail("EspeciesScreen debe usar safe area para el pie sobre la barra de tabs");
+}
+if (!src.includes("piePadBottom")) {
+  fail("EspeciesScreen sin piePadBottom (hueco bajo Catálogo / última consulta)");
 }
 if (!src.includes("Ver última consulta")) fail("EspeciesScreen sin CTA Ver última consulta");
 if (!src.includes("Catálogo ríos") && !src.includes("Catálogo orilla")) {
   fail("EspeciesScreen sin CTAs de catálogo en el pie");
+}
+if (!src.includes('mapWrap: { flex: 1') && !src.includes("mapWrap: { flex:1")) {
+  fail("EspeciesScreen mapWrap debe ser flex:1 para ceder sitio al pie");
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");
@@ -33,4 +36,4 @@ if (!pkg.includes("assert_especies_pie_scroll.mjs")) {
   fail("package.json assert debe incluir assert_especies_pie_scroll.mjs");
 }
 
-console.log("OK: Especies pie scrolleable por encima de la barra de tabs");
+console.log("OK: Especies pie fijo visible por encima de la barra de tabs");
