@@ -51,6 +51,8 @@ for (const n of [
   "radarBanner",
   "Radar ${radarHoraCorta}",
   "Para ${radarFechaPlaca}",
+  "altoMapa",
+  "radarPlacaTxt",
 ]) {
   if (!mapa.includes(n)) fail(`ZonasLibresScreen sin ${n}`);
 }
