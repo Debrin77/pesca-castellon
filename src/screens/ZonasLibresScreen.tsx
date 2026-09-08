@@ -70,6 +70,8 @@ type ParamsMapa = {
   motivoPick?: MotivoUbicacionPendiente;
   centrarEn?: { lat: number; lng: number; nombre?: string };
   activarRadar?: boolean;
+  /** Al abrir desde «Salgo a pescar»: forzar costa o continental. */
+  modoMapa?: "continental" | "costa";
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
@@ -150,6 +152,26 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       setModoAnadir(pickActivo);
       setMotivoPick(motivo);
 
+      // «Salgo a pescar» puede pedir costa o continental explícitamente.
+      if (p.modoMapa === "costa" || p.modoMapa === "continental") {
+        if (!(soloContinental && p.modoMapa === "costa")) {
+          setModo(p.modoMapa);
+          if (p.modoMapa === "costa") {
+            const costa = provincia.regionCosta ?? {
+              latitude: provincia.regionMapa.latitude,
+              longitude: provincia.regionMapa.longitude,
+              zoom: 10,
+            };
+            setCamara({
+              latitude: costa.latitude,
+              longitude: costa.longitude,
+              zoom: costa.zoom,
+              nonce: Date.now(),
+            });
+          }
+        }
+      }
+
       if (p.centrarEn) {
         const { lat, lng, nombre } = p.centrarEn;
         setCamara({ latitude: lat, longitude: lng, zoom: 15, nonce: Date.now() });
@@ -163,9 +185,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       }
 
       if (pickActivo) {
-        navigation.setParams?.({ modoAnadirPunto: undefined, motivoPick: undefined });
+        navigation.setParams?.({
+          modoAnadirPunto: undefined,
+          motivoPick: undefined,
+          modoMapa: undefined,
+        });
       }
-    }, [route.params, navigation, fijarPunto])
+    }, [route.params, navigation, fijarPunto, soloContinental, provincia.regionCosta, provincia.regionMapa])
   );
 
   // Activar radar también si ya estamos en el mapa (params sin re-montar).
@@ -454,7 +480,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     navigation.navigate("Capturas", { screen: "CapturasMain" });
   }
 
-  function usarUbicacionParaSalgo() {
+  async function usarUbicacionParaSalgo() {
     if (!marcador) {
       Alert.alert("Mapa", "Pulsa primero un sitio o zona en el mapa.");
       return;
@@ -470,7 +496,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       return;
     }
     const etiqueta = consulta?.titulo?.trim() || formatearCoords(lat, lng);
-    void fijarPunto({ lat, lng, fuente: "mapa", etiqueta });
+    // Solo el singleton: SalgoAPescar consume el pick y aplica ubicación + índice.
     resolverPickUbicacion({ lat, lng, etiqueta });
     setModoAnadir(false);
     setMotivoPick(null);

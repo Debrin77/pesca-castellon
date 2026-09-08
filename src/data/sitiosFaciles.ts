@@ -59,6 +59,33 @@ export const SITIOS_FACILES: Record<"castellon" | "sevilla", SitioFacil[]> = {
       porQue: "Gran vaso con muchas orillas; mira el nivel SAIH si baja mucho.",
       ambito: "continental",
     },
+    {
+      id: "cs-grao-pinar",
+      zoneId: "grao_pinar",
+      nombre: "Grao de Castellón · Playa del Pinar",
+      lat: 39.98415,
+      lng: 0.02415,
+      porQue: "Orilla de mar accesible; licencia marítima desde tierra (GVA).",
+      ambito: "maritimo",
+    },
+    {
+      id: "cs-benicassim",
+      zoneId: "benicassim_voramar",
+      nombre: "Benicàssim · Voramar",
+      lat: 40.0635,
+      lng: 0.092,
+      porQue: "Playa urbana típica de spinning/surfcasting de orilla.",
+      ambito: "maritimo",
+    },
+    {
+      id: "cs-benicarlo",
+      zoneId: "benicarlo_norte",
+      nombre: "Benicarló · Playa Norte",
+      lat: 40.423,
+      lng: 0.4315,
+      porQue: "Arena y rompiente; confirma vedados y licencia marítima.",
+      ambito: "maritimo",
+    },
   ],
   sevilla: [
     {
