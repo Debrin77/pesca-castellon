@@ -101,7 +101,7 @@ export default function PanelCampoHoy({ navigation }: Props) {
         >
           <Text style={styles.trioOver}>Cielo</Text>
           <Text style={styles.trioBigSm}>Radar</Text>
-          <Text style={styles.trioMeta}>Lluvia sobre el mapa</Text>
+          <Text style={styles.trioMeta}>Lluvia con hora</Text>
           <Text style={styles.trioLink}>Abrir →</Text>
         </TouchableOpacity>
 
