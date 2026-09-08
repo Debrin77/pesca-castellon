@@ -138,5 +138,24 @@ export function etiquetaHoraRadarCorta(frame: FrameRadarActivo | null | undefine
   return horaRadar(frame.time);
 }
 
+/** Etiqueta del tipo: «Observado» / «Previsto». */
+export function etiquetaTipoRadar(frame: FrameRadarActivo | null | undefined): string | null {
+  if (!frame) return null;
+  return frame.tipo === "previsto" ? "Previsto" : "Observado";
+}
+
+/** Fecha para la placa del mapa: «hoy · 8 sep» o «8 sep». */
+export function etiquetaFechaRadarPlaca(frame: FrameRadarActivo | null | undefined): string | null {
+  if (!frame) return null;
+  const fecha = fechaRadarCorta(frame.time);
+  const hoy = new Date();
+  const d = new Date(frame.time * 1000);
+  const esHoy =
+    d.getFullYear() === hoy.getFullYear() &&
+    d.getMonth() === hoy.getMonth() &&
+    d.getDate() === hoy.getDate();
+  return esHoy ? `hoy · ${fecha}` : fecha;
+}
+
 /** Attribution obligatoria. */
 export const RADAR_ATTRIBUTION = "RainViewer";

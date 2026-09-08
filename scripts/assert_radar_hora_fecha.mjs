@@ -1,5 +1,6 @@
 /**
  * Assert: radar de lluvia muestra hora/fecha («para cuándo» es la imagen).
+ * Visible en placa sobre el mapa + banner del pie + chip.
  */
 import fs from "fs";
 import path from "path";
@@ -23,6 +24,8 @@ for (const n of [
   "elegirFrameActivo",
   "etiquetaCuandoRadar",
   "etiquetaHoraRadarCorta",
+  "etiquetaTipoRadar",
+  "etiquetaFechaRadarPlaca",
   "Observado a las",
   "Previsto para las",
   'tipo: "observado"',
@@ -31,7 +34,6 @@ for (const n of [
   if (!svc.includes(n)) fail(`radarService sin ${n}`);
 }
 
-// Preferir past (observado) frente al último nowcast concatenado.
 const idxElegir = svc.indexOf("function elegirFrameActivo");
 const idxPast = svc.indexOf("past.length", idxElegir);
 const idxNowcast = svc.indexOf("nowcast.length", idxElegir);
@@ -44,8 +46,11 @@ for (const n of [
   "radarFrame",
   "etiquetaCuandoRadar",
   "radarCuando",
-  "Radar lluvia · ${radarCuando}",
+  "radarPlaca",
+  "radarPlacaHora",
+  "radarBanner",
   "Radar ${radarHoraCorta}",
+  "Para ${radarFechaPlaca}",
 ]) {
   if (!mapa.includes(n)) fail(`ZonasLibresScreen sin ${n}`);
 }

@@ -35,7 +35,13 @@ import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/b
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
-import { etiquetaCuandoRadar, etiquetaHoraRadarCorta, obtenerRadar } from "../services/radarService";
+import {
+  etiquetaCuandoRadar,
+  etiquetaFechaRadarPlaca,
+  etiquetaHoraRadarCorta,
+  etiquetaTipoRadar,
+  obtenerRadar,
+} from "../services/radarService";
 import type { FrameRadarActivo } from "../services/radarService";
 import {
   anadirPuntoTrack,
@@ -190,6 +196,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   const radarCuando = etiquetaCuandoRadar(radarFrame);
   const radarHoraCorta = etiquetaHoraRadarCorta(radarFrame);
+  const radarTipo = etiquetaTipoRadar(radarFrame);
+  const radarFechaPlaca = etiquetaFechaRadarPlaca(radarFrame);
 
   useEffect(() => {
     setModalidad(mar ? "orilla_mar" : "orilla_continental");
@@ -845,19 +853,53 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
           )}
         </MapView>
+        {capas.radar ? (
+          <View style={styles.radarPlacaWrap} pointerEvents="none">
+            <View
+              style={styles.radarPlaca}
+              accessibilityLiveRegion="polite"
+              accessibilityLabel={
+                radarCuando
+                  ? `Radar lluvia. ${radarCuando}`
+                  : "Radar lluvia activo, cargando hora"
+              }
+            >
+              <Text style={styles.radarPlacaKicker}>Radar lluvia</Text>
+              {radarHoraCorta ? (
+                <>
+                  <Text style={styles.radarPlacaHora}>{radarHoraCorta}</Text>
+                  <Text style={styles.radarPlacaMeta}>
+                    {radarTipo}
+                    {radarFechaPlaca ? ` · ${radarFechaPlaca}` : ""}
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.radarPlacaMeta}>Cargando hora…</Text>
+              )}
+            </View>
+          </View>
+        ) : null}
         <BotonMiPosicion onPress={irAMiPosicion} cargando={localizando} />
       </View>
 
       <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
         {capas.radar ? (
-          <Text style={styles.hint} accessibilityLiveRegion="polite">
-            {radarUrl
-              ? radarCuando
-                ? `Radar lluvia · ${radarCuando} · RainViewer · no es aviso AEMET.`
-                : "Radar lluvia activo · RainViewer · no es aviso AEMET."
-              : "Radar lluvia activo (cargando…) · RainViewer · no es aviso AEMET."}
-          </Text>
+          <View style={styles.radarBanner} accessibilityLiveRegion="polite">
+            <Text style={styles.radarBannerTitle}>
+              {radarHoraCorta
+                ? `${radarTipo ?? "Radar"} · ${radarHoraCorta}`
+                : "Radar lluvia (cargando…)"}
+            </Text>
+            <Text style={styles.radarBannerSub}>
+              {radarFechaPlaca
+                ? `Para ${radarFechaPlaca} · RainViewer · no es aviso AEMET`
+                : "RainViewer · no es aviso AEMET"}
+            </Text>
+            {radarCuando ? (
+              <Text style={styles.radarBannerDetalle}>{radarCuando}</Text>
+            ) : null}
+          </View>
         ) : null}
         <Text style={styles.hint}>
           {modoAnadir
@@ -1031,6 +1073,70 @@ const styles = StyleSheet.create({
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { flex: 1, position: "relative", minHeight: 220 },
+  radarPlacaWrap: {
+    position: "absolute",
+    top: 10,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 20,
+  },
+  radarPlaca: {
+    minWidth: 168,
+    maxWidth: 280,
+    backgroundColor: "rgba(15, 40, 48, 0.88)",
+    borderRadius: RADIUS.lg,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.22)",
+    ...SHADOW,
+  },
+  radarPlacaKicker: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
+  },
+  radarPlacaHora: {
+    color: "#fff",
+    fontSize: 28,
+    fontWeight: "800",
+    marginTop: 2,
+    letterSpacing: -0.5,
+  },
+  radarPlacaMeta: {
+    color: "rgba(255,255,255,0.92)",
+    fontSize: 13,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+  radarBanner: {
+    marginTop: 8,
+    marginBottom: 4,
+    backgroundColor: COLORS.waterDark,
+    borderRadius: RADIUS.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  radarBannerTitle: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "800",
+  },
+  radarBannerSub: {
+    color: "rgba(255,255,255,0.88)",
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 2,
+  },
+  radarBannerDetalle: {
+    color: "rgba(255,255,255,0.78)",
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 4,
+  },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {
     paddingHorizontal: 12,
