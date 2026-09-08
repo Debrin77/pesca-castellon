@@ -135,7 +135,11 @@ export async function calcularIndicePesca(lat: number, lng: number, dias: number
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
       `&hourly=surface_pressure,cloudcover&daily=windspeed_10m_max,precipitation_probability_max` +
       `&past_days=1&forecast_days=${dias}&timezone=auto`;
-    const res = await fetch(url);
+    // Timeout: sin esto «Salgo a pescar» puede quedar en spinner eterno (p. ej. red mala en costa).
+    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 10_000) : null;
+    const res = await fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
+    if (timer) clearTimeout(timer);
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
     const data = await res.json();
 

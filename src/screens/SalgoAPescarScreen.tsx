@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -60,6 +60,7 @@ interface Props {
 }
 
 type OrigenUbicacion = FuentePuntoConsulta;
+type MedioSalida = "continental" | "maritimo";
 
 /**
  * Flujo corto “Salgo a pescar”: eliges dónde → veredicto → índice → checklist.
@@ -71,6 +72,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, fijarPunto } = usePuntoConsulta();
   const checklist = provincia.checklistAntesDePescar;
+  const permiteCosta = !provincia.continentalOnly;
   const [paso, setPaso] = useState(0);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +93,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [notaSalida, setNotaSalida] = useState("");
   const [salidaRegistrada, setSalidaRegistrada] = useState(false);
   const [guardandoSalida, setGuardandoSalida] = useState(false);
+  /** Castellón: costa vs ríos/embalses. Sevilla (solo continental) queda fijo. */
+  const [medio, setMedio] = useState<MedioSalida>(permiteCosta ? "continental" : "continental");
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
   /** Evita relanzar «Revisa qué llevar» cuando fijarPunto actualiza `punto` y re-dispara el focus effect. */
@@ -107,15 +111,22 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     limite: 10,
   });
 
-  const sitiosFaciles = sitiosFacilesDe(provincia.id as "castellon" | "sevilla");
+  const sitiosFaciles = useMemo(() => {
+    const todos = sitiosFacilesDe(provincia.id as "castellon" | "sevilla");
+    if (!permiteCosta) return todos.filter((s) => s.ambito === "continental");
+    return todos.filter((s) => s.ambito === medio);
+  }, [provincia.id, medio, permiteCosta]);
 
-  const zonasRapidas = [...(provincia.zones as { id: string; nombre: string; lat: number; lng: number; tipo?: string }[])]
-    .sort((a, b) => {
-      const rank = (z: { tipo?: string; id: string }) =>
-        z.tipo === "embalse" || z.id.startsWith("embalse") ? 0 : 1;
-      return rank(a) - rank(b);
-    })
-    .slice(0, 12);
+  const zonasRapidas = useMemo(() => {
+    if (medio === "maritimo") return [];
+    return [...(provincia.zones as { id: string; nombre: string; lat: number; lng: number; tipo?: string }[])]
+      .sort((a, b) => {
+        const rank = (z: { tipo?: string; id: string }) =>
+          z.tipo === "embalse" || z.id.startsWith("embalse") ? 0 : 1;
+        return rank(a) - rank(b);
+      })
+      .slice(0, 12);
+  }, [provincia.zones, medio]);
 
   const irAlChecklistUi = useCallback(() => {
     setPaso(2);
@@ -161,6 +172,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           etiqueta: args.etiqueta,
         });
         const c = consultarToqueMapa(args.lat, args.lng);
+        if (permiteCosta) {
+          setMedio(c.ambito === "maritimo" ? "maritimo" : "continental");
+        }
         const dias = await calcularIndicePesca(args.lat, args.lng, 2);
         setCoords({ lat: args.lat, lng: args.lng });
         setEtiqueta(args.etiqueta ?? c.titulo ?? null);
@@ -177,7 +191,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setCargando(false);
       }
     },
-    [fijarPunto, provincia.regionMapa, provincia.nombre, irAlChecklistUi]
+    [fijarPunto, provincia.regionMapa, provincia.nombre, irAlChecklistUi, permiteCosta]
   );
 
   useFocusEffect(
@@ -223,6 +237,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           { irAChecklist: true }
         );
       }
+
+      return () => {
+        // Si el fetch del índice se queda colgado, no bloquees la siguiente entrada.
+        aplicandoRef.current = false;
+        setCargando(false);
+      };
       // route.params?.irAChecklist: al navegar con el flag el callback se recrea y el foco lo ejecuta.
       // No incluir `punto`: su actualización tras fijarPunto no debe re-lanzar aplicarUbicacion.
     }, [aplicarUbicacion, provincia.id, route.params?.irAChecklist, navigation])
@@ -280,7 +300,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     const parent = navigation.getParent?.();
     const dest = {
       screen: "ZonasLibresMain",
-      params: { modoAnadirPunto: true, motivoPick: "salgo" as const },
+      params: {
+        modoAnadirPunto: true,
+        motivoPick: "salgo" as const,
+        modoMapa: (medio === "maritimo" ? "costa" : "continental") as "costa" | "continental",
+      },
     };
     if (parent?.navigate) {
       parent.navigate("Mapa", dest);
@@ -378,8 +402,39 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>1 · Dónde estás · normativa</Text>
             <Text style={styles.hint}>
-              Elige GPS, un punto en el mapa, coordenadas o una zona de {provincia.nombre}.
+              {permiteCosta
+                ? "Elige costa o ríos/embalses, luego GPS, mapa, coordenadas o un sitio."
+                : `Elige GPS, un punto en el mapa, coordenadas o una zona de ${provincia.nombre}.`}
             </Text>
+
+            {permiteCosta ? (
+              <View style={styles.medioRow} accessibilityRole="radiogroup">
+                <TouchableOpacity
+                  style={[styles.medioBtn, medio === "continental" && styles.medioBtnOn]}
+                  onPress={() => setMedio("continental")}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: medio === "continental" }}
+                  accessibilityLabel="Ríos y embalses"
+                >
+                  <Text style={[styles.medioBtnTxt, medio === "continental" && styles.medioBtnTxtOn]}>
+                    Ríos y embalses
+                  </Text>
+                  <Text style={styles.medioBtnSub}>Licencia continental</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.medioBtn, medio === "maritimo" && styles.medioBtnOnMar]}
+                  onPress={() => setMedio("maritimo")}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: medio === "maritimo" }}
+                  accessibilityLabel="Costa orilla de mar"
+                >
+                  <Text style={[styles.medioBtnTxt, medio === "maritimo" && styles.medioBtnTxtOnMar]}>
+                    Costa / orilla
+                  </Text>
+                  <Text style={styles.medioBtnSub}>Licencia marítima tierra</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
 
             {punto &&
             (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
@@ -422,7 +477,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               <PulsePress onPress={irAMapa} style={styles.methodBtn} accessibilityLabel="Elegir en el mapa">
                 <Text style={styles.methodGlyph}>▦</Text>
                 <Text style={styles.methodBtnTxt}>Mapa</Text>
-                <Text style={styles.methodHint}>Tocar</Text>
+                <Text style={styles.methodHint}>{medio === "maritimo" ? "Costa" : "Tocar"}</Text>
               </PulsePress>
               <PulsePress
                 onPress={() => setMostrarCoords((v) => !v)}
@@ -534,7 +589,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
             {sitiosFaciles.length > 0 ? (
               <View style={{ marginBottom: 10 }}>
-                <Text style={styles.formLabel}>Sitios fáciles para empezar</Text>
+                <Text style={styles.formLabel}>
+                  {medio === "maritimo" ? "Playas fáciles para empezar" : "Sitios fáciles para empezar"}
+                </Text>
                 {sitiosFaciles.slice(0, 5).map((z) => (
                   <TouchableOpacity
                     key={z.id}
@@ -843,6 +900,39 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.extrabold,
     color: COLORS.textPrimary,
     marginBottom: 10,
+  },
+  medioRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  medioBtn: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    backgroundColor: COLORS.mist,
+  },
+  medioBtnOn: {
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight,
+  },
+  medioBtnOnMar: {
+    borderColor: COLORS.water,
+    backgroundColor: COLORS.waterLight,
+  },
+  medioBtnTxt: {
+    fontSize: 13,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    color: COLORS.textPrimary,
+  },
+  medioBtnTxtOn: { color: COLORS.primaryDark },
+  medioBtnTxtOnMar: { color: COLORS.waterDark },
+  medioBtnSub: {
+    marginTop: 3,
+    fontSize: 11,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+    lineHeight: 14,
   },
   hint: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 12 },
   muted: { color: COLORS.textSecondary, fontSize: 13 },
