@@ -353,12 +353,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 
   const nEspeciesChip = costa ? orillaSeleccion.length : speciesCatalog.length;
 
-  // Mapa protagonista + pie scrolleable: sin ScrollView el pie (CTAs bajo «Ver especies…»)
-  // queda detrás de la barra de tabs flotante y no se puede alcanzar.
-  // ~45% deja sitio al pie (CTA + última consulta + catálogo) por encima de la barra.
+  // Pie (CTA + última consulta + catálogo) debe caber por encima de la barra de tabs.
+  // Mapa más contenido (~38%) para que esos botones se vean sin pelear con el overlay.
   const altoMapa = useMemo(() => {
     const h = Dimensions.get("window").height;
-    return Math.max(Math.round(h * 0.45), 300);
+    return Math.max(Math.round(h * 0.38), 260);
   }, []);
 
   return (
@@ -736,7 +735,7 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { position: "relative", minHeight: 300, backgroundColor: COLORS.mist },
+  mapWrap: { position: "relative", minHeight: 260, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
@@ -746,8 +745,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
-  // Altura ≈ barra de tabs flotante + margen (evita que «Catálogo / última consulta» queden debajo).
-  pieSpacer: { height: 120 },
+  // Hueco bajo «Ver última consulta» / «Catálogo …» ≈ altura de la barra de tabs flotante.
+  pieSpacer: { height: 128 },
   pieMar: {
     backgroundColor: COLORS.waterLight,
     borderTopColor: COLORS.water,
