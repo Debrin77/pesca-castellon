@@ -26,6 +26,10 @@ export type ItemChecklist = {
 type Props = {
   provinciaId: string;
   items: ItemChecklist[];
+  /** Si true, no pinta la lista (el padre muestra el resumen compacto). */
+  minimizado?: boolean;
+  /** Progreso actual para cabeceras / resumen al minimizar. */
+  onProgreso?: (hechos: number, total: number) => void;
   onLicencia?: () => void;
   onConsejos?: (opts: { consejoId?: string; categoria?: string }) => void;
   onMapa?: () => void;
@@ -60,6 +64,8 @@ export function itemsDesdeTextos(textos: string[], extras: ItemChecklist[] = [])
 export default function ChecklistInteractivo({
   provinciaId,
   items,
+  minimizado = false,
+  onProgreso,
   onLicencia,
   onConsejos,
   onMapa,
@@ -79,6 +85,15 @@ export default function ChecklistInteractivo({
       cargar();
     }, [cargar])
   );
+
+  const hechos = items.filter((it) => ticks[it.id]).length;
+  const total = items.length;
+  const pct = total > 0 ? hechos / total : 0;
+  const listo = total > 0 && hechos === total;
+
+  useEffect(() => {
+    onProgreso?.(hechos, total);
+  }, [hechos, total, onProgreso]);
 
   async function toggle(id: string) {
     const next = { ...ticks, [id]: !ticks[id] };
@@ -109,10 +124,8 @@ export default function ChecklistInteractivo({
     return null;
   }
 
-  const hechos = items.filter((it) => ticks[it.id]).length;
-  const total = items.length;
-  const pct = total > 0 ? hechos / total : 0;
-  const listo = total > 0 && hechos === total;
+  // Sigue montado al minimizar para conservar ticks y notificar progreso al padre.
+  if (minimizado) return null;
 
   return (
     <View style={styles.wrap}>

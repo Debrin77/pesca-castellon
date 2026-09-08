@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,11 @@ import {
   ActivityIndicator,
   TextInput,
   Alert,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
@@ -61,6 +65,12 @@ interface Props {
 
 type OrigenUbicacion = FuentePuntoConsulta;
 
+const CLAVE_CHECKLIST_MINIMIZADO = "@pesca/checklist_que_llevar_minimizado";
+
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 /**
  * Flujo corto “Salgo a pescar”: eliges dónde → veredicto → índice → checklist.
  * Misma lógica de punto que Inicio / Previsión / Mapa (GPS, mapa, coords, zona).
@@ -91,6 +101,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [notaSalida, setNotaSalida] = useState("");
   const [salidaRegistrada, setSalidaRegistrada] = useState(false);
   const [guardandoSalida, setGuardandoSalida] = useState(false);
+  const [checklistMinimizado, setChecklistMinimizado] = useState(false);
+  const [checklistProgreso, setChecklistProgreso] = useState({ hechos: 0, total: 0 });
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
   /** Evita relanzar «Revisa qué llevar» cuando fijarPunto actualiza `punto` y re-dispara el focus effect. */
@@ -109,6 +121,42 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
   const sitiosFaciles = sitiosFacilesDe(provincia.id as "castellon" | "sevilla");
 
+  const itemsChecklist = useMemo(
+    () =>
+      itemsDesdeTextos(
+        checklist,
+        provincia.id === "castellon"
+          ? [
+              {
+                id: "pesca-rec",
+                texto: "Si pescas en costa: declara en PescaREC (obligatorio desde 2026).",
+                accion: { tipo: "pesca_rec" as const },
+              },
+            ]
+          : []
+      ),
+    [checklist, provincia.id]
+  );
+
+  useEffect(() => {
+    void AsyncStorage.getItem(CLAVE_CHECKLIST_MINIMIZADO).then((v) => {
+      if (v === "1") setChecklistMinimizado(true);
+    });
+  }, []);
+
+  const onProgresoChecklist = useCallback((hechos: number, total: number) => {
+    setChecklistProgreso({ hechos, total });
+  }, []);
+
+  const alternarChecklistMinimizado = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setChecklistMinimizado((prev) => {
+      const siguiente = !prev;
+      void AsyncStorage.setItem(CLAVE_CHECKLIST_MINIMIZADO, siguiente ? "1" : "0");
+      return siguiente;
+    });
+  }, []);
+
   const zonasRapidas = [...(provincia.zones as { id: string; nombre: string; lat: number; lng: number; tipo?: string }[])]
     .sort((a, b) => {
       const rank = (z: { tipo?: string; id: string }) =>
@@ -119,6 +167,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
   const irAlChecklistUi = useCallback(() => {
     setPaso(2);
+    // Al abrir «Qué llevar» a propósito, expandir la lista (no el resumen).
+    setChecklistMinimizado(false);
+    void AsyncStorage.setItem(CLAVE_CHECKLIST_MINIMIZADO, "0");
     // El checklist va al final del scroll (normativa + clima quedan arriba).
     setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
@@ -686,13 +737,22 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 <TouchableOpacity
                   style={styles.btnGhost}
                   onPress={() => {
+                    setChecklistMinimizado(false);
+                    void AsyncStorage.setItem(CLAVE_CHECKLIST_MINIMIZADO, "0");
                     setPaso(2);
                     navigation.navigate("Previsión");
                   }}
                 >
                   <Text style={styles.btnGhostTxt}>Ver previsión completa</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => setPaso(2)}>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={() => {
+                    setChecklistMinimizado(false);
+                    void AsyncStorage.setItem(CLAVE_CHECKLIST_MINIMIZADO, "0");
+                    setPaso(2);
+                  }}
+                >
                   <Text style={styles.btnTxt}>Qué llevar →</Text>
                 </TouchableOpacity>
               </View>
@@ -702,22 +762,42 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
           {paso >= 2 && (
             <ListaAnimada index={2}>
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>3 · Qué llevar</Text>
-                <Text style={styles.hint}>Marca lo que ya tienes. Los enlaces abren la ficha útil.</Text>
+                <View style={styles.checklistCabecera}>
+                  <TouchableOpacity
+                    onPress={alternarChecklistMinimizado}
+                    style={styles.checklistCabeceraHit}
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: !checklistMinimizado }}
+                    accessibilityLabel={
+                      checklistMinimizado
+                        ? `Expandir qué llevar, ${checklistProgreso.hechos} de ${checklistProgreso.total} listos`
+                        : "Minimizar qué llevar"
+                    }
+                  >
+                    <Text style={styles.cardTitleCab}>3 · Qué llevar</Text>
+                    {checklistMinimizado ? (
+                      <Text style={styles.checklistResumen}>
+                        {checklistProgreso.total > 0
+                          ? `${checklistProgreso.hechos}/${checklistProgreso.total} listos · toca para abrir`
+                          : "Toca para abrir"}{" "}
+                        ▾
+                      </Text>
+                    ) : (
+                      <Text style={styles.checklistMinimizar}>Minimizar ▴</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+                {!checklistMinimizado ? (
+                  <Text style={styles.hint}>
+                    Marca lo que ya tienes. Los enlaces abren la ficha útil.
+                  </Text>
+                ) : null}
+                {/* Siempre montado: al minimizar solo oculta la lista y sigue reportando progreso. */}
                 <ChecklistInteractivo
                   provinciaId={provincia.id}
-                  items={itemsDesdeTextos(
-                    checklist,
-                    provincia.id === "castellon"
-                      ? [
-                          {
-                            id: "pesca-rec",
-                            texto: "Si pescas en costa: declara en PescaREC (obligatorio desde 2026).",
-                            accion: { tipo: "pesca_rec" },
-                          },
-                        ]
-                      : []
-                  )}
+                  items={itemsChecklist}
+                  minimizado={checklistMinimizado}
+                  onProgreso={onProgresoChecklist}
                   onLicencia={() => navigation.navigate("License")}
                   onConsejos={(o) =>
                     navigation.navigate("Consejos", {
@@ -843,6 +923,35 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.extrabold,
     color: COLORS.textPrimary,
     marginBottom: 10,
+  },
+  checklistCabecera: {
+    marginBottom: 4,
+  },
+  checklistCabeceraHit: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    minHeight: 28,
+  },
+  cardTitleCab: {
+    fontSize: 15,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    color: COLORS.textPrimary,
+    flexShrink: 0,
+  },
+  checklistResumen: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: "700",
+    color: COLORS.textSecondary,
+    textAlign: "right",
+  },
+  checklistMinimizar: {
+    marginLeft: "auto",
+    fontSize: 12,
+    fontWeight: "800",
+    color: COLORS.water,
   },
   hint: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 19, marginBottom: 12 },
   muted: { color: COLORS.textSecondary, fontSize: 13 },
