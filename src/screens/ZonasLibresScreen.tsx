@@ -35,7 +35,8 @@ import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/b
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
-import { obtenerRadar } from "../services/radarService";
+import { etiquetaCuandoRadar, etiquetaHoraRadarCorta, obtenerRadar } from "../services/radarService";
+import type { FrameRadarActivo } from "../services/radarService";
 import {
   anadirPuntoTrack,
   finalizarTrack,
@@ -96,6 +97,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
   const [radarUrl, setRadarUrl] = useState<string | null>(null);
+  const [radarFrame, setRadarFrame] = useState<FrameRadarActivo | null>(null);
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [tracks, setTracks] = useState<TrackPesca[]>([]);
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
@@ -170,15 +172,24 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [route.params, navigation]);
 
   useEffect(() => {
-    if (!capas.radar) return;
+    if (!capas.radar) {
+      setRadarUrl(null);
+      setRadarFrame(null);
+      return;
+    }
     let cancel = false;
     void obtenerRadar().then((r) => {
-      if (!cancel) setRadarUrl(r.urlPlantilla);
+      if (cancel) return;
+      setRadarUrl(r.urlPlantilla);
+      setRadarFrame(r.frameActivo);
     });
     return () => {
       cancel = true;
     };
   }, [capas.radar]);
+
+  const radarCuando = etiquetaCuandoRadar(radarFrame);
+  const radarHoraCorta = etiquetaHoraRadarCorta(radarFrame);
 
   useEffect(() => {
     setModalidad(mar ? "orilla_mar" : "orilla_continental");
@@ -635,7 +646,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         {capasExtra || capas.radar ? (
           <TouchableOpacity style={[styles.layerChip, capas.radar && styles.layerChipActive]} onPress={() => toggleCapa("radar")}>
             <Text style={[styles.layerChipText, capas.radar && styles.layerChipTextActive]}>
-              {capas.radar ? "Radar ON" : "Radar lluvia"}
+              {capas.radar
+                ? radarHoraCorta
+                  ? `Radar ${radarHoraCorta}`
+                  : "Radar ON"
+                : "Radar lluvia"}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -836,8 +851,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       <View style={[styles.pieMapa, mar && styles.pieMapaMar]}>
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
         {capas.radar ? (
-          <Text style={styles.hint}>
-            Radar lluvia activo{radarUrl ? "" : " (cargando…)"} · RainViewer · no es aviso AEMET.
+          <Text style={styles.hint} accessibilityLiveRegion="polite">
+            {radarUrl
+              ? radarCuando
+                ? `Radar lluvia · ${radarCuando} · RainViewer · no es aviso AEMET.`
+                : "Radar lluvia activo · RainViewer · no es aviso AEMET."
+              : "Radar lluvia activo (cargando…) · RainViewer · no es aviso AEMET."}
           </Text>
         ) : null}
         <Text style={styles.hint}>
