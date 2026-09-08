@@ -75,7 +75,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
                 onPress={() => setMedio("maritimo")}
               >
                 <Text style={styles.optTitle}>Costa / orilla de mar</Text>
-                <Text style={styles.optSub}>Licencia marítima recreativa desde tierra (GVA)</Text>
+                <Text style={styles.optSub}>Licencia marítima desde tierra (GVA); kayak igual. Barco = otra.</Text>
               </TouchableOpacity>
             ) : null}
             <TouchableOpacity
@@ -103,7 +103,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             <Text style={styles.title}>Licencia (imprescindible)</Text>
             <Text style={styles.sub}>
               {medio === "maritimo"
-                ? "En costa hace falta la licencia marítima recreativa desde tierra. En mar, PescaREC puede pedir declaraciones."
+                ? "En orilla y kayak: licencia marítima recreativa desde tierra. En barco (lista 6.ª/7.ª): licencia de embarcación del titular (cubre invitados). PescaREC si aplica."
                 : provincia.requisitosLicencia.seguroObligatorio
                   ? "En ríos/embalses: licencia continental, número de registro y seguro de responsabilidad civil."
                   : "En ríos/embalses: licencia continental. En Castellón no se pide seguro de responsabilidad civil."}

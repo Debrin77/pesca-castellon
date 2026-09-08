@@ -16,7 +16,7 @@ const CLAVE_PLEGADO = "@pesca_castellon/banner_licencia_plegado";
 
 /**
  * Aviso de licencias según provincia:
- * Castellón → continental + marítima recreativa desde tierra (GVA); sin seguro RC.
+ * Castellón → continental + marítima (orilla/kayak tierra; barco = licencia de embarcación); sin seguro RC.
  * Sevilla → solo continental Andalucía (Junta) + seguro RC obligatorio.
  */
 export default function LicenseBanner({ onPress, compact }: Props) {
@@ -50,7 +50,7 @@ export default function LicenseBanner({ onPress, compact }: Props) {
     ? req.seguroObligatorio
       ? `Licencias · ${provincia.nombre} · seguro RC`
       : `Licencias · ${provincia.nombre} continental`
-    : "Licencias · continental y marítima desde tierra";
+    : "Licencias · continental, orilla y barco";
 
   const textoExpandido = soloContinental ? (
     <>
@@ -69,9 +69,10 @@ export default function LicenseBanner({ onPress, compact }: Props) {
   ) : (
     <>
       En ríos y embalses: <Text style={styles.em}>licencia de pesca continental</Text>. En la orilla
-      del mar: <Text style={styles.em}>licencia de pesca marítima recreativa desde tierra</Text>. No
-      se sustituyen entre sí. En Castellón <Text style={styles.em}>no</Text> hace falta seguro de RC
-      de pescador.
+      del mar (y kayak): <Text style={styles.em}>marítima recreativa desde tierra</Text>. En barco
+      (lista 6.ª/7.ª): licencia de <Text style={styles.em}>embarcación del titular</Text> (cubre
+      invitados). No se sustituyen entre sí. En Castellón <Text style={styles.em}>no</Text> hace
+      falta seguro de RC de pescador.
     </>
   );
 

@@ -125,7 +125,7 @@ export default function LicenseScreen() {
         <Text style={styles.headerSubtitle}>
           {soloContinental
             ? provincia.etiquetaLicenciaContinental
-            : "Continental y marítima recreativa desde tierra"}
+            : "Continental, orilla, embarcación y kayak"}
         </Text>
       </LinearGradient>
 
@@ -250,6 +250,18 @@ export default function LicenseScreen() {
         </View>
       )}
 
+      {!soloContinental ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Preguntas frecuentes · mar</Text>
+          {LICENCIA_INFO.faqMaritima.map((f) => (
+            <View key={f.pregunta} style={styles.ambitoBlock}>
+              <Text style={styles.ambitoTitulo}>{f.pregunta}</Text>
+              <Text style={styles.cardText}>{f.respuesta}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Mis licencias en este móvil</Text>
         <Text style={styles.privacy}>
@@ -288,7 +300,7 @@ export default function LicenseScreen() {
         <View style={styles.tipoRow}>
           {(soloContinental
             ? (["continental"] as TipoLicencia[])
-            : (["continental", "maritima_tierra"] as TipoLicencia[])
+            : (["continental", "maritima_tierra", "maritima_embarcacion"] as TipoLicencia[])
           ).map((t) => (
             <TouchableOpacity
               key={t}
@@ -296,7 +308,11 @@ export default function LicenseScreen() {
               onPress={() => setTipo(t)}
             >
               <Text style={[styles.tipoChipTxt, tipo === t && styles.tipoChipTxtOn]}>
-                {t === "continental" ? "Continental" : "Marítima tierra"}
+                {t === "continental"
+                  ? "Continental"
+                  : t === "maritima_embarcacion"
+                    ? "Marítima barco"
+                    : "Marítima tierra"}
               </Text>
             </TouchableOpacity>
           ))}
@@ -421,12 +437,22 @@ export default function LicenseScreen() {
       </TouchableOpacity>
 
       {!soloContinental ? (
-        <TouchableOpacity
-          style={styles.ctaButtonSecondary}
-          onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
-        >
-          <Text style={styles.ctaTextSecondary}>Licencia marítima recreativa desde tierra (GVA)</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.ctaButtonSecondary}
+            onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritima)}
+          >
+            <Text style={styles.ctaTextSecondary}>
+              Licencias marítimas GVA (tierra, barco, submarina, esparavel)
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.ctaButtonSecondary}
+            onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
+          >
+            <Text style={styles.ctaTextSecondary}>Licencia marítima recreativa desde tierra (GVA)</Text>
+          </TouchableOpacity>
+        </>
       ) : null}
 
       <TouchableOpacity
@@ -531,7 +557,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 6,
   },
-  tipoRow: { flexDirection: "row", gap: 8 },
+  tipoRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   tipoChip: {
     flex: 1,
     borderWidth: 1,
