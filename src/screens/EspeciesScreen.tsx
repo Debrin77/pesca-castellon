@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
@@ -353,6 +353,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 
   const nEspeciesChip = costa ? orillaSeleccion.length : speciesCatalog.length;
 
+  // Mapa protagonista + pie scrolleable: sin ScrollView el pie (CTAs bajo «Ver especies…»)
+  // queda detrás de la barra de tabs flotante y no se puede alcanzar.
+  const altoMapa = useMemo(() => {
+    const h = Dimensions.get("window").height;
+    return Math.max(Math.round(h * 0.52), 360);
+  }, []);
+
   return (
     <View style={styles.container}>
       {!soloContinental ? (
@@ -387,7 +394,14 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         </View>
       )}
 
-      <View style={styles.mapWrap}>
+      <ScrollView
+        style={styles.scrollMapa}
+        contentContainerStyle={styles.scrollMapaContent}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
+      <View style={[styles.mapWrap, { height: altoMapa }]}>
         <MapView
           key={`${provincia.id}-${modo}`}
           style={styles.map}
@@ -540,6 +554,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
 
       <VentanaConsulta
         visible={fichaAbierta && !!consulta}
@@ -691,6 +706,8 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
+  scrollMapa: { flex: 1 },
+  scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
   modoBar: {
     flexDirection: "row",
     gap: 8,
@@ -715,13 +732,14 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { flex: 1, position: "relative", minHeight: 220 },
+  mapWrap: { position: "relative", minHeight: 360, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
     paddingHorizontal: 14,
     paddingTop: 8,
-    paddingBottom: 96,
+    // Hueco para la barra de tabs flotante (+ chrome web/móvil).
+    paddingBottom: 120,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
