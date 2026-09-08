@@ -35,9 +35,12 @@ for (const needle of [
 
 // El ancla debe medir fuera de ListaAnimada (evita y≈0)
 const iTitulo = home.indexOf('bloqueTitulo}>Detalle del tramo');
-const ventana = home.slice(Math.max(0, iTitulo - 500), iTitulo + 40);
+const ventana = home.slice(Math.max(0, iTitulo - 1200), iTitulo + 40);
 if (iTitulo < 0 || !ventana.includes("ref={tramoAnchorRef}")) {
   fail("El ancla del detalle del tramo debe envolver el bloque (ref={tramoAnchorRef})");
+}
+if (iTitulo < 0 || !ventana.includes("bloqueCabecera") || !ventana.includes("toggleDetalleTramo")) {
+  fail("Detalle del tramo debe ser cabecera desplegable (bloqueCabecera + toggle)");
 }
 
 const iSalgo =

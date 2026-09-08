@@ -749,37 +749,61 @@ export default function HomeScreen({ navigation }: Props) {
         >
           <ListaAnimada index={1}>
             <View style={styles.bloque}>
-              <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
-              {consultaViva ? (
-                <View style={{ marginBottom: 12 }}>
-                  <ConsultaPescaCard
-                    consulta={consultaViva}
-                    compacto
-                    ocultarVeredictoCompacto
-                    expandido={detalleTramo}
-                    onToggleDetalle={toggleDetalleTramo}
-                    onFicha={
-                      consultaViva.tramo?.fichaId
-                        ? () =>
-                            navigation.navigate("ZoneDetail", {
-                              zoneId: consultaViva.tramo!.fichaId,
-                            })
-                        : undefined
-                    }
-                    onEspecies={() => irAEspeciesDelPunto(navigation)}
-                    onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
-                    onMontaje={(id) => {
-                      const consejoId = consejoIdMontajeEspecie(id);
-                      if (!consejoId) return;
-                      navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
-                    }}
-                  />
+              <TouchableOpacity
+                onPress={toggleDetalleTramo}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: detalleTramo }}
+                accessibilityLabel={
+                  detalleTramo
+                    ? "Ocultar detalle del tramo"
+                    : "Desplegar detalle del tramo"
+                }
+                style={styles.bloqueCabecera}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
+                  <Text style={styles.bloqueSub}>
+                    {consultaViva
+                      ? detalleTramo
+                        ? "Normativa y fichas del punto"
+                        : `${consultaViva.titulo} · toca para ver`
+                      : "Sin punto aún · usa Salgo a pescar o el mapa"}
+                  </Text>
                 </View>
-              ) : (
-                <Text style={styles.sinConsulta}>
-                  Sin punto aún. Usa «Salgo a pescar» o el mapa.
-                </Text>
-              )}
+                <Text style={styles.chevron}>{detalleTramo ? "▲" : "▼"}</Text>
+              </TouchableOpacity>
+              {detalleTramo ? (
+                consultaViva ? (
+                  <View style={{ marginBottom: 12 }}>
+                    <ConsultaPescaCard
+                      consulta={consultaViva}
+                      compacto
+                      ocultarVeredictoCompacto
+                      expandido={detalleTramo}
+                      onToggleDetalle={toggleDetalleTramo}
+                      onFicha={
+                        consultaViva.tramo?.fichaId
+                          ? () =>
+                              navigation.navigate("ZoneDetail", {
+                                zoneId: consultaViva.tramo!.fichaId,
+                              })
+                          : undefined
+                      }
+                      onEspecies={() => irAEspeciesDelPunto(navigation)}
+                      onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
+                      onMontaje={(id) => {
+                        const consejoId = consejoIdMontajeEspecie(id);
+                        if (!consejoId) return;
+                        navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <Text style={styles.sinConsulta}>
+                    Sin punto aún. Usa «Salgo a pescar» o el mapa.
+                  </Text>
+                )
+              ) : null}
 
               <PulsePress onPress={() => navigation.navigate("Mapa")} style={styles.mapaCta}>
                 <View style={styles.mapaCtaRow}>
@@ -1338,6 +1362,11 @@ const styles = StyleSheet.create({
   bloque: {
     marginBottom: SPACING.xl,
   },
+  bloqueCabecera: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
   bloqueTitulo: {
     fontSize: 13,
     fontWeight: "800",
@@ -1346,6 +1375,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     marginBottom: SPACING.sm,
     marginTop: SPACING.sm,
+  },
+  bloqueSub: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: -2,
+    marginBottom: 4,
+    fontWeight: "600",
   },
   sectionRow: {
     flexDirection: "row",
