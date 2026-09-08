@@ -93,6 +93,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [guardandoSalida, setGuardandoSalida] = useState(false);
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
+  /** Evita relanzar «Revisa qué llevar» cuando fijarPunto actualiza `punto` y re-dispara el focus effect. */
+  const autoChecklistLanzado = useRef(false);
+  const aplicandoRef = useRef(false);
+  const puntoRef = useRef(punto);
+  puntoRef.current = punto;
+  const scrollRef = useRef<ScrollView>(null);
 
   const sitiosPersonales = listarSitiosPersonales(puntos, capturas, {
     region: provincia.regionMapa,
@@ -111,13 +117,28 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
     })
     .slice(0, 12);
 
+  const irAlChecklistUi = useCallback(() => {
+    setPaso(2);
+    // El checklist va al final del scroll (normativa + clima quedan arriba).
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 80);
+  }, []);
+
   const aplicarUbicacion = useCallback(
-    async (args: {
-      lat: number;
-      lng: number;
-      fuente: FuentePuntoConsulta;
-      etiqueta?: string;
-    }) => {
+    async (
+      args: {
+        lat: number;
+        lng: number;
+        fuente: FuentePuntoConsulta;
+        etiqueta?: string;
+      },
+      opts?: { irAChecklist?: boolean }
+    ) => {
+      if (aplicandoRef.current) return;
+      // Capturar YA: el focus effect / fijarPunto pueden tocar el ref durante el await.
+      const saltarAChecklist = !!(opts?.irAChecklist || irChecklistPendiente.current);
+      irChecklistPendiente.current = false;
       const enProvincia = asegurarCoordsEnProvincia(args.lat, args.lng, {
         region: provincia.regionMapa,
         nombre: provincia.nombre,
@@ -127,6 +148,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setElegirUbicacion(true);
         return;
       }
+      aplicandoRef.current = true;
       setCargando(true);
       setError(null);
       setElegirUbicacion(false);
@@ -145,19 +167,17 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         setOrigen(args.fuente);
         setConsulta(c);
         setIndice(dias[0] ?? null);
-        setPaso(irChecklistPendiente.current ? 2 : 0);
-        if (irChecklistPendiente.current) {
-          irChecklistPendiente.current = false;
-          navigation.setParams?.({ irAChecklist: undefined });
-        }
+        if (saltarAChecklist) irAlChecklistUi();
+        else setPaso(0);
       } catch {
         setError("No se pudo consultar este punto. Prueba otra ubicación.");
         setElegirUbicacion(true);
       } finally {
+        aplicandoRef.current = false;
         setCargando(false);
       }
     },
-    [fijarPunto, provincia.regionMapa, provincia.nombre, navigation]
+    [fijarPunto, provincia.regionMapa, provincia.nombre, irAlChecklistUi]
   );
 
   useFocusEffect(
@@ -166,30 +186,46 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       void obtenerPuntosGuardados().then(setPuntos);
       void obtenerCapturas().then(setCapturas);
       void leerSalidaHoy(provincia.id).then((s) => setSalidaRegistrada(!!s));
-      if (route.params?.irAChecklist) {
+
+      // One-shot: leer y limpiar el param al ganar foco. No dependas de `punto` en este
+      // effect — fijarPunto lo cambia y re-entraba en bucle de spinner.
+      const quiereChecklist = !!route.params?.irAChecklist;
+      if (quiereChecklist) {
         irChecklistPendiente.current = true;
+        autoChecklistLanzado.current = false;
+        navigation.setParams?.({ irAChecklist: undefined });
       }
+
       const elegida = consumirPickUbicacion("salgo");
+      const p = puntoRef.current;
+      const puntoUtil =
+        p && (p.fuente === "mapa" || p.fuente === "zona" || p.fuente === "gps") ? p : null;
+
       if (elegida) {
-        void aplicarUbicacion({
-          lat: elegida.lat,
-          lng: elegida.lng,
-          fuente: "mapa",
-          etiqueta: elegida.etiqueta,
-        });
-      } else if (
-        irChecklistPendiente.current &&
-        punto &&
-        (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")
-      ) {
-        void aplicarUbicacion({
-          lat: punto.lat,
-          lng: punto.lng,
-          fuente: punto.fuente,
-          etiqueta: punto.etiqueta,
-        });
+        void aplicarUbicacion(
+          {
+            lat: elegida.lat,
+            lng: elegida.lng,
+            fuente: "mapa",
+            etiqueta: elegida.etiqueta,
+          },
+          { irAChecklist: quiereChecklist || irChecklistPendiente.current }
+        );
+      } else if (quiereChecklist && !autoChecklistLanzado.current && puntoUtil) {
+        autoChecklistLanzado.current = true;
+        void aplicarUbicacion(
+          {
+            lat: puntoUtil.lat,
+            lng: puntoUtil.lng,
+            fuente: puntoUtil.fuente,
+            etiqueta: puntoUtil.etiqueta,
+          },
+          { irAChecklist: true }
+        );
       }
-    }, [aplicarUbicacion, provincia.id, punto, route.params?.irAChecklist])
+      // route.params?.irAChecklist: al navegar con el flag el callback se recrea y el foco lo ejecuta.
+      // No incluir `punto`: su actualización tras fijarPunto no debe re-lanzar aplicarUbicacion.
+    }, [aplicarUbicacion, provincia.id, route.params?.irAChecklist, navigation])
   );
 
   async function pedirGpsConSheet(): Promise<boolean> {
@@ -322,7 +358,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       onCancelar={() => gpsResolver.current?.(false)}
       onContinuar={() => gpsResolver.current?.(true)}
     />
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+    >
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <OndaAgua intensidad={1} />
         <Text style={styles.kicker}>Modo salida</Text>
