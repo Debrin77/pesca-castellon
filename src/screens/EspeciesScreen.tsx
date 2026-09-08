@@ -355,9 +355,10 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 
   // Mapa protagonista + pie scrolleable: sin ScrollView el pie (CTAs bajo «Ver especies…»)
   // queda detrás de la barra de tabs flotante y no se puede alcanzar.
+  // ~45% deja sitio al pie (CTA + última consulta + catálogo) por encima de la barra.
   const altoMapa = useMemo(() => {
     const h = Dimensions.get("window").height;
-    return Math.max(Math.round(h * 0.52), 360);
+    return Math.max(Math.round(h * 0.45), 300);
   }, []);
 
   return (
@@ -553,6 +554,8 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             </Text>
           </TouchableOpacity>
         </View>
+        {/* Reserva explícita bajo los CTAs para la barra de tabs flotante. */}
+        <View style={styles.pieSpacer} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
       </View>
       </ScrollView>
 
@@ -707,6 +710,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   scrollMapa: { flex: 1 },
+  // Extra al final del scroll para despegar «Catálogo ríos» / «Ver última consulta» de la barra de tabs.
   scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
   modoBar: {
     flexDirection: "row",
@@ -732,17 +736,18 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { position: "relative", minHeight: 360, backgroundColor: COLORS.mist },
+  mapWrap: { position: "relative", minHeight: 300, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
     paddingHorizontal: 14,
     paddingTop: 8,
-    // Hueco para la barra de tabs flotante (+ chrome web/móvil).
-    paddingBottom: 120,
+    paddingBottom: 16,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
+  // Altura ≈ barra de tabs flotante + margen (evita que «Catálogo / última consulta» queden debajo).
+  pieSpacer: { height: 120 },
   pieMar: {
     backgroundColor: COLORS.waterLight,
     borderTopColor: COLORS.water,
