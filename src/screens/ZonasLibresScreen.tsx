@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions } from "react-native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
@@ -492,6 +492,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const pickCaptura = modoAnadir && (motivoPick === "captura" || hayPickUbicacion("captura"));
   const pickConfirmar = pickSalgo || pickCaptura;
 
+  // Mapa protagonista: ~62% de la pantalla (mín. 440). El pie (hora, leyenda) va debajo con scroll.
+  const altoMapa = useMemo(() => {
+    const h = Dimensions.get("window").height;
+    return Math.max(Math.round(h * 0.62), 440);
+  }, []);
+
   return (
     <View style={[styles.container, mar && styles.containerMar]}>
       {modoAnadir ? (
@@ -518,6 +524,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         </View>
       ) : null}
 
+      <ScrollView
+        style={styles.scrollMapa}
+        contentContainerStyle={styles.scrollMapaContent}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled
+      >
       <View style={[styles.searchBox, mar && styles.searchBoxMar]}>
         <TextInput
           style={styles.searchInput}
@@ -734,7 +746,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         </View>
       ) : null}
 
-      <View style={styles.mapWrap}>
+      <View style={[styles.mapWrap, { height: altoMapa }]}>
         <MapView
           key={provincia.id}
           style={styles.map}
@@ -864,17 +876,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                   : "Radar lluvia activo, cargando hora"
               }
             >
-              <Text style={styles.radarPlacaKicker}>Radar lluvia</Text>
               {radarHoraCorta ? (
-                <>
+                <Text style={styles.radarPlacaTxt} numberOfLines={1}>
                   <Text style={styles.radarPlacaHora}>{radarHoraCorta}</Text>
-                  <Text style={styles.radarPlacaMeta}>
-                    {radarTipo}
-                    {radarFechaPlaca ? ` · ${radarFechaPlaca}` : ""}
-                  </Text>
-                </>
+                  {"  "}
+                  {radarTipo}
+                  {radarFechaPlaca ? ` · ${radarFechaPlaca}` : ""}
+                </Text>
               ) : (
-                <Text style={styles.radarPlacaMeta}>Cargando hora…</Text>
+                <Text style={styles.radarPlacaTxt}>Radar · cargando hora…</Text>
               )}
             </View>
           </View>
@@ -886,19 +896,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         <LeyendaMapa modo={mar ? "costa" : "continental"} />
         {capas.radar ? (
           <View style={styles.radarBanner} accessibilityLiveRegion="polite">
-            <Text style={styles.radarBannerTitle}>
+            <Text style={styles.radarBannerTitle} numberOfLines={1}>
               {radarHoraCorta
-                ? `${radarTipo ?? "Radar"} · ${radarHoraCorta}`
+                ? `${radarTipo ?? "Radar"} · ${radarHoraCorta}${radarFechaPlaca ? ` · ${radarFechaPlaca}` : ""}`
                 : "Radar lluvia (cargando…)"}
+              {" · RainViewer"}
             </Text>
-            <Text style={styles.radarBannerSub}>
-              {radarFechaPlaca
-                ? `Para ${radarFechaPlaca} · RainViewer · no es aviso AEMET`
-                : "RainViewer · no es aviso AEMET"}
-            </Text>
-            {radarCuando ? (
-              <Text style={styles.radarBannerDetalle}>{radarCuando}</Text>
-            ) : null}
           </View>
         ) : null}
         <Text style={styles.hint}>
@@ -926,6 +929,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </TouchableOpacity>
         ) : null}
       </View>
+      </ScrollView>
 
       <VentanaConsulta
         visible={fichaAbierta && !!consulta}
@@ -996,6 +1000,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   containerMar: { backgroundColor: COLORS.waterLight },
+  scrollMapa: { flex: 1 },
+  scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
   searchBox: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, backgroundColor: COLORS.surface, zIndex: 10 },
   searchBoxMar: { backgroundColor: COLORS.waterLight },
   searchInput: {
@@ -1072,7 +1078,7 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { flex: 1, position: "relative", minHeight: 220 },
+  mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
   radarPlacaWrap: {
     position: "absolute",
     top: 10,
@@ -1082,60 +1088,39 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   radarPlaca: {
-    minWidth: 168,
-    maxWidth: 280,
-    backgroundColor: "rgba(15, 40, 48, 0.88)",
-    borderRadius: RADIUS.lg,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    maxWidth: 340,
+    backgroundColor: "rgba(15, 40, 48, 0.82)",
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.22)",
+    borderColor: "rgba(255,255,255,0.2)",
     ...SHADOW,
   },
-  radarPlacaKicker: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
+  radarPlacaTxt: {
+    color: "rgba(255,255,255,0.92)",
+    fontSize: 12,
+    fontWeight: "700",
   },
   radarPlacaHora: {
     color: "#fff",
-    fontSize: 28,
+    fontSize: 14,
     fontWeight: "800",
-    marginTop: 2,
-    letterSpacing: -0.5,
-  },
-  radarPlacaMeta: {
-    color: "rgba(255,255,255,0.92)",
-    fontSize: 13,
-    fontWeight: "700",
-    marginTop: 2,
   },
   radarBanner: {
-    marginTop: 8,
-    marginBottom: 4,
+    marginTop: 6,
+    marginBottom: 2,
     backgroundColor: COLORS.waterDark,
-    borderRadius: RADIUS.md,
-    paddingVertical: 10,
+    borderRadius: RADIUS.pill,
+    paddingVertical: 6,
     paddingHorizontal: 12,
+    alignSelf: "center",
   },
   radarBannerTitle: {
     color: "#fff",
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: "800",
-  },
-  radarBannerSub: {
-    color: "rgba(255,255,255,0.88)",
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  radarBannerDetalle: {
-    color: "rgba(255,255,255,0.78)",
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
+    textAlign: "center",
   },
   layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
   layerChip: {

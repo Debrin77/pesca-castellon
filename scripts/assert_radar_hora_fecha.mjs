@@ -50,9 +50,13 @@ for (const n of [
   "radarPlacaHora",
   "radarBanner",
   "Radar ${radarHoraCorta}",
-  "Para ${radarFechaPlaca}",
+  "altoMapa",
+  "radarPlacaTxt",
 ]) {
   if (!mapa.includes(n)) fail(`ZonasLibresScreen sin ${n}`);
+}
+if (!mapa.includes("RainViewer")) {
+  fail("ZonasLibresScreen debe seguir citando RainViewer");
 }
 
 const campo = read("src/components/PanelCampoHoy.tsx");
