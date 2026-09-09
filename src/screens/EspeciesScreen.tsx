@@ -65,10 +65,10 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
   // Barra de tabs flotante; al hacer scroll el pie debe quedar por encima.
   const piePadBottom = 110 + Math.max(insets.bottom, 12);
-  // Mapa protagonista (~58%, mín. 400). El pie (última consulta / catálogo) va debajo con scroll.
+  // Mapa protagonista (~62%, mín. 440), como en Mapa. El pie va debajo con scroll.
   const altoMapa = useMemo(() => {
     const h = Dimensions.get("window").height;
-    return Math.max(Math.round(h * 0.58), 400);
+    return Math.max(Math.round(h * 0.62), 440);
   }, []);
 
   const puntoSeed =
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { position: "relative", minHeight: 400, backgroundColor: COLORS.mist },
+  mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
