@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
@@ -63,8 +63,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const tramos = provincia.tramos as TramoOficial[];
   const playas = soloContinental ? [] : todasLasPlayas();
   const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
-  // Barra de tabs flotante (~80) + margen; los CTAs del pie deben quedar por encima.
+  // Barra de tabs flotante; al hacer scroll el pie debe quedar por encima.
   const piePadBottom = 110 + Math.max(insets.bottom, 12);
+  // Mapa protagonista (~58%, mín. 400). El pie (última consulta / catálogo) va debajo con scroll.
+  const altoMapa = useMemo(() => {
+    const h = Dimensions.get("window").height;
+    return Math.max(Math.round(h * 0.58), 400);
+  }, []);
 
   const puntoSeed =
     punto &&
@@ -391,7 +396,14 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         </View>
       )}
 
-      <View style={styles.mapWrap}>
+      <ScrollView
+        style={styles.scrollMapa}
+        contentContainerStyle={styles.scrollMapaContent}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+      >
+      <View style={[styles.mapWrap, { height: altoMapa }]}>
         <MapView
           key={`${provincia.id}-${modo}`}
           style={styles.map}
@@ -484,7 +496,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         <LeyendaMapa modo={costa ? "costa" : "continental"} />
         <Text style={styles.hint}>
           {consulta
-            ? "Punto ya elegido. Abre las especies de este sitio o el catálogo completo."
+            ? "Punto ya elegido. Desliza hacia abajo para ver última consulta y catálogo."
             : costa
               ? "Catálogo de orilla abierto. También puedes tocar una playa en el mapa."
               : soloContinental
@@ -547,6 +559,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           </Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
 
       <VentanaConsulta
         visible={fichaAbierta && !!consulta}
@@ -698,6 +711,8 @@ export default function EspeciesScreen({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
+  scrollMapa: { flex: 1 },
+  scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
   modoBar: {
     flexDirection: "row",
     gap: 8,
@@ -722,8 +737,7 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  // flex:1 sin minHeight alto: el mapa cede sitio al pie fijo (última consulta / catálogo).
-  mapWrap: { flex: 1, position: "relative", minHeight: 120, backgroundColor: COLORS.mist },
+  mapWrap: { position: "relative", minHeight: 400, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
