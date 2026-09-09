@@ -52,6 +52,7 @@ import { sitiosFacilesDe } from "../data/sitiosFaciles";
 import OndaAgua from "../components/OndaAgua";
 import PasoSalida from "../components/PasoSalida";
 import PulsePress from "../components/PulsePress";
+import AvisoHorarioLegal from "../components/AvisoHorarioLegal";
 import { etiquetaHoy } from "../components/SemaforoVeredicto";
 import { guardarSalidaHoy, leerSalidaHoy } from "../services/salidaHoyService";
 
@@ -436,6 +437,14 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               </View>
             ) : null}
 
+            <AvisoHorarioLegal
+              ambito={medio}
+              lat={coords?.lat ?? punto?.lat}
+              lng={coords?.lng ?? punto?.lng}
+              provinciaId={provincia.id}
+              compacto
+            />
+
             {punto &&
             (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
             !coords ? (
@@ -674,6 +683,8 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                   <SemaforoVeredicto consulta={consulta} />
                   <ConsultaPescaCard
                     consulta={consulta}
+                    lat={coords?.lat}
+                    lng={coords?.lng}
                     onFicha={
                       consulta.tramo?.fichaId
                         ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })

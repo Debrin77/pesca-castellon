@@ -593,6 +593,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                   key={sp.id}
                   sp={sp}
                   index={i}
+                  ambito={consulta.ambito === "maritimo" ? "maritimo" : "continental"}
                   enVeda={consulta.ambito === "maritimo" ? undefined : estaEnVeda(sp.id)}
                   onAparejos={() => irAparejos(sp.id)}
                   onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
@@ -696,6 +697,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                 key={sp.id}
                 sp={sp}
                 index={i}
+                ambito="maritimo"
                 onAparejos={() => irAparejos(sp.id)}
                 onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
               />

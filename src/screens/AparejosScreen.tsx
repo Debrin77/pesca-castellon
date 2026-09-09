@@ -184,7 +184,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               <Text style={styles.notes}>No lo confundas con: {sp.noConfundirCon}</Text>
             ) : null}
 
-            <MejorHoraPesca especie={sp} />
+            <MejorHoraPesca especie={sp} ambito={ambito === "costa" ? "maritimo" : "continental"} />
 
             {ambito === "rio" && (sp.habitats || sp.senuelosClave?.length) ? (
               <View style={[styles.gearCard, { marginTop: 12 }]}>

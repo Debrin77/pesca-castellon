@@ -211,6 +211,81 @@ export async function obtenerPrevision(lat: number, lng: number, dias: number = 
   }
 }
 
+export type OrtoOcasoDia = {
+  fecha: string;
+  /** ISO usable por Date (con offset si Open-Meteo no lo trae). */
+  ortoIso: string;
+  ocasoIso: string;
+  ortoTxt: string;
+  ocasoTxt: string;
+};
+
+const TTL_ORTO_MS = 6 * 60 * 60 * 1000;
+const memoOrto = new Map<string, { at: number; data: OrtoOcasoDia }>();
+
+/** Extrae HH:MM de un ISO de Open-Meteo (`2026-09-09T07:12` o con offset). */
+export function horaCortaDeIso(iso: string): string {
+  const m = iso.match(/T(\d{2}:\d{2})/);
+  return m ? m[1] : iso;
+}
+
+/** Si el ISO no trae Z/offset, aplica utc_offset_seconds de Open-Meteo. */
+export function isoConOffset(iso: string, utcOffsetSeconds: number | null | undefined): string {
+  if (/Z$|[+-]\d{2}:?\d{2}$/.test(iso)) return iso;
+  if (utcOffsetSeconds == null || !Number.isFinite(utcOffsetSeconds)) return iso;
+  const sign = utcOffsetSeconds >= 0 ? "+" : "-";
+  const abs = Math.abs(utcOffsetSeconds);
+  const oh = Math.floor(abs / 3600)
+    .toString()
+    .padStart(2, "0");
+  const om = Math.floor((abs % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  return `${iso}${sign}${oh}:${om}`;
+}
+
+/**
+ * Orto y ocaso del día (timezone auto de Open-Meteo) para franjas legales / de luz.
+ */
+export async function obtenerOrtoOcaso(
+  lat: number,
+  lng: number,
+  fechaIso?: string
+): Promise<OrtoOcasoDia | null> {
+  const fecha = fechaIso ?? new Date().toISOString().slice(0, 10);
+  const clave = `${claveCoords(lat, lng)}|${fecha}`;
+  const hit = memoOrto.get(clave);
+  if (hit && Date.now() - hit.at < TTL_ORTO_MS) return hit.data;
+
+  try {
+    const url =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
+      `&daily=sunrise,sunset&timezone=auto&start_date=${fecha}&end_date=${fecha}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
+    const data = await res.json();
+    const daily = data.daily;
+    const rawOrto = daily?.sunrise?.[0];
+    const rawOcaso = daily?.sunset?.[0];
+    if (!rawOrto || !rawOcaso) return hit?.data ?? null;
+    const offset = typeof data.utc_offset_seconds === "number" ? data.utc_offset_seconds : null;
+    const ortoIso = isoConOffset(rawOrto, offset);
+    const ocasoIso = isoConOffset(rawOcaso, offset);
+    const out: OrtoOcasoDia = {
+      fecha: daily.time?.[0] ?? fecha,
+      ortoIso,
+      ocasoIso,
+      ortoTxt: horaCortaDeIso(rawOrto),
+      ocasoTxt: horaCortaDeIso(rawOcaso),
+    };
+    memoOrto.set(clave, { at: Date.now(), data: out });
+    return out;
+  } catch (err) {
+    console.warn("Error obteniendo orto/ocaso:", err);
+    return hit?.data ?? null;
+  }
+}
+
 /** Oleaje frente al Grao. En Castellón la marea astronómica es irrelevante frente a esto. */
 export async function obtenerOleaje(lat: number, lng: number): Promise<{ hora: string; alturaM: number }[]> {
   try {
