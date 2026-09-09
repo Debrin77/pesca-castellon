@@ -13,9 +13,11 @@ import SitiosOrientativos from "./SitiosOrientativos";
 import ListaAnimada from "./ListaAnimada";
 import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
+import AvisoHorarioLegal from "./AvisoHorarioLegal";
 import { certezaDeConsulta } from "../data/certezaConsulta";
 import { COLORS, RADIUS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 
 interface Props {
   consulta: ConsultaPesca;
@@ -36,6 +38,9 @@ interface Props {
   /** Control externo del expandido (Inicio: gesto del hero). */
   expandido?: boolean;
   onToggleDetalle?: () => void;
+  /** Para calcular orto/ocaso de la franja horaria. */
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export default function ConsultaPescaCard({
@@ -48,8 +53,13 @@ export default function ConsultaPescaCard({
   ocultarVeredictoCompacto = false,
   expandido,
   onToggleDetalle,
+  lat,
+  lng,
 }: Props) {
   const provincia = getProvinciaActiva();
+  const { punto } = usePuntoConsulta();
+  const latEfectiva = lat ?? punto?.lat ?? null;
+  const lngEfectiva = lng ?? punto?.lng ?? null;
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
   const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada) : false;
@@ -239,6 +249,13 @@ export default function ConsultaPescaCard({
 
         {mostrarTodo ? (
           <>
+            <AvisoHorarioLegal
+              ambito={mar ? "maritimo" : "continental"}
+              lat={latEfectiva}
+              lng={lngEfectiva}
+              provinciaId={provincia.id}
+              compacto
+            />
             <Text style={styles.claveKicker}>Lo esencial hoy</Text>
             {puntosClave.length === 0 ? (
               <Text style={styles.ok}>Sin avisos extra en este punto.</Text>

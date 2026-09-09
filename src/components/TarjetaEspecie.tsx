@@ -38,6 +38,7 @@ export default function TarjetaEspecie({
   onAparejos,
   onMontaje,
   extra,
+  ambito = "continental",
 }: {
   sp: any;
   index: number;
@@ -45,6 +46,7 @@ export default function TarjetaEspecie({
   onAparejos?: () => void;
   onMontaje?: () => void;
   extra?: React.ReactNode;
+  ambito?: "continental" | "maritimo";
 }) {
   const talla = tallaDestacada(sp);
   const invasora = sp.invasora || sp.id === "cangrejo_azul";
@@ -87,7 +89,7 @@ export default function TarjetaEspecie({
         {sp.notas ? <Text style={styles.cardText}>{sp.notas}</Text> : null}
         {sp.noConfundirCon ? <Text style={styles.cardText}>No lo confundas con: {sp.noConfundirCon}</Text> : null}
         {sp.motivo ? <Text style={styles.avisoLegalText}>{sp.motivo}</Text> : null}
-        <MejorHoraPesca especie={sp} />
+        <MejorHoraPesca especie={sp} ambito={ambito} />
         {enVeda != null && (
           <Text style={styles.cardStatus}>
             Estado ahora:{" "}

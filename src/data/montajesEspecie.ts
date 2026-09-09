@@ -284,7 +284,7 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     consejoId: "montaje-pulpo-fondo",
     diagramaId: "montaje-pulpo-fondo",
     titulo: "Pulpo · fondo de roca (caña o mano)",
-    resumen: "Plomo + bajo corto + anzuelo con cebo o jig de pulpo. Solo orilla legal, de día.",
+    resumen: "Plomo + bajo corto + anzuelo con cebo o jig de pulpo. Solo orilla legal.",
     ambito: "costa",
     especieIds: ["pulpo"],
     piezas: [

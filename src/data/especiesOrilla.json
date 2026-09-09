@@ -60,7 +60,7 @@
         "resumen": "Más activo en desembocaduras y marjal con calor.",
         "verano": "Atardecer en golas y canales, fuera de vedados.",
         "invierno": "Poco activo.",
-        "noche": "La pesca de noche sigue prohibida salvo norma expresa."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     }
   ],
@@ -77,7 +77,7 @@
         "resumen": "Primera y última hora, con oleaje corto.",
         "verano": "Amanecer y anochecer; mediodía flojo.",
         "invierno": "Días de mar de fondo, casi todo el día en rompiente.",
-        "noche": "Caza de noche, pero la recreativa nocturna no está permitida: última hora de luz."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -92,7 +92,7 @@
         "resumen": "Noche de orilla no; alba y atardecer en rompiente.",
         "verano": "Madrugada y último cuarto de luz.",
         "invierno": "Días suaves, todo el día en playa.",
-        "noche": "Come de noche; pesca de noche no."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -107,7 +107,7 @@
         "resumen": "Todo el año en roca; mejor con agua un poco picada.",
         "verano": "Amanecer en la rompiente de piedra.",
         "invierno": "Mediodía en solana de roca.",
-        "noche": "Poco de noche. No pesques de noche."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -122,7 +122,7 @@
         "resumen": "Casi todo el día en roca baja.",
         "verano": "Mañana y atardecer.",
         "invierno": "Horas de sol.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -137,7 +137,7 @@
         "resumen": "Oleaje corto en playa.",
         "verano": "Alba.",
         "invierno": "Días de mar.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -152,7 +152,7 @@
         "resumen": "De día, a vista, pan o masa donde esté permitido el cebo.",
         "verano": "Mañanas en superficie.",
         "invierno": "Menos activa.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -167,7 +167,7 @@
         "resumen": "De día en orilla de piedra.",
         "verano": "Mañana.",
         "invierno": "Mediodía.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -182,7 +182,7 @@
         "resumen": "Superficie a primeras horas.",
         "verano": "Alba.",
         "invierno": "Mediodía suave.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -192,12 +192,12 @@
       "tallaCm": 16,
       "tallaNota": "Como lisas, 16 cm Mediterráneo",
       "noConfundirCon": "Llisa (Mugil cephalus), de cabeza más ancha.",
-      "notas": "Muy citada en surfcasting nocturno de Benicàssim/Alcossebre: recuerda que de noche no se pesca.",
+      "notas": "Muy citada en surfcasting nocturno de Benicàssim/Alcossebre: la caña de noche no tiene veda general autonómica; mira bando local.",
       "mejorHora": {
         "resumen": "Atardecer en playa.",
         "verano": "Última hora de luz.",
         "invierno": "Días suaves.",
-        "noche": "Activa de noche; tú no puedes pescar de noche."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -212,7 +212,7 @@
         "resumen": "Pases de cardumen, a menudo mañana.",
         "verano": "Amanecer.",
         "invierno": "Más frecuente.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -227,7 +227,7 @@
         "resumen": "Cuando hay pajarera vista desde tierra.",
         "verano": "Amanecer.",
         "invierno": "Menos.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -238,12 +238,12 @@
       "tallaNota": "Sin talla numérica en RD 560 anexo II Mediterráneo (jibias: por determinar). No te lleves crías.",
       "noConfundirCon": "Calamar (cuerpo más alargado, aletas posteriores).",
       "normativaEspecial": "Autorizada (RD 347/2011 anexo I: Sepia officinalis). Se pesca a caña con egi/potera: Decreto 41/2013 permite como máximo dos poteras por pescador. Sin nasas. Fuera de puerto e Irta. Cupo de peso del decreto (5 kg/día, orientación). No vender.",
-      "notas": "Sí se puede desde orilla en Castellón, otoño-invierno en rompiente y roca legal. Egi 2.5–3.5 al atardecer, no de noche cerrada.",
+      "notas": "Sí se puede desde orilla en Castellón, otoño-invierno en rompiente y roca legal. Egi 2.5–3.5 al atardecer, también de noche si el acceso es legal.",
       "mejorHora": {
         "resumen": "Atardecer en rompiente y roca.",
         "verano": "Poco.",
         "invierno": "Mejor temporada.",
-        "noche": "Activa al anochecer; no de noche cerrada."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -259,7 +259,7 @@
         "resumen": "Última luz, otoño.",
         "verano": "Poco desde orilla.",
         "invierno": "Buenos pases.",
-        "noche": "Pican de noche; tú hasta 1 h después del ocaso."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -276,7 +276,7 @@
         "resumen": "Agua clara, de día, en grietas.",
         "verano": "Mañana.",
         "invierno": "Mediodía.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -291,7 +291,7 @@
         "resumen": "De día, fondo.",
         "verano": "Mañana.",
         "invierno": "Mediodía.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -306,7 +306,7 @@
         "resumen": "De día.",
         "verano": "Mañana.",
         "invierno": "Sol.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -321,7 +321,7 @@
         "resumen": "Oleaje y atardecer.",
         "verano": "Noche biológica; tú al anochecer.",
         "invierno": "Menos.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -336,7 +336,7 @@
         "resumen": "Pases de caza a primera hora.",
         "verano": "Amanecer.",
         "invierno": "Menos.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -351,7 +351,7 @@
         "resumen": "Agua picada, spinning.",
         "verano": "Amanecer.",
         "invierno": "Mejor temporada en el norte de Castellón.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     },
     {
@@ -366,7 +366,7 @@
         "resumen": "Agua clara y calor, a media agua.",
         "verano": "Mañana y atardecer.",
         "invierno": "Poco.",
-        "noche": "No."
+        "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
       }
     }
   ]

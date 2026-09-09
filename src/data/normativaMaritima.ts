@@ -17,8 +17,17 @@ export const REGLAS_ORILLA_MAR = [
   "No vender las capturas. Respeta tallas y vedas del BOE y de la UE.",
   "Tope habitual: 5 kg por licencia y día (puede no computar una pieza). Decreto 41/2013.",
   "Desde tierra: como máximo dos cañas por licencia (máx. 3 m entre ellas si son del mismo titular), o un aparejo a mano. Máximo seis anzuelos o dos poteras por pescador. Los cebos artificiales cuentan como anzuelo. Anzuelos no menores de 12 mm de largo y 5 mm de ancho. Sin nasas, redes ni artes profesionales.",
-  "Esta app no cubre pesca desde embarcación.",
+  "Horario caña desde tierra: Decreto 41/2013 y RD 347/2011 no fijan veda nocturna general (la prohibición ocaso→orto es de la modalidad submarina). Un bando municipal o el acceso a la playa sí pueden limitar.",
+  "Esta app no cubre pesca desde embarcación ni submarina.",
 ];
+
+/** Texto corto para avisos de franja solar en costa (caña desde tierra). */
+export const HORARIO_LEGAL_ORILLA_MAR =
+  "Caña desde tierra: sin veda nocturna general en Dec. 41/2013 / RD 347/2011. La prohibición de noche (ocaso→orto) aplica a la pesca submarina. Revisa bando municipal y acceso a playa.";
+
+/** Submarina (no cubierta por la app, pero evita confusiones). */
+export const HORARIO_SUBMARINA_CV =
+  "Pesca submarina: prohibida de noche, desde el ocaso al orto (Dec. 41/2013 art. 13 / RD 347/2011).";
 
 /** Cefalópodos autorizados en recreo (RD 347/2011 anexo I). Castellón ≠ veda recreativa del pulpo de Andalucía. */
 export const NOTA_CEFALOPODOS_ORILLA =
