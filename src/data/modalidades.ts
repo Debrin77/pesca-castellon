@@ -33,7 +33,7 @@ export const MODALIDADES: {
     corta: "Kayak",
     ambito: "ambos",
     notaLegal:
-      "En mar puede exigirse licencia de embarcación o artefacto flotante según CCAA/Estado. No confundir con orilla.",
+      "En mar CV: kayak = artefacto flotante (no lista 6.ª/7.ª). Licencia marítima desde tierra, personal. No confundir con la del barco.",
   },
   {
     id: "embarcacion",
@@ -41,7 +41,7 @@ export const MODALIDADES: {
     corta: "Barco",
     ambito: "ambos",
     notaLegal:
-      "Modalidad distinta a orilla: licencia/autorización de embarcación y, en mar, PescaREC para especies protegidas.",
+      "En mar CV: licencia de embarcación (la pide el titular; ampara a invitados). Orilla/tierra no vale. PescaREC si hay especies de protección diferenciada.",
   },
   {
     id: "submarina",

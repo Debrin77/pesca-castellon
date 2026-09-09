@@ -164,7 +164,7 @@ export async function eliminarFavorito(zonaId: string): Promise<void> {
 
 // --- Licencias en vigor (solo en este dispositivo) ---
 
-export type TipoLicencia = "continental" | "maritima_tierra";
+export type TipoLicencia = "continental" | "maritima_tierra" | "maritima_embarcacion";
 
 export interface LicenciaGuardada {
   id: string;
@@ -180,6 +180,7 @@ export interface LicenciaGuardada {
 export const ETIQUETA_LICENCIA: Record<TipoLicencia, string> = {
   continental: "Pesca continental",
   maritima_tierra: "Marítima recreativa desde tierra",
+  maritima_embarcacion: "Marítima desde embarcación",
 };
 
 export async function obtenerLicencias(): Promise<LicenciaGuardada[]> {
@@ -228,7 +229,7 @@ export async function resumenLicenciasCortas(): Promise<string> {
   if (lista.length === 0) return "Aún no has guardado tus licencias en el móvil (opcional).";
   const partes = lista.map((l) => {
     const dias = diasHastaCaducidad(l.caducaEl);
-    const nombre = l.tipo === "continental" ? "Continental" : "Marítima desde tierra";
+    const nombre = ETIQUETA_LICENCIA[l.tipo] ?? l.tipo;
     if (dias < 0) return `${nombre}: caducada`;
     if (dias <= 30) return `${nombre}: caduca en ${dias} d`;
     return `${nombre}: en vigor`;

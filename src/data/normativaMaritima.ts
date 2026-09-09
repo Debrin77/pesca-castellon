@@ -1,12 +1,11 @@
 /**
- * Pesca marítima recreativa DESDE TIERRA en Castellón.
+ * Pesca marítima recreativa en Castellón (foco orilla).
  * Decreto 41/2013 (aguas interiores CV) + normas estatales en aguas exteriores.
- * No cubre embarcación ni submarina.
+ * Embarcación / kayak / esparavel: orientación legal breve; no guía de navegación.
  */
 export const FUENTE_MARITIMA = {
-  titulo: "Decreto 41/2013 (pesca marítima recreativa CV) + licencia GVA desde tierra",
-  urlLicencia:
-    "https://sede.gva.es/es/inicio/procedimientos?id_proc=17170",
+  titulo: "Decreto 41/2013 (pesca marítima recreativa CV) + licencia GVA",
+  urlLicencia: "https://sede.gva.es/es/detall-tramit?id_proc=647",
 };
 
 export const REGLAS_ORILLA_MAR = [
@@ -17,7 +16,9 @@ export const REGLAS_ORILLA_MAR = [
   "No vender las capturas. Respeta tallas y vedas del BOE y de la UE.",
   "Tope habitual: 5 kg por licencia y día (puede no computar una pieza). Decreto 41/2013.",
   "Desde tierra: como máximo dos cañas por licencia (máx. 3 m entre ellas si son del mismo titular), o un aparejo a mano. Máximo seis anzuelos o dos poteras por pescador. Los cebos artificiales cuentan como anzuelo. Anzuelos no menores de 12 mm de largo y 5 mm de ancho. Sin nasas, redes ni artes profesionales.",
-  "Esta app no cubre pesca desde embarcación.",
+  "Barco (lista 6.ª/7.ª): licencia de embarcación del titular; ampara a invitados. La de costa no basta.",
+  "Kayak / paddle en mar CV: en la práctica, licencia marítima desde tierra (artefacto flotante, no lista 6.ª/7.ª). Confirma Capitanía y sede GVA.",
+  "Esparavel (rall): red circular desde orilla; licencia específica distinta de la de caña.",
 ];
 
 /** Cefalópodos autorizados en recreo (RD 347/2011 anexo I). Castellón ≠ veda recreativa del pulpo de Andalucía. */
