@@ -24,7 +24,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
   const provincia = ctx ?? getProvinciaActiva();
   const { fijarPunto } = usePuntoConsulta();
   const sitios = useMemo(
-    () => sitiosFacilesDe(provincia.id as "castellon" | "sevilla"),
+    () => sitiosFacilesDe(provincia.id as "castellon" | "sevilla" | "cordoba"),
     [provincia.id]
   );
   const [paso, setPaso] = useState(0);

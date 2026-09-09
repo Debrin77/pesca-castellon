@@ -47,16 +47,16 @@ function FilaTalla({ fila, onPress }: { fila: Fila; onPress?: () => void }) {
 
 export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: string) => void }) {
   const provincia = getProvinciaActiva();
-  const esSevilla = provincia.id === "sevilla";
+  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
 
   return (
     <View>
       <Text style={styles.aviso}>
-        {esSevilla
-          ? "Cifras según Orden 13/01/2023 (Andalucía) y fichas de Sevilla. INV = invasora / no objeto de pesca. Guión = sin talla de retención."
+        {esAndalucia
+          ? `Cifras según Orden 13/01/2023 (Andalucía) y fichas de ${provincia.nombre}. INV = invasora / no objeto de pesca. Guión = sin talla de retención.`
           : "Cifra = talla o peso mínimo para retener. SM = sin muerte. INV = invasora (no devolver). Guión = el anexo no fija número. Lisa: 16 cm en mar, 25 cm en río."}
       </Text>
-      {!esSevilla ? (
+      {!esAndalucia ? (
         <>
           <Text style={styles.bloque}>Costa · RD 560/1995 anexo II Mediterráneo</Text>
           {ordenar(filasCosta()).map((f) => (
@@ -65,7 +65,7 @@ export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: str
         </>
       ) : null}
       <Text style={styles.bloque}>
-        {esSevilla ? "Ríos y embalses · Orden 13/01/2023 (Junta Andalucía)" : "Ríos y embalses · Orden 30/2016"}
+        {esAndalucia ? "Ríos y embalses · Orden 13/01/2023 (Junta Andalucía)" : "Ríos y embalses · Orden 30/2016"}
       </Text>
       {ordenar(filasRio()).map((f) => (
         <FilaTalla key={`r-${f.id}`} fila={f} onPress={onEspecie ? () => onEspecie(f.id) : undefined} />

@@ -12,10 +12,10 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
     return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
   }
   if (c.veredicto === "fuera_catalogo") {
-    const esSevilla = getProvinciaActiva().id === "sevilla";
+    const esAndalucia = getProvinciaActiva().id === "sevilla" || getProvinciaActiva().id === "cordoba";
     return {
       texto: "SIN TRAMO",
-      sub: esSevilla
+      sub: esAndalucia
         ? "No es veda · puede ser agua libre (art. 5.2). Mira el cartel"
         : "No es veda · el tramo no está dibujado. Mira el cartel",
     };

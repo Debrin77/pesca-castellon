@@ -1,0 +1,167 @@
+{
+  "aviso": "Lugares que se citan una y otra vez en webs y foros de pesca de Córdoba/Andalucía (Artes de Pesca, Hay Pesca, Iberpesca, Fishsurfing, blogs de licencia). No son la Orden de vedas ni un GPS secreto. El nivel del embalse (SAIH CHG EmbalCO) cambia el sitio. Refugios y vedados (Bembézar, Cordobilla, Malpasillo, lagunas…) no llevan recomendaciones.",
+  "porTramo": {
+    "cor-embalse_de_iznajar": [
+      {
+        "nombre": "Cola del Genil / Rute (orilla más citada)",
+        "especies": "Carpa, barbo; bass; siluro fortuito (sacrificar)",
+        "cuando": "Primavera y otoño; evita pico de verano en zona baño",
+        "detalle": "Iznájar es el embalse más grande de Andalucía y el más citado en Córdoba. Medidas DERA de siluro y mejillón cebra: no traslades agua ni material sin secar; siluro no es objeto de pesca. Mira SAIH E05."
+      },
+      {
+        "nombre": "Puntas y cortados con caída (spinning)",
+        "especies": "Black bass",
+        "cuando": "Alba y atardecer; vinilo / crank",
+        "detalle": "Escenario de big water: el nivel (E05) manda. No copies orillas de Guadalmellato ni Navallana: son vasos distintos."
+      }
+    ],
+    "cor-embalse_guadalmellato": [
+      {
+        "nombre": "Orillas accesibles desde Adamuz / Obejo",
+        "especies": "Black bass, carpa, lucio",
+        "cuando": "Primavera-otoño; madrugada",
+        "detalle": "Guadalmellato es el embalse «de casa» para muchos cordobeses (cerca de la capital). Aguas libres art. 5.2. SAIH E49. No confundir con Navallana (otro vaso, más al oeste)."
+      },
+      {
+        "nombre": "Colas y reculas con cobertura",
+        "especies": "Black bass",
+        "cuando": "Abr–jun al amanecer",
+        "detalle": "Texas / drop shot en palos y caídas. Confirma que no pisas zona señalizada ni 200 m de presa."
+      }
+    ],
+    "cor-embalse_de_san_rafael_de_navallana": [
+      {
+        "nombre": "Orillas del vaso pescable (fuera del refugio)",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Primavera-otoño",
+        "detalle": "Navallana tiene polígono refugio DERA aparte: NO pesques en el refugio. El vaso con retención de barbos en rejones (competiciones FAPD) es el tramo libre. SAIH E51. Muy cerca de Córdoba capital."
+      }
+    ],
+    "cor-embalse_de_la_brena_brena_ii": [
+      {
+        "nombre": "Orillas de Breña II (Almodóvar del Río)",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Sep–nov y abr–jun",
+        "detalle": "Breña / Breña II: medidas de mejillón cebra (DERA). Desinfecta material. SAIH E50. No es Puente Nuevo ni Bembézar (Bembézar es refugio)."
+      }
+    ],
+    "cor-embalse_de_puente_nuevo": [
+      {
+        "nombre": "Orillas y cola hacia Guadiato",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Primavera; evita saturación de finde",
+        "detalle": "Puente Nuevo (Espiel / Villaviciosa). Retención barbos en rejones solo en competición FAPD. SAIH E48. Aguas arriba/abajo: no entres en el refugio de Bembézar."
+      }
+    ],
+    "cor-embalse_de_sierra_boyera": [
+      {
+        "nombre": "Orillas accesibles (Belmez / Peñarroya)",
+        "especies": "Carpa, barbo",
+        "cuando": "Con lámina suficiente; mira nivel",
+        "detalle": "Sierra Boyera ha sufrido episodios de embalse muy bajo. Confirma SAIH E47 antes de ir. Retención barbos en rejones solo en FAPD."
+      }
+    ],
+    "cor-embalse_de_vadomojon": [
+      {
+        "nombre": "Orillas de Vadomojón (Baena / Luque)",
+        "especies": "Carpa, barbo, bass",
+        "cuando": "Primavera-otoño",
+        "detalle": "Embalse del Guadajoz. SAIH E53. No confundir con las lagunas-refugio de la campiña (Zóñar, Rincón, Amarga…): allí la pesca está prohibida."
+      }
+    ],
+    "cor-embalse_de_yeguas": [
+      {
+        "nombre": "Orillas hacia Montoro / Marmolejo",
+        "especies": "Black bass, carpa, barbo",
+        "cuando": "Abr–jun y sep–nov",
+        "detalle": "Yeguas (límite Córdoba/Jaén). SAIH E52. Citado para bass y ciprínidos. No copies puntos de Iznájar."
+      }
+    ],
+    "cor-embalse_del_retortillo": [
+      {
+        "nombre": "Orillas planas con árboles sumergidos (fuera del refugio)",
+        "especies": "Black bass, carpa, barbo, boga",
+        "cuando": "Primavera-otoño",
+        "detalle": "Retortillo (Córdoba/Sevilla). OBLIGATORIO: hay polígono refugio DERA — no pesques ahí. El vaso libre es el de retención barbos. SAIH E39 (EmbalCO)."
+      }
+    ],
+    "cor-embalse_arenoso": [
+      {
+        "nombre": "Orillas de sierra (Montoro / Cardeña)",
+        "especies": "Black bass, carpa, lucio",
+        "cuando": "Primavera-otoño; accesos forestales",
+        "detalle": "Arenoso: aguas libres art. 5.2. SAIH E46. Confirma pistas abiertas. No es Martín Gonzalo (vaso menor aparte)."
+      }
+    ],
+    "cor-embalse_martin_gonzalo": [
+      {
+        "nombre": "Orillas accesibles de Martín Gonzalo",
+        "especies": "Black bass, carpa, barbo",
+        "cuando": "Primavera-otoño",
+        "detalle": "Embalse menor cerca de Montoro. Sin panel SAIH propio habitual: no inventamos nivel. Ideal para primeras salidas de spinning."
+      }
+    ],
+    "cor-guadalquivir_cordoba_capital": [
+      {
+        "nombre": "Orillas urbanas / Sotos de la Albolafia (accesos públicos)",
+        "especies": "Carpa, barbo, alburno; siluro fortuito",
+        "cuando": "Mañanas; respeta ordenanzas de paseo",
+        "detalle": "Tramo más citado del Guadalquivir en Córdoba capital. Aguas libres art. 5.2. Coup y fondo. Siluro: no es objeto de pesca. No copies puestos de Iznájar aquí."
+      },
+      {
+        "nombre": "Puentes y pilares con corriente",
+        "especies": "Barbo, carpa; bass ocasional",
+        "cuando": "Con caudal estable",
+        "detalle": "Spinning ligero o feeder en remansos tras pilares. Confirma señalización municipal."
+      }
+    ],
+    "cor-guadalquivir_montoro": [
+      {
+        "nombre": "Orillas del Guadalquivir en Montoro",
+        "especies": "Ciprínidos",
+        "cuando": "Con lámina y acceso público",
+        "detalle": "Aguas libres art. 5.2. Poco hotspot documentado aparte del río genérico. No uses puntos de Yeguas o Arenoso aquí."
+      }
+    ],
+    "cor-guadalquivir_palma_del_rio": [
+      {
+        "nombre": "Orillas en Palma del Río",
+        "especies": "Ciprínidos",
+        "cuando": "Con caudal visible",
+        "detalle": "Límite occidental cordobés del Guadalquivir. Aguas libres. No copies sitios de Peñaflor (Sevilla) sin confirmar orilla."
+      }
+    ],
+    "cor-genil_puente_genil": [
+      {
+        "nombre": "Tablas accesibles del Genil en Puente Genil",
+        "especies": "Ciprínidos, bass ocasional",
+        "cuando": "Con caudal; evita refugios cercanos",
+        "detalle": "Cerca de Cordobilla, Malpasillo y Tíscar (refugios): mira el mapa. Aguas libres solo fuera de esos polígonos."
+      }
+    ],
+    "cor-guadajoz_baena": [
+      {
+        "nombre": "Tablas del Guadajoz (Baena / Castro del Río)",
+        "especies": "Ciprínidos",
+        "cuando": "Tras lluvias suaves; corriente moderada",
+        "detalle": "Aguas libres art. 5.2. Cobertura en foros menor que Iznájar/Guadalmellato: no inventamos puntas de otros ríos."
+      }
+    ],
+    "cor-guadiato_villaviciosa": [
+      {
+        "nombre": "Tramos de Guadiato entre embalses",
+        "especies": "Ciprínidos, bass",
+        "cuando": "Primavera-otoño",
+        "detalle": "Fuera de refugios. Medidas de mejillón cebra en Guadiato/Cabrilla: seca el material. No entres en Bembézar (refugio)."
+      }
+    ],
+    "cor-rio_guadiato": [
+      {
+        "nombre": "Tramo DERA Guadiato (medidas mejillón)",
+        "especies": "Ciprínidos",
+        "cuando": "Con caudal; tras desinfectar material",
+        "detalle": "Polígono DERA de medidas excepcionales mejillón cebra. Pesca posible como aguas libres, pero protocolos de bioseguridad."
+      }
+    ]
+  }
+}

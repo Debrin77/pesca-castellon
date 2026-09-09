@@ -92,7 +92,7 @@ export const PERIODOS_HABILES: PeriodoHabil[] = [
 export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla") {
+  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
     if (especieId === "barbo_gitano") return !periodoBarboAbierto(fecha);
     if (especieId === "boga") return !periodoBogaAbierto(fecha);
     if (especieId === "tenca" || especieId === "cacho") return true;
@@ -118,7 +118,7 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
 export function notaVeda(especieId: string): string | null {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla") {
+  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
     const sp = (provincia.species as any[]).find((s) => s.id === especieId);
     if (sp?.normativaEspecial) return sp.normativaEspecial as string;
     if (sp?.normativaResumen) return sp.normativaResumen as string;
@@ -144,12 +144,12 @@ export function resumenTemporadaActual(fecha: Date = new Date()): {
   texto: string;
 } {
   const provincia = getProvinciaActiva();
-  if (provincia.id === "sevilla") {
+  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
     const barboOk = periodoBarboAbierto(fecha);
     const bogaOk = periodoBogaAbierto(fecha);
     return {
       truchaAbierta: false,
-      etiquetaTrucha: "No aplica (Sevilla ciprinícola)",
+      etiquetaTrucha: `No aplica (${provincia.nombre} ciprinícola)`,
       texto:
         !barboOk || !bogaOk
           ? `Autóctonos en veda parcial. Barbo: ${barboOk ? "hábil" : "veda"}. Boga: ${bogaOk ? "hábil" : "veda"}.`

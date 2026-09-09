@@ -38,6 +38,13 @@ const COPY: Record<
     tecnico:
       "Cartografía DERA y aguas libres (art. 5.2). Licencia continental + NIR + seguro RC obligatorio.",
   },
+  cordoba: {
+    kicker: "Andalucía",
+    detalle: "Ríos y embalses del Guadalquivir medio. Licencia de la Junta y mapa local al entrar.",
+    chips: ["Ríos", "Embalses", "Licencia Junta"],
+    tecnico:
+      "Cartografía DERA y aguas libres (art. 5.2). Licencia continental + NIR + seguro RC obligatorio. SAIH CHG EmbalCO.",
+  },
 };
 
 interface Props {

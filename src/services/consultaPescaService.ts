@@ -185,7 +185,7 @@ function evaluarTramo(
   fecha: Date
 ): ConsultaPesca {
   const provincia = getProvinciaActiva();
-  const esAndalucia = provincia.id === "sevilla";
+  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
   const confianza: ConsultaPesca["confianza"] =
     fuenteGeometria === "poligono_icv" ? "oficial" : "aproximada";
   const salmonicola = /salmon/i.test(t.vocacion);

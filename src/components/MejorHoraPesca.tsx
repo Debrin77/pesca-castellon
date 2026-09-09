@@ -31,7 +31,7 @@ export default function MejorHoraPesca({ especie, ambito = "continental" }: Prop
   const horarioLegal =
     ambito === "maritimo"
       ? HORARIO_LEGAL_ORILLA_MAR
-      : getProvinciaActiva().id === "sevilla"
+      : getProvinciaActiva().id === "sevilla" || getProvinciaActiva().id === "cordoba"
         ? HORARIO_ORIENTATIVO_ANDALUCIA
         : HORARIO_LEGAL_PESCA;
 

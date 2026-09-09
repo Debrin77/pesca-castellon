@@ -1,0 +1,181 @@
+[
+  {
+    "id": "guadalquivir_cordoba_capital",
+    "nombre": "Guadalquivir en Córdoba capital",
+    "tipo": "rio",
+    "lat": 37.8765,
+    "lng": -4.7795,
+    "radioKm": 3.2,
+    "cuenca": "Guadalquivir",
+    "municipio": "Córdoba",
+    "municipios": ["Córdoba"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin", "black_bass"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "descripcion": "Tramo urbano y periurbano del Guadalquivir a su paso por Córdoba. Aguas libres (art. 5.2 Orden 13/01/2023): no figura como coto ni refugio. Radio orientativo sin polígono DERA. Carpa, barbo y alburno habituales; siluro presente (no es objeto de pesca).",
+    "avisos": [
+      "Radio orientativo art. 5.2: confirma orilla y señalización municipal.",
+      "Ordenanzas de paseos y muelles pueden restringir la pesca.",
+      "Art. 6 si pescas cerca de azudes o escalas del tramo."
+    ]
+  },
+  {
+    "id": "guadalquivir_montoro",
+    "nombre": "Guadalquivir en Montoro",
+    "tipo": "rio",
+    "lat": 38.025,
+    "lng": -4.383,
+    "radioKm": 2.4,
+    "cuenca": "Guadalquivir",
+    "municipio": "Montoro",
+    "municipios": ["Montoro"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "descripcion": "Tramo del Guadalquivir en Montoro (Córdoba). Aguas libres art. 5.2. Radio orientativo para orillas y remansos; sin geometría DERA de cotos.",
+    "avisos": [
+      "Aguas libres art. 5.2. Respeta 200 m de cualquier presa o escala cercana."
+    ]
+  },
+  {
+    "id": "guadalquivir_palma_del_rio",
+    "nombre": "Guadalquivir en Palma del Río",
+    "tipo": "rio",
+    "lat": 37.698,
+    "lng": -5.281,
+    "radioKm": 2.2,
+    "cuenca": "Guadalquivir",
+    "municipio": "Palma del Río",
+    "municipios": ["Palma del Río"],
+    "rio": "Guadalquivir",
+    "especies": ["carpa", "barbo_gitano", "alburno", "siluro", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · cauce Guadalquivir",
+    "descripcion": "Guadalquivir a su paso por Palma del Río, límite occidental de la provincia. Aguas libres art. 5.2. Radio orientativo.",
+    "avisos": [
+      "Confirma orilla y señalización. Art. 6 cerca de azudes."
+    ]
+  },
+  {
+    "id": "embalse_guadalmellato",
+    "nombre": "Embalse del Guadalmellato",
+    "tipo": "embalse",
+    "lat": 38.048,
+    "lng": -4.652,
+    "radioKm": 4.5,
+    "cuenca": "Guadalquivir",
+    "municipio": "Adamuz",
+    "municipios": ["Adamuz", "Obejo", "Villanueva de Córdoba"],
+    "rio": "Guadalmellato",
+    "especies": ["black_bass", "carpa", "barbo_gitano", "lucio", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse",
+    "descripcion": "Embalse CHG del Guadalmellato (Adamuz / Obejo). Aguas libres art. 5.2: no figura como refugio ni coto en el dataset DERA de cotos. Radio orientativo. Bass, carpa y lucio citados en listados de pesca cordobesa.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Invasoras (bass/lucio): RD 630/2013 y Resolución 19/12/2019 — no traslocar."
+    ]
+  },
+  {
+    "id": "embalse_martin_gonzalo",
+    "nombre": "Embalse de Martín Gonzalo",
+    "tipo": "embalse",
+    "lat": 38.118,
+    "lng": -4.312,
+    "radioKm": 2.0,
+    "cuenca": "Guadalquivir",
+    "municipio": "Montoro",
+    "municipios": ["Montoro"],
+    "rio": "Martín Gonzalo",
+    "especies": ["black_bass", "carpa", "barbo_gitano", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse",
+    "descripcion": "Embalse de Martín Gonzalo (Montoro). Aguas libres art. 5.2 sin polígono DERA de cotos; radio orientativo. Embalse menor accesible para spinning y fondo.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Confirma accesos y señalización local."
+    ]
+  },
+  {
+    "id": "embalse_arenoso",
+    "nombre": "Embalse del Arenoso",
+    "tipo": "embalse",
+    "lat": 38.195,
+    "lng": -4.305,
+    "radioKm": 3.5,
+    "cuenca": "Guadalquivir",
+    "municipio": "Montoro",
+    "municipios": ["Montoro", "Cardeña"],
+    "rio": "Arenoso",
+    "especies": ["black_bass", "carpa", "barbo_gitano", "lucio", "alburno"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · embalse",
+    "descripcion": "Embalse del Arenoso (Montoro / Cardeña). Aguas libres art. 5.2. Sin polígono DERA de cotos; radio orientativo. Orillas de sierra con bass y carpa.",
+    "avisos": [
+      "Art. 6: 200 m de la presa.",
+      "Accesos forestales: confirma pistas abiertas y señalización."
+    ]
+  },
+  {
+    "id": "genil_puente_genil",
+    "nombre": "Río Genil en Puente Genil",
+    "tipo": "rio",
+    "lat": 37.389,
+    "lng": -4.77,
+    "radioKm": 2.5,
+    "cuenca": "Genil",
+    "municipio": "Puente Genil",
+    "municipios": ["Puente Genil"],
+    "rio": "Genil",
+    "especies": ["carpa", "barbo_gitano", "alburno", "carpin", "black_bass"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · afluente Genil",
+    "descripcion": "Tramo del Genil en Puente Genil. Aguas libres art. 5.2. Cerca hay refugios (Cordobilla, Malpasillo, lagunas): no entres en polígonos vedados. Radio orientativo.",
+    "avisos": [
+      "No confundir con refugios cercanos (Cordobilla, Malpasillo, Tíscar): allí la pesca está prohibida.",
+      "Barbo y boga: solo captura y suelta en periodo hábil."
+    ]
+  },
+  {
+    "id": "guadajoz_baena",
+    "nombre": "Río Guadajoz (Baena / Castro del Río)",
+    "tipo": "rio",
+    "lat": 37.62,
+    "lng": -4.45,
+    "radioKm": 3.5,
+    "cuenca": "Guadajoz",
+    "municipio": "Castro del Río",
+    "municipios": ["Baena", "Castro del Río", "Espejo"],
+    "rio": "Guadajoz",
+    "especies": ["carpa", "barbo_gitano", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · afluente Guadajoz",
+    "descripcion": "Afluente del Guadalquivir por la campiña cordobesa. Aguas libres art. 5.2. Sin polígono DERA; radio orientativo en tablas y remansos.",
+    "avisos": [
+      "Geometría orientativa: confirma orilla y señalización.",
+      "Barbo: captura y suelta en periodo hábil (Orden 13/01/2023)."
+    ]
+  },
+  {
+    "id": "guadiato_villaviciosa",
+    "nombre": "Río Guadiato (Villaviciosa / Espiel)",
+    "tipo": "rio",
+    "lat": 38.12,
+    "lng": -5.0,
+    "radioKm": 4.0,
+    "cuenca": "Guadiato",
+    "municipio": "Villaviciosa de Córdoba",
+    "municipios": ["Villaviciosa de Córdoba", "Espiel", "Almodóvar del Río"],
+    "rio": "Guadiato",
+    "especies": ["carpa", "barbo_gitano", "black_bass", "alburno", "carpin"],
+    "notaAnexo": "ART_52_APROX",
+    "vocacionOficial": "Aguas libres · afluente Guadiato",
+    "descripcion": "Tramos del Guadiato entre embalses (Puente Nuevo, Breña). Aguas libres art. 5.2 fuera de refugios. Hay medidas DERA de mejillón cebra en tramos del Guadiato/Cabrilla: no traslades agua ni material sin secar.",
+    "avisos": [
+      "Mejillón cebra: desinfecta y seca el material al cambiar de masa.",
+      "No pesques dentro de refugios DERA (Bembézar, etc.). Art. 6 cerca de presas."
+    ]
+  }
+]

@@ -67,7 +67,7 @@ export function ajustarHoraTxt(hhmm: string, deltaHoras: number): string {
 
 export function normaContinentalTxt(provinciaId?: string): string {
   const id = provinciaId ?? getProvinciaActiva().id;
-  return id === "sevilla" ? HORARIO_ORIENTATIVO_ANDALUCIA : HORARIO_LEGAL_PESCA;
+  return id === "sevilla" || id === "cordoba" ? HORARIO_ORIENTATIVO_ANDALUCIA : HORARIO_LEGAL_PESCA;
 }
 
 export function construirAvisoHorario(args: {

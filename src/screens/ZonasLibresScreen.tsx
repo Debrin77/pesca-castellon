@@ -562,7 +562,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           placeholder={
             mar
               ? "Busca playa o municipio (Benicàssim, Grao, Nules…)"
-              : provincia.id === "sevilla"
+              : provincia.id === "sevilla" || provincia.id === "cordoba"
                 ? "Busca embalse, río o tus puntos"
                 : "Busca tramo, municipio o tus puntos"
           }
@@ -779,7 +779,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
-          pescaWms={provincia.id === "sevilla" ? "rediam" : "icv"}
+          pescaWms={provincia.id === "sevilla" || provincia.id === "cordoba" ? "rediam" : "icv"}
           showRadar={capas.radar}
           radarUrl={radarUrl}
           showBathymetry={mar && capas.batimetria}

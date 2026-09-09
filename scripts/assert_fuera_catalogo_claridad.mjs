@@ -51,6 +51,17 @@ for (const n of [
   if (!se.includes(n)) fail(`sevilla/config sin ${n}`);
 }
 
+const co = read("src/provincias/cordoba/config.ts");
+for (const n of [
+  "coberturaCartografica",
+  "art. 5.2",
+  "No es veda automática",
+  "DERA",
+  "urlVisor",
+]) {
+  if (!co.includes(n)) fail(`cordoba/config sin ${n}`);
+}
+
 const svc = read("src/services/consultaPescaService.ts");
 for (const n of [
   "Sin tramo en el catálogo",

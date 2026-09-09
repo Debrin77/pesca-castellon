@@ -19,7 +19,7 @@ export function infoPermisoCoto(
   matricula?: string | null,
   nombreTramo?: string
 ): InfoPermisoCoto {
-  if (provinciaId === "sevilla") {
+  if (provinciaId === "sevilla" || provinciaId === "cordoba") {
     return {
       matricula: matricula ?? undefined,
       nombre: nombreTramo ?? "Coto / tramo acotado Andalucía",

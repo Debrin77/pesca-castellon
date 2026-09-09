@@ -38,7 +38,9 @@ const ZONAS_AVISO: Record<ProvinciaId, RegExp> = {
   castellon:
     /castell[oó]n|maestrat|penyagolosa|ports|plana|vinar[oò]s|benicarl|oropesa|burriana|moncofa/i,
   sevilla:
-    /sevilla|andaluc[ií]a|guadalquivir|sierra\s*norte|aljarafe|campi[nñ]a|do[nñ]ana|huelva|c[oó]rdoba/i,
+    /sevilla|andaluc[ií]a|guadalquivir|sierra\s*norte|aljarafe|campi[nñ]a|do[nñ]ana/i,
+  cordoba:
+    /c[oó]rdoba|andaluc[ií]a|guadalquivir|guadiato|genil|guadajoz|izn[aá]jar|hornachuelos|montoro|sierra\s*morena/i,
 };
 
 const EVENTOS_INTERES: { re: RegExp; tipo: TipoAviso }[] = [
@@ -243,6 +245,29 @@ const RIOS_POR_PROVINCIA: Record<ProvinciaId, PuntoRio[]> = {
       nombre: "Guadaíra (Alcalá de Guadaíra)",
       lat: 37.35,
       lng: -5.78,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+  ],
+  cordoba: [
+    {
+      id: "gq_cordoba",
+      nombre: "Guadalquivir (Córdoba)",
+      lat: 37.88,
+      lng: -4.78,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+    {
+      id: "gq_montoro",
+      nombre: "Guadalquivir (Montoro)",
+      lat: 38.02,
+      lng: -4.38,
+      urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+    {
+      id: "genil_iznajar",
+      nombre: "Genil / Iznájar",
+      lat: 37.25,
+      lng: -4.35,
       urlConfirma: "https://www.chguadalquivir.es/saih/",
     },
   ],

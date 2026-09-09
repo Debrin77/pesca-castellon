@@ -1,6 +1,11 @@
 import type { Aprovechamiento } from "../data/normativa2026";
 
-export type ProvinciaId = "castellon" | "sevilla";
+export type ProvinciaId = "castellon" | "sevilla" | "cordoba";
+
+/** Provincias bajo marco normativo Junta de Andalucía (Orden 13/01/2023). */
+export function esProvinciaAndalucia(id: ProvinciaId | string | null | undefined): boolean {
+  return id === "sevilla" || id === "cordoba";
+}
 
 export interface RegionMapa {
   latitude: number;

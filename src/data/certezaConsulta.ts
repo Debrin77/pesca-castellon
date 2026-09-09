@@ -34,28 +34,28 @@ export function certezaDeConsulta(
   }
 
   if (c.confianza === "oficial" && c.fuenteGeometria === "poligono_icv") {
-    const esSevilla = opts?.provinciaId === "sevilla";
+    const esAndalucia = opts?.provinciaId === "sevilla" || opts?.provinciaId === "cordoba";
     return {
       nivel: "oficial",
       sello: "OFICIAL",
-      etiqueta: esSevilla ? "Polígono DERA / Junta" : "Polígono ICV",
+      etiqueta: esAndalucia ? "Polígono DERA / Junta" : "Polígono ICV",
       aviso: "Geometría oficial embebida en la app.",
-      a11y: esSevilla
+      a11y: esAndalucia
         ? "Consulta sobre polígono oficial DERA de la Junta."
         : "Consulta sobre polígono oficial ICV.",
     };
   }
 
   if (c.fuenteGeometria === "ninguna") {
-    const esSevilla = opts?.provinciaId === "sevilla";
+    const esAndalucia = opts?.provinciaId === "sevilla" || opts?.provinciaId === "cordoba";
     return {
       nivel: "aproximada",
       sello: "APROXIMADO",
       etiqueta: "Fuera del catálogo geométrico",
-      aviso: esSevilla
+      aviso: esAndalucia
         ? "No es veda automática. Puede ser agua libre (art. 5.2): confirma que no es refugio y mira el cartel."
         : "No es veda automática. Este tramo no está dibujado en el mapa: confirma cartel o DOGV.",
-      a11y: esSevilla
+      a11y: esAndalucia
         ? "Punto fuera del catálogo DERA. No es veda automática; el artículo 5.2 puede aplicar. Confirma refugios y señalización."
         : "Punto fuera del catálogo ICV y del anexo. No es veda automática. Confirma señalización.",
     };

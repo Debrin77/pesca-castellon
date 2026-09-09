@@ -4,7 +4,7 @@ App de pesca **personal e íntima** para salir al agua con criterio: normativa
 local, clima, índice de pesca, diario de capturas y ritual de salida. Pensada
 para ti y tu provincia — **compartir un punto es opcional, no la finalidad**.
 
-Hoy cubre **Castellón** (ríos/embalses + costa) y **Sevilla** (continental).
+Hoy cubre **Castellón** (ríos/embalses + costa), **Sevilla** y **Córdoba** (continental Andalucía).
 Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en iPhone.
 
 ## Filosofía del producto
@@ -29,7 +29,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
   dispositivo.
 
 ### Provincias y mapa
-- Selector de provincia: **Castellón** y **Sevilla**.
+- Selector de provincia: **Castellón**, **Sevilla** y **Córdoba**.
 - Mapa nativo (`react-native-maps`) / web (Leaflet + OpenStreetMap).
 - Capas de cotos/tramos (ICV en Castellón), vedados de costa, puertos, radar de
   lluvia, puntos y capturas personales.
@@ -102,7 +102,7 @@ Escanea el QR con Expo Go (Android) o la cámara (iOS).
 Scripts útiles:
 - `npm run assert` — comprobaciones de regresión de producto.
 - `npm run build:web` — export estático web.
-- `npm run sync:icv` / `npm run sync:sevilla` — regenerar cartografía embebida.
+- `npm run sync:icv` / `npm run sync:sevilla` / `npm run sync:cordoba` — regenerar cartografía embebida.
 
 ## Estructura (resumen)
 
@@ -112,7 +112,7 @@ src/
   screens/              # Inicio, Mapa, Especies, Previsión, Capturas, …
   components/           # Mapa, semáforo, montajes, PantallaBloqueo, …
   services/             # Clima, índice, SAIH, acceso PIN, offline, GPX, …
-  provincias/           # Config Castellón + Sevilla
+  provincias/           # Config Castellón + Sevilla + Córdoba
   data/                 # Especies, zonas, normativa, montajes, consejos
   context/              # Provincia, acceso, punto de consulta
 ```
@@ -136,5 +136,5 @@ src/
 ## Licencia de pesca (referencia; verificar cada temporada)
 
 - GVA (Castellón / C. Valenciana): sede electrónica de licencia de pesca.
-- Andalucía (Sevilla): licencia continental + seguro RC del pescador cuando aplique.
+- Andalucía (Sevilla / Córdoba): licencia continental + seguro RC del pescador cuando aplique.
 - Pesca marítima recreativa / declaraciones: app oficial **PescaREC** (MAPA).

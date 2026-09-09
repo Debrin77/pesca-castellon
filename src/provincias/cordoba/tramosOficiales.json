@@ -1,0 +1,717 @@
+[
+  {
+    "id": "cor-embalse_de_iznajar",
+    "codigo": "CO-01",
+    "nombre": "Embalse de Iznájar",
+    "rio": "Embalse de Iznájar",
+    "lat": 37.24204,
+    "lng": -4.28606,
+    "radioKm": 2.25,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "fichaId": "embalse_de_iznajar",
+    "especies": [
+      "carpa",
+      "black_bass",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Genil",
+    "municipios": [
+      "Rute"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_la_brena_brena_ii",
+    "codigo": "CO-02",
+    "nombre": "Embalse de la Breña / Breña II",
+    "rio": "Embalse de la Breña / Breña II",
+    "lat": 37.85819,
+    "lng": -5.0348,
+    "radioKm": 3.96,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_la_brena_brena_ii",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Almodóvar del Río"
+    ]
+  },
+  {
+    "id": "cor-refugio_embalse_de_san_rafael_de_navallana",
+    "codigo": "CO-03",
+    "nombre": "Refugio Embalse de San Rafael de Navallana",
+    "rio": "Refugio Embalse de San Rafael de Navallana",
+    "lat": 37.99012,
+    "lng": -4.62334,
+    "radioKm": 2.93,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_san_rafael_de_navallana",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Córdoba"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_sierra_boyera",
+    "codigo": "CO-04",
+    "nombre": "Embalse de Sierra Boyera",
+    "rio": "Embalse de Sierra Boyera",
+    "lat": 38.27667,
+    "lng": -5.26957,
+    "radioKm": 5.26,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_sierra_boyera",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Belmez",
+      "Fuente Obejuna",
+      "Peñarroya-Pueblonuevo"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_vadomojon",
+    "codigo": "CO-05",
+    "nombre": "Embalse de Vadomojón",
+    "rio": "Embalse de Vadomojón",
+    "lat": 37.61866,
+    "lng": -4.19537,
+    "radioKm": 4.77,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_vadomojon",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Genil",
+    "municipios": [
+      "Alcaudete",
+      "Baena",
+      "Luque"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_puente_nuevo",
+    "codigo": "CO-06",
+    "nombre": "Embalse de Puente Nuevo",
+    "rio": "Embalse de Puente Nuevo",
+    "lat": 38.13324,
+    "lng": -4.98104,
+    "radioKm": 8,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_puente_nuevo",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Espiel",
+      "Villaviciosa de Córdoba"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_san_rafael_de_navallana",
+    "codigo": "CO-07",
+    "nombre": "Embalse de San Rafael de Navallana",
+    "rio": "Embalse de San Rafael de Navallana",
+    "lat": 37.98435,
+    "lng": -4.65164,
+    "radioKm": 3.61,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_san_rafael_de_navallana",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Córdoba",
+      "Obejo"
+    ]
+  },
+  {
+    "id": "cor-refugio_embalse_del_bembezar",
+    "codigo": "CO-08",
+    "nombre": "Refugio Embalse del Bembezar",
+    "rio": "Refugio Embalse del Bembezar",
+    "lat": 37.97176,
+    "lng": -5.28091,
+    "radioKm": 8,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_del_bembezar",
+    "especies": [],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Espiel",
+      "Hornachuelos",
+      "Villaviciosa de Córdoba"
+    ]
+  },
+  {
+    "id": "cor-rio_guadiato",
+    "codigo": "CO-09",
+    "nombre": "Rio Guadiato",
+    "rio": "Rio Guadiato",
+    "lat": 37.8153,
+    "lng": -5.05143,
+    "radioKm": 1.33,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "fichaId": "rio_guadiato",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Almodóvar del Río"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_de_los_jarales",
+    "codigo": "CO-10",
+    "nombre": "Refugio Laguna de los Jarales",
+    "rio": "Refugio Laguna de los Jarales",
+    "lat": 37.30597,
+    "lng": -4.57795,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_los_jarales",
+    "especies": [],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Lucena"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_de_rincon",
+    "codigo": "CO-11",
+    "nombre": "Refugio Laguna de Rincon",
+    "rio": "Refugio Laguna de Rincon",
+    "lat": 37.45985,
+    "lng": -4.62855,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_rincon",
+    "especies": [],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Aguilar de la Frontera"
+    ]
+  },
+  {
+    "id": "cor-embalse_de_yeguas",
+    "codigo": "CO-12",
+    "nombre": "Embalse de Yegüas",
+    "rio": "Embalse de Yegüas",
+    "lat": 38.09582,
+    "lng": -4.22546,
+    "radioKm": 5.6,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_de_yeguas",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Genil",
+    "municipios": [
+      "Marmolejo",
+      "Montoro"
+    ]
+  },
+  {
+    "id": "cor-refugio_embalse_de_malpasillo",
+    "codigo": "CO-13",
+    "nombre": "Refugio Embalse de Malpasillo",
+    "rio": "Refugio Embalse de Malpasillo",
+    "lat": 37.28665,
+    "lng": -4.66989,
+    "radioKm": 1.51,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_malpasillo",
+    "especies": [],
+    "cuenca": "Genil",
+    "municipios": [
+      "Badolatosa",
+      "Lucena"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_de_tiscar",
+    "codigo": "CO-14",
+    "nombre": "Refugio Laguna de Tiscar",
+    "rio": "Refugio Laguna de Tiscar",
+    "lat": 37.42965,
+    "lng": -4.8212,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_tiscar",
+    "especies": [],
+    "cuenca": "Genil",
+    "municipios": [
+      "Puente Genil"
+    ]
+  },
+  {
+    "id": "cor-embalse_del_retortillo",
+    "codigo": "CO-15",
+    "nombre": "Embalse del Retortillo",
+    "rio": "Embalse del Retortillo",
+    "lat": 37.85679,
+    "lng": -5.39005,
+    "radioKm": 1.44,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ANEXO_V_3",
+    "fichaId": "embalse_del_retortillo",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Hornachuelos",
+      "La Puebla de los Infantes"
+    ]
+  },
+  {
+    "id": "cor-rio_de_la_cabrilla",
+    "codigo": "CO-16",
+    "nombre": "Rio de la Cabrilla",
+    "rio": "Rio de la Cabrilla",
+    "lat": 37.88243,
+    "lng": -5.03606,
+    "radioKm": 0.6,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "fichaId": "rio_de_la_cabrilla",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "lucio"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Almodóvar del Río"
+    ]
+  },
+  {
+    "id": "cor-refugio_embalse_del_retortillo",
+    "codigo": "CO-17",
+    "nombre": "Refugio Embalse del Retortillo",
+    "rio": "Refugio Embalse del Retortillo",
+    "lat": 37.85488,
+    "lng": -5.35942,
+    "radioKm": 1.89,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_del_retortillo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Hornachuelos"
+    ]
+  },
+  {
+    "id": "cor-refugio_embalse_de_cordobilla",
+    "codigo": "CO-18",
+    "nombre": "Refugio Embalse de Cordobilla",
+    "rio": "Refugio Embalse de Cordobilla",
+    "lat": 37.34466,
+    "lng": -4.69285,
+    "radioKm": 2.98,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_de_cordobilla",
+    "especies": [],
+    "cuenca": "Genil",
+    "municipios": [
+      "Aguilar de la Frontera",
+      "Badolatosa",
+      "Puente Genil"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_amarga",
+    "codigo": "CO-19",
+    "nombre": "Refugio Laguna Amarga",
+    "rio": "Refugio Laguna Amarga",
+    "lat": 37.31456,
+    "lng": -4.61456,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_amarga",
+    "especies": [],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Lucena"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_del_conde",
+    "codigo": "CO-20",
+    "nombre": "Refugio Laguna del Conde",
+    "rio": "Refugio Laguna del Conde",
+    "lat": 37.57768,
+    "lng": -4.20456,
+    "radioKm": 0.6,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_del_conde",
+    "especies": [],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Luque"
+    ]
+  },
+  {
+    "id": "cor-refugio_laguna_de_zonar",
+    "codigo": "CO-21",
+    "nombre": "Refugio Laguna de Zoñar",
+    "rio": "Refugio Laguna de Zoñar",
+    "lat": 37.48174,
+    "lng": -4.69168,
+    "radioKm": 0.98,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_laguna_de_zonar",
+    "especies": [],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Aguilar de la Frontera"
+    ]
+  },
+  {
+    "id": "cor-guadalquivir_cordoba_capital",
+    "codigo": "CO-22",
+    "nombre": "Guadalquivir en Córdoba capital",
+    "rio": "Guadalquivir",
+    "lat": 37.8765,
+    "lng": -4.7795,
+    "radioKm": 3.2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_cordoba_capital",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin",
+      "black_bass"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Córdoba"
+    ]
+  },
+  {
+    "id": "cor-guadalquivir_montoro",
+    "codigo": "CO-23",
+    "nombre": "Guadalquivir en Montoro",
+    "rio": "Guadalquivir",
+    "lat": 38.025,
+    "lng": -4.383,
+    "radioKm": 2.4,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_montoro",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Montoro"
+    ]
+  },
+  {
+    "id": "cor-guadalquivir_palma_del_rio",
+    "codigo": "CO-24",
+    "nombre": "Guadalquivir en Palma del Río",
+    "rio": "Guadalquivir",
+    "lat": 37.698,
+    "lng": -5.281,
+    "radioKm": 2.2,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadalquivir_palma_del_rio",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "siluro",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Palma del Río"
+    ]
+  },
+  {
+    "id": "cor-embalse_guadalmellato",
+    "codigo": "CO-25",
+    "nombre": "Embalse del Guadalmellato",
+    "rio": "Guadalmellato",
+    "lat": 38.048,
+    "lng": -4.652,
+    "radioKm": 4.5,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_guadalmellato",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Adamuz",
+      "Obejo",
+      "Villanueva de Córdoba"
+    ]
+  },
+  {
+    "id": "cor-embalse_martin_gonzalo",
+    "codigo": "CO-26",
+    "nombre": "Embalse de Martín Gonzalo",
+    "rio": "Martín Gonzalo",
+    "lat": 38.118,
+    "lng": -4.312,
+    "radioKm": 2,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_martin_gonzalo",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Montoro"
+    ]
+  },
+  {
+    "id": "cor-embalse_arenoso",
+    "codigo": "CO-27",
+    "nombre": "Embalse del Arenoso",
+    "rio": "Arenoso",
+    "lat": 38.195,
+    "lng": -4.305,
+    "radioKm": 3.5,
+    "vocacion": "Ciprinícola / embalse",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "embalse_arenoso",
+    "especies": [
+      "black_bass",
+      "carpa",
+      "barbo_gitano",
+      "lucio",
+      "alburno"
+    ],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Montoro",
+      "Cardeña"
+    ]
+  },
+  {
+    "id": "cor-genil_puente_genil",
+    "codigo": "CO-28",
+    "nombre": "Río Genil en Puente Genil",
+    "rio": "Genil",
+    "lat": 37.389,
+    "lng": -4.77,
+    "radioKm": 2.5,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "genil_puente_genil",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin",
+      "black_bass"
+    ],
+    "cuenca": "Genil",
+    "municipios": [
+      "Puente Genil"
+    ]
+  },
+  {
+    "id": "cor-guadajoz_baena",
+    "codigo": "CO-29",
+    "nombre": "Río Guadajoz (Baena / Castro del Río)",
+    "rio": "Guadajoz",
+    "lat": 37.62,
+    "lng": -4.45,
+    "radioKm": 3.5,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadajoz_baena",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Guadajoz",
+    "municipios": [
+      "Baena",
+      "Castro del Río",
+      "Espejo"
+    ]
+  },
+  {
+    "id": "cor-guadiato_villaviciosa",
+    "codigo": "CO-30",
+    "nombre": "Río Guadiato (Villaviciosa / Espiel)",
+    "rio": "Guadiato",
+    "lat": 38.12,
+    "lng": -5,
+    "radioKm": 4,
+    "vocacion": "Ciprinícola",
+    "regimen": "Recreo / aguas libres (art. 5.2)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "ART_52_APROX",
+    "fichaId": "guadiato_villaviciosa",
+    "especies": [
+      "carpa",
+      "barbo_gitano",
+      "black_bass",
+      "alburno",
+      "carpin"
+    ],
+    "cuenca": "Guadiato",
+    "municipios": [
+      "Villaviciosa de Córdoba",
+      "Espiel",
+      "Almodóvar del Río"
+    ]
+  }
+]

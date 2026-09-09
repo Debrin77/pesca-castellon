@@ -17,14 +17,14 @@ const CLAVE_PLEGADO = "@pesca_castellon/banner_licencia_plegado";
 /**
  * Aviso de licencias según provincia:
  * Castellón → continental + marítima recreativa desde tierra (GVA); sin seguro RC.
- * Sevilla → solo continental Andalucía (Junta) + seguro RC obligatorio.
+ * Sevilla / Córdoba → solo continental Andalucía (Junta) + seguro RC obligatorio.
  */
 export default function LicenseBanner({ onPress, compact }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const req = provincia.requisitosLicencia;
-  const badge = provincia.id === "sevilla" ? "JA" : "GVA";
+  const badge = provincia.id === "sevilla" || provincia.id === "cordoba" ? "JA" : "GVA";
   const [plegado, setPlegado] = useState(false);
   const [resumen, setResumen] = useState("Sin licencias guardadas en el móvil");
 

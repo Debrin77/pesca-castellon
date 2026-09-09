@@ -68,6 +68,20 @@ export const ENLACES_APUNTARSE: EnlaceApuntarse[] = [
     provinciaId: "sevilla",
   },
   {
+    id: "co-fapd-delegacion",
+    titulo: "Delegación FAPD Córdoba",
+    descripcion: "Convocatorias provinciales, boletines y plazos de inscripción.",
+    url: "https://fapd.org/",
+    provinciaId: "cordoba",
+  },
+  {
+    id: "co-fapd-calendario",
+    titulo: "Calendario Andalucía 2026",
+    descripcion: "Calendario oficial FAPD (PDF por meses y modalidades).",
+    url: "https://fapd.org/calendario-de-competiciones-2026",
+    provinciaId: "cordoba",
+  },
+  {
     id: "nac-fepyc",
     titulo: "FEPyC · calendario nacional",
     descripcion: "Campeonatos de España. Inscripción vía federación autonómica.",
@@ -161,6 +175,32 @@ export const CLUBES_PESCA: ClubPesca[] = [
     localidad: "Sevilla",
     url: "https://sevilla.fapd.org/",
     notas: "Activo en Mar-Costa Liga Clubs 2026.",
+  },
+
+  /* Córdoba — vía FAPD Andalucía */
+  {
+    id: "co-fapd-delegacion",
+    nombre: "Delegación FAPD · Córdoba",
+    provinciaId: "cordoba",
+    localidad: "Córdoba",
+    url: "https://fapd.org/",
+    notas: "Pregunta por clubes federados de la provincia y cómo darte de alta.",
+  },
+  {
+    id: "co-amigos-guadalquivir",
+    nombre: "Clubes de pesca · Córdoba capital",
+    provinciaId: "cordoba",
+    localidad: "Córdoba",
+    url: "https://fapd.org/",
+    notas: "Inscripción a pruebas oficiales a través del club federado FAPD.",
+  },
+  {
+    id: "co-iznajar-zona",
+    nombre: "Clubes zona Iznájar / Genil",
+    provinciaId: "cordoba",
+    localidad: "Iznájar / Rute",
+    url: "https://fapd.org/",
+    notas: "Consulta la delegación provincial para el club más cercano.",
   },
 ];
 
