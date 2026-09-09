@@ -246,21 +246,28 @@ export function isoConOffset(iso: string, utcOffsetSeconds: number | null | unde
 
 /**
  * Orto y ocaso del día (timezone auto de Open-Meteo) para franjas legales / de luz.
+ * Sin start_date: Open-Meteo usa el «hoy» civil de la zona pedida (no el UTC del servidor).
  */
 export async function obtenerOrtoOcaso(
   lat: number,
   lng: number,
   fechaIso?: string
 ): Promise<OrtoOcasoDia | null> {
-  const fecha = fechaIso ?? new Date().toISOString().slice(0, 10);
-  const clave = `${claveCoords(lat, lng)}|${fecha}`;
+  const usarRangoFijo = !!fechaIso;
+  const claveFecha = fechaIso ?? "hoy-local";
+  const clave = `${claveCoords(lat, lng)}|${claveFecha}`;
   const hit = memoOrto.get(clave);
   if (hit && Date.now() - hit.at < TTL_ORTO_MS) return hit.data;
 
   try {
-    const url =
+    let url =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
-      `&daily=sunrise,sunset&timezone=auto&start_date=${fecha}&end_date=${fecha}`;
+      `&daily=sunrise,sunset&timezone=auto`;
+    if (usarRangoFijo) {
+      url += `&start_date=${fechaIso}&end_date=${fechaIso}`;
+    } else {
+      url += `&forecast_days=1`;
+    }
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Open-Meteo respondió ${res.status}`);
     const data = await res.json();
@@ -272,12 +279,14 @@ export async function obtenerOrtoOcaso(
     const ortoIso = isoConOffset(rawOrto, offset);
     const ocasoIso = isoConOffset(rawOcaso, offset);
     const out: OrtoOcasoDia = {
-      fecha: daily.time?.[0] ?? fecha,
+      fecha: daily.time?.[0] ?? fechaIso ?? new Date().toISOString().slice(0, 10),
       ortoIso,
       ocasoIso,
       ortoTxt: horaCortaDeIso(rawOrto),
       ocasoTxt: horaCortaDeIso(rawOcaso),
     };
+    // Clave también por día civil de la respuesta (evita mezclar días si el caché vive > medianoche).
+    memoOrto.set(`${claveCoords(lat, lng)}|${out.fecha}`, { at: Date.now(), data: out });
     memoOrto.set(clave, { at: Date.now(), data: out });
     return out;
   } catch (err) {

@@ -28,14 +28,26 @@ export default function AvisoHorarioLegal({
 
   useEffect(() => {
     let vivo = true;
-    setCargando(true);
-    void obtenerAvisoHorarioLegal({ ambito, lat, lng, provinciaId }).then((a) => {
-      if (!vivo) return;
-      setAviso(a);
-      setCargando(false);
-    });
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function cargar() {
+      setCargando(true);
+      void obtenerAvisoHorarioLegal({ ambito, lat, lng, provinciaId }).then((a) => {
+        if (!vivo) return;
+        setAviso(a);
+        setCargando(false);
+      });
+    }
+
+    cargar();
+    // Tras medianoche local recarga la franja del día nuevo.
+    const ahora = new Date();
+    const manana = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1, 0, 1, 0);
+    timer = setTimeout(cargar, Math.max(30_000, manana.getTime() - ahora.getTime()));
+
     return () => {
       vivo = false;
+      if (timer) clearTimeout(timer);
     };
   }, [ambito, lat, lng, provinciaId]);
 

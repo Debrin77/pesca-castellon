@@ -17,7 +17,14 @@ function read(rel) {
 }
 
 const weather = read("src/services/weatherService.ts");
-for (const n of ["obtenerOrtoOcaso", "OrtoOcasoDia", "sunrise,sunset", "horaCortaDeIso", "isoConOffset"]) {
+for (const n of [
+  "obtenerOrtoOcaso",
+  "OrtoOcasoDia",
+  "sunrise,sunset",
+  "horaCortaDeIso",
+  "isoConOffset",
+  "forecast_days=1",
+]) {
   if (!weather.includes(n)) fail(`weatherService sin ${n}`);
 }
 
