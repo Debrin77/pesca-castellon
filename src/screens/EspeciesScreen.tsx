@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
 import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
@@ -52,6 +53,7 @@ function camaraCosta(provincia: {
 }
 
 export default function EspeciesScreen({ navigation, route }: Props) {
+  const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { punto, fijarPunto } = usePuntoConsulta();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -61,6 +63,8 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const tramos = provincia.tramos as TramoOficial[];
   const playas = soloContinental ? [] : todasLasPlayas();
   const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
+  // Barra de tabs flotante (~80) + margen; los CTAs del pie deben quedar por encima.
+  const piePadBottom = 110 + Math.max(insets.bottom, 12);
 
   const puntoSeed =
     punto &&
@@ -468,7 +472,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         <BotonMiPosicion onPress={() => usarMiUbicacion()} cargando={cargandoUbicacion} />
       </View>
 
-      <View style={[styles.pie, costa && styles.pieMar]}>
+      <View style={[styles.pie, costa && styles.pieMar, { paddingBottom: piePadBottom }]}>
         <View style={[styles.provinciaChip, costa && styles.provinciaChipMar]}>
           <Text style={[styles.provinciaChipTxt, costa && styles.provinciaChipTxtMar]}>
             {costa
@@ -520,25 +524,28 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             <Text style={styles.ctaContinentalTxt}>Ver especies de ríos y embalses</Text>
           </TouchableOpacity>
         )}
-        <View style={styles.pieRow}>
-          {consulta && !fichaAbierta ? (
-            <TouchableOpacity style={styles.pieBtn} onPress={() => setFichaAbierta(true)}>
-              <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
-            </TouchableOpacity>
-          ) : null}
+        {consulta && !fichaAbierta ? (
           <TouchableOpacity
-            style={[styles.pieBtn, costa ? styles.pieBtnGhostMar : styles.pieBtnGhost]}
-            onPress={abrirCatalogo}
+            style={styles.pieBtn}
+            onPress={() => setFichaAbierta(true)}
             accessibilityRole="button"
-            accessibilityLabel={
-              costa ? `Catálogo de orilla de ${provincia.nombre}` : `Catálogo continental de ${provincia.nombre}`
-            }
+            accessibilityLabel="Ver última consulta"
           >
-            <Text style={costa ? styles.pieBtnGhostMarTxt : styles.pieBtnGhostTxt}>
-              {costa ? "Catálogo orilla" : "Catálogo ríos"}
-            </Text>
+            <Text style={styles.pieBtnTxt}>Ver última consulta</Text>
           </TouchableOpacity>
-        </View>
+        ) : null}
+        <TouchableOpacity
+          style={[styles.pieBtn, costa ? styles.pieBtnGhostMar : styles.pieBtnGhost]}
+          onPress={abrirCatalogo}
+          accessibilityRole="button"
+          accessibilityLabel={
+            costa ? `Catálogo de orilla de ${provincia.nombre}` : `Catálogo continental de ${provincia.nombre}`
+          }
+        >
+          <Text style={costa ? styles.pieBtnGhostMarTxt : styles.pieBtnGhostTxt}>
+            {costa ? "Catálogo orilla" : "Catálogo ríos"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <VentanaConsulta
@@ -715,13 +722,13 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary, textAlign: "center" },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { flex: 1, position: "relative", minHeight: 220 },
+  // flex:1 sin minHeight alto: el mapa cede sitio al pie fijo (última consulta / catálogo).
+  mapWrap: { flex: 1, position: "relative", minHeight: 120, backgroundColor: COLORS.mist },
   map: { flex: 1 },
   pie: {
     backgroundColor: COLORS.surface,
     paddingHorizontal: 14,
     paddingTop: 8,
-    paddingBottom: 96,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
   },
@@ -773,24 +780,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   ctaContinentalTxt: { color: "#fff", fontWeight: "800", fontSize: 16, textAlign: "center" },
-  pieRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 8 },
   pieBtn: {
-    flexGrow: 1,
-    flexBasis: 140,
-    minHeight: 42,
+    marginTop: 8,
+    width: "100%",
+    minHeight: 46,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primaryLight,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
   },
-  pieBtnTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 14 },
+  pieBtnTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 15 },
   pieBtnMar: { backgroundColor: COLORS.waterDark },
   pieBtnMarTxt: { color: "#fff", fontWeight: "800", fontSize: 14, textAlign: "center" },
   pieBtnGhost: { backgroundColor: COLORS.waterLight },
-  pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },
+  pieBtnGhostTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 15 },
   pieBtnGhostMar: { backgroundColor: "#fff", borderWidth: 1, borderColor: COLORS.waterDark },
-  pieBtnGhostMarTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 14 },
+  pieBtnGhostMarTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 15 },
   lead: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, marginBottom: 12, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 16, lineHeight: 20 },
   catalogoIntro: {
