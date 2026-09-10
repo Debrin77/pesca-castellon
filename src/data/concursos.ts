@@ -309,6 +309,48 @@ export const CONCURSOS: ConcursoPesca[] = [
     notas: "Confirma sede, fecha y boletín en la delegación provincial FAPD Córdoba / calendario Andalucía.",
     cta: "Ver calendario FAPD",
   },
+
+  /* ——— Cuenca · CLM 2026 ——— */
+  {
+    id: "cu-portal-vedas",
+    titulo: "Orden de vedas y ejercicio de la pesca · CLM",
+    fecha: "2026-01-01",
+    fin: "2026-12-31",
+    lugar: "Castilla-La Mancha",
+    modalidad: "Todas",
+    organizador: "JCCM · Desarrollo Sostenible",
+    provinciaId: "cuenca",
+    url: "https://cazaypesca.castillalamancha.es/pesca/ejercicio-pesca",
+    notas: "Orden 20/2026, tallas, cotos y descargas. Inscripción a concursos vía federación / club.",
+    cta: "Abrir portal Caza y Pesca",
+    portal: true,
+  },
+  {
+    id: "cu-portal-permisos",
+    titulo: "Permisos cotos especiales · venta en línea",
+    fecha: "2026-01-01",
+    fin: "2026-12-31",
+    lugar: "Cuenca / CLM",
+    modalidad: "Cotos especiales",
+    organizador: "JCCM",
+    provinciaId: "cuenca",
+    url: "https://ventaenlinea.castillalamancha.es/ventaenlinea/publico/tiendas/tiendasSOCO.jsf",
+    notas: "Además de la licencia DIANA. Confirma listado de cotos en Área de Descargas.",
+    cta: "Comprar permiso",
+    portal: true,
+  },
+  {
+    id: "cu-2026-consulta-federacion",
+    titulo: "Concursos provinciales Cuenca (consulta federación / club)",
+    fecha: "2026-04-01",
+    lugar: "Cuenca (según convocatoria)",
+    modalidad: "Agua dulce",
+    organizador: "Clubes / Federación CLM",
+    provinciaId: "cuenca",
+    url: "https://cazaypesca.castillalamancha.es/pesca/ejercicio-pesca",
+    notas: "Las solicitudes de concurso van por sede electrónica JCCM (art. 6 Orden 20/2026). Apúntate por tu club.",
+    cta: "Ver normas de concursos",
+  },
 ];
 
 export function concursosParaProvincia(provinciaId: ProvinciaId, desdeIso?: string): ConcursoPesca[] {

@@ -1,10 +1,15 @@
 import type { Aprovechamiento } from "../data/normativa2026";
 
-export type ProvinciaId = "castellon" | "sevilla" | "cordoba";
+export type ProvinciaId = "castellon" | "sevilla" | "cordoba" | "cuenca";
 
 /** Provincias bajo marco normativo Junta de Andalucía (Orden 13/01/2023). */
 export function esProvinciaAndalucia(id: ProvinciaId | string | null | undefined): boolean {
   return id === "sevilla" || id === "cordoba";
+}
+
+/** Provincias bajo marco normativo Castilla-La Mancha (Ley 1/1992 + Orden de vedas). */
+export function esProvinciaCastillaLaMancha(id: ProvinciaId | string | null | undefined): boolean {
+  return id === "cuenca";
 }
 
 export interface RegionMapa {

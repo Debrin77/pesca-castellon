@@ -1,0 +1,374 @@
+[
+  {
+    "id": "cue-embalse_de_buendia",
+    "codigo": "CU-01",
+    "nombre": "Embalse de Buendía",
+    "rio": "Embalse de Buendía",
+    "lat": 40.39105,
+    "lng": -2.71214,
+    "radioKm": 8.5,
+    "vocacion": "Ciprinícola / depredadores",
+    "regimen": "Aguas libres · cupo barbos 6/día (Orden 20/2026)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "embalse_de_buendia",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "lucioperca",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno"
+    ],
+    "cuenca": "Tajo",
+    "municipios": [
+      "Buendía",
+      "Alcocer"
+    ]
+  },
+  {
+    "id": "cue-embalse_de_alarcon",
+    "codigo": "CU-02",
+    "nombre": "Embalse de Alarcón",
+    "rio": "Embalse de Alarcón",
+    "lat": 39.65549,
+    "lng": -2.20795,
+    "radioKm": 7.0,
+    "vocacion": "Ciprinícola / depredadores",
+    "regimen": "Aguas libres · cupo barbos 6/día · restricciones de cebo",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "embalse_de_alarcon",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno",
+      "cacho"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Alarcón"
+    ]
+  },
+  {
+    "id": "cue-embalse_de_contreras",
+    "codigo": "CU-03",
+    "nombre": "Embalse de Contreras",
+    "rio": "Embalse de Contreras",
+    "lat": 39.58538,
+    "lng": -1.52382,
+    "radioKm": 5.5,
+    "vocacion": "Ciprinícola / depredadores",
+    "regimen": "Aguas libres · cupo barbos 6/día",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "embalse_de_contreras",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno"
+    ],
+    "cuenca": "Cabriel / Júcar",
+    "municipios": [
+      "Villargordo del Cabriel",
+      "Minglanilla"
+    ]
+  },
+  {
+    "id": "cue-laguna_de_una",
+    "codigo": "CU-04",
+    "nombre": "Laguna de Uña",
+    "rio": "Laguna de Uña",
+    "lat": 40.22638,
+    "lng": -1.97604,
+    "radioKm": 0.8,
+    "vocacion": "Ciprinícola · Serranía",
+    "regimen": "Aguas libres · régimen especial ciprínidos en veda de trucha",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "laguna_de_una",
+    "especies": [
+      "carpa",
+      "barbo",
+      "tenca",
+      "trucha_comun"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Uña"
+    ]
+  },
+  {
+    "id": "cue-embalse_de_bolarque",
+    "codigo": "CU-05",
+    "nombre": "Embalse de Bolarque",
+    "rio": "Embalse de Bolarque",
+    "lat": 40.39329,
+    "lng": -2.80011,
+    "radioKm": 2.5,
+    "vocacion": "Ciprinícola / depredadores",
+    "regimen": "Aguas libres (límite Cuenca–Guadalajara)",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "embalse_de_bolarque",
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin"
+    ],
+    "cuenca": "Tajo",
+    "municipios": [
+      "Almonacid de Zorita",
+      "Sayatón"
+    ]
+  },
+  {
+    "id": "cue-embalse_de_la_toba",
+    "codigo": "CU-06",
+    "nombre": "Embalse de La Toba",
+    "rio": "Embalse de La Toba",
+    "lat": 40.223,
+    "lng": -1.955,
+    "radioKm": 1.8,
+    "vocacion": "Ciprinícola · truchera (régimen especial)",
+    "regimen": "Aguas libres · ciprínidos en veda de trucha",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "embalse_de_la_toba",
+    "especies": [
+      "trucha_comun",
+      "carpa",
+      "barbo",
+      "tenca"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Uña",
+      "Villalba de la Sierra"
+    ]
+  },
+  {
+    "id": "cue-rio_jucar_valdecabras",
+    "codigo": "CU-07",
+    "nombre": "Río Júcar · Valdecabras – Arroyo de la Hoz",
+    "rio": "Río Júcar · Valdecabras – Arroyo de la Hoz",
+    "lat": 40.145,
+    "lng": -2.05,
+    "radioKm": 3.5,
+    "vocacion": "Truchera / ciprinícola",
+    "regimen": "Aguas libres · régimen especial",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "TRUCHERA",
+    "matriculaCoto": null,
+    "fichaId": "rio_jucar_valdecabras",
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho",
+      "boga"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Cuenca",
+      "Villalba de la Sierra"
+    ]
+  },
+  {
+    "id": "cue-rio_jucar_capital",
+    "codigo": "CU-08",
+    "nombre": "Río Júcar · Cuenca capital",
+    "rio": "Río Júcar · Cuenca capital",
+    "lat": 40.0705,
+    "lng": -2.1374,
+    "radioKm": 1.2,
+    "vocacion": "Urbano / ciprinícola",
+    "regimen": "Aguas libres",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": null,
+    "matriculaCoto": null,
+    "fichaId": "rio_jucar_capital",
+    "especies": [
+      "barbo",
+      "cacho",
+      "carpa",
+      "boga"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Cuenca"
+    ]
+  },
+  {
+    "id": "cue-coto_intensivo_puente_romano",
+    "codigo": "CU-09",
+    "nombre": "Coto intensivo Puente Romano (CI-9)",
+    "rio": "Coto intensivo Puente Romano (CI-9)",
+    "lat": 40.078,
+    "lng": -2.125,
+    "radioKm": 0.9,
+    "vocacion": "Coto intensivo · trucha arcoíris",
+    "regimen": "Coto intensivo · permiso + licencia",
+    "aprovechamiento": "ZPC",
+    "notaAnexo": null,
+    "matriculaCoto": "CI-9",
+    "fichaId": "coto_intensivo_puente_romano",
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Cuenca"
+    ]
+  },
+  {
+    "id": "cue-coto_intensivo_el_chantre",
+    "codigo": "CU-10",
+    "nombre": "Coto intensivo El Chantre (CI-10)",
+    "rio": "Coto intensivo El Chantre (CI-10)",
+    "lat": 40.095,
+    "lng": -2.1,
+    "radioKm": 0.9,
+    "vocacion": "Coto intensivo · trucha arcoíris",
+    "regimen": "Coto intensivo · permiso + licencia",
+    "aprovechamiento": "ZPC",
+    "notaAnexo": null,
+    "matriculaCoto": "CI-10",
+    "fichaId": "coto_intensivo_el_chantre",
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Cuenca"
+    ]
+  },
+  {
+    "id": "cue-coto_intensivo_la_torre",
+    "codigo": "CU-11",
+    "nombre": "Coto intensivo La Torre (CI-19)",
+    "rio": "Coto intensivo La Torre (CI-19)",
+    "lat": 40.055,
+    "lng": -2.16,
+    "radioKm": 0.9,
+    "vocacion": "Coto intensivo · trucha arcoíris",
+    "regimen": "Coto intensivo · permiso + licencia",
+    "aprovechamiento": "ZPC",
+    "notaAnexo": null,
+    "matriculaCoto": "CI-19",
+    "fichaId": "coto_intensivo_la_torre",
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Cuenca"
+    ]
+  },
+  {
+    "id": "cue-refugio_arroyo_de_la_herreria",
+    "codigo": "CU-12",
+    "nombre": "Refugio Arroyo de la Herrería",
+    "rio": "Refugio Arroyo de la Herrería",
+    "lat": 40.28,
+    "lng": -1.72,
+    "radioKm": 2.0,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "REFUGIO",
+    "matriculaCoto": null,
+    "fichaId": "refugio_arroyo_de_la_herreria",
+    "especies": [],
+    "cuenca": "Júcar",
+    "municipios": [
+      "Zafrilla",
+      "Huélamo"
+    ]
+  },
+  {
+    "id": "cue-vedado_rio_cuervo_nacimiento",
+    "codigo": "CU-13",
+    "nombre": "Vedado Río Cuervo (nacimiento)",
+    "rio": "Vedado Río Cuervo (nacimiento)",
+    "lat": 40.425,
+    "lng": -1.88,
+    "radioKm": 1.5,
+    "vocacion": "Vedado",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "VEDADO",
+    "matriculaCoto": null,
+    "fichaId": "vedado_rio_cuervo_nacimiento",
+    "especies": [],
+    "cuenca": "Tajo / Guadiela",
+    "municipios": [
+      "Vega del Codorno",
+      "Tragacete"
+    ]
+  },
+  {
+    "id": "cue-rio_cabriel_cristinas",
+    "codigo": "CU-14",
+    "nombre": "Río Cabriel · Cristinas – Puente Vieja",
+    "rio": "Río Cabriel · Cristinas – Puente Vieja",
+    "lat": 39.9,
+    "lng": -1.55,
+    "radioKm": 2.5,
+    "vocacion": "Truchera / ciprinícola",
+    "regimen": "Aguas libres · régimen especial",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "TRUCHERA",
+    "matriculaCoto": null,
+    "fichaId": "rio_cabriel_cristinas",
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho"
+    ],
+    "cuenca": "Cabriel",
+    "municipios": [
+      "Villora",
+      "Enguídanos"
+    ]
+  },
+  {
+    "id": "cue-laguna_del_marquesado",
+    "codigo": "CU-15",
+    "nombre": "Laguna del Marquesado",
+    "rio": "Laguna del Marquesado",
+    "lat": 40.098,
+    "lng": -1.595,
+    "radioKm": 0.6,
+    "vocacion": "Truchera",
+    "regimen": "Aguas libres · apertura trucha 1 jun",
+    "aprovechamiento": "ZPL",
+    "notaAnexo": "TRUCHERA",
+    "matriculaCoto": null,
+    "fichaId": "laguna_del_marquesado",
+    "especies": [
+      "trucha_comun"
+    ],
+    "cuenca": "Cabriel",
+    "municipios": [
+      "Laguna del Marquesado"
+    ]
+  }
+]

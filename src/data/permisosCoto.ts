@@ -1,4 +1,5 @@
 import type { ProvinciaId } from "../provincias/types";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import ptopCastellon from "./ptopCotos.json";
 
 export interface InfoPermisoCoto {
@@ -19,7 +20,7 @@ export function infoPermisoCoto(
   matricula?: string | null,
   nombreTramo?: string
 ): InfoPermisoCoto {
-  if (provinciaId === "sevilla" || provinciaId === "cordoba") {
+  if (esProvinciaAndalucia(provinciaId)) {
     return {
       matricula: matricula ?? undefined,
       nombre: nombreTramo ?? "Coto / tramo acotado Andalucía",
@@ -28,6 +29,20 @@ export function infoPermisoCoto(
       urlTramite: "https://www.juntadeandalucia.es/organismos/agriculturapescaaguaydesarrollorural.html",
       avisoPtop:
         "Los cupos y días del coto los fija el plan o la orden anual. Esta app no sustituye el permiso del día.",
+    };
+  }
+
+  if (esProvinciaCastillaLaMancha(provinciaId)) {
+    return {
+      matricula: matricula ?? undefined,
+      nombre: nombreTramo ?? "Coto especial / intensivo CLM",
+      comoObtener:
+        "Permisos de cotos especiales en la venta en línea de la JCCM. Cotos intensivos: además, según el concesionario / sociedad colaboradora. Licencia CLM siempre obligatoria.",
+      urlTramite:
+        "https://ventaenlinea.castillalamancha.es/ventaenlinea/publico/tiendas/tiendasSOCO.jsf",
+      telefonoOficina: "969 178 300",
+      avisoPtop:
+        "Cupos, cebos y días los fija la Orden de vedas y el plan del coto. Esta app no sustituye el permiso del día ni el visor JCCM.",
     };
   }
 
@@ -47,6 +62,9 @@ export const ENLACES_PERMISOS = {
   castellonLicencia: "https://sede.gva.es/es/detall-tramit?id_proc=681",
   castellonMaritima: "https://sede.gva.es/es/inicio/procedimientos?id_proc=17170",
   sevillaJunta: "https://www.juntadeandalucia.es/organismos/agriculturapescaaguaydesarrollorural.html",
+  cuencaDiana: "https://diana.castillalamancha.es/diana/aInicio",
+  cuencaPermisosCoto:
+    "https://ventaenlinea.castillalamancha.es/ventaenlinea/publico/tiendas/tiendasSOCO.jsf",
   pescaRec: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
   pescaRecStoreAndroid: "https://play.google.com/store/apps/details?id=es.gob.map.pescarec",
   pescaRecStoreIos: "https://apps.apple.com/es/app/pescarec/id6752486687",

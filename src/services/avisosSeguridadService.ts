@@ -41,6 +41,8 @@ const ZONAS_AVISO: Record<ProvinciaId, RegExp> = {
     /sevilla|andaluc[ií]a|guadalquivir|sierra\s*norte|aljarafe|campi[nñ]a|do[nñ]ana/i,
   cordoba:
     /c[oó]rdoba|andaluc[ií]a|guadalquivir|guadiato|genil|guadajoz|izn[aá]jar|hornachuelos|montoro|sierra\s*morena/i,
+  cuenca:
+    /cuenca|castilla[\s-]*la[\s-]*mancha|j[uú]car|cabriel|buend[ií]a|alarc[oó]n|contreras|serran[ií]a|guadiela|tajo/i,
 };
 
 const EVENTOS_INTERES: { re: RegExp; tipo: TipoAviso }[] = [
@@ -269,6 +271,29 @@ const RIOS_POR_PROVINCIA: Record<ProvinciaId, PuntoRio[]> = {
       lat: 37.25,
       lng: -4.35,
       urlConfirma: "https://www.chguadalquivir.es/saih/",
+    },
+  ],
+  cuenca: [
+    {
+      id: "jucar_alarcon",
+      nombre: "Júcar (Alarcón)",
+      lat: 39.66,
+      lng: -2.21,
+      urlConfirma: "https://saih.chj.es",
+    },
+    {
+      id: "jucar_cuenca",
+      nombre: "Júcar (Cuenca capital)",
+      lat: 40.07,
+      lng: -2.14,
+      urlConfirma: "https://saih.chj.es",
+    },
+    {
+      id: "cabriel_contreras",
+      nombre: "Cabriel (Contreras)",
+      lat: 39.59,
+      lng: -1.52,
+      urlConfirma: "https://saih.chj.es",
     },
   ],
 };

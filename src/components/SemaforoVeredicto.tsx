@@ -4,6 +4,7 @@ import { colorSemaforo, ConsultaPesca } from "../services/consultaPescaService";
 import { EJE_LEGAL } from "../data/ejesLegalMeteo";
 import { certezaDeConsulta } from "../data/certezaConsulta";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { COLORS, RADIUS } from "../theme";
 
 export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
@@ -12,12 +13,16 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
     return { texto: "HOY NO", sub: "Pesca prohibida aquí" };
   }
   if (c.veredicto === "fuera_catalogo") {
-    const esAndalucia = getProvinciaActiva().id === "sevilla" || getProvinciaActiva().id === "cordoba";
+    const id = getProvinciaActiva().id;
+    const esAndalucia = esProvinciaAndalucia(id);
+    const esClm = esProvinciaCastillaLaMancha(id);
     return {
       texto: "SIN TRAMO",
       sub: esAndalucia
         ? "No es veda · puede ser agua libre (art. 5.2). Mira el cartel"
-        : "No es veda · el tramo no está dibujado. Mira el cartel",
+        : esClm
+          ? "No es veda · confirma visor JCCM y cartel"
+          : "No es veda · el tramo no está dibujado. Mira el cartel",
     };
   }
   if (c.sePuedePescarHoy) {

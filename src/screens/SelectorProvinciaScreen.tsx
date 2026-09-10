@@ -45,6 +45,13 @@ const COPY: Record<
     tecnico:
       "Cartografía DERA y aguas libres (art. 5.2). Licencia continental + NIR + seguro RC obligatorio. SAIH CHG EmbalCO.",
   },
+  cuenca: {
+    kicker: "Castilla-La Mancha",
+    detalle: "Júcar, Cabriel y Mar de Castilla. Licencia JCCM y normas propias de Cuenca.",
+    chips: ["Embalses", "Trucha", "Licencia CLM"],
+    tecnico:
+      "Orden 20/2026 y Ley 1/1992. Barbos sin muerte salvo Contreras, Alarcón y Buendía. Sin seguro RC. Visor JCCM + SAIH CHJ.",
+  },
 };
 
 interface Props {

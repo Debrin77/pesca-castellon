@@ -12,7 +12,7 @@ export type SitioFacil = {
   ambito: "continental" | "maritimo";
 };
 
-export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba", SitioFacil[]> = {
+export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba" | "cuenca", SitioFacil[]> = {
   castellon: [
     {
       id: "cs-sichar",
@@ -181,8 +181,46 @@ export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba", SitioFa
       ambito: "continental",
     },
   ],
+  cuenca: [
+    {
+      id: "cu-alarcon",
+      zoneId: "embalse_de_alarcon",
+      nombre: "Embalse de Alarcón",
+      lat: 39.6555,
+      lng: -2.208,
+      porQue: "Gran vaso del Júcar; mira restricciones de cebo y SAIH.",
+      ambito: "continental",
+    },
+    {
+      id: "cu-contreras",
+      zoneId: "embalse_de_contreras",
+      nombre: "Embalse de Contreras",
+      lat: 39.5854,
+      lng: -1.5238,
+      porQue: "Orillas accesibles; confirma límite provincial con CV.",
+      ambito: "continental",
+    },
+    {
+      id: "cu-jucar-capital",
+      zoneId: "rio_jucar_capital",
+      nombre: "Río Júcar · Cuenca capital",
+      lat: 40.0705,
+      lng: -2.1374,
+      porQue: "Tramo urbano accesible; barbos solo sin muerte.",
+      ambito: "continental",
+    },
+    {
+      id: "cu-toba",
+      zoneId: "embalse_de_la_toba",
+      nombre: "Embalse de La Toba",
+      lat: 40.223,
+      lng: -1.955,
+      porQue: "Vaso de Serranía; trucha sin muerte y régimen especial.",
+      ambito: "continental",
+    },
+  ],
 };
 
-export function sitiosFacilesDe(provinciaId: "castellon" | "sevilla" | "cordoba"): SitioFacil[] {
+export function sitiosFacilesDe(provinciaId: "castellon" | "sevilla" | "cordoba" | "cuenca"): SitioFacil[] {
   return SITIOS_FACILES[provinciaId] ?? [];
 }

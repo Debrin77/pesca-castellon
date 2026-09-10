@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 import { resumenLicenciasCortas } from "../services/storageService";
 
@@ -18,13 +19,18 @@ const CLAVE_PLEGADO = "@pesca_castellon/banner_licencia_plegado";
  * Aviso de licencias según provincia:
  * Castellón → continental + marítima recreativa desde tierra (GVA); sin seguro RC.
  * Sevilla / Córdoba → solo continental Andalucía (Junta) + seguro RC obligatorio.
+ * Cuenca → continental Castilla-La Mancha (JCCM / DIANA); sin seguro RC.
  */
 export default function LicenseBanner({ onPress, compact }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const req = provincia.requisitosLicencia;
-  const badge = provincia.id === "sevilla" || provincia.id === "cordoba" ? "JA" : "GVA";
+  const badge = esProvinciaAndalucia(provincia.id)
+    ? "JA"
+    : esProvinciaCastillaLaMancha(provincia.id)
+      ? "CLM"
+      : "GVA";
   const [plegado, setPlegado] = useState(false);
   const [resumen, setResumen] = useState("Sin licencias guardadas en el móvil");
 

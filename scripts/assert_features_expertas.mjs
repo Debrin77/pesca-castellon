@@ -137,8 +137,10 @@ for (const n of [
   'provinciaId: "castellon"',
   'provinciaId: "sevilla"',
   'provinciaId: "cordoba"',
+  'provinciaId: "cuenca"',
   "La Barqueta",
   "Peñíscola",
+  "cazaypesca.castillalamancha.es",
 ]) {
   if (!concursos.includes(n)) {
     console.error(`FAIL concursos.ts sin «${n}»`);

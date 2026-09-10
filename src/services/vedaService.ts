@@ -2,8 +2,8 @@
  * Periodos hábiles (vedas) por especie y provincia activa.
  *
  * Castellón → Orden 30/2016 + resoluciones GVA.
- * Sevilla → Orden 13/01/2023 (BOJA): barbo/boga con periodos propios;
- *           siluro no es objeto de pesca (no usar textos de tenencia CV).
+ * Sevilla / Córdoba → Orden 13/01/2023 (BOJA): barbo/boga con periodos propios.
+ * Cuenca → Orden 20/2026 CLM + Ley 1/1992 (trucheras art. 2; barbos sin muerte salvo excepciones).
  */
 
 import {
@@ -12,7 +12,12 @@ import {
   TALLAS_OFICIALES,
 } from "../data/normativa2026";
 import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
+import {
+  etiquetaTemporadaTruchaCuenca,
+  periodoTruchaCuencaAbierto,
+} from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 
 export interface PeriodoHabil {
   especieId: string;
@@ -92,10 +97,18 @@ export const PERIODOS_HABILES: PeriodoHabil[] = [
 export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
+  if (esProvinciaAndalucia(provincia.id)) {
     if (especieId === "barbo_gitano") return !periodoBarboAbierto(fecha);
     if (especieId === "boga") return !periodoBogaAbierto(fecha);
     if (especieId === "tenca" || especieId === "cacho") return true;
+    return false;
+  }
+
+  if (esProvinciaCastillaLaMancha(provincia.id)) {
+    if (especieId === "trucha_comun" || especieId === "trucha_arcoiris") {
+      return !periodoTruchaCuencaAbierto(fecha);
+    }
+    if (especieId === "anguila" || especieId === "siluro") return true;
     return false;
   }
 
@@ -118,10 +131,13 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
 export function notaVeda(especieId: string): string | null {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
+  if (esProvinciaAndalucia(provincia.id) || esProvinciaCastillaLaMancha(provincia.id)) {
     const sp = (provincia.species as any[]).find((s) => s.id === especieId);
     if (sp?.normativaEspecial) return sp.normativaEspecial as string;
     if (sp?.normativaResumen) return sp.normativaResumen as string;
+  }
+
+  if (esProvinciaAndalucia(provincia.id)) {
     if (especieId === "barbo_gitano") {
       return periodoBarboAbierto()
         ? "Barbo: captura y suelta, periodo hábil (1 jul–25 feb)."
@@ -135,6 +151,15 @@ export function notaVeda(especieId: string): string | null {
     return null;
   }
 
+  if (esProvinciaCastillaLaMancha(provincia.id)) {
+    if (especieId === "trucha_comun") {
+      return periodoTruchaCuencaAbierto()
+        ? "Trucha común CLM: solo sin muerte · periodo hábil de aguas trucheras."
+        : "Trucha / aguas trucheras en veda (art. 2 Orden 20/2026), salvo régimen especial de ciprínidos señalizado.";
+    }
+    return null;
+  }
+
   return PERIODOS_HABILES.find((p) => p.especieId === especieId)?.notas ?? null;
 }
 
@@ -144,7 +169,7 @@ export function resumenTemporadaActual(fecha: Date = new Date()): {
   texto: string;
 } {
   const provincia = getProvinciaActiva();
-  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
+  if (esProvinciaAndalucia(provincia.id)) {
     const barboOk = periodoBarboAbierto(fecha);
     const bogaOk = periodoBogaAbierto(fecha);
     return {
@@ -154,6 +179,18 @@ export function resumenTemporadaActual(fecha: Date = new Date()): {
         !barboOk || !bogaOk
           ? `Autóctonos en veda parcial. Barbo: ${barboOk ? "hábil" : "veda"}. Boga: ${bogaOk ? "hábil" : "veda"}.`
           : "Aguas libres · exóticas todo el año. Barbo y boga en captura y suelta (periodos hábiles).",
+    };
+  }
+
+  if (esProvinciaCastillaLaMancha(provincia.id)) {
+    const abierta = periodoTruchaCuencaAbierto(fecha);
+    const etiqueta = etiquetaTemporadaTruchaCuenca(fecha.getFullYear());
+    return {
+      truchaAbierta: abierta,
+      etiquetaTrucha: etiqueta,
+      texto: abierta
+        ? `Temporada trucheras ABIERTA (baja montaña). Trucha solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6).`
+        : `Temporada trucheras CERRADA fuera de periodo art. 2. En aguas no trucheras la pesca con caña puede seguir todo el año (Orden 20/2026). Barbos: sin muerte salvo excepciones.`,
     };
   }
 

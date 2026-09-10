@@ -26,6 +26,7 @@ function puntoEnRegionMapa(lat, lng, region, margenRelativo = 0.2) {
 const sevilla = { latitude: 37.55, longitude: -5.85, latitudeDelta: 1.35, longitudeDelta: 1.35 };
 const castellon = { latitude: 40.05, longitude: -0.02, latitudeDelta: 1.25, longitudeDelta: 1.25 };
 const cordoba = { latitude: 37.95, longitude: -4.75, latitudeDelta: 1.45, longitudeDelta: 1.55 };
+const cuenca = { latitude: 39.95, longitude: -2.15, latitudeDelta: 1.55, longitudeDelta: 1.65 };
 
 let fallos = 0;
 function fail(m) {
@@ -61,6 +62,19 @@ else fail("Córdoba ciudad NO debe contar como Castellón");
 
 if (!puntoEnRegionMapa(grao.lat, grao.lng, cordoba)) ok("Grao fuera de Córdoba");
 else fail("Grao NO debe contar como Córdoba");
+
+const cuencaCentro = { lat: 40.07, lng: -2.14 };
+if (puntoEnRegionMapa(cuencaCentro.lat, cuencaCentro.lng, cuenca)) ok("Cuenca ciudad dentro de Cuenca");
+else fail("Cuenca ciudad debería estar en Cuenca");
+
+if (!puntoEnRegionMapa(cuencaCentro.lat, cuencaCentro.lng, castellon)) ok("Cuenca ciudad fuera de Castellón");
+else fail("Cuenca ciudad NO debe contar como Castellón");
+
+if (!puntoEnRegionMapa(cuencaCentro.lat, cuencaCentro.lng, cordoba)) ok("Cuenca ciudad fuera de Córdoba");
+else fail("Cuenca ciudad NO debe contar como Córdoba");
+
+if (!puntoEnRegionMapa(grao.lat, grao.lng, cuenca)) ok("Grao fuera de Cuenca");
+else fail("Grao NO debe contar como Cuenca");
 
 const especiesSrc = readFileSync(join(root, "src/screens/EspeciesScreen.tsx"), "utf8");
 if (/usarMiUbicacion\(\);\s*\n\s*\}, \[\]/.test(especiesSrc) || /useEffect\(\(\) => \{\s*usarMiUbicacion\(\);/.test(especiesSrc)) {

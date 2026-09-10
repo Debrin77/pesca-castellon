@@ -1,0 +1,814 @@
+[
+  {
+    "id": "embalse_de_buendia",
+    "nombre": "Embalse de Buendía",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola / depredadores",
+    "rio": "Embalse de Buendía",
+    "municipio": "Buendía",
+    "lat": 40.39105,
+    "lng": -2.71214,
+    "radioAproxKm": 8.5,
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · cupo barbos 6/día (Orden 20/2026). Confirma visor JCCM y cartel.",
+    "avisos": [
+      "Orden 20/2026 (Cuenca): barbos con cupo máximo 6/pescador/día en Buendía (presa → puente nuevo Alcocer km 2,8 CHT). Fuera de ese tramo: barbos solo sin muerte.",
+      "Invasoras (bass, lucio, lucioperca, carpa…): sacrificio inmediato según Anexo I/III. No traslocar.",
+      "Desinfecta y seca material al cambiar de masa (mejillón cebra / especies alóctonas)."
+    ],
+    "especies": [
+      "black_bass",
+      "lucio",
+      "lucioperca",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Tajo",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · geometría OSM orientativa"
+  },
+  {
+    "id": "embalse_de_alarcon",
+    "nombre": "Embalse de Alarcón",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola / depredadores",
+    "rio": "Embalse de Alarcón",
+    "municipio": "Alarcón",
+    "lat": 39.65549,
+    "lng": -2.20795,
+    "radioAproxKm": 7.0,
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · cupo barbos 6/día · restricciones de cebo. Confirma visor JCCM y cartel.",
+    "avisos": [
+      "Orden 20/2026 art. 7.C.4.4: en Alarcón prohibido pez vivo/muerto, peces artificiales >10 cm, boilies/pellets de masa endurecida, clonks y cebado no vegetal.",
+      "Barbos: cupo máx. 6/día. Cacho desde la presa de Alarcón hasta salida de provincia: devolución inmediata (sin muerte).",
+      "Invasoras: sacrificio inmediato en áreas autorizadas (Anexo III). Confirma visor JCCM."
+    ],
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno",
+      "cacho"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE ALARCÓN",
+    "saihFichaId": null,
+    "saihFuente": "chj",
+    "saihUrl": "https://saih.chj.es",
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · geometría OSM orientativa"
+  },
+  {
+    "id": "embalse_de_contreras",
+    "nombre": "Embalse de Contreras",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola / depredadores",
+    "rio": "Embalse de Contreras",
+    "municipio": "Villargordo del Cabriel",
+    "lat": 39.58538,
+    "lng": -1.52382,
+    "radioAproxKm": 5.5,
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · cupo barbos 6/día. Confirma visor JCCM y cartel.",
+    "avisos": [
+      "Frontera con Comunitat Valenciana: licencia CLM en orilla conquense. Barbos: cupo máx. 6/día.",
+      "Invasoras con sacrificio inmediato. Confirma límites provinciales y cartel."
+    ],
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin",
+      "alburno"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": "EMBALSE DE CONTRERAS",
+    "saihFichaId": null,
+    "saihFuente": "chj",
+    "saihUrl": "https://saih.chj.es",
+    "cuenca": "Cabriel / Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · geometría OSM orientativa"
+  },
+  {
+    "id": "laguna_de_una",
+    "nombre": "Laguna de Uña",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola · Serranía",
+    "rio": "Laguna de Uña",
+    "municipio": "Uña",
+    "lat": 40.22638,
+    "lng": -1.97604,
+    "radioAproxKm": 0.8,
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · régimen especial ciprínidos en veda de trucha. Confirma visor JCCM y cartel.",
+    "avisos": [
+      "PORN Serranía de Cuenca: prohibidos patos, barquitos cebadores y cualquier objeto flotante.",
+      "Cebado solo vegetal no contaminante (Orden 20/2026). Barbos: solo sin muerte (salvo excepciones de embalses grandes).",
+      "En época de veda de trucha puede autorizarse ciprínidos con cebo vegetal y anzuelo sin arponcillo."
+    ],
+    "especies": [
+      "carpa",
+      "barbo",
+      "tenca",
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · geometría OSM orientativa"
+  },
+  {
+    "id": "embalse_de_bolarque",
+    "nombre": "Embalse de Bolarque",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola / depredadores",
+    "rio": "Embalse de Bolarque",
+    "municipio": "Almonacid de Zorita",
+    "lat": 40.39329,
+    "lng": -2.80011,
+    "radioAproxKm": 2.5,
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres (límite Cuenca–Guadalajara). Confirma visor JCCM y cartel.",
+    "avisos": [
+      "Embalse compartido con Guadalajara: confirma orilla y licencia CLM. Barbos fuera de Buendía/Alarcón/Contreras: solo sin muerte en provincia de Cuenca."
+    ],
+    "especies": [
+      "black_bass",
+      "lucio",
+      "carpa",
+      "barbo",
+      "carpin"
+    ],
+    "mejoresEpocas": {
+      "black_bass": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Tajo",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · geometría OSM orientativa"
+  },
+  {
+    "id": "embalse_de_la_toba",
+    "nombre": "Embalse de La Toba",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Ciprinícola · truchera (régimen especial)",
+    "rio": "Embalse de La Toba",
+    "municipio": "Uña",
+    "lat": 40.223,
+    "lng": -1.955,
+    "radioAproxKm": 1.8,
+    "descripcion": "Catálogo orientativo Cuenca. Aguas libres · ciprínidos en veda de trucha. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "En veda de trucha: ciprínidos con cebo vegetal y anzuelo sin arponcillo; cebado vegetal autorizado.",
+      "Trucha común: solo pesca sin muerte en periodo hábil de aguas trucheras."
+    ],
+    "especies": [
+      "trucha_comun",
+      "carpa",
+      "barbo",
+      "tenca"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "rio_jucar_valdecabras",
+    "nombre": "Río Júcar · Valdecabras – Arroyo de la Hoz",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Truchera / ciprinícola",
+    "rio": "Río Júcar · Valdecabras – Arroyo de la Hoz",
+    "municipio": "Cuenca",
+    "lat": 40.145,
+    "lng": -2.05,
+    "radioAproxKm": 3.5,
+    "descripcion": "Catálogo orientativo Cuenca. Aguas libres · régimen especial. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Tramo con régimen especial ciprínidos en veda de trucha (cebo vegetal, anzuelo sin arponcillo).",
+      "Trucha: solo sin muerte; anzuelos sin arponcillo en trucheras. Barbos: solo sin muerte."
+    ],
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho",
+      "boga"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "rio_jucar_capital",
+    "nombre": "Río Júcar · Cuenca capital",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Urbano / ciprinícola",
+    "rio": "Río Júcar · Cuenca capital",
+    "municipio": "Cuenca",
+    "lat": 40.0705,
+    "lng": -2.1374,
+    "radioAproxKm": 1.2,
+    "descripcion": "Catálogo orientativo Cuenca. Aguas libres. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Tramo urbano: mira ordenanzas y señalización. Barbos: solo sin muerte.",
+      "Cebado vegetal autorizado entre Valdecabras y desembocadura del Moscas (Orden 20/2026)."
+    ],
+    "especies": [
+      "barbo",
+      "cacho",
+      "carpa",
+      "boga"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "coto_intensivo_puente_romano",
+    "nombre": "Coto intensivo Puente Romano (CI-9)",
+    "tipo": "coto",
+    "estadoZona": "acotada",
+    "vocacionOficial": "Coto intensivo · trucha arcoíris",
+    "rio": "Coto intensivo Puente Romano (CI-9)",
+    "municipio": "Cuenca",
+    "lat": 40.078,
+    "lng": -2.125,
+    "radioAproxKm": 0.9,
+    "descripcion": "Catálogo orientativo Cuenca. Coto intensivo · permiso + licencia. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Coto intensivo: hace falta permiso del concesionario además de la licencia CLM.",
+      "Asoc. Provincial Pescadores Deportivos Conquenses. Confirma cupos y cebos del plan técnico."
+    ],
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "coto_intensivo_el_chantre",
+    "nombre": "Coto intensivo El Chantre (CI-10)",
+    "tipo": "coto",
+    "estadoZona": "acotada",
+    "vocacionOficial": "Coto intensivo · trucha arcoíris",
+    "rio": "Coto intensivo El Chantre (CI-10)",
+    "municipio": "Cuenca",
+    "lat": 40.095,
+    "lng": -2.1,
+    "radioAproxKm": 0.9,
+    "descripcion": "Catálogo orientativo Cuenca. Coto intensivo · permiso + licencia. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Coto intensivo: permiso del día + licencia CLM. Sociedad San Rafael."
+    ],
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "coto_intensivo_la_torre",
+    "nombre": "Coto intensivo La Torre (CI-19)",
+    "tipo": "coto",
+    "estadoZona": "acotada",
+    "vocacionOficial": "Coto intensivo · trucha arcoíris",
+    "rio": "Coto intensivo La Torre (CI-19)",
+    "municipio": "Cuenca",
+    "lat": 40.055,
+    "lng": -2.16,
+    "radioAproxKm": 0.9,
+    "descripcion": "Catálogo orientativo Cuenca. Coto intensivo · permiso + licencia. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Coto intensivo: Club Deportivo de Caza y Tiro de Cuenca. Permiso + licencia."
+    ],
+    "especies": [
+      "trucha_arcoiris",
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "refugio_arroyo_de_la_herreria",
+    "nombre": "Refugio Arroyo de la Herrería",
+    "tipo": "refugio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Refugio de pesca",
+    "rio": "Refugio Arroyo de la Herrería",
+    "municipio": "Zafrilla",
+    "lat": 40.28,
+    "lng": -1.72,
+    "radioAproxKm": 2.0,
+    "descripcion": "Catálogo orientativo Cuenca. No pescable. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Refugio de pesca (Orden de vedas / Anexo II): pesca y baño prohibidos."
+    ],
+    "especies": [],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Júcar",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "vedado_rio_cuervo_nacimiento",
+    "nombre": "Vedado Río Cuervo (nacimiento)",
+    "tipo": "refugio",
+    "estadoZona": "vedada",
+    "vocacionOficial": "Vedado",
+    "rio": "Vedado Río Cuervo (nacimiento)",
+    "municipio": "Vega del Codorno",
+    "lat": 40.425,
+    "lng": -1.88,
+    "radioAproxKm": 1.5,
+    "descripcion": "Catálogo orientativo Cuenca. No pescable. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Vedado: nacimiento del Cuervo hasta puente Tragacete–Masegosa. Pesca prohibida."
+    ],
+    "especies": [],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Tajo / Guadiela",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "rio_cabriel_cristinas",
+    "nombre": "Río Cabriel · Cristinas – Puente Vieja",
+    "tipo": "rio",
+    "estadoZona": "libre",
+    "vocacionOficial": "Truchera / ciprinícola",
+    "rio": "Río Cabriel · Cristinas – Puente Vieja",
+    "municipio": "Villora",
+    "lat": 39.9,
+    "lng": -1.55,
+    "radioAproxKm": 2.5,
+    "descripcion": "Catálogo orientativo Cuenca. Aguas libres · régimen especial. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "En veda de trucha: ciprínidos con cebo vegetal y anzuelo sin arponcillo (6,7 km).",
+      "Barbos: solo sin muerte. Confirma señalización de cotos especiales cercanos."
+    ],
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Cabriel",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "laguna_del_marquesado",
+    "nombre": "Laguna del Marquesado",
+    "tipo": "embalse",
+    "estadoZona": "libre",
+    "vocacionOficial": "Truchera",
+    "rio": "Laguna del Marquesado",
+    "municipio": "Laguna del Marquesado",
+    "lat": 40.098,
+    "lng": -1.595,
+    "radioAproxKm": 0.6,
+    "descripcion": "Catálogo orientativo Cuenca. Aguas libres · apertura trucha 1 jun. Confirma visor JCCM / Orden 20/2026.",
+    "avisos": [
+      "Apertura de trucha retrasada al 1 de junio. PORN: prohibidos patos / flotadores adaptados al cuerpo.",
+      "Trucha: solo sin muerte."
+    ],
+    "especies": [
+      "trucha_comun"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "trucha_arcoiris": [
+        "marzo",
+        "abril",
+        "mayo",
+        "octubre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "carpa": [
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Cabriel",
+    "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  }
+]

@@ -62,6 +62,17 @@ for (const n of [
   if (!co.includes(n)) fail(`cordoba/config sin ${n}`);
 }
 
+const cu = read("src/provincias/cuenca/config.ts");
+for (const n of [
+  "coberturaCartografica",
+  "No es veda automática",
+  "JCCM",
+  "urlVisor",
+  "Orden 20/2026",
+]) {
+  if (!cu.includes(n)) fail(`cuenca/config sin ${n}`);
+}
+
 const svc = read("src/services/consultaPescaService.ts");
 for (const n of [
   "Sin tramo en el catálogo",

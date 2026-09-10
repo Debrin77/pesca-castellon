@@ -113,7 +113,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   });
 
   const sitiosFaciles = useMemo(() => {
-    const todos = sitiosFacilesDe(provincia.id as "castellon" | "sevilla" | "cordoba");
+    const todos = sitiosFacilesDe(provincia.id as "castellon" | "sevilla" | "cordoba" | "cuenca");
     if (!permiteCosta) return todos.filter((s) => s.ambito === "continental");
     return todos.filter((s) => s.ambito === medio);
   }, [provincia.id, medio, permiteCosta]);
