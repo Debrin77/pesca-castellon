@@ -6,7 +6,9 @@ import {
   temporadaTruchaAbierta,
 } from "../data/normativa2026";
 import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo } from "../provincias/sevilla/normativa";
+import { avisosPorNotaAnexoClm } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { distanciaKm } from "./geoService";
 import {
   buscarPoligonoIcv,
@@ -185,9 +187,11 @@ function evaluarTramo(
   fecha: Date
 ): ConsultaPesca {
   const provincia = getProvinciaActiva();
-  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
+  const esAndalucia = esProvinciaAndalucia(provincia.id);
+  const esClm = esProvinciaCastillaLaMancha(provincia.id);
+  // OSM / catálogo CLM no es geometría oficial del visor JCCM → aproximada.
   const confianza: ConsultaPesca["confianza"] =
-    fuenteGeometria === "poligono_icv" ? "oficial" : "aproximada";
+    fuenteGeometria === "poligono_icv" && !esClm ? "oficial" : "aproximada";
   const salmonicola = /salmon/i.test(t.vocacion);
   const truchaOk = temporadaTruchaAbierta(fecha);
   const nota = notaDias(t.notaAnexo);
@@ -203,21 +207,29 @@ function evaluarTramo(
     permisos.push(
       esAndalucia
         ? "Límite según polígono oficial DERA / Junta de Andalucía (Orden 13/01/2023), no un círculo alrededor del centroide."
-        : "Límite según polígono oficial ICV (no un círculo alrededor del centroide)."
+        : esClm
+          ? "Límite según catálogo orientativo de la app (OSM + Orden 20/2026). Confirma el visor JCCM y el cartel."
+          : "Límite según polígono oficial ICV (no un círculo alrededor del centroide)."
     );
   } else {
     restricciones.push(
       esAndalucia
         ? "Este tramo no tiene polígono DERA: usamos el radio orientativo alrededor del centro. Mira la señalización."
-        : "Este tramo ZPL/VP aún no tiene polígono ICV: usamos el radio del anexo I alrededor del centroide. En la orilla exacta puede haber un error de decenas de metros."
+        : esClm
+          ? "Este tramo usa radio orientativo (sin polígono fino en la app). Confirma visor JCCM y cartel."
+          : "Este tramo ZPL/VP aún no tiene polígono ICV: usamos el radio del anexo I alrededor del centroide. En la orilla exacta puede haber un error de decenas de metros."
     );
   }
 
-  if (esAndalucia) {
+  if (esAndalucia || esClm) {
     const ficha = t.fichaId
       ? (provincia.zones as { id: string; avisos?: string[] }[]).find((z) => z.id === t.fichaId)
       : undefined;
-    const avisosFicha = ficha?.avisos?.length ? ficha.avisos : avisosPorNotaAnexo(t.notaAnexo);
+    const avisosFicha = ficha?.avisos?.length
+      ? ficha.avisos
+      : esClm
+        ? avisosPorNotaAnexoClm(t.notaAnexo)
+        : avisosPorNotaAnexo(t.notaAnexo);
     for (const a of avisosFicha) {
       if (!restricciones.includes(a)) restricciones.push(a);
     }

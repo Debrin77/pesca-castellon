@@ -10,7 +10,9 @@ import {
 } from "../data/normativaMaritima";
 import { HORARIO_LEGAL_PESCA } from "../data/normativa2026";
 import { HORARIO_ORIENTATIVO_ANDALUCIA } from "../provincias/sevilla/normativa";
+import { HORARIO_LEGAL_CLM } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { GRAO_CASTELLON, OrtoOcasoDia, obtenerOrtoOcaso } from "./weatherService";
 
 export type AmbitoHorario = "continental" | "maritimo";
@@ -67,7 +69,9 @@ export function ajustarHoraTxt(hhmm: string, deltaHoras: number): string {
 
 export function normaContinentalTxt(provinciaId?: string): string {
   const id = provinciaId ?? getProvinciaActiva().id;
-  return id === "sevilla" || id === "cordoba" ? HORARIO_ORIENTATIVO_ANDALUCIA : HORARIO_LEGAL_PESCA;
+  if (esProvinciaAndalucia(id)) return HORARIO_ORIENTATIVO_ANDALUCIA;
+  if (esProvinciaCastillaLaMancha(id)) return HORARIO_LEGAL_CLM;
+  return HORARIO_LEGAL_PESCA;
 }
 
 export function construirAvisoHorario(args: {

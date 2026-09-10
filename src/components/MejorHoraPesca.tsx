@@ -3,7 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 import { HORARIO_LEGAL_PESCA } from "../data/normativa2026";
 import { HORARIO_LEGAL_ORILLA_MAR } from "../data/normativaMaritima";
 import { HORARIO_ORIENTATIVO_ANDALUCIA } from "../provincias/sevilla/normativa";
+import { HORARIO_LEGAL_CLM } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { COLORS, RADIUS } from "../theme";
 
 export type MejorHora = {
@@ -28,12 +30,15 @@ export default function MejorHoraPesca({ especie, ambito = "continental" }: Prop
   const h = especie.mejorHora;
   if (!h && !especie.ventanas) return null;
 
+  const id = getProvinciaActiva().id;
   const horarioLegal =
     ambito === "maritimo"
       ? HORARIO_LEGAL_ORILLA_MAR
-      : getProvinciaActiva().id === "sevilla" || getProvinciaActiva().id === "cordoba"
+      : esProvinciaAndalucia(id)
         ? HORARIO_ORIENTATIVO_ANDALUCIA
-        : HORARIO_LEGAL_PESCA;
+        : esProvinciaCastillaLaMancha(id)
+          ? HORARIO_LEGAL_CLM
+          : HORARIO_LEGAL_PESCA;
 
   return (
     <View

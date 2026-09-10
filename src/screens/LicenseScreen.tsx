@@ -25,11 +25,17 @@ import {
   REGLAS_GENERALES_ANDALUCIA,
   textoVigenciaNormativaAndalucia,
 } from "../provincias/sevilla/normativa";
+import {
+  CHECKLIST_ANTES_DE_PESCAR_CLM,
+  REGLAS_GENERALES_CLM,
+  textoVigenciaNormativaClm,
+} from "../provincias/cuenca/normativa";
 import TemporadaBanner from "../components/TemporadaBanner";
 import PescaRecBanner from "../components/PescaRecBanner";
 import { infoPermisoCoto } from "../data/permisosCoto";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
 import {
   diasHastaCaducidad,
@@ -66,15 +72,26 @@ function avisar(titulo: string, mensaje: string) {
 export default function LicenseScreen() {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
+  const esAndalucia = esProvinciaAndalucia(provincia.id);
+  const esClm = esProvinciaCastillaLaMancha(provincia.id);
   const soloContinental = provincia.continentalOnly;
   const checklist = provincia.checklistAntesDePescar.length
     ? provincia.checklistAntesDePescar
     : esAndalucia
       ? CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA
-      : CHECKLIST_ANTES_DE_PESCAR;
-  const reglas = esAndalucia ? REGLAS_GENERALES_ANDALUCIA : REGLAS_GENERALES;
-  const vigencia = esAndalucia ? textoVigenciaNormativaAndalucia() : textoVigenciaNormativa();
+      : esClm
+        ? CHECKLIST_ANTES_DE_PESCAR_CLM
+        : CHECKLIST_ANTES_DE_PESCAR;
+  const reglas = esAndalucia
+    ? REGLAS_GENERALES_ANDALUCIA
+    : esClm
+      ? REGLAS_GENERALES_CLM
+      : REGLAS_GENERALES;
+  const vigencia = esAndalucia
+    ? textoVigenciaNormativaAndalucia()
+    : esClm
+      ? textoVigenciaNormativaClm()
+      : textoVigenciaNormativa();
   const fuente = provincia.fuenteNormativa;
   const [licencias, setLicencias] = useState<LicenciaGuardada[]>([]);
   const [tipo, setTipo] = useState<TipoLicencia>("continental");

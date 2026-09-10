@@ -410,7 +410,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={costa ? "mar" : "bosque"}
-          pescaWms={provincia.id === "sevilla" || provincia.id === "cordoba" ? "rediam" : "icv"}
+          pescaWms={
+            provincia.id === "sevilla" || provincia.id === "cordoba"
+              ? "rediam"
+              : provincia.id === "cuenca"
+                ? "none"
+                : "icv"
+          }
           onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
           onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
         >

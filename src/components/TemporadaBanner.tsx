@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { resumenTemporadaActual } from "../services/vedaService";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
+import { periodoTruchaCuencaAbierto } from "../provincias/cuenca/normativa";
 import { COLORS, RADIUS, SHADOW_SOFT } from "../theme";
 
 interface Props {
@@ -12,7 +14,7 @@ interface Props {
 export default function TemporadaBanner({ compact }: Props) {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
+  if (esProvinciaAndalucia(provincia.id)) {
     const barboOk = periodoBarboAbierto();
     const bogaOk = periodoBogaAbierto();
     const alerta = !barboOk || !bogaOk;
@@ -26,6 +28,30 @@ export default function TemporadaBanner({ compact }: Props) {
           Barbo (captura y suelta): {barboOk ? "hábil (1 jul–25 feb)" : "veda (26 feb–30 jun)"}. Boga
           (captura y suelta): {bogaOk ? "hábil (1 may–31 ene)" : "veda (1 feb–30 abr)"}. Refugios
           Anexo IV: pesca prohibida. Tenca y cacho: no se pescan.
+        </Text>
+        {!compact && (
+          <TouchableOpacity
+            onPress={() => Linking.openURL(provincia.fuenteNormativa.urlOrden)}
+            accessibilityRole="link"
+          >
+            <Text style={styles.link}>Ver fuente normativa →</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
+
+  if (esProvinciaCastillaLaMancha(provincia.id)) {
+    const abierta = periodoTruchaCuencaAbierto();
+    return (
+      <View style={[styles.box, abierta ? styles.boxOk : styles.boxOff, compact && styles.compact]}>
+        <Text style={styles.kicker}>Orden 20/2026 · {provincia.nombre} (CLM)</Text>
+        <Text style={[styles.title, abierta ? styles.titleOk : styles.titleOff]}>
+          {abierta ? "Trucheras en temporada" : "Trucheras fuera de periodo"}
+        </Text>
+        <Text style={styles.body}>
+          Trucha: solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6).
+          Aguas no trucheras: caña todo el año con cebos y cupos de la Orden. Confirma visor JCCM.
         </Text>
         {!compact && (
           <TouchableOpacity

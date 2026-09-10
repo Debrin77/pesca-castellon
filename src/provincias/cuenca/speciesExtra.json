@@ -1,0 +1,92 @@
+[
+  {
+    "id": "cacho",
+    "nombre": "Cacho",
+    "nombreCientifico": "Squalius spp.",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Autóctono. En el Júcar desde la presa de Alarcón hasta la salida de la provincia de Cuenca: devolución inmediata obligatoria (Orden 20/2026 art. 7.C.4.3). Cacho del Mediterráneo: solo sin muerte en todo tipo de aguas.",
+    "tallaOficial": "Sin muerte en el tramo Alarcón→salida provincia; resto según Anexo I (talla 10 cm donde se autorice).",
+    "cupo": "0 en tramo Alarcón–salida; confirma Orden vigente.",
+    "mejoresMeses": ["abril", "mayo", "junio"],
+    "ventanas": "Mañanas en corriente suave",
+    "mejorHora": {
+      "resumen": "Más probable a media mañana en tablas.",
+      "verano": "7:00–11:30.",
+      "invierno": "10:00–14:00.",
+      "noche": "No."
+    },
+    "habitats": "Júcar medio-bajo conquense, Cabriel, afluentes",
+    "senuelosClave": ["Masa fina", "Maíz pequeño", "Ninfa ligera"],
+    "normativaResumen": "Desde presa de Alarcón hasta salida de provincia: sin muerte obligatoria.",
+    "normativaEspecial": "⚠️ CUENCA: cacho en Júcar (presa Alarcón → salida provincia) — devolución inmediata viva (art. 7.C.4.3). Cacho del Mediterráneo: solo sin muerte en todas las aguas.",
+    "equipo": {
+      "cana": "Coup / spinning ultraligero",
+      "carrete": "2000",
+      "linea": "0,12-0,16 mm",
+      "senuelosCebos": ["Masa", "Maíz"],
+      "tecnica": "Pesca fina; suelta inmediata en el tramo regulado."
+    }
+  },
+  {
+    "id": "boga",
+    "nombre": "Boga",
+    "nombreCientifico": "Pseudochondrostoma spp.",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Autóctona (boga de río / meridional según cuenca). Talla mínima 10 cm donde se autorice extracción. Presente en Júcar y afluentes conquenses.",
+    "tallaOficial": "10 cm donde se autorice extracción.",
+    "cupo": "Según Orden vigente.",
+    "mejoresMeses": ["abril", "mayo", "junio"],
+    "ventanas": "Corriente suave; primavera",
+    "mejorHora": {
+      "resumen": "Media mañana en tablas limpias.",
+      "verano": "7:00–11:30.",
+      "invierno": "10:00–14:00.",
+      "noche": "No."
+    },
+    "habitats": "Júcar, Cabriel, Guadazaón",
+    "senuelosClave": ["Masa", "Maíz pequeño", "Asticot si está permitido"],
+    "normativaResumen": "Autóctona. Talla 10 cm donde aplique. Licencia CLM.",
+    "normativaEspecial": "⚠️ CLM: boga / madrilla / cachos — talla 10 cm donde se autorice extracción (Orden de vedas).",
+    "equipo": {
+      "cana": "Coup / feeder fino",
+      "carrete": "2000-3000",
+      "linea": "0,12-0,16 mm",
+      "senuelosCebos": ["Masa", "Maíz"],
+      "tecnica": "Fondo o deriva en corriente suave."
+    }
+  },
+  {
+    "id": "percasol",
+    "nombre": "Perca sol",
+    "nombreCientifico": "Lepomis gibbosus",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐠",
+    "notas": "Invasora con sacrificio inmediato. Presente en algunos embalses y balsas.",
+    "tallaOficial": "Sin talla. Sacrificio inmediato.",
+    "cupo": "No devolver.",
+    "mejoresMeses": ["mayo", "junio", "julio"],
+    "ventanas": "Orillas someras",
+    "mejorHora": {
+      "resumen": "Día completo en orillas.",
+      "verano": "Todo el día.",
+      "invierno": "Poco activa.",
+      "noche": "Horario diurno."
+    },
+    "habitats": "Orillas vegetadas de embalses",
+    "senuelosClave": ["Microjig", "Gusano"],
+    "normativaResumen": "Invasora CLM: sacrificio inmediato.",
+    "normativaEspecial": "⚠️ CLM: perca-sol — sacrificio inmediato, no devolver.",
+    "equipo": {
+      "cana": "Ultraligera",
+      "carrete": "1000",
+      "linea": "0,10-0,14 mm",
+      "senuelosCebos": ["Microseñuelos"],
+      "tecnica": "No devolver."
+    }
+  }
+]

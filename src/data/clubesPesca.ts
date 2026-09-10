@@ -82,6 +82,27 @@ export const ENLACES_APUNTARSE: EnlaceApuntarse[] = [
     provinciaId: "cordoba",
   },
   {
+    id: "cu-diana-licencia",
+    titulo: "Licencia de pesca CLM (DIANA)",
+    descripcion: "Tramita o renueva la licencia de pesca de Castilla-La Mancha.",
+    url: "https://diana.castillalamancha.es/diana/aInicio",
+    provinciaId: "cuenca",
+  },
+  {
+    id: "cu-permisos-cotos",
+    titulo: "Permisos cotos especiales JCCM",
+    descripcion: "Venta en línea de permisos de cotos especiales de Castilla-La Mancha.",
+    url: "https://ventaenlinea.castillalamancha.es/ventaenlinea/publico/tiendas/tiendasSOCO.jsf",
+    provinciaId: "cuenca",
+  },
+  {
+    id: "cu-caza-pesca-portal",
+    titulo: "Portal Caza y Pesca CLM",
+    descripcion: "Orden de vedas, visores, escenarios y descargas oficiales.",
+    url: "https://cazaypesca.castillalamancha.es/pesca/ejercicio-pesca",
+    provinciaId: "cuenca",
+  },
+  {
     id: "nac-fepyc",
     titulo: "FEPyC · calendario nacional",
     descripcion: "Campeonatos de España. Inscripción vía federación autonómica.",
@@ -201,6 +222,32 @@ export const CLUBES_PESCA: ClubPesca[] = [
     localidad: "Iznájar / Rute",
     url: "https://fapd.org/",
     notas: "Consulta la delegación provincial para el club más cercano.",
+  },
+
+  /* Cuenca — Castilla-La Mancha */
+  {
+    id: "cu-pescadores-conquenses",
+    nombre: "Asoc. Provincial Pescadores Deportivos Conquenses",
+    provinciaId: "cuenca",
+    localidad: "Cuenca",
+    url: "https://cazaypesca.castillalamancha.es/pesca/cursos-masas-agua/escenarios-pesca",
+    notas: "Concesionaria del coto intensivo Puente Romano (CI-9).",
+  },
+  {
+    id: "cu-san-rafael",
+    nombre: "Grupo de Pesca San Rafael",
+    provinciaId: "cuenca",
+    localidad: "Cuenca",
+    url: "https://cazaypesca.castillalamancha.es/pesca/cursos-masas-agua/escenarios-pesca",
+    notas: "Coto intensivo El Chantre (CI-10).",
+  },
+  {
+    id: "cu-caza-tiro",
+    nombre: "Club Deportivo de Caza y Tiro de Cuenca",
+    provinciaId: "cuenca",
+    localidad: "Cuenca",
+    url: "https://cazaypesca.castillalamancha.es/pesca/cursos-masas-agua/escenarios-pesca",
+    notas: "Coto intensivo La Torre (CI-19).",
   },
 ];
 

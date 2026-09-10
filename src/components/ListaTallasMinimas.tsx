@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import orilla from "../data/especiesOrilla.json";
 import { tallaDestacada } from "./TarjetaEspecie";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { COLORS } from "../theme";
 
 type Fila = { id: string; nombre: string; sp: any };
@@ -47,16 +48,20 @@ function FilaTalla({ fila, onPress }: { fila: Fila; onPress?: () => void }) {
 
 export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: string) => void }) {
   const provincia = getProvinciaActiva();
-  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
+  const esAndalucia = esProvinciaAndalucia(provincia.id);
+  const esClm = esProvinciaCastillaLaMancha(provincia.id);
+  const soloContinental = esAndalucia || esClm;
 
   return (
     <View>
       <Text style={styles.aviso}>
         {esAndalucia
           ? `Cifras según Orden 13/01/2023 (Andalucía) y fichas de ${provincia.nombre}. INV = invasora / no objeto de pesca. Guión = sin talla de retención.`
-          : "Cifra = talla o peso mínimo para retener. SM = sin muerte. INV = invasora (no devolver). Guión = el anexo no fija número. Lisa: 16 cm en mar, 25 cm en río."}
+          : esClm
+            ? `Cifras según Orden 20/2026 (Castilla-La Mancha) y fichas de ${provincia.nombre}. SM = sin muerte. INV = invasora (sacrificio). Guión = sin talla de retención.`
+            : "Cifra = talla o peso mínimo para retener. SM = sin muerte. INV = invasora (no devolver). Guión = el anexo no fija número. Lisa: 16 cm en mar, 25 cm en río."}
       </Text>
-      {!esAndalucia ? (
+      {!soloContinental ? (
         <>
           <Text style={styles.bloque}>Costa · RD 560/1995 anexo II Mediterráneo</Text>
           {ordenar(filasCosta()).map((f) => (
@@ -65,7 +70,11 @@ export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: str
         </>
       ) : null}
       <Text style={styles.bloque}>
-        {esAndalucia ? "Ríos y embalses · Orden 13/01/2023 (Junta Andalucía)" : "Ríos y embalses · Orden 30/2016"}
+        {esAndalucia
+          ? "Ríos y embalses · Orden 13/01/2023 (Junta Andalucía)"
+          : esClm
+            ? "Ríos y embalses · Orden 20/2026 (JCCM)"
+            : "Ríos y embalses · Orden 30/2016"}
       </Text>
       {ordenar(filasRio()).map((f) => (
         <FilaTalla key={`r-${f.id}`} fila={f} onPress={onEspecie ? () => onEspecie(f.id) : undefined} />

@@ -72,9 +72,20 @@ if (!cordoba.includes("speciesExtra") || !cordoba.includes("speciesOverrides")) 
   fail("Córdoba debe construir catálogo con overrides + extras");
 }
 
+const cuenca = read("src/provincias/cuenca/config.ts");
+if (!cuenca.includes("continentalOnly: true")) {
+  fail("Cuenca debe ser continentalOnly");
+}
+if (!cuenca.includes("speciesExtra") || !cuenca.includes("speciesOverrides")) {
+  fail("Cuenca debe construir catálogo con overrides + extras");
+}
+if (/from\s+[\"'].*species\.json[\"']/.test(cuenca)) {
+  fail("Cuenca no debe importar species.json de Castellón");
+}
+
 const pkg = read("package.json");
 if (!pkg.includes("assert_especies_continental_equivalente.mjs")) {
   fail("package.json assert debe incluir assert_especies_continental_equivalente.mjs");
 }
 
-console.log("OK: Castellón + Sevilla + Córdoba · especies continentales con CTA equivalente a costa");
+console.log("OK: Castellón + Sevilla + Córdoba + Cuenca · especies continentales con CTA equivalente a costa");

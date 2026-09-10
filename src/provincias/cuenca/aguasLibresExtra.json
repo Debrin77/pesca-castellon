@@ -1,0 +1,42 @@
+[
+  {
+    "id": "embalse_de_la_toba",
+    "nombre": "Embalse de La Toba",
+    "lat": 40.223,
+    "lng": -1.955,
+    "radioKm": 1.8,
+    "nota": "En veda de trucha: ciprínidos con cebo vegetal y anzuelo sin arponcillo; cebado vegetal autorizado."
+  },
+  {
+    "id": "rio_jucar_valdecabras",
+    "nombre": "Río Júcar · Valdecabras – Arroyo de la Hoz",
+    "lat": 40.145,
+    "lng": -2.05,
+    "radioKm": 3.5,
+    "nota": "Tramo con régimen especial ciprínidos en veda de trucha (cebo vegetal, anzuelo sin arponcillo)."
+  },
+  {
+    "id": "rio_jucar_capital",
+    "nombre": "Río Júcar · Cuenca capital",
+    "lat": 40.0705,
+    "lng": -2.1374,
+    "radioKm": 1.2,
+    "nota": "Tramo urbano: mira ordenanzas y señalización. Barbos: solo sin muerte."
+  },
+  {
+    "id": "rio_cabriel_cristinas",
+    "nombre": "Río Cabriel · Cristinas – Puente Vieja",
+    "lat": 39.9,
+    "lng": -1.55,
+    "radioKm": 2.5,
+    "nota": "En veda de trucha: ciprínidos con cebo vegetal y anzuelo sin arponcillo (6,7 km)."
+  },
+  {
+    "id": "laguna_del_marquesado",
+    "nombre": "Laguna del Marquesado",
+    "lat": 40.098,
+    "lng": -1.595,
+    "radioKm": 0.6,
+    "nota": "Apertura de trucha retrasada al 1 de junio. PORN: prohibidos patos / flotadores adaptados al cuerpo."
+  }
+]

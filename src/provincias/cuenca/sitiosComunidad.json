@@ -1,0 +1,83 @@
+{
+  "aviso": "Lugares citados con frecuencia en guías y foros de pesca de Cuenca / Castilla-La Mancha (Buendía, Alarcón, Contreras, Serranía). No son la Orden de vedas ni un GPS secreto. El nivel del embalse (SAIH CHJ) y los cotos cambian el sitio. Vedados y refugios no llevan recomendaciones.",
+  "porTramo": {
+    "cue-embalse_de_buendia": [
+      {
+        "nombre": "Presa y orillas hacia Alcocer (vaso con cupo de barbos)",
+        "especies": "Bass, lucio, lucioperca, carpa; barbos (cupo 6)",
+        "cuando": "Primavera y otoño; mira nivel",
+        "detalle": "Mar de Castilla conquense. Barbos con cupo solo presa→puente nuevo Alcocer. Invasoras: sacrificio. Desinfecta material."
+      },
+      {
+        "nombre": "Colas y entrantes con cobertura (spinning)",
+        "especies": "Black bass, lucio",
+        "cuando": "Alba y atardecer",
+        "detalle": "Big water: el nivel manda. No copies orillas de Alarcón (otro vaso, otras reglas de cebo)."
+      }
+    ],
+    "cue-embalse_de_alarcon": [
+      {
+        "nombre": "Orillas accesibles (Alarcón / cola)",
+        "especies": "Bass, carpa, barbo (cupo 6), cacho (sin muerte)",
+        "cuando": "Primavera-otoño",
+        "detalle": "Restricciones fuertes de cebo (art. 7.C.4.4): sin pez vivo/muerto, sin boilies endurecidos, sin clonks. Cacho desde la presa hacia abajo: devolución inmediata. SAIH CHJ."
+      }
+    ],
+    "cue-embalse_de_contreras": [
+      {
+        "nombre": "Orillas conquenses (Minglanilla / Villargordo)",
+        "especies": "Bass, carpa, barbo (cupo 6)",
+        "cuando": "Primavera; evita saturación de finde",
+        "detalle": "Frontera con CV: licencia CLM en orilla de Cuenca. Barbos con cupo 6. SAIH CHJ."
+      }
+    ],
+    "cue-embalse_de_la_toba": [
+      {
+        "nombre": "Orillas del vaso (Uña / Villalba)",
+        "especies": "Trucha (sin muerte), carpa, barbo (sin muerte)",
+        "cuando": "Periodo hábil trucheras; ciprínidos también en veda con cebo vegetal",
+        "detalle": "Régimen especial ciprínidos en veda de trucha. Cebado vegetal autorizado."
+      }
+    ],
+    "cue-laguna_de_una": [
+      {
+        "nombre": "Orilla peatonal (sin flotadores)",
+        "especies": "Carpa, tenca, barbo (sin muerte)",
+        "cuando": "Primavera-verano",
+        "detalle": "PORN Serranía: prohibidos patos, barquitos cebadores y objetos flotantes. Solo cebado vegetal."
+      }
+    ],
+    "cue-rio_jucar_capital": [
+      {
+        "nombre": "Tramo urbano de Cuenca",
+        "especies": "Barbo (sin muerte), cacho, carpa",
+        "cuando": "Mañanas entre semana",
+        "detalle": "Accesible; mira ordenanzas. Cebado vegetal autorizado Valdecabras–Moscas."
+      }
+    ],
+    "cue-rio_jucar_valdecabras": [
+      {
+        "nombre": "Valdecabras – Arroyo de la Hoz",
+        "especies": "Trucha (sin muerte), barbo (sin muerte)",
+        "cuando": "Periodo hábil trucheras",
+        "detalle": "Régimen especial ciprínidos en veda. Anzuelos sin arponcillo en trucheras."
+      }
+    ],
+    "cue-rio_cabriel_cristinas": [
+      {
+        "nombre": "Cristinas – Puente Vieja",
+        "especies": "Trucha (sin muerte), barbo (sin muerte)",
+        "cuando": "Periodo hábil; ciprínidos en veda con cebo vegetal",
+        "detalle": "6,7 km de régimen especial. Confirma cotos especiales cercanos."
+      }
+    ],
+    "cue-embalse_de_bolarque": [
+      {
+        "nombre": "Orilla conquense / límite Guadalajara",
+        "especies": "Bass, lucio, carpa",
+        "cuando": "Primavera-otoño",
+        "detalle": "Confirma provincia de la orilla. Barbos: sin muerte en Cuenca fuera de Buendía/Alarcón/Contreras."
+      }
+    ]
+  }
+}

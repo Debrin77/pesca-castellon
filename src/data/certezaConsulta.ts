@@ -1,4 +1,5 @@
 import type { ConsultaPesca } from "../services/consultaPescaService";
+import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 
 export type NivelCerteza = "oficial" | "aproximada" | "orientativo_costa";
 
@@ -33,8 +34,10 @@ export function certezaDeConsulta(
     };
   }
 
+  const esAndalucia = esProvinciaAndalucia(opts?.provinciaId);
+  const esClm = esProvinciaCastillaLaMancha(opts?.provinciaId);
+
   if (c.confianza === "oficial" && c.fuenteGeometria === "poligono_icv") {
-    const esAndalucia = opts?.provinciaId === "sevilla" || opts?.provinciaId === "cordoba";
     return {
       nivel: "oficial",
       sello: "OFICIAL",
@@ -46,18 +49,31 @@ export function certezaDeConsulta(
     };
   }
 
+  if (c.fuenteGeometria === "poligono_icv" && esClm) {
+    return {
+      nivel: "aproximada",
+      sello: "APROXIMADO",
+      etiqueta: "Catálogo app · OSM / Orden CLM",
+      aviso: "No es el visor oficial JCCM. Confirma cartel y Orden 20/2026.",
+      a11y: "Consulta sobre geometría orientativa de la app para Castilla-La Mancha. Confirma el visor JCCM.",
+    };
+  }
+
   if (c.fuenteGeometria === "ninguna") {
-    const esAndalucia = opts?.provinciaId === "sevilla" || opts?.provinciaId === "cordoba";
     return {
       nivel: "aproximada",
       sello: "APROXIMADO",
       etiqueta: "Fuera del catálogo geométrico",
       aviso: esAndalucia
         ? "No es veda automática. Puede ser agua libre (art. 5.2): confirma que no es refugio y mira el cartel."
-        : "No es veda automática. Este tramo no está dibujado en el mapa: confirma cartel o DOGV.",
+        : esClm
+          ? "No es veda automática. Confirma visor JCCM, Orden de vedas y cartel."
+          : "No es veda automática. Este tramo no está dibujado en el mapa: confirma cartel o DOGV.",
       a11y: esAndalucia
         ? "Punto fuera del catálogo DERA. No es veda automática; el artículo 5.2 puede aplicar. Confirma refugios y señalización."
-        : "Punto fuera del catálogo ICV y del anexo. No es veda automática. Confirma señalización.",
+        : esClm
+          ? "Punto fuera del catálogo de la app. No es veda automática. Confirma visor JCCM y señalización."
+          : "Punto fuera del catálogo ICV y del anexo. No es veda automática. Confirma señalización.",
     };
   }
 
