@@ -136,6 +136,7 @@ for (const n of [
   "portal: true",
   'provinciaId: "castellon"',
   'provinciaId: "sevilla"',
+  'provinciaId: "cordoba"',
   "La Barqueta",
   "Peñíscola",
 ]) {

@@ -25,6 +25,7 @@ function puntoEnRegionMapa(lat, lng, region, margenRelativo = 0.2) {
 
 const sevilla = { latitude: 37.55, longitude: -5.85, latitudeDelta: 1.35, longitudeDelta: 1.35 };
 const castellon = { latitude: 40.05, longitude: -0.02, latitudeDelta: 1.25, longitudeDelta: 1.25 };
+const cordoba = { latitude: 37.95, longitude: -4.75, latitudeDelta: 1.45, longitudeDelta: 1.55 };
 
 let fallos = 0;
 function fail(m) {
@@ -50,6 +51,16 @@ else fail("Sevilla ciudad debería estar en Sevilla");
 
 if (!puntoEnRegionMapa(sevillaCentro.lat, sevillaCentro.lng, castellon)) ok("Sevilla ciudad fuera de Castellón");
 else fail("Sevilla ciudad NO debe contar como Castellón");
+
+const cordobaCentro = { lat: 37.88, lng: -4.78 };
+if (puntoEnRegionMapa(cordobaCentro.lat, cordobaCentro.lng, cordoba)) ok("Córdoba ciudad dentro de Córdoba");
+else fail("Córdoba ciudad debería estar en Córdoba");
+
+if (!puntoEnRegionMapa(cordobaCentro.lat, cordobaCentro.lng, castellon)) ok("Córdoba ciudad fuera de Castellón");
+else fail("Córdoba ciudad NO debe contar como Castellón");
+
+if (!puntoEnRegionMapa(grao.lat, grao.lng, cordoba)) ok("Grao fuera de Córdoba");
+else fail("Grao NO debe contar como Córdoba");
 
 const especiesSrc = readFileSync(join(root, "src/screens/EspeciesScreen.tsx"), "utf8");
 if (/usarMiUbicacion\(\);\s*\n\s*\}, \[\]/.test(especiesSrc) || /useEffect\(\(\) => \{\s*usarMiUbicacion\(\);/.test(especiesSrc)) {

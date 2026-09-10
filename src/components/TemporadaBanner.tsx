@@ -12,7 +12,7 @@ interface Props {
 export default function TemporadaBanner({ compact }: Props) {
   const provincia = getProvinciaActiva();
 
-  if (provincia.id === "sevilla") {
+  if (provincia.id === "sevilla" || provincia.id === "cordoba") {
     const barboOk = periodoBarboAbierto();
     const bogaOk = periodoBogaAbierto();
     const alerta = !barboOk || !bogaOk;

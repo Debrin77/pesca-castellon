@@ -113,7 +113,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   });
 
   const sitiosFaciles = useMemo(() => {
-    const todos = sitiosFacilesDe(provincia.id as "castellon" | "sevilla");
+    const todos = sitiosFacilesDe(provincia.id as "castellon" | "sevilla" | "cordoba");
     if (!permiteCosta) return todos.filter((s) => s.ambito === "continental");
     return todos.filter((s) => s.ambito === medio);
   }, [provincia.id, medio, permiteCosta]);
@@ -509,9 +509,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       value={latTxt}
                       onChangeText={setLatTxt}
                       keyboardType="default"
-                      placeholder={
-                        provincia.id === "sevilla" ? '37°45\'55" N' : String(provincia.regionMapa.latitude.toFixed(3))
-                      }
+                      placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
@@ -523,9 +521,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       value={lngTxt}
                       onChangeText={setLngTxt}
                       keyboardType="default"
-                      placeholder={
-                        provincia.id === "sevilla" ? '5°27\'40" O' : String(provincia.regionMapa.longitude.toFixed(3))
-                      }
+                      placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />

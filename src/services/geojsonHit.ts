@@ -1,6 +1,8 @@
 import icv from "../data/icvPescaCastellon.json";
 import sevillaOficial from "../provincias/sevilla/pescaOficial.json";
+import cordobaOficial from "../provincias/cordoba/pescaOficial.json";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esProvinciaAndalucia } from "../provincias/types";
 import { distanciaKm } from "./geoService";
 
 export type CapaIcv = "zpc" | "zrtc" | "zra" | "refugio" | "zpl";
@@ -20,16 +22,20 @@ export interface PoligonoIcv {
 export const FUENTE_ICV =
   "Cartografía ICV (WFS Caza y Pesca) · CC BY 4.0. QGIS puede reexportar el mismo GeoPackage oficial.";
 
-export const FUENTE_DERA_SEVILLA =
+export const FUENTE_DERA_ANDALUCIA =
   "IECA / Junta de Andalucía · DERA 08_10_CotosPesca · CC BY 4.0. Orden 13/01/2023 (BOJA nº 15).";
 
+/** @deprecated alias histórico */
+export const FUENTE_DERA_SEVILLA = FUENTE_DERA_ANDALUCIA;
+
 export function fuentePoligonosOficiales(): string {
-  return getProvinciaActiva().id === "sevilla" ? FUENTE_DERA_SEVILLA : FUENTE_ICV;
+  return esProvinciaAndalucia(getProvinciaActiva().id) ? FUENTE_DERA_ANDALUCIA : FUENTE_ICV;
 }
 
 export function poligonosIcv(): { type: string; properties: PoligonoIcv; geometry: { type: string; coordinates: any } }[] {
   const p = getProvinciaActiva();
   if (p.id === "sevilla") return sevillaOficial.features as any;
+  if (p.id === "cordoba") return cordobaOficial.features as any;
   return icv.features as any;
 }
 

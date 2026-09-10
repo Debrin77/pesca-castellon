@@ -12,7 +12,7 @@ export type SitioFacil = {
   ambito: "continental" | "maritimo";
 };
 
-export const SITIOS_FACILES: Record<"castellon" | "sevilla", SitioFacil[]> = {
+export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba", SitioFacil[]> = {
   castellon: [
     {
       id: "cs-sichar",
@@ -134,8 +134,55 @@ export const SITIOS_FACILES: Record<"castellon" | "sevilla", SitioFacil[]> = {
       ambito: "continental",
     },
   ],
+  cordoba: [
+    {
+      id: "co-guadalmellato",
+      zoneId: "embalse_guadalmellato",
+      nombre: "Embalse del Guadalmellato",
+      lat: 38.048,
+      lng: -4.652,
+      porQue: "El más citado cerca de Córdoba; orillas y parking habituales.",
+      ambito: "continental",
+    },
+    {
+      id: "co-navallana",
+      zoneId: "embalse_de_san_rafael_de_navallana",
+      nombre: "Embalse de San Rafael de Navallana",
+      lat: 37.98435,
+      lng: -4.65164,
+      porQue: "Cerca de la capital; confirma que no pisas el refugio DERA.",
+      ambito: "continental",
+    },
+    {
+      id: "co-iznajar",
+      zoneId: "embalse_de_iznajar",
+      nombre: "Embalse de Iznájar",
+      lat: 37.24204,
+      lng: -4.28606,
+      porQue: "Gran vaso; mira nivel SAIH y medidas de siluro/mejillón.",
+      ambito: "continental",
+    },
+    {
+      id: "co-gq-capital",
+      zoneId: "guadalquivir_cordoba_capital",
+      nombre: "Guadalquivir · Córdoba capital",
+      lat: 37.8765,
+      lng: -4.7795,
+      porQue: "Tramo urbano accesible; mira ordenanzas y azudes.",
+      ambito: "continental",
+    },
+    {
+      id: "co-martin",
+      zoneId: "embalse_martin_gonzalo",
+      nombre: "Embalse de Martín Gonzalo",
+      lat: 38.118,
+      lng: -4.312,
+      porQue: "Embalse menor; buen banco de pruebas para spinning.",
+      ambito: "continental",
+    },
+  ],
 };
 
-export function sitiosFacilesDe(provinciaId: "castellon" | "sevilla"): SitioFacil[] {
+export function sitiosFacilesDe(provinciaId: "castellon" | "sevilla" | "cordoba"): SitioFacil[] {
   return SITIOS_FACILES[provinciaId] ?? [];
 }

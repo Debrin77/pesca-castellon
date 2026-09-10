@@ -1,0 +1,107 @@
+[
+  {
+    "id": "barbo_gitano",
+    "nombre": "Barbo gitano",
+    "nombreCientifico": "Luciobarbus sclateri",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Ciprínido autóctono de Andalucía (cuencas atlánticas del sur). Muy presente en Guadalquivir cordobés, Genil, Guadajoz, Guadiato y colas de embalses (Iznájar, Navallana, Yeguas…). Prefiere corriente moderada y fondos de grava.",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de julio a 25 de febrero.",
+    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
+    "mejorHora": {
+      "resumen": "Más probable por la mañana en tablas de corriente. Pico extra si el agua va un poco teñida tras lluvias.",
+      "verano": "Aprox. 7:00–12:00 y segundo pico 17:00–20:00 en orillas sombreadas.",
+      "invierno": "Aprox. 10:00–15:00, en tablas que den el sol.",
+      "noche": "Poco activo de noche. No se pesca de noche salvo autorización expresa."
+    },
+    "habitats": "Tablas del Genil y Guadajoz, colas de Iznájar y Navallana, azudes del Guadalquivir cordobés",
+    "senuelosClave": [
+      "Pasta o masa de barbo",
+      "Maíz en corriente",
+      "Ninfa pesada a correlona",
+      "Cucharilla pequeña n.º 1-2 donde el tramo permita spinning"
+    ],
+    "normativaResumen": "Autóctono andaluz: captura y suelta (art. 7.2), periodo 1 jul–25 feb. Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: barbo gitano — solo captura y suelta. Periodo hábil 1 de julio a 25 de febrero (veda 26 feb–30 jun).",
+    "equipo": {
+      "cana": "Caña de river/feeder 3.60-3.90 m, acción media, o spinning ligero 2.10-2.40 m",
+      "carrete": "Carrete spinning 3000-4000",
+      "linea": "Nylon 0.18-0.25 mm",
+      "senuelosCebos": ["Lombriz (donde el cebo natural esté permitido)", "Masa/pasta de barbo", "Maíz"],
+      "tecnica": "Pesca a fondo en corriente moderada con feeder o plomada corredera; en embalse, orillas de cola con grava"
+    }
+  },
+  {
+    "id": "boga",
+    "nombre": "Boga del Guadiana",
+    "nombreCientifico": "Pseudochondrostoma willkommii",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "Ciprínido autóctono de cuencas del suroeste ibérico. En Córdoba aparece en afluentes (Guadiato, Guadajoz, Genil) y colas de embalse con algo de corriente. Cardúmenes pegados al fondo.",
+    "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
+    "cupo": "0 de retención. Periodo hábil: 1 de mayo a 31 de enero.",
+    "mejoresMeses": ["abril", "mayo", "junio"],
+    "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
+    "mejorHora": {
+      "resumen": "Más probable a media mañana en tablas con corriente suave y fondo limpio.",
+      "verano": "Aprox. 7:00–11:30; evita el mediodía de calor en orillas sin sombra.",
+      "invierno": "Aprox. 10:00–14:00 en tramos soleados.",
+      "noche": "Poco activa de noche. No se pesca de noche."
+    },
+    "habitats": "Guadiato, Guadajoz, Genil y colas de Iznájar, Yeguas y Retortillo (fuera de refugios)",
+    "senuelosClave": [
+      "Masa fina o pan",
+      "Maíz pequeño",
+      "Asticot / gusano donde el cebo natural esté permitido",
+      "Ninfa ligera a la deriva"
+    ],
+    "normativaResumen": "Autóctona: captura y suelta (art. 7.2), periodo 1 may–31 ene. Licencia continental Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: boga — solo captura y suelta. Periodo hábil 1 de mayo a 31 de enero (veda 1 feb–30 abr).",
+    "equipo": {
+      "cana": "Caña ligera de coup o inglesa 3.6-4.5 m, o feeder fino",
+      "carrete": "Spinning 2000-3000 o pesca al coup",
+      "linea": "Nylon 0.12-0.16 mm",
+      "senuelosCebos": ["Masa", "Pan", "Maíz pequeño", "Asticot si está permitido"],
+      "tecnica": "Pesca fina a fondo o a la deriva en corriente suave; cebado discreto"
+    }
+  },
+  {
+    "id": "alburno",
+    "nombre": "Alburno",
+    "nombreCientifico": "Alburnus alburnus",
+    "categoria": "invasora",
+    "invasora": true,
+    "icono": "🐠",
+    "notas": "Ciprínido introducido/invasor, muy abundante en el Guadalquivir cordobés y en embalses (Iznájar, Navallana, Breña, Guadalmellato…). Forma cardúmenes en superficie; útil como indicador de actividad pero compite con autóctonos.",
+    "tallaOficial": "No es objeto de pesca en Andalucía. Captura fortuita: no devolver.",
+    "cupo": "0 de aprovechamiento. No devolver / no traslocar.",
+    "mejoresMeses": ["abril", "mayo", "junio", "julio", "agosto"],
+    "ventanas": "Todo el día en superficie; mejor con sol y agua templada",
+    "mejorHora": {
+      "resumen": "Activo casi todo el día en superficie y media agua. Pico con sol y brisa suave.",
+      "verano": "Aprox. 8:00–13:00 y 17:00–20:00 pegado a orilla y muelles.",
+      "invierno": "Aprox. 11:00–15:00 en zonas soleadas y remansos.",
+      "noche": "Poco visible de noche. No se pesca de noche."
+    },
+    "habitats": "Guadalquivir en Córdoba, colas y orillas de Iznájar, Navallana, Breña II y Guadalmellato",
+    "senuelosClave": [
+      "Micro spinning / cucharilla n.º 0",
+      "Mosca seca o streamer pequeño",
+      "Pan o masa en superficie",
+      "Vinilo micro shad"
+    ],
+    "normativaResumen": "Andalucía: alburno no es especie objeto de pesca (Orden 13/01/2023). Si entra, no devolver ni traslocar (RD 630/2013). Licencia Junta + seguro RC.",
+    "normativaEspecial": "⚠️ ANDALUCÍA: alburno — no es objeto de pesca. Captura fortuita: no devolver ni traslocar a otras masas.",
+    "equipo": {
+      "cana": "Caña ultraligera de spinning 1.80-2.10 m o caña de coup fina",
+      "carrete": "Spinning 1000-2000",
+      "linea": "Nylon 0.10-0.14 mm o trenzado fino",
+      "senuelosCebos": ["Micro cucharilla", "Pan", "Masa", "Mosca pequeña"],
+      "tecnica": "Pesca fina en superficie o media agua sobre cardúmenes visibles; no traslocar ejemplares"
+    }
+  }
+]

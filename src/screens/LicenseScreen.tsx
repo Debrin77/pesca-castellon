@@ -66,15 +66,15 @@ function avisar(titulo: string, mensaje: string) {
 export default function LicenseScreen() {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const esSevilla = provincia.id === "sevilla";
+  const esAndalucia = provincia.id === "sevilla" || provincia.id === "cordoba";
   const soloContinental = provincia.continentalOnly;
   const checklist = provincia.checklistAntesDePescar.length
     ? provincia.checklistAntesDePescar
-    : esSevilla
+    : esAndalucia
       ? CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA
       : CHECKLIST_ANTES_DE_PESCAR;
-  const reglas = esSevilla ? REGLAS_GENERALES_ANDALUCIA : REGLAS_GENERALES;
-  const vigencia = esSevilla ? textoVigenciaNormativaAndalucia() : textoVigenciaNormativa();
+  const reglas = esAndalucia ? REGLAS_GENERALES_ANDALUCIA : REGLAS_GENERALES;
+  const vigencia = esAndalucia ? textoVigenciaNormativaAndalucia() : textoVigenciaNormativa();
   const fuente = provincia.fuenteNormativa;
   const [licencias, setLicencias] = useState<LicenciaGuardada[]>([]);
   const [tipo, setTipo] = useState<TipoLicencia>("continental");
@@ -157,9 +157,9 @@ export default function LicenseScreen() {
         <Text style={styles.cardTitle}>Permisos de coto</Text>
         <Text style={styles.cardText}>{infoPermisoCoto(provincia.id).comoObtener}</Text>
         <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPtop}</Text>
-        {esSevilla ? (
+        {esAndalucia ? (
           <Text style={[styles.cardText, { marginTop: 8 }]}>
-            En Sevilla (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
+            En {provincia.nombre} (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
             refugios (VP) mandan. Si aparece un coto en cartel, pide el permiso al titular.
           </Text>
         ) : null}
@@ -357,7 +357,7 @@ export default function LicenseScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
-        {esSevilla
+        {esAndalucia
           ? (provincia.species as any[]).map((sp) => (
               <View key={sp.id} style={styles.tallaRow}>
                 <Text style={styles.tallaName}>{sp.nombre}</Text>
@@ -372,7 +372,7 @@ export default function LicenseScreen() {
             ))}
       </View>
 
-      {!esSevilla ? (
+      {!esAndalucia ? (
         <>
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Tasas 2026 (continental)</Text>
@@ -411,10 +411,10 @@ export default function LicenseScreen() {
 
       <TouchableOpacity
         style={styles.ctaButton}
-        onPress={() => Linking.openURL(esSevilla ? fuente.urlLicencia : LICENCIA_INFO.tramiteOnline)}
+        onPress={() => Linking.openURL(esAndalucia ? fuente.urlLicencia : LICENCIA_INFO.tramiteOnline)}
       >
         <Text style={styles.ctaText}>
-          {esSevilla
+          {esAndalucia
             ? "Tramitar licencia continental (Junta de Andalucía)"
             : "Tramitar licencia continental (Sede GVA)"}
         </Text>
@@ -434,11 +434,11 @@ export default function LicenseScreen() {
         onPress={() => Linking.openURL(fuente.urlOrden || FUENTE_NORMATIVA.urlOrden)}
       >
         <Text style={styles.ctaTextSecondary}>
-          {esSevilla ? "Consultar normativa / orden de vedas" : "Consultar resolución de tramos (DOGV)"}
+          {esAndalucia ? "Consultar normativa / orden de vedas" : "Consultar resolución de tramos (DOGV)"}
         </Text>
       </TouchableOpacity>
 
-      {!esSevilla ? (
+      {!esAndalucia ? (
         <TouchableOpacity
           style={styles.ctaButtonSecondary}
           onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}

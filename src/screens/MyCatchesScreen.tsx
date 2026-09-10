@@ -661,7 +661,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           value={latCaptura}
                           onChangeText={setLatCaptura}
                           keyboardType="default"
-                          placeholder={provincia.id === "sevilla" ? '37°45\'55" N' : "39.986"}
+                          placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
                           autoCapitalize="characters"
                           autoCorrect={false}
                         />
@@ -673,7 +673,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           value={lngCaptura}
                           onChangeText={setLngCaptura}
                           keyboardType="default"
-                          placeholder={provincia.id === "sevilla" ? '5°27\'40" O' : "-0.049"}
+                          placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
                           autoCapitalize="characters"
                           autoCorrect={false}
                         />
@@ -804,7 +804,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       value={latPunto}
                       onChangeText={setLatPunto}
                       keyboardType="default"
-                      placeholder={provincia.id === "sevilla" ? '37°45\'55" N' : "39.986"}
+                      placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
@@ -816,7 +816,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       value={lngPunto}
                       onChangeText={setLngPunto}
                       keyboardType="default"
-                      placeholder={provincia.id === "sevilla" ? '5°27\'40" O' : "-0.049"}
+                      placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
