@@ -83,13 +83,14 @@ export const PERIODOS_HABILES: PeriodoHabil[] = [
     inicio: { mes: 1, dia: 1 },
     fin: { mes: 12, dia: 31 },
     todoElAnio: true,
-    notas: `Talla mínima orientativa: ${TALLAS_OFICIALES.tenca}.`,
+    notas: `Régimen tenca: ${TALLAS_OFICIALES.tenca}.`,
   },
   {
     especieId: "anguila",
     inicio: { mes: 1, dia: 1 },
     fin: { mes: 12, dia: 31 },
-    todoElAnio: true,
+    /** No es "todo el año hábil": la recreativa está vedada/prohibida en CV. */
+    todoElAnio: false,
     notas: TALLAS_OFICIALES.anguila,
   },
 ];
@@ -115,6 +116,8 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
   if (especieId === "trucha_comun" || especieId === "trucha_arcoiris") {
     return !temporadaTruchaAbierta(fecha);
   }
+  /** Anguila: pesca recreativa prohibida en CV (no hay periodo hábil de retención). */
+  if (especieId === "anguila") return true;
   const periodo = PERIODOS_HABILES.find((p) => p.especieId === especieId);
   if (!periodo) return false;
   if (periodo.todoElAnio) return false;

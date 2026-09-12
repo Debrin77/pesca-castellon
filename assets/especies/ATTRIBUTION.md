@@ -45,7 +45,7 @@ Editor Thomas Spencer Baynes and William Robertson Smi
 - `corvina.jpg` — File:Histoire naturelle des poissons (Pl. 100) (7949992004).jpg — Public domain — Buffon, Georges Louis Leclerc; Cuvier, Georges; Valenciennes
 - `palometon.jpg` — File:Carangidae Lichia amia 1.1.jpg — CC BY-SA 4.0 — NasserHalaweh
 - `anjova.jpg` — File:Fish4397 - Flickr - NOAA Photo Library.jpg — Public domain — SEFSC Pascagoula Laboratory; Collection of Brandi Noble, NOAA/NMFS/SEFSC.
-- `espeton.jpg` — File:Banco de gran barracudas (Sphyraena barracuda), parque nacional Ras Muhammad, Egipto, 2022-03-27, DD 115.jpg — CC BY-SA 4.0 — Diego Delso
+- `espeton.jpg` — File:Bicudas (Sphyraena viridensis), Cabo de Palos, España, 2022-07-15, DD 09.jpg — CC BY-SA 4.0 — Diego Delso
 - `datil_mar.jpg` — File:Datte de mer (Lithophaga lithophaga) (Ifremer 00633-74494 - 29608).jpg — CC BY 4.0 — Isabelle Cheret
 - `nacra.jpg` — File:Pinnidae - Pinna nobilis.jpg — CC BY-SA 3.0 — Hectonichus
 - `caballito.jpg` — File:Hippocampus guttulatus 2.jpg — CC BY-SA 4.0 — Mare Per Sempre
@@ -65,5 +65,5 @@ Translation by User:Theklan
 - `jurel.jpg` — File:Chicharros (Trachurus trachurus) secos, Mercado Duque de Bragança, Angra do Heroísmo, isla de Terceira, Azores, Portugal, 2020-07-25, DD 03.jpg — CC BY-SA 4.0 — Diego Delso
 - `corvina.jpg` — File:Argyrosomus regius.001 - Aquarium Finisterrae.jpg — CC BY-SA 4.0 — Fernando Losada Rodríguez
 - `palometon.jpg` — File:Leccia Amia 26 kg .jpg — CC BY-SA 4.0 — Mariella Rubegni
-- `espeton.jpg` — File:Banco de gran barracudas (Sphyraena barracuda), parque nacional Ras Muhammad, Egipto, 2022-03-27, DD 115.jpg — CC BY-SA 4.0 — Diego Delso
+- `espeton.jpg` — File:Bicudas (Sphyraena viridensis), Cabo de Palos, España, 2022-07-15, DD 09.jpg — CC BY-SA 4.0 — Diego Delso
 - `mabra.jpg` — File:Chelon ramada Italy.jpg — CC BY 4.0 — etrusko25

@@ -254,9 +254,9 @@
     "al15.zpc": [
       {
         "nombre": "Els Estanys / La Ponderosa (CS-010)",
-        "especies": "Carpa, bass; anguila con cupo y talla",
+        "especies": "Carpa, bass; anguila no es objetivo recreativo (prohibida)",
         "cuando": "Solo con permiso de esa ZPC",
-        "detalle": "El marjal de Almenara está vedado (VP3) salvo este coto. Sin permiso no se pesca. Anguila: 25 cm y cupo de aguas libres no aplica igual en coto."
+        "detalle": "El marjal de Almenara está vedado (VP3) salvo este coto. Sin permiso no se pesca. Anguila: pesca recreativa prohibida en CV; no retengas."
       }
     ]
   }

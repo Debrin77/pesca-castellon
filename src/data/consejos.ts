@@ -330,7 +330,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         titulo: "Orilla de mar (Castellón)",
         resumen: "Gusano, tita, vinilos y jigs legales.",
         detalle:
-          "Desde tierra: licencia marítima. No pescar en puertos ni a menos de 100 m de bañistas en temporada. Lubina/llissa: cabezas plomadas o cebo en rompiente al alba/atardecer.",
+          "Desde tierra: licencia marítima. No pescar en puertos ni a menos de 100 m de zonas frecuentadas por bañistas. Lubina/llissa: cabezas plomadas o cebo en rompiente al alba/atardecer.",
         tags: ["costa", "marítima"],
       },
     ],

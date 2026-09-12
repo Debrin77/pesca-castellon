@@ -55,6 +55,7 @@ const TALLA_LABELS: Record<string, string> = {
   carpin: "Carpín",
   tenca: "Tenca",
   anguila: "Anguila",
+  llobarro: "Llobarro / lubina (río)",
   black_bass: "Black bass",
   lucio: "Lucio",
   siluro: "Siluro",

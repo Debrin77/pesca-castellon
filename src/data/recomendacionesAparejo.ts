@@ -325,21 +325,24 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "anguila",
     ambito: "rio",
-    resumenCompra: "Fondo con cebo; anzuelo #4–#1/0; sin cebador típico.",
-    anzueloTipo: "Simple fuerte (circle o j)",
-    anzueloTalla: "#4–#1/0",
-    arponcillo: "opcional",
+    resumenCompra: "No es objetivo recreativo legal en CV (pesca recreativa prohibida).",
+    anzueloTipo: "No aplica",
+    anzueloTalla: "—",
+    arponcillo: "recomendado_sin",
     arponcilloNota:
-      "Revisa cupo/talla. En continental CV la noche está vedada salvo molinà autorizada; no improvises pesca nocturna.",
-    cebador: { recomendado: false, tipos: "—", nota: "Cebo en anzuelo (lombriz/pescado); no jaula típica." },
-    plomos: [
-      { enAnzuelo: "Lombriz grande / trozo de pescado", plomoG: "20–60 g", nota: "Fondo pegado a orilla/estructura" },
-    ],
-    compraRapida: ["Caña media 2,7–3,3 m", "Nylon 0,30+", "Anzuelos #4–1/0", "Oliva 30–50 g"],
+      "En la Comunitat Valenciana la pesca recreativa de anguila está prohibida (Res. 30/10/2020 / Res. 16/09/2024).",
+    cebador: { recomendado: false, tipos: "—", nota: "No prepares montaje de retención de anguila en CV." },
+    plomos: [],
+    compraRapida: ["No comprar material específico de anguila para CV recreativa"],
     restricciones: [
       {
+        provincias: ["castellon"],
+        texto: "Anguila: pesca recreativa prohibida en CV. No retengas.",
+        severidad: "prohibido",
+      },
+      {
         provincias: ["*"],
-        texto: "Anguila: especie sensible; comprueba veda/cupo en tu provincia antes de retener.",
+        texto: "Anguila: especie sensible/amenazada; en CV recreativa prohibida. En otras provincias confirma veda antes de cualquier retención.",
         severidad: "aviso",
       },
       ANDALUCIA_SEGURO,
@@ -625,7 +628,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "mabra",
     ambito: "costa",
-    resumenCompra: "Como llisa; no de noche.",
+    resumenCompra: "Como llisa; activa al anochecer (sin veda nocturna general de caña).",
     anzueloTipo: "Simple fino",
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",

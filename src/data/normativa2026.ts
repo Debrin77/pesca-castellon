@@ -62,14 +62,22 @@ export const REGLAS_GENERALES = [
 export const TALLAS_OFICIALES: Record<string, string> = {
   trucha_comun: "Sin muerte (sin talla de retención)",
   barbo: "Sin muerte (todas las especies de barbo autóctono)",
-  carpin: "8 cm",
-  tenca: "25 cm",
-  anguila: "25 cm · cupo 4 ud o 1 kg/día en aguas libres",
+  /** Res. 16/09/2024 (DOGV): carpín sin talla ni cupo (ya no 8 cm). */
+  carpin: "Sin talla · sin cupo (Res. 16/09/2024)",
+  /**
+   * La tenca dejó de figurar con 25 cm en la tabla de Res. 16/09/2024.
+   * No indiques 25 cm como talla vigente; confirma el régimen del tramo.
+   */
+  tenca: "Sin talla publicada en Res. 16/09/2024 (confirma tramo)",
+  /** Pesca recreativa de anguila prohibida (Res. 30/10/2020; mantenida en Res. 16/09/2024). */
+  anguila: "Pesca recreativa prohibida (salvo autorización expresa / molinà)",
+  /** Continental CV — distinta de la talla marítima RD 560 (23 cm). */
+  llobarro: "25 cm · cupo 4/día (aguas continentales, Res. 16/09/2024)",
   black_bass: "Invasora: captura fomentada, no devolver",
   lucio: "Invasora: captura fomentada, no devolver",
   siluro: "Invasora: no devolver, no transportar, notificar",
   carpa: "Sin talla mínima específica en la Orden (no está en la tabla de 2.2)",
-  mugilidos: "25 cm en río (Orden 30/2016). En mar: 16 cm (RD 560)",
+  mugilidos: "25 cm · cupo 4/día en río (Res. 16/09/2024). En mar: 16 cm (RD 560)",
   trucha_arcoiris: "Sin cupo ni talla; retención y sacrificio si se pesca fuera de tramo truchero",
 };
 

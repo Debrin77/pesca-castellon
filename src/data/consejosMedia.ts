@@ -649,7 +649,7 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
       {
         source: A.footballJig,
         caption:
-          "Football jig — Cabeza de plomo ancha/ovalada + softbait. Rueda por cascajo mejor que una cabeza redonda; típico bass en fondo irregular.",
+          "Football jig (familia jig) — La foto muestra un jig con softbait; el football jig se distingue por cabeza ovalada/«balón» para rodar en cascajo sin clavarse tanto. Típico bass en fondo irregular.",
       },
       {
         source: A.vinilos,
