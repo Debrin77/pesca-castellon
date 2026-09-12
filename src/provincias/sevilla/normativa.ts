@@ -73,6 +73,14 @@ export function avisosPorNotaAnexo(nota: string | null | undefined): string[] {
         "Cerca de Doñana y marismas hay refugios donde la pesca está prohibida (Entremuros, Guadiamar, Dehesa de Abajo…). Mira el mapa.",
         "Ordenanzas municipales pueden restringir pesca en paseos y muelles.",
       ];
+    case "ANEXO_IV":
+      return [
+        "Anexo IV: refugio de pesca — pesca prohibida con carácter permanente. No lances.",
+      ];
+    case "ANEXO_V_3":
+      return [
+        "Anexo V.3: en competiciones oficiales FAPD pueden autorizarse rejones de barbo en veda. Fuera de concurso, rige captura y suelta / periodo del art. 7.",
+      ];
     case "ART_52_APROX":
       return [
         "Aguas libres art. 5.2 (no es coto ni refugio). Radio orientativo: sin polígono DERA en esta ficha.",
@@ -96,6 +104,7 @@ export const REGLAS_GENERALES_ANDALUCIA = [
   "Alburno, siluro y otras invasoras no listadas en art. 2: no son objeto de pesca. Junta: pesca del siluro prohibida; captura fortuita → sacrificio y no devolver (no basta con avisar a agentes).",
   "Cangrejo rojo: solo controladores autorizados (Orden 3/08/2016, marismas del Guadalquivir).",
   "Una caña en aguas trucheras; dos cañas en el resto, máximo 10 m entre ellas (art. 9).",
+  "Art. 9.4: prohibido cebar (precebo/spod/method como cebado) y usar pez como cebo, salvo competiciones oficiales FAPD autorizadas. El cebo va en el anzuelo.",
 ];
 
 export const CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA = [
@@ -106,6 +115,7 @@ export const CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA = [
   "200 m de presas, escalas y pasos de peces: no pescar.",
   "Si pescas barbo o boga: periodo hábil y captura y suelta.",
   "Invasoras: no traslocar; sacrificio si la norma lo exige (RD 630/2013 y art. 8).",
-  "Horario: 1 h antes del orto – 1 h después del ocaso.",
+  "No cebar ni usar pez como cebo (art. 9.4), salvo FAPD autorizada.",
+  "Horario: 1 h antes del orto – 1 h después del ocaso (en Iznájar: orto–ocaso, sin ±1 h).",
   "Llevar DNI/NIE, licencia y justificante del seguro.",
 ];

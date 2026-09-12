@@ -1,5 +1,5 @@
 {
-  "aviso": "Equipo de pesca marítima recreativa desde tierra en Castellón. No es pesca desde barco. De noche no. 100 m de bañistas. Dársena no.",
+  "aviso": "Equipo de pesca marítima recreativa desde tierra en Castellón. No es pesca desde barco. Caña: sin veda nocturna general (Dec. 41/2013); revisa bando y acceso a playa. 100 m de bañistas. Dársena no.",
   "porId": {
     "lubina": {
       "cana": "Spinning 2,40–2,70 m MH (10–40 g) o surfcasting 4,20 m si lanzas a rompiente",
@@ -62,7 +62,7 @@
       "carrete": "6500",
       "linea": "Nylon 0,28 mm",
       "senuelosCebos": ["Gusano", "Masa", "Tita"],
-      "tecnica": "Atardecer en playa. Activa de noche: tú no puedes pescar de noche."
+      "tecnica": "Atardecer y noche en playa (si el acceso/bando lo permiten): la caña desde tierra no tiene veda nocturna general autonómica."
     },
     "jurel": {
       "cana": "Spinning 2,10–2,40 m L-ML",
@@ -87,7 +87,7 @@
         "No nasas ni redes",
         "Cebo natural en anzuelo legal (12×5 mm mínimo) si no usas potera"
       ],
-      "tecnica": "Legal en Castellón. Atardecer en roca y rompiente, otoño-invierno. Máximo dos poteras. Fuera de dársena e Irta. Sin talla en cm: no te lleves crías. No de noche cerrada."
+      "tecnica": "Legal en Castellón. Atardecer/noche en roca y rompiente (otoño-invierno), si el acceso es legal. Máximo dos poteras. Fuera de dársena e Irta. Sin talla en cm: no te lleves crías."
     },
     "pulpo": {
       "cana": "Rockfishing o spinning 2,10 m, o un aparejo a mano (un aparejo por pescador)",
@@ -106,7 +106,7 @@
       "linea": "PE 0,8–1.0 + bajo 0,35",
       "senuelosCebos": [
         "Hasta 2 poteras/egi (Decreto 41/2013). Egi 3.0–3.5",
-        "Egi con luz solo en última hora legal, no de noche cerrada",
+        "Egi con luz: útil al anochecer/noche si el acceso a la orilla es legal",
         "No nasas"
       ],
       "tecnica": "Autorizado (Loligo spp. en RD 347/2011 anexo I). Última luz, otoño, escollera de playa no muelle interior. Máximo dos poteras."

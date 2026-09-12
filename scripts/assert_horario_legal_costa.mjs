@@ -87,6 +87,25 @@ if (!orilla.includes("sin veda nocturna general")) {
   fail("especiesOrilla debe aclarar ausencia de veda nocturna general en caña");
 }
 
+const aparejos = read("src/data/aparejosOrilla.json");
+if (/\bDe noche no\b/i.test(aparejos) || /no puedes pescar de noche/i.test(aparejos) || /no de noche cerrada/i.test(aparejos)) {
+  fail("aparejosOrilla no debe inventar veda nocturna general de caña");
+}
+if (!aparejos.includes("sin veda nocturna general") && !aparejos.includes("no tiene veda nocturna general")) {
+  fail("aparejosOrilla debe aclarar ausencia de veda nocturna general de caña");
+}
+
+const norma2026 = read("src/data/normativa2026.ts");
+if (norma2026.includes('anguila: "25 cm') || norma2026.includes("cupo 4 ud o 1 kg")) {
+  fail("normativa2026 no debe ofrecer cupo/talla de retención de anguila (pesca recreativa prohibida)");
+}
+if (norma2026.includes('carpin: "8 cm"')) {
+  fail("normativa2026: carpín ya no tiene talla 8 cm (Res. 16/09/2024)");
+}
+if (!norma2026.includes("Pesca recreativa prohibida")) {
+  fail("normativa2026 debe marcar anguila como pesca recreativa prohibida");
+}
+
 const pkg = read("package.json");
 if (!pkg.includes("assert_horario_legal_costa.mjs")) {
   fail("package.json assert debe incluir assert_horario_legal_costa.mjs");

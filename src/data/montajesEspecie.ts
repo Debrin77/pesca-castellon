@@ -296,7 +296,7 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     ],
     regulacion: [
       "Trabaja el fondo: toques suaves; el pulpo «pesa» al enganchar.",
-      "Devuelve el que no llegue a 1 kg (orientación del decreto); cupo 5 kg/día.",
+      "Devuelve el que no llegue a 1 kg (talla mínima RD 560/1995 anexo II Mediterráneo). Cupo orientativo 5 kg/día (Decreto 41/2013).",
       "Nunca nasas ni gancho profesional; Irta: pesca a pie vedada.",
     ],
     alternativa: "Jig de pulpo sin cebo natural, mismo esquema de plomo + bajo.",

@@ -85,6 +85,20 @@ const ANDALUCIA_SEGURO: RestriccionAparejo = {
   severidad: "aviso",
 };
 
+const ANDALUCIA_NO_CEBAR: RestriccionAparejo = {
+  provincias: ["sevilla", "cordoba"],
+  texto:
+    "Andalucía art. 9.4: prohibido cebar (precebo/spod/method) y usar pez como cebo, salvo FAPD autorizada. El cebo va en el anzuelo.",
+  severidad: "obligatorio",
+};
+
+const ANDALUCIA_SILURO_NO_OBJETO: RestriccionAparejo = {
+  provincias: ["sevilla", "cordoba"],
+  texto:
+    "Andalucía: el siluro no es objeto de pesca. No prepares un equipo específico; captura fortuita → sacrificio y no devolver.",
+  severidad: "obligatorio",
+};
+
 const COSTA_CS: RestriccionAparejo = {
   provincias: ["castellon"],
   soloAmbito: "costa",
@@ -189,51 +203,50 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "carpa",
     ambito: "rio",
-    resumenCompra: "Anzuelo 8–4; method/cage donde cebar esté permitido.",
+    resumenCompra: "Anzuelo 8–4; cebo en anzuelo. En Andalucía no cebar (art. 9.4).",
     anzueloTipo: "Simple carpero (wide gape / curve)",
     anzueloTalla: "#8–#4 (boilie 15–20 mm → #6–#4; maíz → #8–#6)",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arponcillo si sueltas (catch & release). Con arpón solo si vas a retener donde sea legal.",
     cebador: {
-      recomendado: true,
-      tipos: "Method / flat · cage abierto · PVA (no barquito si está prohibido)",
-      nota: "Solo donde el cebado esté permitido (no trucheros). Empieza con method 20–40 g en orilla.",
+      recomendado: false,
+      tipos: "— en Andalucía · Method / flat o cage solo donde el cebado esté permitido",
+      nota: "Andalucía art. 9.4: no cebar (salvo FAPD). En otras CCAA, solo donde el cebado esté permitido (no trucheros).",
     },
     plomos: [
-      { enAnzuelo: "Maíz / pellet pequeño", plomoG: "20–40 g", nota: "Oliva deslizante o method ligero" },
+      { enAnzuelo: "Maíz / pellet pequeño", plomoG: "20–40 g", nota: "Oliva deslizante; cebo en anzuelo" },
       { enAnzuelo: "Boilie 15–20 mm", plomoG: "40–80 g", nota: "Inline / lead clip según distancia" },
       { enAnzuelo: "Boya / zig", plomoG: "Balines 1–4 g", nota: "Solo para equilibrar la boya" },
-      { enAnzuelo: "Method feeder orilla", plomoG: "20–50 g (el propio feeder)" },
     ],
     compraRapida: [
       "Caña carp / feeder 3,3–3,9 m",
       "Nylon 0,28–0,35",
       "Anzuelos #8–#4 sin arponcillo",
-      "Method 20–40 g + cage 30–50 g",
-      "Maíz, pellets, boilies",
+      "Oliva 20–60 g",
+      "Maíz / masa / boilies (en anzuelo)",
     ],
-    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_PORN_PATOS, CUENCA_TRUCHERA, ANDALUCIA_SEGURO],
-  },
+    restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, CUENCA_TRUCHERA, ANDALUCIA_SEGURO],
+  }
   {
     especieId: "carpin",
     ambito: "rio",
-    resumenCompra: "Anzuelo fino #10–#6; feeder fino o coup.",
+    resumenCompra: "Anzuelo fino #10–#6; coup/feeder fino; cebo en anzuelo.",
     anzueloTipo: "Simple fino (carpín / coup)",
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arponcillo recomendado (boca delicada y sueltas frecuentes).",
     cebador: {
-      recomendado: true,
-      tipos: "Cage fino · open-end pequeño · method micro",
-      nota: "Cebado ligero vegetal. En Serranía de Cuenca: sin patos/barquitos.",
+      recomendado: false,
+      tipos: "— en Andalucía · cage fino solo si el cebado es legal",
+      nota: "Andalucía: sin cebado (art. 9.4). En Serranía de Cuenca: sin patos/barquitos.",
     },
     plomos: [
-      { enAnzuelo: "Maíz / pan / masa", plomoG: "10–25 g", nota: "Oliva o cage fino" },
+      { enAnzuelo: "Maíz / pan / masa", plomoG: "10–25 g", nota: "Oliva" },
       { enAnzuelo: "Asticot / lombriz pequeña", plomoG: "8–20 g" },
     ],
-    compraRapida: ["Coup/feeder 3,6 m", "Nylon 0,16–0,22", "Anzuelos #10–#6", "Cage 15–30 g", "Cebo vegetal"],
-    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
-  },
+    compraRapida: ["Coup/feeder 3,6 m", "Nylon 0,16–0,22", "Anzuelos #10–#6", "Oliva 10–25 g", "Cebo vegetal"],
+    restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
+  }
   {
     especieId: "tenca",
     ambito: "rio",
@@ -285,61 +298,61 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "barbo_gitano",
     ambito: "rio",
-    resumenCompra: "Feeder en remansos Guadalquivir; anzuelo #10–#6.",
+    resumenCompra: "Feeder/fondo en remansos; anzuelo #10–#6; cebo en anzuelo (Andalucía sin cebar).",
     anzueloTipo: "Simple river",
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arponcillo recomendado (suelta / cupos locales).",
     cebador: {
-      recomendado: true,
-      tipos: "Cage · open-end",
-      nota: "Remansos y colas; confirma señalización municipal en Sevilla/Córdoba.",
+      recomendado: false,
+      tipos: "— en Andalucía",
+      nota: "Andalucía art. 9.4: no cebar. Remansos y colas; confirma señalización municipal.",
     },
     plomos: [
       { enAnzuelo: "Lombriz / maíz", plomoG: "20–50 g" },
       { enAnzuelo: "Corriente tras pilares", plomoG: "40–70 g" },
     ],
-    compraRapida: ["Feeder 3,6–3,9 m", "Nylon 0,22–0,28", "Cage 30–60 g", "Anzuelos #10–#6"],
-    restricciones: [ANDALUCIA_SEGURO, NO_CEBAR_TRUCHERO],
-  },
+    compraRapida: ["Feeder 3,6–3,9 m", "Nylon 0,22–0,28", "Oliva 30–60 g", "Anzuelos #10–#6"],
+    restricciones: [ANDALUCIA_SEGURO, ANDALUCIA_NO_CEBAR, NO_CEBAR_TRUCHERO],
+  }
   {
     especieId: "siluro",
     ambito: "rio",
-    resumenCompra: "Material XXL; plomo pesado en fondo; cebador opcional.",
-    anzueloTipo: "Simple o circle reforzado / treble del señuelo",
-    anzueloTalla: "6/0–10/0 (cebo) · según señuelo grande",
+    resumenCompra: "En Andalucía/CLM no es objetivo de pesca. Captura fortuita → sacrificio.",
+    anzueloTipo: "No prepares montaje específico de siluro donde no sea objeto de pesca",
+    anzueloTalla: "—",
     arponcillo: "opcional",
-    arponcilloNota: "Invasora en muchos tramos: arponcillo habitual. Sigue el protocolo de sacrificio local.",
+    arponcilloNota: "Si entra de forma fortuita: sacrificio según norma local. No uses pez como cebo.",
     cebador: {
       recomendado: false,
-      tipos: "Spod / PVA solo si legal y con cebo permitido",
-      nota: "Lo habitual es spinning pesado o fondo con pez/pellets grandes. No improvises UL.",
+      tipos: "—",
+      nota: "Andalucía: siluro no es objeto de pesca + art. 9.4 sin pez-cebo. CLM: pesca prohibida como objetivo.",
     },
-    plomos: [
-      { enAnzuelo: "Vinilo / shad 15–25 cm", plomoG: "20–60 g cabeza" },
-      { enAnzuelo: "Cebo de fondo (pez/pellet)", plomoG: "80–200 g", nota: "Según profundidad y viento" },
-    ],
-    compraRapida: ["Caña heavy", "Trenza 0,25–0,40", "Bajo reforzado", "Snaps XXL", "Anzuelos 6/0+"],
-    restricciones: [INVASORA, ANDALUCIA_SEGURO],
-  },
+    plomos: [],
+    compraRapida: ["No comprar equipo «anti-siluro» donde esté prohibido como objeto"],
+    restricciones: [INVASORA, ANDALUCIA_SEGURO, ANDALUCIA_NO_CEBAR, ANDALUCIA_SILURO_NO_OBJETO],
+  }
   {
     especieId: "anguila",
     ambito: "rio",
-    resumenCompra: "Fondo con cebo; anzuelo #4–#1/0; sin cebador típico.",
-    anzueloTipo: "Simple fuerte (circle o j)",
-    anzueloTalla: "#4–#1/0",
-    arponcillo: "opcional",
+    resumenCompra: "No es objetivo recreativo legal en CV (pesca recreativa prohibida).",
+    anzueloTipo: "No aplica",
+    anzueloTalla: "—",
+    arponcillo: "recomendado_sin",
     arponcilloNota:
-      "Revisa cupo/talla. En continental CV la noche está vedada salvo molinà autorizada; no improvises pesca nocturna.",
-    cebador: { recomendado: false, tipos: "—", nota: "Cebo en anzuelo (lombriz/pescado); no jaula típica." },
-    plomos: [
-      { enAnzuelo: "Lombriz grande / trozo de pescado", plomoG: "20–60 g", nota: "Fondo pegado a orilla/estructura" },
-    ],
-    compraRapida: ["Caña media 2,7–3,3 m", "Nylon 0,30+", "Anzuelos #4–1/0", "Oliva 30–50 g"],
+      "En la Comunitat Valenciana la pesca recreativa de anguila está prohibida (Res. 30/10/2020 / Res. 16/09/2024).",
+    cebador: { recomendado: false, tipos: "—", nota: "No prepares montaje de retención de anguila en CV." },
+    plomos: [],
+    compraRapida: ["No comprar material específico de anguila para CV recreativa"],
     restricciones: [
       {
+        provincias: ["castellon"],
+        texto: "Anguila: pesca recreativa prohibida en CV. No retengas.",
+        severidad: "prohibido",
+      },
+      {
         provincias: ["*"],
-        texto: "Anguila: especie sensible; comprueba veda/cupo en tu provincia antes de retener.",
+        texto: "Anguila: especie sensible/amenazada; en CV recreativa prohibida. En otras provincias confirma veda antes de cualquier retención.",
         severidad: "aviso",
       },
       ANDALUCIA_SEGURO,
@@ -625,7 +638,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "mabra",
     ambito: "costa",
-    resumenCompra: "Como llisa; no de noche.",
+    resumenCompra: "Como llisa; activa al anochecer (sin veda nocturna general de caña).",
     anzueloTipo: "Simple fino",
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",

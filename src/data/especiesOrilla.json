@@ -89,7 +89,7 @@
       "noConfundirCon": "Sargo: la dorada tiene una mancha dorada entre los ojos y una negra en el opérculo.",
       "notas": "Reina del surfcasting en playas de arena (Peñíscola, Benicàssim, Grao) con gusano o marisco.",
       "mejorHora": {
-        "resumen": "Noche de orilla no; alba y atardecer en rompiente.",
+        "resumen": "Alba, atardecer y noche en rompiente (si el acceso/bando lo permiten).",
         "verano": "Madrugada y último cuarto de luz.",
         "invierno": "Días suaves, todo el día en playa.",
         "noche": "Caña desde tierra: sin veda nocturna general (Dec. 41/2013 / RD 347/2011); revisa bando y acceso a playa. La prohibición ocaso→orto es de submarina."
@@ -217,12 +217,12 @@
     },
     {
       "id": "caballa",
-      "nombre": "Caballa",
-      "nombreCientifico": "Scomber scombrus",
+      "nombre": "Caballa / estornino",
+      "nombreCientifico": "Scomber colias (estornino; la atlántica S. scombrus es rara en orilla CS)",
       "tallaCm": 18,
-      "tallaNota": "18 cm Mediterráneo",
-      "noConfundirCon": "Estornino (Scomber colias), misma talla de referencia 18 cm en el anexo.",
-      "notas": "Pases primaverales frente a espigones legales (fuera de puerto).",
+      "tallaNota": "18 cm Mediterráneo (Scomber spp., RD 560 anexo II)",
+      "noConfundirCon": "Scomber scombrus (caballa atlántica): misma talla 18 cm en el anexo, mucho menos habitual en Castellón.",
+      "notas": "En orilla de Castellón lo habitual es el estornino (S. colias). Pases primaverales frente a espigones legales (fuera de puerto).",
       "mejorHora": {
         "resumen": "Cuando hay pajarera vista desde tierra.",
         "verano": "Amanecer.",

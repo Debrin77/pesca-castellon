@@ -9,7 +9,11 @@
     "notas": "Especie protegida: pesca siempre sin muerte. Temporada salmonícola del tercer domingo de marzo al 31 de agosto. En cabeceras (ZRTC) está vedada.",
     "tallaOficial": "Sin muerte (sin talla de retención)",
     "cupo": "No se retiene ningún ejemplar",
-    "mejoresMeses": ["abril", "mayo", "junio"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio"
+    ],
     "ventanas": "Amanecer y atardecer; ninfas a media agua al mediodía",
     "mejorHora": {
       "resumen": "Más probable al amanecer y al atardecer. A mediodía muerde peor, salvo ninfas a media agua en corriente.",
@@ -18,13 +22,21 @@
       "noche": "Poco activa de noche. No se pesca de noche."
     },
     "habitats": "Pozas oxigenadas, colas de tabla, sombras de ribera en Palancia y Villahermosa altos",
-    "senuelosClave": ["Ninfa pheasant tail / hare's ear #14-18", "Cucharilla n.º 0-1 plateada o cobriza", "Seca caddis al atardecer"],
+    "senuelosClave": [
+      "Ninfa pheasant tail / hare's ear #14-18",
+      "Cucharilla n.º 0-1 plateada o cobriza",
+      "Seca caddis al atardecer"
+    ],
     "normativaResumen": "Solo mosca o cucharilla, un anzuelo sin arpón, una caña sin abandono. Prohibido cebar.",
     "equipo": {
       "cana": "Caña de trucha ligera de acción rápida, 2.10-2.70 m (spinning ultraligero o caña de mosca #3-#5)",
       "carrete": "Carrete spinning talla 1000-2000 con freno suave",
       "linea": "Nylon 0.14-0.18 mm o final de línea de mosca del mismo diámetro",
-      "senuelosCebos": ["Cucharilla ondulante pequeña", "Mosca artificial (seca o ninfa)", "Lombriz natural donde esté permitido cebo natural"],
+      "senuelosCebos": [
+        "Cucharilla ondulante pequeña",
+        "Mosca artificial (seca o ninfa)",
+        "Lombriz natural donde esté permitido cebo natural"
+      ],
       "tecnica": "Spinning fino aguas arriba o pesca a mosca en tramos de corriente; un solo anzuelo, preferible sin arponcillo"
     }
   },
@@ -38,7 +50,12 @@
     "notas": "Sin cupo ni talla. Si se pesca fuera de tramo truchero hay que retenerla y sacrificarla (Orden 30/2016 art. 5).",
     "tallaOficial": "Sin cupo ni talla",
     "cupo": "Sin límite en tramos donde está autorizada",
-    "mejoresMeses": ["abril", "mayo", "junio", "julio"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "julio"
+    ],
     "ventanas": "Todo el día en tramos de suelta; mejor con agua algo turbia",
     "mejorHora": {
       "resumen": "En tramos de suelta pica casi todo el día; un poco mejor a primera hora y con agua algo turbia.",
@@ -47,13 +64,19 @@
       "noche": "No es un pez de noche. No se pesca de noche."
     },
     "habitats": "Tramos de suelta y colas de embalse salmonícolas",
-    "senuelosClave": ["Cucharilla giratoria n.º 1-2", "Streamer tipo woolly bugger"],
+    "senuelosClave": [
+      "Cucharilla giratoria n.º 1-2",
+      "Streamer tipo woolly bugger"
+    ],
     "normativaResumen": "Mosca o cucharilla, anzuelo sin arpón en tramos salmonícolas.",
     "equipo": {
       "cana": "Caña de spinning ligera 2.10-2.40 m o caña de mosca #4-#6",
       "carrete": "Carrete spinning 1000-2000",
       "linea": "Nylon 0.16-0.20 mm",
-      "senuelosCebos": ["Cucharilla giratoria/ondulante", "Mosca artificial"],
+      "senuelosCebos": [
+        "Cucharilla giratoria/ondulante",
+        "Mosca artificial"
+      ],
       "tecnica": "Igual que trucha común: solo mosca artificial o cucharilla, un anzuelo sin arponcillo"
     }
   },
@@ -67,7 +90,13 @@
     "notas": "Invasora (RD 630/2013). No devolver al agua. En Arenós (Castellón) es la especie reina: cola y brazos en primavera, puntas profundas en verano. Aguas claras = finesse.",
     "tallaOficial": "Sin talla (invasora: no se devuelve)",
     "cupo": "Sin cupo; captura fomentada",
-    "mejoresMeses": ["marzo", "abril", "mayo", "septiembre", "octubre"],
+    "mejoresMeses": [
+      "marzo",
+      "abril",
+      "mayo",
+      "septiembre",
+      "octubre"
+    ],
     "ventanas": "Amanecer y atardecer; mediodía solo en profundidad o sombra de cañón",
     "mejorHora": {
       "resumen": "Más probable al amanecer y al atardecer. A mediodía solo en profundidad o a la sombra del cañón.",
@@ -88,7 +117,13 @@
       "cana": "Combo: casting 7' MH para Texas/jig + spinning 6'10\" ML para drop shot",
       "carrete": "Baitcasting ratio ~7:1 con PE 20 lb para cobertura; spinning 2500 + PE 0,10 + fluoro 8 lb para finesse",
       "linea": "Trenzado fino + líder de fluorocarbono 0,20-0,30 mm (Arenós suele estar claro)",
-      "senuelosCebos": ["Creature bait 4\"", "Drop shot finesse", "Football jig", "Topwater", "Spinnerbait en turbio"],
+      "senuelosCebos": [
+        "Creature bait 4\"",
+        "Drop shot finesse",
+        "Football jig",
+        "Topwater",
+        "Spinnerbait en turbio"
+      ],
       "tecnica": "Primavera: Texas y spinnerbait en cola. Verano: drop shot y jig en puntas. Otoño: crank y jig a media cota. No hace falta siempre finesse extremo salvo agua muy clara."
     }
   },
@@ -102,7 +137,12 @@
     "notas": "Invasora de gran voracidad. En María Cristina y Arenós se pesca a jerkbait y swimbait cerca de vegetación y cambios de cota.",
     "tallaOficial": "Sin talla (invasora: no se devuelve)",
     "cupo": "Sin cupo",
-    "mejoresMeses": ["marzo", "abril", "octubre", "noviembre"],
+    "mejoresMeses": [
+      "marzo",
+      "abril",
+      "octubre",
+      "noviembre"
+    ],
     "ventanas": "Primeras y últimas horas; agua fría a media cota",
     "mejorHora": {
       "resumen": "Más probable a primera y última hora de luz. Con agua fría también pica a media mañana.",
@@ -111,13 +151,22 @@
       "noche": "Caza al anochecer, pero no se pesca de noche: última hora de luz."
     },
     "habitats": "Orillas con cañas, entradas de rambla, estructuras sumergidas",
-    "senuelosClave": ["Jerkbait suspendido", "Swimbait 12-18 cm", "Cuchara ondulante grande", "Bajo de acero o fluoro grueso"],
+    "senuelosClave": [
+      "Jerkbait suspendido",
+      "Swimbait 12-18 cm",
+      "Cuchara ondulante grande",
+      "Bajo de acero o fluoro grueso"
+    ],
     "normativaResumen": "Invasora: no devolver. Imprescindible bajo anticorte: tiene dientes.",
     "equipo": {
       "cana": "Caña de spinning heavy 2.10-2.70 m, potencia 20-60 g",
       "carrete": "Carrete spinning 4000 con buena capacidad de línea",
       "linea": "Trenzado 0.18-0.25 mm + bajo de acero o fluorocarbono grueso (imprescindible, tiene dientes)",
-      "senuelosCebos": ["Cucharas grandes", "Swimbaits", "Jerkbaits"],
+      "senuelosCebos": [
+        "Cucharas grandes",
+        "Swimbaits",
+        "Jerkbaits"
+      ],
       "tecnica": "Lanzados largos en zonas de vegetación acuática y cambios de profundidad; recuperación irregular"
     }
   },
@@ -131,7 +180,11 @@
     "notas": "Alóctona naturalizada, muy presente en María Cristina, Sitjar y Ulldecona. No figura en la tabla de tallas de la Orden (art. 2.2).",
     "tallaOficial": "Sin talla mínima específica en la Orden 30/2016",
     "cupo": "Sin cupo general; en ZPL se aplica normativa de aguas no trucheras",
-    "mejoresMeses": ["mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Noche y amanecer en verano; días suaves de primavera",
     "mejorHora": {
       "resumen": "En verano come sobre todo de madrugada y al anochecer. En primavera, días suaves casi todo el día.",
@@ -140,13 +193,23 @@
       "noche": "Biológicamente es pez de noche, pero la pesca recreativa nocturna está prohibida. Lo más cercano: 1 hora antes del amanecer y la última hora de luz."
     },
     "habitats": "Colas limosas, desembocaduras de rambla, mesetas de 2-4 m",
-    "senuelosClave": ["Boilie frutal 15-20 mm", "Maíz dulce en hair", "Pellets con PVA", "Method feeder en orilla"],
+    "senuelosClave": [
+      "Boilie frutal 15-20 mm",
+      "Maíz dulce en hair",
+      "Pellets con PVA",
+      "Method feeder en orilla"
+    ],
     "normativaResumen": "Cebo natural (maíz, lombriz) solo fuera de tramos trucheros. Prohibido pescar de noche salvo autorización.",
     "equipo": {
       "cana": "Caña de carpfishing 3.60 m, 2.75-3.5 lb de acción",
       "carrete": "Carrete de carpfishing (frontal, big pit) 5000-8000 con baitrunner",
       "linea": "Monofilamento 0.30-0.35 mm o trenzado con líder",
-      "senuelosCebos": ["Boilies", "Maíz dulce", "Pellets", "Masa/pan"],
+      "senuelosCebos": [
+        "Boilies",
+        "Maíz dulce",
+        "Pellets",
+        "Masa/pan"
+      ],
       "tecnica": "Pesca a fondo con montaje de plomada fija (hair rig), cebado previo de la zona (PVA/spod)"
     }
   },
@@ -160,7 +223,12 @@
     "notas": "Ciprínido autóctono (L. graellsii / L. guiraonis). Pesca siempre sin muerte. Muy activo en colas de Arenós y tramos medios del Palancia y Mijares.",
     "tallaOficial": "Sin muerte",
     "cupo": "Devolución inmediata de todos los ejemplares",
-    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Mañanas de corriente; pico con agua algo teñida tras lluvias",
     "mejorHora": {
       "resumen": "Más probable por la mañana en corriente. Pico extra si el agua va un poco teñida tras lluvias.",
@@ -169,13 +237,22 @@
       "noche": "Poco activo de noche. No se pesca de noche."
     },
     "habitats": "Tablas de corriente, colas de embalse, azudes",
-    "senuelosClave": ["Pasta de barbo", "Maíz en corriente", "Ninfa pesada a correlona", "Cucharilla pequeña si el tramo lo permite"],
+    "senuelosClave": [
+      "Pasta de barbo",
+      "Maíz en corriente",
+      "Ninfa pesada a correlona",
+      "Cucharilla pequeña si el tramo lo permite"
+    ],
     "normativaResumen": "Autóctono: sin muerte. Lombriz solo en aguas no trucheras.",
     "equipo": {
       "cana": "Caña de river/feeder 3.60-3.90 m, acción media",
       "carrete": "Carrete spinning 3000-4000",
       "linea": "Nylon 0.20-0.25 mm",
-      "senuelosCebos": ["Lombriz", "Masa/pasta de barbo", "Maíz"],
+      "senuelosCebos": [
+        "Lombriz",
+        "Masa/pasta de barbo",
+        "Maíz"
+      ],
       "tecnica": "Pesca a fondo en zonas de corriente moderada, con feeder o plomada corredera"
     }
   },
@@ -189,7 +266,13 @@
     "notas": "El pez de agua dulce más grande de Europa. En Sitjar y María Cristina hay citas. Cebo vivo de pez está prohibido con carácter general (Orden 30/2016).",
     "tallaOficial": "Invasora — no se retiene ni se devuelve de forma legal para transporte",
     "cupo": "Prohibida tenencia y transporte vivo o muerto",
-    "mejoresMeses": ["mayo", "junio", "julio", "agosto", "septiembre"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre"
+    ],
     "ventanas": "Atardecer; actividad crepuscular. La pesca nocturna recreativa está prohibida.",
     "mejorHora": {
       "resumen": "Más probable al atardecer y al anochecer (crepúsculo). De día, en verano, suele estar parado en hoyos.",
@@ -198,15 +281,23 @@
       "noche": "Es un cazador nocturno, pero la pesca recreativa de noche está prohibida. No se puede esperar a las 23:00: usa el crepúsculo legal."
     },
     "habitats": "Hoyos junto a presa, puentes, orillas socavadas",
-    "senuelosClave": ["Swimbait grande", "Vinilo shad 15-20 cm", "Montaje a fondo con pellet (sin pez vivo)"],
+    "senuelosClave": [
+      "Swimbait grande",
+      "Vinilo shad 15-20 cm",
+      "Montaje a fondo con pellet (sin pez vivo)"
+    ],
     "normativaResumen": "Notificar a agentes medioambientales. No devolver. No llevarse el ejemplar.",
     "normativaEspecial": "⚠️ NORMATIVA ESPECÍFICA: en toda la Comunitat Valenciana está PROHIBIDA la tenencia, el transporte y la circulación de ejemplares de siluro, vivos o muertos. No se puede devolver al agua ni llevárselo a casa. Si capturas uno, debes notificarlo a los agentes medioambientales de la zona lo antes posible.",
     "equipo": {
       "cana": "Caña específica de siluro o de depredadores pesados, 2,10-2,70 m, potencia alta (100-300 g para pesca a cebo/clonk; combos más ligeros de 10-25 g solo para spinning con señuelo)",
-      "carrete": "Carrete de gran capacidad y freno potente: talla 5000-6000 para señuelo, 8000-10000 para cebo vivo/muerto",
+      "carrete": "Carrete de gran capacidad y freno potente: talla 5000-6000 para señuelo, 8000-10000 para cebo muerto/pellets (pez vivo prohibido)",
       "linea": "Trenzado 0,30-0,40 mm (14-20 kg) + bajo de línea de nailon o fluorocarbono grueso, 0,40-0,50 mm, 1,20-1,80 m",
-      "senuelosCebos": ["Swimbaits y vinilos grandes", "Pellets en montaje de fondo", "Percusión tipo clonk donde la navegación esté permitida"],
-      "tecnica": "Pesca a fondo en zonas profundas cerca de refugios (puentes, pecios, agujeros de orilla), sobre todo al atardecer y de noche, cuando el siluro está más activo. Técnica \"clonk\" desde embarcación con sonda para localizarlo."
+      "senuelosCebos": [
+        "Swimbaits y vinilos grandes",
+        "Pellets en montaje de fondo",
+        "Percusión tipo clonk donde la navegación esté permitida"
+      ],
+      "tecnica": "Pesca a fondo en zonas profundas cerca de refugios (puentes, pecios, agujeros de orilla), sobre todo al atardecer en franja legal (1 h tras el ocaso como máximo). Técnica \"clonk\" desde embarcación con sonda donde la navegación esté permitida. No cebo vivo de pez."
     }
   },
   {
@@ -228,7 +319,9 @@
       "cana": "No requiere caña: se captura con reteles/nasas o a mano en orilla (verificar normativa local sobre artes permitidas)",
       "carrete": "No aplica",
       "linea": "No aplica",
-      "senuelosCebos": ["Cebo de pescado o hígado en nasa"],
+      "senuelosCebos": [
+        "Cebo de pescado o hígado en nasa"
+      ],
       "tecnica": "Colocación de reteles/nasas cerca de la orilla al atardecer, revisión al amanecer (verificar si está permitido en la zona)"
     }
   },
@@ -264,11 +357,15 @@
     "categoria": "autoctona",
     "invasora": false,
     "icono": "🐍",
-    "notas": "Especie amenazada con plan propio. En aguas libres: cupo 4 ejemplares o 1 kg/día (lo que se alcance primero). Talla 25 cm.",
-    "tallaOficial": "25 cm",
-    "tallaCm": 25,
-    "cupo": "4 ud o 1 kg/día en aguas libres",
-    "mejoresMeses": ["septiembre", "octubre", "noviembre"],
+    "notas": "Especie amenazada. En la Comunitat Valenciana la pesca recreativa de anguila está prohibida (Res. 30/10/2020, mantenida en Res. 16/09/2024). No retengas ni indiques cupo/talla de retención.",
+    "tallaOficial": "Pesca recreativa prohibida",
+    "tallaCm": null,
+    "cupo": "No aplicable (pesca recreativa prohibida)",
+    "mejoresMeses": [
+      "septiembre",
+      "octubre",
+      "noviembre"
+    ],
     "ventanas": "Crepúsculo; molinà solo donde esté expresamente autorizada",
     "mejorHora": {
       "resumen": "Más probable al crepúsculo (última hora de luz). De noche solo con molinà y solo donde esté autorizada.",
@@ -277,14 +374,17 @@
       "noche": "Es pez nocturno, pero la molinà de noche solo es legal en tramos expresamente autorizados. En el resto, última hora de luz."
     },
     "habitats": "Tramos bajos del Mijares y Palancia, marjales (muchos vedados)",
-    "senuelosClave": ["Lombriz en aguas no trucheras", "Montaje de fondo discreto"],
-    "normativaResumen": "Zonas de reserva de anguila: pesca prohibida. Desembocaduras a menudo VP.",
+    "senuelosClave": [
+      "Lombriz en aguas no trucheras",
+      "Montaje de fondo discreto"
+    ],
+    "normativaResumen": "Pesca recreativa prohibida en CV. Zonas de reserva de anguila y muchas desembocaduras VP.",
     "equipo": {
-      "cana": "Caña media 3-3,6 m para fondo",
-      "carrete": "Spinning 3000-4000",
-      "linea": "Nylon 0,25-0,30 mm",
-      "senuelosCebos": ["Lombriz (solo aguas no trucheras)"],
-      "tecnica": "Fondo cerca de orillas con vegetación. Revisa si el tramo es VP o ZRA."
+      "cana": "No objetivo recreativo legal en CV",
+      "carrete": "No aplica",
+      "linea": "No aplica",
+      "senuelosCebos": [],
+      "tecnica": "No pesques anguila recreativa en la Comunitat Valenciana salvo autorización expresa."
     }
   },
   {
@@ -294,11 +394,15 @@
     "categoria": "introducida_naturalizada",
     "invasora": false,
     "icono": "🐠",
-    "notas": "Talla mínima 8 cm. Frecuente en aguas lentas y embalses menores.",
-    "tallaOficial": "8 cm",
-    "tallaCm": 8,
-    "cupo": "Sin cupo general en la Orden",
-    "mejoresMeses": ["abril", "mayo", "junio"],
+    "notas": "Res. 16/09/2024: sin talla ni cupo (ya no aplica el mínimo de 8 cm de la Orden 30/2016 original). Frecuente en aguas lentas y embalses menores.",
+    "tallaOficial": "Sin talla (Res. 16/09/2024)",
+    "tallaCm": null,
+    "cupo": "Sin cupo (Res. 16/09/2024)",
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio"
+    ],
     "ventanas": "Mañanas cálidas en orilla",
     "mejorHora": {
       "resumen": "Más probable en mañanas cálidas, pegado a la orilla y a la vegetación.",
@@ -307,13 +411,21 @@
       "noche": "Poco activo de noche. No se pesca de noche."
     },
     "habitats": "Orillas someras, ramblas remansadas",
-    "senuelosClave": ["Maíz", "Masa dulce", "Gusano en aguas no trucheras"],
-    "normativaResumen": "Devolver si mide menos de 8 cm.",
+    "senuelosClave": [
+      "Maíz",
+      "Masa dulce",
+      "Gusano en aguas no trucheras"
+    ],
+    "normativaResumen": "Sin talla ni cupo (Res. 16/09/2024).",
     "equipo": {
       "cana": "Caña ligera de coup o feeder 3,6 m",
       "carrete": "Spinning 2000-3000 o pesca al coup",
       "linea": "Nylon 0,14-0,18 mm",
-      "senuelosCebos": ["Maíz", "Masa", "Asticot en aguas no trucheras"],
+      "senuelosCebos": [
+        "Maíz",
+        "Masa",
+        "Asticot en aguas no trucheras"
+      ],
       "tecnica": "Pesca fina a fondo o a la inglesa junto a vegetación."
     }
   },
@@ -324,11 +436,15 @@
     "categoria": "autoctona",
     "invasora": false,
     "icono": "🐟",
-    "notas": "Talla mínima 25 cm. Aguas lentas y con vegetación; poco frecuente en los grandes embalses de Castellón.",
-    "tallaOficial": "25 cm",
-    "tallaCm": 25,
-    "cupo": "Sin cupo general en la Orden",
-    "mejoresMeses": ["mayo", "junio", "julio"],
+    "notas": "Ya no figura con talla mínima 25 cm en la tabla de Res. 16/09/2024. Aguas lentas y con vegetación; poco frecuente en los grandes embalses de Castellón. Confirma el régimen del tramo.",
+    "tallaOficial": "Sin talla publicada en Res. 16/09/2024",
+    "tallaCm": null,
+    "cupo": "Sin cupo publicado en Res. 16/09/2024",
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "julio"
+    ],
     "ventanas": "Amanecer en orillas cubiertas",
     "mejorHora": {
       "resumen": "Más probable al amanecer, en orillas con vegetación y fondo blando.",
@@ -337,13 +453,21 @@
       "noche": "Puede alimentarse de noche, pero no se pesca de noche: ve al alba."
     },
     "habitats": "Tablas con nenúfar y fondos blandos",
-    "senuelosClave": ["Lombriz (aguas no trucheras)", "Maíz", "Pellets pequeños"],
-    "normativaResumen": "Devolver por debajo de 25 cm.",
+    "senuelosClave": [
+      "Lombriz (aguas no trucheras)",
+      "Maíz",
+      "Pellets pequeños"
+    ],
+    "normativaResumen": "No uses 25 cm como talla vigente; confirma tramo/PTOP.",
     "equipo": {
       "cana": "Feeder ligero 3,3-3,6 m",
       "carrete": "Spinning 3000",
       "linea": "Nylon 0,18-0,22 mm",
-      "senuelosCebos": ["Lombriz", "Maíz", "Pellets"],
+      "senuelosCebos": [
+        "Lombriz",
+        "Maíz",
+        "Pellets"
+      ],
       "tecnica": "Cebado suave y espera en orilla con cobertura."
     }
   },
@@ -354,11 +478,15 @@
     "categoria": "marina_estuarina",
     "invasora": false,
     "icono": "🐟",
-    "notas": "Entran en tramos bajos y desembocaduras. Talla 25 cm en río (Orden 30/2016 art. 2.2). En orilla de mar la lisa es 16 cm (RD 560). Muchas desembocaduras de Castellón están vedadas (Millars, Prat).",
+    "notas": "Entran en tramos bajos y desembocaduras. Talla 25 cm y cupo 4/día en río (Res. 16/09/2024). En orilla de mar la lisa es 16 cm (RD 560). Muchas desembocaduras de Castellón están vedadas (Millars, Prat).",
     "tallaOficial": "25 cm en aguas continentales",
     "tallaCm": 25,
-    "cupo": "Según normativa de pesca marítima de recreo si el tramo se considera marítimo",
-    "mejoresMeses": ["mayo", "junio", "septiembre"],
+    "cupo": "4/día en aguas continentales (Res. 16/09/2024). En mar, cupo/talla marítimos.",
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Mareas y primeras horas",
     "mejorHora": {
       "resumen": "Más probable a primeras horas y con la subida de marea o de caudal, pastando en superficie.",
@@ -367,13 +495,21 @@
       "noche": "Poco habitual de noche. No se pesca de noche. Muchas desembocaduras son vedado (VP)."
     },
     "habitats": "Azudes bajos del Palancia y Mijares, siempre que el tramo sea ZPL y no VP",
-    "senuelosClave": ["Pan", "Masa", "Mosca de sargazo en superficie"],
+    "senuelosClave": [
+      "Pan",
+      "Masa",
+      "Mosca de sargazo en superficie"
+    ],
     "normativaResumen": "Si el punto es desembocadura catalogada VP, no se pesca. En mar, licencia y tallas marítimas.",
     "equipo": {
       "cana": "Spinning ligero 2,4-2,7 m o inglesa",
       "carrete": "2500-4000",
       "linea": "Nylon 0,20-0,25 mm",
-      "senuelosCebos": ["Pan", "Masa", "Mosca de superficie"],
+      "senuelosCebos": [
+        "Pan",
+        "Masa",
+        "Mosca de superficie"
+      ],
       "tecnica": "Detectar lisas pastando en superficie; no pescar en marjales vedados."
     }
   }
