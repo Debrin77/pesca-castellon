@@ -512,5 +512,35 @@
       ],
       "tecnica": "Detectar lisas pastando en superficie; no pescar en marjales vedados."
     }
+  },
+  {
+    "id": "llobarro",
+    "nombre": "Llobarro / lubina (continental)",
+    "nombreCientifico": "Dicentrarchus labrax",
+    "categoria": "marina_estuarina",
+    "invasora": false,
+    "icono": "🐟",
+    "notas": "En aguas continentales de la CV (tramos bajos / estuarinos no vedados): talla 25 cm y cupo 4/día (Res. 16/09/2024). En orilla de mar la talla es 23 cm (RD 560). Muchas desembocaduras de Castellón están vedadas.",
+    "tallaOficial": "25 cm en aguas continentales",
+    "tallaCm": 25,
+    "cupo": "4/día en aguas continentales (Res. 16/09/2024). En mar, talla/cupo marítimos.",
+    "mejoresMeses": ["abril", "mayo", "junio", "septiembre", "octubre"],
+    "ventanas": "Crepúsculo y primeras horas en azudes bajos no vedados",
+    "mejorHora": {
+      "resumen": "Más probable al amanecer y al atardecer en tramos bajos con algo de corriente o marea.",
+      "verano": "Aprox. 6:00–9:00 y 19:00–21:00.",
+      "invierno": "Aprox. 10:00–15:00 en días suaves.",
+      "noche": "No se pesca de noche en continental CV."
+    },
+    "habitats": "Azudes bajos del Palancia y Mijares solo si el tramo es ZPL (no VP / no ZRA)",
+    "senuelosClave": ["Minnow / stickbait", "Vinilo shad", "Cucharilla ondulante"],
+    "normativaResumen": "Continental CV: 25 cm · cupo 4/día (Res. 16/09/2024). Mar: 23 cm RD 560. Confirma que el tramo no esté vedado.",
+    "equipo": {
+      "cana": "Spinning 2,40-2,70 m, 10-30 g",
+      "carrete": "2500-4000",
+      "linea": "Trenzado fino + flúor 0,20-0,28 mm",
+      "senuelosCebos": ["Minnows", "Vinilos", "Cucharillas"],
+      "tecnica": "Lances a orilla y corriente en tramos legales; no pesques en desembocaduras VP."
+    }
   }
 ]

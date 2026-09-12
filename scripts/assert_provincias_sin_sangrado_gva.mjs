@@ -67,6 +67,43 @@ for (const [n, txt] of [
   if (txt.includes("Carassius auratus")) fail(`${n}: carpín debe ser Carassius gibelio`);
 }
 
+/** Boga: no recomendar meses de veda (1 feb–30 abr) ni cebado. */
+for (const prov of ["sevilla", "cordoba"]) {
+  const extra = JSON.parse(read(`src/provincias/${prov}/speciesExtra.json`));
+  const boga = extra.find((s) => s.id === "boga");
+  if (!boga) {
+    fail(`${prov}: falta boga en speciesExtra`);
+    continue;
+  }
+  const veda = new Set(["febrero", "marzo", "abril"]);
+  const mal = (boga.mejoresMeses || []).filter((m) => veda.has(m));
+  if (mal.length) fail(`${prov}: boga mejoresMeses en veda (${mal.join(", ")})`);
+  const tec = boga.equipo?.tecnica || "";
+  if (/cebado/i.test(tec) && !/no cebar/i.test(tec)) {
+    fail(`${prov}: boga no debe enseñar cebado (art. 9.4)`);
+  }
+  if (!extra.some((s) => s.id === "anguila")) {
+    fail(`${prov}: falta ficha anguila (no objeto / prohibida)`);
+  }
+}
+
+const cueExtra = JSON.parse(read("src/provincias/cuenca/speciesExtra.json"));
+if (!cueExtra.some((s) => s.id === "anguila")) {
+  fail("cuenca: falta ficha anguila (pesca prohibida CLM)");
+}
+
+const csSpecies = JSON.parse(read("src/data/species.json"));
+if (!csSpecies.some((s) => s.id === "llobarro")) {
+  fail("castellón: falta llobarro continental (25 cm · cupo 4, Res. 16/09/2024)");
+}
+const vedaSrc = read("src/services/vedaService.ts");
+if (!vedaSrc.includes('especieId === "anguila"')) {
+  fail("vedaService: debe contemplar anguila");
+}
+if (!/esProvinciaAndalucia[\s\S]{0,400}anguila/.test(vedaSrc)) {
+  fail("vedaService: Andalucía debe marcar anguila como no pescable");
+}
+
 if (fallos) {
   console.error(`assert_provincias_sin_sangrado_gva: ${fallos} fallo(s)`);
   process.exit(1);

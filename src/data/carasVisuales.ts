@@ -37,6 +37,7 @@ const ESPECIE_CARA: Record<string, CaraVisual> = {
   siluro: { emoji: "👹", gradiente: ["#b42318", "#24352c"], etiqueta: "Invasora" },
   anguila: { emoji: "🐍", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Migradora" },
   mugilidos: { emoji: "🌊", gradiente: ["#2a7a94", "#13485a"], etiqueta: "Estuario / mar" },
+  llobarro: { emoji: "🐟", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Estuario / río" },
   // Orilla Castellón (15 usuales + invasora)
   lubina: { emoji: "🐟", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Orilla · mar" },
   dorada: { emoji: "🐠", gradiente: ["#1a6f8a", "#13485a"], etiqueta: "Orilla · mar" },

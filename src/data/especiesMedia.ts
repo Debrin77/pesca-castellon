@@ -20,6 +20,7 @@ const FOTOS: Record<string, ImageSourcePropType> = {
   carpin: require("../../assets/especies/carpin.jpg"),
   tenca: require("../../assets/especies/tenca.jpg"),
   mugilidos: require("../../assets/especies/mugilidos.jpg"),
+  llobarro: require("../../assets/especies/lubina.jpg"),
   llisa: require("../../assets/especies/llisa.jpg"),
   alburno: require("../../assets/especies/alburno.jpg"),
   boga: require("../../assets/especies/boga.jpg"),
