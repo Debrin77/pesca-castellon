@@ -5,7 +5,8 @@ import {
   etiquetaTemporadaTrucha,
   temporadaTruchaAbierta,
 } from "../data/normativa2026";
-import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo } from "../provincias/sevilla/normativa";
+import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo as avisosPorNotaAnexoSevilla } from "../provincias/sevilla/normativa";
+import { avisosPorNotaAnexo as avisosPorNotaAnexoCordoba } from "../provincias/cordoba/normativa";
 import { avisosPorNotaAnexoClm } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -229,7 +230,9 @@ function evaluarTramo(
       ? ficha.avisos
       : esClm
         ? avisosPorNotaAnexoClm(t.notaAnexo)
-        : avisosPorNotaAnexo(t.notaAnexo);
+        : getProvinciaActiva().id === "cordoba"
+          ? avisosPorNotaAnexoCordoba(t.notaAnexo)
+          : avisosPorNotaAnexoSevilla(t.notaAnexo);
     for (const a of avisosFicha) {
       if (!restricciones.includes(a)) restricciones.push(a);
     }
@@ -339,18 +342,41 @@ function evaluarTramo(
       if (!diaOk) restricciones.push(`Hoy es ${dow}: no es día hábil en este tramo.`);
     }
   } else if (esAndalucia) {
-    permisos.push(
-      "Art. 5.2: aguas libres si no es coto ni refugio. En Sevilla no hay cotos de ciprínidos (Anexo V.4)."
-    );
+    const idProv = getProvinciaActiva().id;
+    if (idProv === "sevilla") {
+      permisos.push(
+        "Art. 5.2: aguas libres si no es coto ni refugio. En Sevilla no hay cotos de ciprínidos (Anexo V.4)."
+      );
+    } else if (idProv === "cordoba") {
+      permisos.push(
+        "Art. 5.2: aguas libres si no es coto ni refugio. En Córdoba los embalses listados son libres salvo refugios del Anexo IV; confirma DERA/cartel del vaso."
+      );
+    } else {
+      permisos.push("Art. 5.2: aguas libres si no es coto ni refugio (Orden 13/01/2023 Andalucía).");
+    }
     permisos.push(
       `Barbo: captura y suelta, ${periodoBarboAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 jul–25 feb). Boga: captura y suelta, ${periodoBogaAbierto(fecha) ? "hoy hábil" : "hoy en veda"} (1 may–31 ene).`
     );
-    permisos.push("Art. 6: 200 m de presas y escalas. Horario art. 4: 1 h antes del orto – 1 h después del ocaso.");
+    if (t.notaAnexo === "ANEXO_V_2" || t.notaAnexo === "IZNAJAR" || t.id?.includes("iznajar")) {
+      permisos.push(
+        "Iznájar (Anexo V.2): horario orto→ocaso (sin ±1 h). Límites de línea/cebos/señuelos; siluro no es objeto de pesca."
+      );
+    } else {
+      permisos.push("Art. 6: 200 m de presas y escalas. Horario art. 4: 1 h antes del orto – 1 h después del ocaso.");
+    }
+    permisos.push("Art. 9.4: no cebar ni usar pez como cebo (salvo FAPD autorizada).");
     if (t.notaAnexo === "ANEXO_V_3") {
       permisos.push(
         "Anexo V.3: en este embalse/tramo las competiciones oficiales FAPD pueden retener barbos en rejones durante su veda."
       );
     }
+  } else if (esProvinciaCastillaLaMancha(getProvinciaActiva().id)) {
+    permisos.push(
+      "Castilla-La Mancha: Orden 20/2026 (vedas) y Ley 1/1992. Autóctonos con talla/sin muerte según Anexo; invasoras con sacrificio cuando proceda."
+    );
+    permisos.push(
+      "Horario diurno legal (1 h antes del orto – 1 h después del ocaso), salvo excepciones (p. ej. cangrejo). Cotos: permiso del titular / plan técnico JCCM."
+    );
   } else {
     permisos.push(
       "Aguas no trucheras: artículos 2 y 8 de la Orden 30/2016. Lombriz/asticot permitidos. Autóctonos de la tabla 2.2 con talla o sin muerte según especie."

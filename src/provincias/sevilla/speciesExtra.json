@@ -9,7 +9,15 @@
     "notas": "Ciprínido autóctono de Andalucía (cuencas atlánticas del sur). Muy presente en Guadaíra, Corbones, Rivera de Huelva y colas de embalses sevillanos. Prefiere corriente moderada y fondos de grava.",
     "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
     "cupo": "0 de retención. Periodo hábil: 1 de julio a 25 de febrero.",
-    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+      "enero"
+    ],
     "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
     "mejorHora": {
       "resumen": "Más probable por la mañana en tablas de corriente. Pico extra si el agua va un poco teñida tras lluvias.",
@@ -30,7 +38,11 @@
       "cana": "Caña de river/feeder 3.60-3.90 m, acción media, o spinning ligero 2.10-2.40 m",
       "carrete": "Carrete spinning 3000-4000",
       "linea": "Nylon 0.18-0.25 mm",
-      "senuelosCebos": ["Lombriz (donde el cebo natural esté permitido)", "Masa/pasta de barbo", "Maíz"],
+      "senuelosCebos": [
+        "Lombriz (donde el cebo natural esté permitido)",
+        "Masa/pasta de barbo",
+        "Maíz"
+      ],
       "tecnica": "Pesca a fondo en corriente moderada con feeder o plomada corredera; en embalse, orillas de cola con grava"
     }
   },
@@ -44,7 +56,11 @@
     "notas": "Ciprínido autóctono de cuencas del suroeste ibérico. En Sevilla aparece en afluentes (Guadaíra, Corbones, Rivera de Cala/Agrio) y colas de embalse con algo de corriente. Cardúmenes pegados al fondo.",
     "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
     "cupo": "0 de retención. Periodo hábil: 1 de mayo a 31 de enero.",
-    "mejoresMeses": ["abril", "mayo", "junio"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio"
+    ],
     "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
     "mejorHora": {
       "resumen": "Más probable a media mañana en tablas con corriente suave y fondo limpio.",
@@ -65,7 +81,12 @@
       "cana": "Caña ligera de coup o inglesa 3.6-4.5 m, o feeder fino",
       "carrete": "Spinning 2000-3000 o pesca al coup",
       "linea": "Nylon 0.12-0.16 mm",
-      "senuelosCebos": ["Masa", "Pan", "Maíz pequeño", "Asticot si está permitido"],
+      "senuelosCebos": [
+        "Masa",
+        "Pan",
+        "Maíz pequeño",
+        "Asticot si está permitido"
+      ],
       "tecnica": "Pesca fina a fondo o a la deriva en corriente suave; cebado discreto"
     }
   },
@@ -79,7 +100,13 @@
     "notas": "Ciprínido introducido/invasor, muy abundante en el Guadalquivir sevillano y en embalses (Minilla, Pintado, Zufre, Torre del Águila). Forma cardúmenes en superficie; útil como indicador de actividad pero compite con autóctonos.",
     "tallaOficial": "No es objeto de pesca en Andalucía. Captura fortuita: no devolver.",
     "cupo": "0 de aprovechamiento. No devolver / no traslocar.",
-    "mejoresMeses": ["abril", "mayo", "junio", "julio", "agosto"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto"
+    ],
     "ventanas": "Todo el día en superficie; mejor con sol y agua templada",
     "mejorHora": {
       "resumen": "Activo casi todo el día en superficie y media agua. Pico con sol y brisa suave.",
@@ -100,7 +127,12 @@
       "cana": "Caña ultraligera de spinning 1.80-2.10 m o caña de coup fina",
       "carrete": "Spinning 1000-2000",
       "linea": "Nylon 0.10-0.14 mm o trenzado fino",
-      "senuelosCebos": ["Micro cucharilla", "Pan", "Masa", "Mosca pequeña"],
+      "senuelosCebos": [
+        "Micro cucharilla",
+        "Pan",
+        "Masa",
+        "Mosca pequeña"
+      ],
       "tecnica": "Pesca fina en superficie o media agua sobre cardúmenes visibles; no traslocar ejemplares"
     }
   }

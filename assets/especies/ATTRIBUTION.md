@@ -25,7 +25,7 @@ Editor Thomas Spencer Baynes and William Robertson Smi
 - `mugilidos.jpg` — File:Mugil cephalus Minorca.jpg — CC BY 3.0 — Roberto Pillon
 - `llisa.jpg` — File:Mugil cephalus Minorca.jpg — CC BY 3.0 — Roberto Pillon
 - `alburno.jpg` — File:Alburnus alburnus FZ.png — CC BY 2.0 — Andreas Hartl
-- `boga.jpg` — File:Mapa Chondrostoma willkommii.png — Public domain — Osado
+- `boga.jpg` — File:Pseudochondrostoma willkommii1 cropped.jpg — ver licencia en Commons — Pseudochondrostoma willkommii (boga del Guadiana/Guadalquivir)
 - `lubina.jpg` — File:Dicentrarchus labrax 23224415.jpg — CC BY 4.0 — Andrea Quadrio
 - `dorada.jpg` — File:Sparus aurata Sardegna.jpg — CC BY 3.0 — Roberto Pillon
 - `sargo.jpg` — File:Diplodus sargus Minorca.jpg — CC BY 3.0 — Roberto Pillon
@@ -61,7 +61,7 @@ Translation by User:Theklan
 - `carpin.jpg` — File:Carassius wild golden fish 2013 G1.jpg — Public domain — George Chernilevsky
 - `tenca.jpg` — File:Hal - Tinca tinca - 3.jpg — CC BY-SA 4.0 — Emőke Dénes
 - `alburno.jpg` — File:Common Bleak - Alburnus alburnus (30945826648).jpg — CC BY-SA 2.0 — Björn S...
-- `boga.jpg` — File:Banco de bogas (Boops boops), franja marina Teno-Rasca, Tenerife, España, 2022-01-08, DD 43.jpg — CC BY-SA 4.0 — Diego Delso
+- `boga.jpg` — File:Pseudochondrostoma willkommii1 cropped.jpg — ver licencia en Commons — Pseudochondrostoma willkommii (boga del Guadiana/Guadalquivir)
 - `jurel.jpg` — File:Chicharros (Trachurus trachurus) secos, Mercado Duque de Bragança, Angra do Heroísmo, isla de Terceira, Azores, Portugal, 2020-07-25, DD 03.jpg — CC BY-SA 4.0 — Diego Delso
 - `corvina.jpg` — File:Argyrosomus regius.001 - Aquarium Finisterrae.jpg — CC BY-SA 4.0 — Fernando Losada Rodríguez
 - `palometon.jpg` — File:Leccia Amia 26 kg .jpg — CC BY-SA 4.0 — Mariella Rubegni

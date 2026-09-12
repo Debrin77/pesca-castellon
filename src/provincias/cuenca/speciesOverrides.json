@@ -9,7 +9,13 @@
     "notas": "Exótica invasora. En CLM figura entre las especies con pesca prohibida (Orden 20/2026). Presencia en expansión en grandes embalses del Tajo/Júcar; no es especie objeto de pesca.",
     "tallaOficial": "Pesca prohibida (Orden de vedas CLM). Captura fortuita: no devolver; retira del medio.",
     "cupo": "0. No es objeto de pesca.",
-    "mejoresMeses": ["mayo", "junio", "julio", "agosto", "septiembre"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre"
+    ],
     "ventanas": "Actividad crepuscular; el horario legal CLM es diurno (Ley 1/1992).",
     "mejorHora": {
       "resumen": "No es modalidad objetivo en Cuenca: pesca prohibida.",
@@ -39,7 +45,13 @@
     "notas": "Exótica invasora. En Cuenca se pesca sobre todo en Buendía, Alarcón y Contreras. Sacrificio inmediato según Anexo I; solo en áreas de distribución del Anexo III de la Orden vigente.",
     "tallaOficial": "Sin talla. Sacrificio inmediato (invasora).",
     "cupo": "Sin cupo de retención viva. No devolver. No traslocar.",
-    "mejoresMeses": ["marzo", "abril", "mayo", "septiembre", "octubre"],
+    "mejoresMeses": [
+      "marzo",
+      "abril",
+      "mayo",
+      "septiembre",
+      "octubre"
+    ],
     "ventanas": "Amanecer y atardecer; mediodía en profundidad",
     "mejorHora": {
       "resumen": "Más probable al amanecer y al atardecer.",
@@ -61,7 +73,13 @@
       "cana": "Casting 7' MH + spinning 6'10\" ML",
       "carrete": "Baitcasting ~7:1; spinning 2500",
       "linea": "Trenzado fino + flúor 0,20-0,30 mm",
-      "senuelosCebos": ["Creature bait", "Drop shot", "Jig", "Topwater", "Spinnerbait"],
+      "senuelosCebos": [
+        "Creature bait",
+        "Drop shot",
+        "Jig",
+        "Topwater",
+        "Spinnerbait"
+      ],
       "tecnica": "Primavera en cola; verano drop shot/jig en puntas; otoño crank a media cota."
     }
   },
@@ -75,7 +93,13 @@
     "notas": "Exótica invasora. Histórico en el Mar de Castilla (Buendía/Entrepeñas) y presente en grandes embalses conquenses. Sacrificio inmediato; no devolver.",
     "tallaOficial": "Sin talla. Sacrificio inmediato.",
     "cupo": "Sin cupo vivo. No devolver.",
-    "mejoresMeses": ["octubre", "noviembre", "diciembre", "marzo", "abril"],
+    "mejoresMeses": [
+      "octubre",
+      "noviembre",
+      "diciembre",
+      "marzo",
+      "abril"
+    ],
     "ventanas": "Mañanas frías; señuelo grande junto a cobertura",
     "mejorHora": {
       "resumen": "Más activo en agua fría, a media mañana.",
@@ -96,7 +120,11 @@
       "cana": "Spinning/casting potencia media-alta 2,10-2,40 m",
       "carrete": "4000-5000",
       "linea": "Trenzado + bajo de acero o flúor grueso",
-      "senuelosCebos": ["Swimbaits", "Jerkbaits", "Spinnerbait"],
+      "senuelosCebos": [
+        "Swimbaits",
+        "Jerkbaits",
+        "Spinnerbait"
+      ],
       "tecnica": "Barridos junto a cobertura; recupera irregular."
     }
   },
@@ -110,7 +138,12 @@
     "notas": "Exótica invasora con obligación de sacrificio inmediato en CLM (Orden 20/2026). Muy presente en embalses del Júcar y Tajo conquenses. En Alarcón hay restricciones fuertes de cebos (sin boilies/pellets endurecidos).",
     "tallaOficial": "Sin talla. Sacrificio inmediato.",
     "cupo": "Sin cupo vivo. No devolver.",
-    "mejoresMeses": ["mayo", "junio", "julio", "septiembre"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "julio",
+      "septiembre"
+    ],
     "ventanas": "Amanecer y atardecer en orillas someras",
     "mejorHora": {
       "resumen": "Más probable al alba y al atardecer en orillas.",
@@ -130,21 +163,30 @@
       "cana": "Feeder / carp 3,60-3,90 m",
       "carrete": "Feeder 5000-6000",
       "linea": "Nylon 0,22-0,30 mm",
-      "senuelosCebos": ["Maíz", "Vegetales", "Asticot en embalses no trucheros"],
+      "senuelosCebos": [
+        "Maíz",
+        "Vegetales",
+        "Asticot en embalses no trucheros"
+      ],
       "tecnica": "Fondo en cola; respeta restricciones de Alarcón."
     }
   },
   {
     "id": "carpin",
     "nombre": "Carpín",
-    "nombreCientifico": "Carassius auratus",
+    "nombreCientifico": "Carassius gibelio",
     "categoria": "exotica",
     "invasora": false,
     "icono": "🐠",
-    "notas": "Exótica (no listada como invasora de sacrificio en el resumen JCCM de carpín). Presente en embalses y lagunas. Confirma Anexo I de la Orden vigente.",
+    "notas": "Exótica (no listada como invasora de sacrificio en el resumen JCCM de carpín). Presente en embalses y lagunas. Confirma Anexo I de la Orden vigente. Identificación habitual en embalses: Carassius gibelio (carpín plateado).",
     "tallaOficial": "Sin talla (Orden de vedas).",
     "cupo": "Según Orden vigente; no traslocar.",
-    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Mañanas en orillas someras",
     "mejorHora": {
       "resumen": "Más probable por la mañana en orillas.",
@@ -153,14 +195,22 @@
       "noche": "Horario diurno."
     },
     "habitats": "Orillas de embalses y lagunas conquenses",
-    "senuelosClave": ["Maíz pequeño", "Masa fina", "Asticot"],
+    "senuelosClave": [
+      "Maíz pequeño",
+      "Masa fina",
+      "Asticot"
+    ],
     "normativaResumen": "Exótica. Licencia CLM. Confirma cupos Anexo I Orden 20/2026.",
     "normativaEspecial": "⚠️ CLM: carpín — sin talla en el resumen de vedas; confirma Anexo I y no traslocar.",
     "equipo": {
       "cana": "Coup / inglesa ligera",
       "carrete": "2000-3000",
       "linea": "0,12-0,16 mm",
-      "senuelosCebos": ["Maíz", "Masa", "Asticot"],
+      "senuelosCebos": [
+        "Maíz",
+        "Masa",
+        "Asticot"
+      ],
       "tecnica": "Pesca fina a fondo o a la deriva."
     }
   },
@@ -174,7 +224,12 @@
     "notas": "Invasora. Control de poblaciones con veda 1 feb–31 may (aves acuáticas). Fuera de esa veda: de 1 h antes del orto a 2 h después del ocaso. No donde coexista con otras especies de cangrejo.",
     "tallaOficial": "Sin talla. Sacrificio / control según Orden.",
     "cupo": "Control de poblaciones; no traslocar vivo.",
-    "mejoresMeses": ["junio", "julio", "agosto", "septiembre"],
+    "mejoresMeses": [
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre"
+    ],
     "ventanas": "Atardecer autorizado (hasta 2 h tras ocaso) fuera de veda feb–may",
     "mejorHora": {
       "resumen": "Más activo al atardecer fuera del periodo de veda feb–may.",
@@ -183,14 +238,19 @@
       "noche": "Solo la extensión de 2 h tras ocaso para control de cangrejo rojo."
     },
     "habitats": "Orillas limosas de embalses y tramos lentos",
-    "senuelosClave": ["Reteles autorizados", "Cebos vegetales"],
+    "senuelosClave": [
+      "Reteles autorizados",
+      "Cebos vegetales"
+    ],
     "normativaResumen": "Invasora. Veda control 1 feb–31 may. Horario especial hasta 2 h tras ocaso.",
     "normativaEspecial": "⚠️ CLM: cangrejo rojo — veda de control 1 feb–31 may. Fuera: orto−1 h → ocaso+2 h. Sacrificio; no donde haya otras especies de cangrejo.",
     "equipo": {
       "cana": "—",
       "carrete": "—",
       "linea": "—",
-      "senuelosCebos": ["Reteles"],
+      "senuelosCebos": [
+        "Reteles"
+      ],
       "tecnica": "Control autorizado; desinfecta material."
     }
   },
@@ -204,7 +264,12 @@
     "notas": "Autóctona. En CLM solo pesca sin muerte en todo tipo de aguas. Serranía de Cuenca, alto Júcar, Cuervo, Cabriel y cotos especiales. Periodos hábiles en aguas trucheras (art. 2).",
     "tallaOficial": "Sin muerte (devolución inmediata).",
     "cupo": "0 de retención.",
-    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Mañanas de primavera; eclosiones",
     "mejorHora": {
       "resumen": "Más probable por la mañana en corrientes oxigenadas.",
@@ -213,14 +278,21 @@
       "noche": "No."
     },
     "habitats": "Alto Júcar, Cuervo, Escabas, Cabriel, Laguna del Marquesado; cotos especiales",
-    "senuelosClave": ["Mosca seca/ninfa", "Cucharilla simple sin arponcillo", "Streamers pequeños"],
+    "senuelosClave": [
+      "Mosca seca/ninfa",
+      "Cucharilla simple sin arponcillo",
+      "Streamers pequeños"
+    ],
     "normativaResumen": "Solo sin muerte. Periodos trucheras art. 2. Anzuelos sin arponcillo.",
     "normativaEspecial": "⚠️ CLM (Cuenca): trucha común — SOLO pesca sin muerte. Baja montaña 1 abr–30 sep; alta 1 may–15 oct. Anzuelos sin arponcillo. Algunas aperturas retrasadas (p. ej. Laguna del Marquesado 1 jun).",
     "equipo": {
       "cana": "Mosca 7-8' #3-5 o spinning ultraligero",
       "carrete": "Mosca o spinning 1000-2000",
       "linea": "Sedal fino / tippet adecuado",
-      "senuelosCebos": ["Mosca", "Cucharilla simple"],
+      "senuelosCebos": [
+        "Mosca",
+        "Cucharilla simple"
+      ],
       "tecnica": "Sin muerte; suelta inmediata sin manipulación extra."
     }
   },
@@ -234,7 +306,13 @@
     "notas": "Exótica invasora. En CLM se autoriza en cotos intensivos (suelta) con sacrificio inmediato fuera de ese marco. En Cuenca: Puente Romano, El Chantre, La Torre, etc.",
     "tallaOficial": "Sin talla — sacrificio inmediato (salvo marco de coto intensivo / suelta autorizada).",
     "cupo": "Según plan del coto intensivo.",
-    "mejoresMeses": ["marzo", "abril", "mayo", "octubre", "noviembre"],
+    "mejoresMeses": [
+      "marzo",
+      "abril",
+      "mayo",
+      "octubre",
+      "noviembre"
+    ],
     "ventanas": "Días de coto; confirma plan técnico",
     "mejorHora": {
       "resumen": "Según horario del coto intensivo.",
@@ -243,14 +321,22 @@
       "noche": "No, salvo autorización expresa."
     },
     "habitats": "Cotos intensivos del Júcar en Cuenca (CI-9, CI-10, CI-19…)",
-    "senuelosClave": ["Cucharilla", "Mosca", "Vinilo pequeño"],
+    "senuelosClave": [
+      "Cucharilla",
+      "Mosca",
+      "Vinilo pequeño"
+    ],
     "normativaResumen": "Invasora. Cotos intensivos con permiso. Sacrificio fuera del marco autorizado.",
     "normativaEspecial": "⚠️ CLM: trucha arcoíris — invasora. En coto intensivo: permiso + licencia y reglas del plan. Fuera: sacrificio inmediato, no devolver.",
     "equipo": {
       "cana": "Spinning ligero / mosca",
       "carrete": "2000-3000",
       "linea": "Nylon 0,16-0,20 mm",
-      "senuelosCebos": ["Cucharilla", "Mosca", "Masillas si el coto lo permite"],
+      "senuelosCebos": [
+        "Cucharilla",
+        "Mosca",
+        "Masillas si el coto lo permite"
+      ],
       "tecnica": "Sigue el plan técnico del coto."
     }
   },
@@ -264,7 +350,12 @@
     "notas": "Autóctono. En la provincia de Cuenca: solo pesca sin muerte en todas las aguas, excepto Contreras, Alarcón y Buendía (presa→puente Alcocer), donde el cupo es 6 ejemplares/pescador/día (talla mín. 18 cm).",
     "tallaOficial": "18 cm donde se autorice extracción. Resto: sin muerte.",
     "cupo": "0 (sin muerte) salvo Contreras/Alarcón/Buendía: máx. 6/día.",
-    "mejoresMeses": ["abril", "mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "abril",
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Mañanas en corriente; colas de embalse",
     "mejorHora": {
       "resumen": "Más probable por la mañana en tablas y colas.",
@@ -273,14 +364,23 @@
       "noche": "No."
     },
     "habitats": "Júcar, Cabriel, Guadiela, Buendía, Alarcón, Contreras",
-    "senuelosClave": ["Maíz", "Masa de barbo", "Ninfa pesada", "Cucharilla pequeña donde permita spinning"],
+    "senuelosClave": [
+      "Maíz",
+      "Masa de barbo",
+      "Ninfa pesada",
+      "Cucharilla pequeña donde permita spinning"
+    ],
     "normativaResumen": "Cuenca: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6, talla 18 cm).",
     "normativaEspecial": "⚠️ CUENCA: barbos — solo sin muerte en casi toda la provincia. Excepción: Contreras, Alarcón y Buendía (presa→puente nuevo Alcocer): hasta 6/día, talla mín. 18 cm (Orden 20/2026 art. 7.C).",
     "equipo": {
       "cana": "Feeder / river 3,60-3,90 m o spinning ligero",
       "carrete": "3000-4000",
       "linea": "0,18-0,25 mm",
-      "senuelosCebos": ["Maíz", "Masa", "Lombriz donde esté permitido"],
+      "senuelosCebos": [
+        "Maíz",
+        "Masa",
+        "Lombriz donde esté permitido"
+      ],
       "tecnica": "Fondo en corriente; en embalse, colas con grava."
     }
   },
@@ -294,7 +394,11 @@
     "notas": "Autóctona. Talla mínima 18 cm donde se autorice extracción. Presente en lagunas y embalses tranquilos de la Serranía.",
     "tallaOficial": "18 cm",
     "cupo": "Según Orden vigente.",
-    "mejoresMeses": ["mayo", "junio", "septiembre"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "septiembre"
+    ],
     "ventanas": "Amanecer en orillas vegetadas",
     "mejorHora": {
       "resumen": "Más probable al amanecer junto a vegetación.",
@@ -303,14 +407,21 @@
       "noche": "Horario diurno."
     },
     "habitats": "Laguna de Uña, La Toba, zonas vegetadas de embalses",
-    "senuelosClave": ["Maíz", "Masa", "Asticot"],
+    "senuelosClave": [
+      "Maíz",
+      "Masa",
+      "Asticot"
+    ],
     "normativaResumen": "Autóctona. Talla 18 cm. Licencia CLM.",
     "normativaEspecial": "⚠️ CLM: tenca — talla mínima 18 cm donde se autorice extracción (Orden de vedas).",
     "equipo": {
       "cana": "Coup / feeder fino",
       "carrete": "2000-3000",
       "linea": "0,14-0,18 mm",
-      "senuelosCebos": ["Maíz", "Masa"],
+      "senuelosCebos": [
+        "Maíz",
+        "Masa"
+      ],
       "tecnica": "Fondo suave junto a vegetación."
     }
   },
@@ -324,7 +435,12 @@
     "notas": "Invasora con sacrificio inmediato. Muy abundante en embalses del Júcar conquense.",
     "tallaOficial": "Sin talla. Sacrificio inmediato.",
     "cupo": "No devolver.",
-    "mejoresMeses": ["mayo", "junio", "julio", "agosto"],
+    "mejoresMeses": [
+      "mayo",
+      "junio",
+      "julio",
+      "agosto"
+    ],
     "ventanas": "Superficie en días calmados",
     "mejorHora": {
       "resumen": "Cardúmenes en superficie a media mañana.",
@@ -333,14 +449,21 @@
       "noche": "Horario diurno."
     },
     "habitats": "Superficie de Alarcón, Contreras, Buendía",
-    "senuelosClave": ["Mosquito", "Tiny crank", "Masa fina"],
+    "senuelosClave": [
+      "Mosquito",
+      "Tiny crank",
+      "Masa fina"
+    ],
     "normativaResumen": "Invasora CLM: sacrificio inmediato.",
     "normativaEspecial": "⚠️ CLM: alburno — sacrificio inmediato, no devolver ni traslocar.",
     "equipo": {
       "cana": "Ultraligera",
       "carrete": "1000-2000",
       "linea": "0,10-0,14 mm",
-      "senuelosCebos": ["Microseñuelos", "Masa"],
+      "senuelosCebos": [
+        "Microseñuelos",
+        "Masa"
+      ],
       "tecnica": "No devolver; útil como indicador de actividad."
     }
   },
@@ -354,7 +477,12 @@
     "notas": "Exótica invasora. Presente en el eje Entrepeñas–Buendía y otros embalses. Sacrificio inmediato.",
     "tallaOficial": "Sin talla. Sacrificio inmediato.",
     "cupo": "No devolver.",
-    "mejoresMeses": ["octubre", "noviembre", "marzo", "abril"],
+    "mejoresMeses": [
+      "octubre",
+      "noviembre",
+      "marzo",
+      "abril"
+    ],
     "ventanas": "Crepúsculo legal; fondos con estructura",
     "mejorHora": {
       "resumen": "Más activa al atardecer en cotas medias.",
@@ -363,14 +491,21 @@
       "noche": "Horario diurno legal."
     },
     "habitats": "Buendía y embalses profundos con estructura",
-    "senuelosClave": ["Shad 10-12 cm", "Drop shot", "Vertical jig"],
+    "senuelosClave": [
+      "Shad 10-12 cm",
+      "Drop shot",
+      "Vertical jig"
+    ],
     "normativaResumen": "Invasora CLM: sacrificio inmediato.",
     "normativaEspecial": "⚠️ CLM: lucioperca — sacrificio inmediato, no devolver. Confirma Anexo III.",
     "equipo": {
       "cana": "Spinning MH 2,10-2,40 m",
       "carrete": "3000-4000",
       "linea": "Trenzado + flúor",
-      "senuelosCebos": ["Shads", "Drop shot"],
+      "senuelosCebos": [
+        "Shads",
+        "Drop shot"
+      ],
       "tecnica": "Fondo y saltos de cota; no devolver."
     }
   }
