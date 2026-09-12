@@ -380,13 +380,13 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "ap-feeder",
         titulo: "Feeder / fondo para carpa y barbo",
-        resumen: "Caña feeder 3,3–3,6 m · nailon 0.20–0.25 · cage o oliva.",
+        resumen: "Caña feeder 3,3–3,6 m · nailon 0.20–0.25 · oliva (cage solo si cebar es legal).",
         detalle:
-          "Plomo deslizante + emerillón de tope + bajo + anzuelo. Solo donde cebar esté permitido (no trucheros). Anzuelo a la medida del cebo.",
+          "Plomo deslizante + emerillón de tope + bajo + anzuelo. Cebo en el anzuelo. Cage/method de cebado solo donde esté permitido (no trucheros). Andalucía art. 9.4: sin cebar (usa oliva, no jaula de cebado) salvo FAPD.",
         pasos: [
-          "Plomo deslizante (oliva o cage) en la línea.",
-          "Emerillón de tope + bajo + anzuelo.",
-          "Solo donde cebar esté permitido.",
+          "Plomo deslizante (oliva; cage solo si cebar es legal) en la línea.",
+          "Emerillón de tope + bajo + anzuelo con el cebo.",
+          "No cebes el vaso donde esté prohibido (Andalucía art. 9.4 / trucheros).",
         ],
         diagrama: "montaje-fondo",
         tags: ["carpa", "barbo", "fotos"],
@@ -483,9 +483,9 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "voc-football-jig",
         titulo: "Football jig",
-        resumen: "Jig de cabeza redondeada/ovalada para cascajo.",
+        resumen: "Jig de cabeza ovalada/«balón» para cascajo.",
         detalle:
-          "Se arrastra y «salta» el fondo; suele llevar trailer de vinilo. No es un jighead simple: la forma ayuda a no clavarse tanto en piedras.",
+          "Cabeza aplastada ovalada que rueda en piedras; suele llevar trailer de vinilo. No es un jighead redondo simple. La foto de la app es un jig/softbait tipo Vibrotail (familia jig), no una cabeza football auténtica: úsala como referencia de técnica, no de forma exacta.",
         diagrama: "voc-football-jig",
         tags: ["señuelo", "bass", "foto"],
       },
@@ -546,9 +546,9 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "voc-feeder",
         titulo: "Feeder / fondo",
-        resumen: "Cebador o plomo deslizante cerca del fondo.",
+        resumen: "Plomo deslizante o cebador cerca del fondo.",
         detalle:
-          "Cebas el punto y el pez encuentra el anzuelo. Típico barbo/carpa donde cebar esté permitido (no en trucheros).",
+          "Con oliva: cebo solo en el anzuelo. Con cage/method: cebas el punto — solo donde cebar esté permitido (no trucheros; Andalucía art. 9.4 sin cebar salvo FAPD). Típico barbo/carpa.",
         diagrama: "voc-feeder",
         tags: ["técnica", "foto"],
       },

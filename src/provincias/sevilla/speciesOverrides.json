@@ -18,11 +18,7 @@
       "noche": "Cazador nocturno, pero la pesca recreativa fuera del horario art. 4 no está permitida."
     },
     "habitats": "Guadalquivir urbano (dársena, Delicias, Chapina/Barqueta), azudes de Alcalá del Río y Peñaflor, Rivera de Huelva / Gergal, Bajo Guadalquivir hacia Coria; hoyos, puentes y orillas socavadas",
-    "senuelosClave": [
-      "Swimbait grande",
-      "Vinilo shad 15-20 cm",
-      "Montaje a fondo con pellet (sin pez vivo)"
-    ],
+    "senuelosClave": [],
     "normativaResumen": "Andalucía: pesca del siluro prohibida como objetivo. Captura fortuita → sacrificio y no devolver (Orden 13/01/2023 + RD 630/2013). Solo en campañas oficiales de control (si las hay) se autoriza extracción dirigida con licencia.",
     "normativaEspecial": "⚠️ ANDALUCÍA (Sevilla): la pesca del siluro está prohibida (no es objeto de pesca). Si lo capturas fortuitamente debes sacrificarlo y no devolverlo al agua (portal Junta / Orden 13/01/2023 y RD 630/2013). No basta con «avisar a autoridades» en lugar de sacrificar. Las campañas puntuales de control de la Junta pueden autorizar extracción dirigida (con licencia) y pedir datos de capturas; confirma BOJA y resoluciones vigentes.",
     "equipo": {
@@ -150,8 +146,7 @@
     "habitats": "Guadalquivir urbano y bajo (Barqueta, Coria, Gelves), azud de Peñaflor, Guadaíra, colas limosas de embalses",
     "senuelosClave": [
       "Boilie frutal 15-20 mm",
-      "Maíz dulce en hair",
-      "Method feeder en orilla"
+      "Maíz dulce en hair"
     ],
     "normativaResumen": "Exótica: todo el año sin talla/cupo en aguas libres. Licencia continental Andalucía + seguro RC. Art. 8 / Resolución 19/12/2019 según masa.",
     "normativaEspecial": "⚠️ ANDALUCÍA: carpa — exótica/invasora (catálogo). Art. 8 + Resolución 19/12/2019: retención solo donde esté autorizada; fuera, sacrificio. Art. 9.4: no cebar ni pez-cebo.",

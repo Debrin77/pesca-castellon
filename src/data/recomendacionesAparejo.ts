@@ -99,6 +99,20 @@ const ANDALUCIA_SILURO_NO_OBJETO: RestriccionAparejo = {
   severidad: "obligatorio",
 };
 
+const CLM_SILURO_NO_OBJETO: RestriccionAparejo = {
+  provincias: ["cuenca"],
+  texto:
+    "Castilla-La Mancha (Orden 20/2026): siluro con pesca prohibida. No es objetivo; captura fortuita → no devolver / retirar del medio.",
+  severidad: "obligatorio",
+};
+
+const CS_SILURO_TRANSPORTE: RestriccionAparejo = {
+  provincias: ["castellon"],
+  texto:
+    "Comunitat Valenciana: prohibida tenencia/transporte de siluro vivo o muerto. Notifica a agentes; no te lo lleves.",
+  severidad: "obligatorio",
+};
+
 const COSTA_CS: RestriccionAparejo = {
   provincias: ["castellon"],
   soloAmbito: "costa",
@@ -226,7 +240,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
       "Maíz / masa / boilies (en anzuelo)",
     ],
     restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, CUENCA_TRUCHERA, ANDALUCIA_SEGURO],
-  }
+  },
   {
     especieId: "carpin",
     ambito: "rio",
@@ -246,39 +260,39 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     ],
     compraRapida: ["Coup/feeder 3,6 m", "Nylon 0,16–0,22", "Anzuelos #10–#6", "Oliva 10–25 g", "Cebo vegetal"],
     restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
-  }
+  },
   {
     especieId: "tenca",
     ambito: "rio",
-    resumenCompra: "Anzuelo #10–#6; fondo suave; cebador vegetal.",
+    resumenCompra: "Anzuelo #10–#6; fondo suave; cebo en anzuelo (cage solo si cebar es legal).",
     anzueloTipo: "Simple fino",
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arponcillo si sueltas; boca carnosa.",
     cebador: {
-      recomendado: true,
-      tipos: "Cage abierto · groundbait vegetal",
-      nota: "Cebo vegetal (lombriz/masa/maíz). Confirma si el vaso permite cebar.",
+      recomendado: false,
+      tipos: "Cage abierto solo donde el cebado sea legal (no Andalucía genérico / no trucheros)",
+      nota: "Andalucía: tenca no es objeto de pesca (art. 2.2). Donde sí se pesque tenca, confirma cebado local.",
     },
     plomos: [
       { enAnzuelo: "Lombriz / masa", plomoG: "10–30 g" },
       { enAnzuelo: "Maíz", plomoG: "15–35 g" },
     ],
     compraRapida: ["Caña ligera 3,3–3,6 m", "Nylon 0,18–0,24", "Anzuelos #10–#6", "Oliva 15–30 g", "Masa / maíz"],
-    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
+    restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
   },
   {
     especieId: "barbo",
     ambito: "rio",
-    resumenCompra: "Feeder/cage en corriente; anzuelo #10–#6.",
+    resumenCompra: "Feeder/fondo en corriente; anzuelo #10–#6. Cage solo donde cebar sea legal.",
     anzueloTipo: "Simple resistente (barbo / river)",
     anzueloTalla: "#10–#6 (lombriz) · #8–#4 (pellet grande)",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arponcillo donde el barbo sea sin muerte (muchos tramos CV/CLM). Con arpón solo si retención legal.",
     cebador: {
       recomendado: true,
-      tipos: "Cage / open-end · bullet feeder en corriente",
-      nota: "El cage debe aguantar la vena sin rodar. No en tramos trucheros.",
+      tipos: "Cage / open-end · bullet feeder en corriente (no trucheros)",
+      nota: "El cage debe aguantar la vena sin rodar. No en tramos trucheros. En Andalucía usa la ficha barbo gitano (sin cebar art. 9.4).",
     },
     plomos: [
       { enAnzuelo: "Lombriz / maíz", plomoG: "20–40 g", nota: "Corriente suave" },
@@ -290,10 +304,10 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
       "River/feeder 3,60–3,90 m",
       "Nylon 0,22–0,28 + bajo 0,18–0,22",
       "Anzuelos #10–#6 sin arponcillo",
-      "Cage 30–60 g",
+      "Cage/oliva 30–60 g",
       "Lombriz, maíz, pellet",
     ],
-    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_TRUCHERA, ANDALUCIA_SEGURO],
+    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_TRUCHERA, ANDALUCIA_SEGURO, ANDALUCIA_NO_CEBAR],
   },
   {
     especieId: "barbo_gitano",
@@ -314,24 +328,42 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     ],
     compraRapida: ["Feeder 3,6–3,9 m", "Nylon 0,22–0,28", "Oliva 30–60 g", "Anzuelos #10–#6"],
     restricciones: [ANDALUCIA_SEGURO, ANDALUCIA_NO_CEBAR, NO_CEBAR_TRUCHERO],
-  }
+  },
   {
     especieId: "siluro",
     ambito: "rio",
-    resumenCompra: "En Andalucía/CLM no es objetivo de pesca. Captura fortuita → sacrificio.",
-    anzueloTipo: "No prepares montaje específico de siluro donde no sea objeto de pesca",
-    anzueloTalla: "—",
+    resumenCompra:
+      "Invasora. En CV puedes encontrarlo (p. ej. Sitjar) pero no transportes. En Andalucía/CLM no es objetivo de pesca.",
+    anzueloTipo: "Castellón: spinning/fondo pesado si aparece. Andalucía/CLM: no prepares montaje específico",
+    anzueloTalla: "Castellón: anzuelos/snaps XXL si usas señuelo grande · Andalucía/CLM: —",
     arponcillo: "opcional",
-    arponcilloNota: "Si entra de forma fortuita: sacrificio según norma local. No uses pez como cebo.",
+    arponcilloNota:
+      "No uses pez vivo como cebo (prohibido con carácter general). Andalucía/CLM: captura fortuita → sacrificio / no devolver.",
     cebador: {
       recomendado: false,
       tipos: "—",
-      nota: "Andalucía: siluro no es objeto de pesca + art. 9.4 sin pez-cebo. CLM: pesca prohibida como objetivo.",
+      nota: "Sin cebador. Andalucía art. 9.4: sin pez-cebo. CLM: no es objeto. CV: notifica y no transportes.",
     },
-    plomos: [],
-    compraRapida: ["No comprar equipo «anti-siluro» donde esté prohibido como objeto"],
-    restricciones: [INVASORA, ANDALUCIA_SEGURO, ANDALUCIA_NO_CEBAR, ANDALUCIA_SILURO_NO_OBJETO],
-  }
+    plomos: [
+      {
+        enAnzuelo: "Vinilo / shad grande (solo donde no sea «no objeto»)",
+        plomoG: "Cabeza 20–60 g o plomo de fondo",
+        nota: "No aplica como objetivo en Sevilla, Córdoba ni Cuenca",
+      },
+    ],
+    compraRapida: [
+      "Castellón: caña MH–H + trenza fuerte + snaphook XXL (si pescas depredadores en Sitjar)",
+      "Sevilla/Córdoba/Cuenca: no compres equipo «anti-siluro» — no es objeto de pesca",
+    ],
+    restricciones: [
+      INVASORA,
+      ANDALUCIA_SEGURO,
+      ANDALUCIA_NO_CEBAR,
+      ANDALUCIA_SILURO_NO_OBJETO,
+      CLM_SILURO_NO_OBJETO,
+      CS_SILURO_TRANSPORTE,
+    ],
+  },
   {
     especieId: "anguila",
     ambito: "rio",
@@ -348,14 +380,75 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
       {
         provincias: ["castellon"],
         texto: "Anguila: pesca recreativa prohibida en CV. No retengas.",
-        severidad: "prohibido",
+        severidad: "obligatorio",
+      },
+      {
+        provincias: ["sevilla", "cordoba"],
+        texto: "Andalucía: anguila no es objeto de pesca (Decreto 209/2020). No retengas.",
+        severidad: "obligatorio",
+      },
+      {
+        provincias: ["cuenca"],
+        texto: "CLM: pesca de anguila prohibida (Orden 20/2026 / marco UE). No retengas.",
+        severidad: "obligatorio",
       },
       {
         provincias: ["*"],
-        texto: "Anguila: especie sensible/amenazada; en CV recreativa prohibida. En otras provincias confirma veda antes de cualquier retención.",
+        texto: "Anguila: especie sensible/amenazada. Confirma veda autonómica antes de cualquier retención.",
         severidad: "aviso",
       },
       ANDALUCIA_SEGURO,
+    ],
+  },
+  {
+    especieId: "llobarro",
+    ambito: "rio",
+    resumenCompra: "Continental CV: 25 cm · cupo 4/día (Res. 16/09/2024). Spinning de tramo bajo legal.",
+    anzueloTipo: "Simple / treble del minnow (cambia a simple si sueltas)",
+    anzueloTalla: "Según señuelo 7–21 g · anzuelo #2–1/0 en vivo artificial",
+    arponcillo: "recomendado_sin",
+    arponcilloNota: "Sin arponcillo facilita suelta de subtalla (<25 cm continental).",
+    cebador: { recomendado: false, tipos: "—", nota: "Señuelo; no cebador de río en estuario." },
+    plomos: [
+      { enAnzuelo: "Minnow / stickbait", plomoG: "No hace falta (señuelo lastrado)" },
+      { enAnzuelo: "Vinilo shad", plomoG: "Cabeza 7–14 g" },
+    ],
+    compraRapida: [
+      "Spinning 2,4–2,7 m 10–30 g",
+      "Trenza fina + flúor 0,20–0,28",
+      "Minnows / shads",
+      "Solo tramos ZPL (no VP / ZRA)",
+    ],
+    restricciones: [
+      {
+        provincias: ["castellon"],
+        texto: "Llobarro continental: 25 cm y cupo 4/día (Res. 16/09/2024). En mar la talla es 23 cm (RD 560).",
+        severidad: "obligatorio",
+      },
+      ANDALUCIA_SEGURO,
+    ],
+  },
+  {
+    especieId: "lucioperca",
+    ambito: "rio",
+    resumenCompra: "Invasora CLM: sacrificio inmediato. Spinning/drop shot en embalse.",
+    anzueloTipo: "Offset / jighead para shad",
+    anzueloTalla: "2/0–4/0 según vinilo 10–12 cm",
+    arponcillo: "opcional",
+    arponcilloNota: "Invasora: no devolver. Arponcillo irrelevante para suelta.",
+    cebador: { recomendado: false, tipos: "—", nota: "Señuelo; sin pez vivo (prohibido)." },
+    plomos: [
+      { enAnzuelo: "Shad 10–12 cm", plomoG: "Cabeza 10–25 g" },
+      { enAnzuelo: "Drop shot", plomoG: "7–14 g" },
+    ],
+    compraRapida: ["Spinning MH 2,1–2,4 m", "Trenza + flúor", "Shads / drop shot", "Guantes"],
+    restricciones: [
+      INVASORA,
+      {
+        provincias: ["cuenca"],
+        texto: "CLM: lucioperca — sacrificio inmediato, no devolver ni traslocar. Confirma Anexo III.",
+        severidad: "obligatorio",
+      },
     ],
   },
   {
@@ -388,14 +481,14 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     arponcilloNota: "Boca pequeña: sin arponcillo y hierro fino.",
     cebador: {
       recomendado: true,
-      tipos: "Cage micro · groundbait fino",
-      nota: "Cebado vegetal ligero donde esté permitido.",
+      tipos: "Cage micro · groundbait fino solo donde cebar sea legal",
+      nota: "Cebado vegetal ligero donde esté permitido. Andalucía: confirma art. 9.4 (sin cebar genérico).",
     },
     plomos: [
       { enAnzuelo: "Asticot / maíz pequeño / pan", plomoG: "5–20 g" },
     ],
-    compraRapida: ["Coup/feeder fino", "Nylon 0,12–0,18", "Anzuelos #14–#10", "Cage 10–25 g"],
-    restricciones: [NO_CEBAR_TRUCHERO, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
+    compraRapida: ["Coup/feeder fino", "Nylon 0,12–0,18", "Anzuelos #14–#10", "Oliva/cage 10–25 g"],
+    restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
   },
   {
     especieId: "boga",

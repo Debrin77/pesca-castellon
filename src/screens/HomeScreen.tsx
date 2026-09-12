@@ -792,7 +792,7 @@ export default function HomeScreen({ navigation }: Props) {
                       onEspecies={() => irAEspeciesDelPunto(navigation)}
                       onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
                       onMontaje={(id) => {
-                        const consejoId = consejoIdMontajeEspecie(id);
+                        const consejoId = consejoIdMontajeEspecie(id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
                         if (!consejoId) return;
                         navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
                       }}

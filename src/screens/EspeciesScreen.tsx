@@ -340,7 +340,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   }
 
   function irMontaje(especieId: string) {
-    const consejoId = consejoIdMontajeEspecie(especieId);
+    const consejoId = consejoIdMontajeEspecie(especieId, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
     if (!consejoId) {
       irAparejos(especieId);
       return;
@@ -602,7 +602,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                   ambito={consulta.ambito === "maritimo" ? "maritimo" : "continental"}
                   enVeda={consulta.ambito === "maritimo" ? undefined : estaEnVeda(sp.id)}
                   onAparejos={() => irAparejos(sp.id)}
-                  onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
+                  onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
                 />
               ))
             )}
@@ -689,7 +689,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
               index={i}
               enVeda={estaEnVeda(sp.id)}
               onAparejos={() => irAparejos(sp.id)}
-              onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
+              onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
             />
           ))}
         {!soloContinental && catalogo === "mar" && (
@@ -705,7 +705,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                 index={i}
                 ambito="maritimo"
                 onAparejos={() => irAparejos(sp.id)}
-                onMontaje={consejoIdMontajeEspecie(sp.id) ? () => irMontaje(sp.id) : undefined}
+                onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
               />
             ))}
           </>

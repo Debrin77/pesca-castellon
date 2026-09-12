@@ -1001,7 +1001,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               }}
               onMontaje={(id) => {
                 setFichaAbierta(false);
-                const consejoId = consejoIdMontajeEspecie(id);
+                const consejoId = consejoIdMontajeEspecie(id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
                 if (!consejoId) return;
                 navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
               }}

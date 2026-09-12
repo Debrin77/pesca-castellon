@@ -40,6 +40,10 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
+  const optsMontaje = useMemo(
+    () => ({ provinciaId: provincia.id, soloContinental }),
+    [provincia.id, soloContinental]
+  );
   const speciesCatalog = provincia.species as any[];
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
@@ -277,12 +281,12 @@ export default function AparejosScreen({ route, navigation }: Props) {
               <TablaRecomendacionAparejo rec={guiaCompra} provinciaId={provincia.id} mar={mar} />
             ) : null}
 
-            {montajesParaEspecie(sp.id).length > 0 ? (
+            {montajesParaEspecie(sp.id, optsMontaje).length > 0 ? (
               <TouchableOpacity
                 style={styles.montajeCta}
                 onPress={() =>
                   navigation?.navigate("Consejos", {
-                    consejoId: consejoIdMontajeEspecie(sp.id),
+                    consejoId: consejoIdMontajeEspecie(sp.id, optsMontaje),
                     categoria: "montajes",
                   })
                 }
@@ -291,7 +295,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               >
                 <Text style={styles.montajeCtaTitle}>Cómo montar la línea</Text>
                 <Text style={styles.montajeCtaSub}>
-                  Esquema visual: orden de boya, plomo y anzuelo · {montajesParaEspecie(sp.id)[0].titulo}
+                  Esquema visual: orden de boya, plomo y anzuelo · {montajesParaEspecie(sp.id, optsMontaje)[0].titulo}
                 </Text>
               </TouchableOpacity>
             ) : null}

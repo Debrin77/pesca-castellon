@@ -649,7 +649,7 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
       {
         source: A.footballJig,
         caption:
-          "Football jig (familia jig) — La foto muestra un jig con softbait; el football jig se distingue por cabeza ovalada/«balón» para rodar en cascajo sin clavarse tanto. Típico bass en fondo irregular.",
+          "Jig con softbait (referencia visual) — Esta foto es un jig/softbait tipo Blue Fox Vibrotail, NO una cabeza football auténtica. Un football jig real tiene cabeza ovalada/«balón» para rodar en cascajo. Úsalo como familia jig; no confundas la forma de la cabeza.",
       },
       {
         source: A.vinilos,

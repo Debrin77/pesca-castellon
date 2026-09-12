@@ -137,8 +137,9 @@ export const GLOSARIO: Record<string, TerminoGlosario> = {
   football_jig: {
     id: "football_jig",
     etiqueta: "Football jig",
-    resumen: "Jig de cabeza redondeada/ovalada para cascajo.",
-    detalle: "Se arrastra por el fondo; suele llevar trailer de vinilo.",
+    resumen: "Jig de cabeza ovalada/«balón» para cascajo.",
+    detalle:
+      "Cabeza aplastada ovalada que rueda en piedras sin clavarse tanto. No confundir con un jighead redondo o un softbait Vibrotail: la foto de referencia de la app es familia jig, no una cabeza football auténtica.",
     consejoId: "voc-football-jig",
     diagramaId: "voc-football-jig",
     aliases: ["football jig", "football", "jig football"],
