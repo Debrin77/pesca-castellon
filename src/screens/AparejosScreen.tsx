@@ -18,6 +18,8 @@ import { FilaAparejo } from "../components/IconoAparejo";
 import { tallaDestacada } from "../components/TarjetaEspecie";
 import { fotoEspecie } from "../data/especiesMedia";
 import { consejoIdMontajeEspecie, montajesParaEspecie } from "../data/montajesEspecie";
+import { recomendacionAparejo } from "../data/recomendacionesAparejo";
+import TablaRecomendacionAparejo from "../components/TablaRecomendacionAparejo";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -88,6 +90,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
     ambito === "costa" ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id] : sp?.equipo;
   const talla = sp ? tallaDestacada(sp) : null;
   const mar = ambito === "costa" && !soloContinental;
+  const guiaCompra = sp ? recomendacionAparejo(sp.id, ambito === "costa" ? "costa" : "rio") : undefined;
 
   return (
     <View style={styles.container}>
@@ -138,7 +141,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
 
       <ScrollView ref={scrollRef} style={styles.content} contentContainerStyle={{ padding: 16, paddingBottom: 110 }}>
         <Text style={styles.ambitoHint}>
-          Equipo recomendado por especie. El sitio de pesca ya lo elegiste en Inicio o Mapa.
+          Equipo recomendado por especie, con guía de compra (anzuelo, arponcillo, cebador, plomo). El sitio de
+          pesca ya lo elegiste en Inicio o Mapa.
         </Text>
         {sp ? (
           <ListaAnimada key={`${ambito}-${sp.id}`} replayKey={`${ambito}-${sp.id}`} index={0}>
@@ -240,6 +244,10 @@ export default function AparejosScreen({ route, navigation }: Props) {
             ) : (
               <Text style={styles.emptyText}>No hay recomendaciones de equipo para esta especie.</Text>
             )}
+
+            {guiaCompra ? (
+              <TablaRecomendacionAparejo rec={guiaCompra} provinciaId={provincia.id} mar={mar} />
+            ) : null}
 
             {montajesParaEspecie(sp.id).length > 0 ? (
               <TouchableOpacity
