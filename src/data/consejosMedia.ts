@@ -134,6 +134,10 @@ const A = {
   crankbaits: require("../../assets/consejos/aparejos/crankbaits.jpg"),
   jerkbait: require("../../assets/consejos/aparejos/wobbler-minnow.jpg"),
   jigVarios: require("../../assets/consejos/aparejos/senuelos-jig-varios.jpg"),
+  footballJig: require("../../assets/consejos/aparejos/football-jig-bluefox.jpg"),
+  rockfishingRoca: require("../../assets/consejos/aparejos/rockfishing-roca.jpg"),
+  jigheadTwister: require("../../assets/consejos/aparejos/jighead-twister.jpg"),
+  jigheadPiezas: require("../../assets/consejos/aparejos/jighead-piezas.jpg"),
   surfcasting: require("../../assets/consejos/aparejos/surfcasting-orilla.jpg"),
   egi: require("../../assets/consejos/aparejos/egi-jigs.jpg"),
   boyas: require("../../assets/consejos/aparejos/boyas.jpg"),
@@ -643,9 +647,9 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
     credito: "Fotos © R. Henrik Nilsson · CC BY 4.0 · Danndorfer1914 · CC0 · Wikimedia",
     pasos: [
       {
-        source: A.jigVarios,
+        source: A.footballJig,
         caption:
-          "Jig — Cabeza de plomo + anzuelo (a veces con «falda»). El football jig tiene cabeza redondeada/ovalada para rodar en cascajo.",
+          "Football jig — Cabeza de plomo ancha/ovalada + softbait. Rueda por cascajo mejor que una cabeza redonda; típico bass en fondo irregular.",
       },
       {
         source: A.vinilos,
@@ -748,31 +752,31 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
   },
   "voc-rockfishing": {
     modo: "identificacion",
-    credito: "Fotos libres Wikimedia Commons",
+    credito: "Fotos PD / CC0 · Wikimedia Commons",
     pasos: [
       {
-        source: A.jigVarios,
+        source: A.rockfishingRoca,
         caption:
-          "Rockfishing — Spinning ligero en roca/escollera: jigs y vinilos pequeños a sargo, serrano, etc.",
+          "Rockfishing — Pesca desde roca o escollera (no es un señuelo concreto): spinning ligero a sargo, serrano, etc.",
       },
       {
-        source: A.vinilos,
-        caption: "Señuelos — Softbaits 2–5 cm y cabezas 1–5 g. Cuidado con enganches en fondo irregular.",
+        source: A.twister,
+        caption: "Señuelos típicos — Softbaits 2–5 cm y cabezas 1–5 g. Cuidado con enganches y oleaje.",
       },
     ],
   },
   "voc-jighead": {
     modo: "identificacion",
-    credito: "Fotos © R. Henrik Nilsson · CC BY 4.0 · Danndorfer1914 · CC0 · Wikimedia",
+    credito: "Fotos PD · George Chernilevsky · Wikimedia Commons",
     pasos: [
       {
-        source: A.jigVarios,
+        source: A.jigheadTwister,
         caption:
           "Jighead / cabeza plomada — Plomo + anzuelo integrados. Ensartas el vinilo y pescas a saltitos o arrastre.",
       },
       {
-        source: A.twister,
-        caption: "Con twister o shad — La cola vibra en la recogida. Empieza con 3–7 g en orilla.",
+        source: A.jigheadPiezas,
+        caption: "Piezas — Cabeza sola, vinilo y montaje listo. Empieza con 3–7 g en orilla (más ligero en rockfishing).",
       },
     ],
   },

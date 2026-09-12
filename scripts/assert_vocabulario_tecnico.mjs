@@ -72,10 +72,34 @@ const fotos = [
   "assets/consejos/aparejos/montaje-carolina.jpg",
   "assets/consejos/aparejos/montajes-finesse.jpg",
   "assets/consejos/aparejos/senuelos-jig-varios.jpg",
+  "assets/consejos/aparejos/football-jig-bluefox.jpg",
+  "assets/consejos/aparejos/rockfishing-roca.jpg",
+  "assets/consejos/aparejos/jighead-twister.jpg",
+  "assets/consejos/aparejos/jighead-piezas.jpg",
   "assets/consejos/aparejos/surfcasting-orilla.jpg",
 ];
 for (const f of fotos) {
   if (!exists(f)) fail(`falta foto ${f}`);
+}
+
+/** Football jig, rockfishing y jighead no deben compartir la misma foto principal. */
+function primeraSourceBloque(id) {
+  const re = new RegExp(`"${id}":\\s*\\{[\\s\\S]*?source:\\s*A\\.(\\w+)`, "m");
+  const m = media.match(re);
+  return m ? m[1] : null;
+}
+const srcFootball = primeraSourceBloque("voc-football-jig");
+const srcRock = primeraSourceBloque("voc-rockfishing");
+const srcJighead = primeraSourceBloque("voc-jighead");
+if (!srcFootball || !srcRock || !srcJighead) {
+  fail("no se pudo leer source principal de football/rockfishing/jighead");
+} else if (new Set([srcFootball, srcRock, srcJighead]).size !== 3) {
+  fail(
+    `fotos principales repetidas: football=${srcFootball} rockfishing=${srcRock} jighead=${srcJighead}`,
+  );
+}
+if (!media.includes("footballJig") || !media.includes("rockfishingRoca") || !media.includes("jigheadTwister")) {
+  fail("faltan requires footballJig / rockfishingRoca / jigheadTwister");
 }
 
 for (const k of ["spinning", "texas", "dropshot", "popper", "stickbait", "surfcasting"]) {

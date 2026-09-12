@@ -56,4 +56,8 @@ Sin croquis ni diagramas esquemáticos: solo foto real.
 - `aparejos/montaje-carolina.jpg` — File:Das Caroliner-Rig.jpg — CC0 — Danndorfer1914
 - `aparejos/montajes-finesse.jpg` — File:Rigs für das Finesse Angeln.jpg — CC0 — Danndorfer1914
 - `aparejos/senuelos-jig-varios.jpg` — File:4 hooked fishing bait lures viz jig spoonlure plug spinnerbait.jpg — CC BY 4.0 — R. Henrik Nilsson
+- `aparejos/football-jig-bluefox.jpg` — File:Bluefox Vibrotail jig fishing lure 29 gr.jpg — CC BY 4.0 — R. Henrik Nilsson
+- `aparejos/rockfishing-roca.jpg` — File:Wybung rock fishing 2.jpg — Public domain — Webaware
+- `aparejos/jighead-twister.jpg` — File:Jig-Twister lure 2009 G1.jpg — Public domain — George Chernilevsky
+- `aparejos/jighead-piezas.jpg` — File:Jig-Twister lure 2009 G2.jpg — Public domain — George Chernilevsky
 - `aparejos/surfcasting-orilla.jpg` — File:Surf fishing at sunrise- Daytona Beach, Florida (9101400819).jpg — Public domain — State Library and Archives of Florida
