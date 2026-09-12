@@ -66,7 +66,7 @@ export default function ConsejosScreen() {
         <Text style={styles.heroKicker}>Escuela de bolsillo</Text>
         <Text style={styles.heroTitle}>Consejos de pesca</Text>
         <Text style={styles.heroSub}>
-          Montajes por especie, nudos paso a paso y piezas del aparejo. Fotos y esquemas en la app, sin internet.
+          Montajes por especie, nudos paso a paso, piezas del aparejo y vocabulario técnico con foto. Todo en la app, sin internet.
         </Text>
       </LinearGradient>
 
@@ -74,7 +74,7 @@ export default function ConsejosScreen() {
         <View style={styles.introCard}>
           <Text style={styles.introTitle}>Si empiezas de cero</Text>
           <Text style={styles.introTxt}>
-            Abre «Montajes por especie»: verás el orden de la línea (boya, plomo, anzuelo…) y cómo regularlo. Luego «Nudo Palomar» y «Kit mínimo».
+            Abre «Montajes por especie»: verás el orden de la línea (boya, plomo, anzuelo…) y cómo regularlo. Luego «Nudo Palomar», «Kit mínimo» y «Vocabulario» (Texas, popper, spinning…) con foto.
           </Text>
         </View>
 
@@ -164,7 +164,7 @@ export default function ConsejosScreen() {
         ))}
 
         <Text style={styles.footnote}>
-          Orientativo. Carteles del tramo, PTOP del coto y normativa oficial prevalecen. Montajes = esquema de línea para principiantes; nudos con fotos Wikimedia (créditos bajo cada guía).
+          Orientativo. Carteles del tramo, PTOP del coto y normativa oficial prevalecen. Montajes = esquema de línea; Vocabulario = técnicas y señuelos con foto; nudos con fotos Wikimedia (créditos bajo cada guía).
         </Text>
       </View>
     </ScrollView>

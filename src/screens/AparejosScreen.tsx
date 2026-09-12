@@ -20,6 +20,8 @@ import { fotoEspecie } from "../data/especiesMedia";
 import { consejoIdMontajeEspecie, montajesParaEspecie } from "../data/montajesEspecie";
 import { recomendacionAparejo } from "../data/recomendacionesAparejo";
 import TablaRecomendacionAparejo from "../components/TablaRecomendacionAparejo";
+import TerminoAyuda from "../components/TerminoAyuda";
+import { terminosEnTexto } from "../data/glosario";
 
 interface Props {
   route?: { params?: { especieId?: string } };
@@ -91,6 +93,18 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const talla = sp ? tallaDestacada(sp) : null;
   const mar = ambito === "costa" && !soloContinental;
   const guiaCompra = sp ? recomendacionAparejo(sp.id, ambito === "costa" ? "costa" : "rio") : undefined;
+  const terminosFicha = useMemo(() => {
+    if (!sp) return [];
+    return terminosEnTexto(
+      equipo?.tecnica,
+      ...(equipo?.senuelosCebos ?? []),
+      ...(sp.senuelosClave ?? []),
+      guiaCompra?.resumenCompra,
+      ...(guiaCompra?.compraRapida ?? [])
+    )
+      .filter((t) => !!t.diagramaId)
+      .slice(0, 8);
+  }, [sp, equipo, guiaCompra]);
 
   return (
     <View style={styles.container}>
@@ -244,6 +258,20 @@ export default function AparejosScreen({ route, navigation }: Props) {
             ) : (
               <Text style={styles.emptyText}>No hay recomendaciones de equipo para esta especie.</Text>
             )}
+
+            {terminosFicha.length > 0 ? (
+              <View style={styles.vocabBox}>
+                <Text style={styles.vocabTitle}>¿Qué significa…?</Text>
+                <Text style={styles.vocabSub}>Toca un término para ver foto y definición</Text>
+                <View style={styles.vocabChips}>
+                  {terminosFicha.map((t) => (
+                    <View key={t.id} style={styles.vocabChip}>
+                      <TerminoAyuda id={t.id} />
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ) : null}
 
             {guiaCompra ? (
               <TablaRecomendacionAparejo rec={guiaCompra} provinciaId={provincia.id} mar={mar} />
@@ -407,4 +435,23 @@ const styles = StyleSheet.create({
   },
   montajeCtaTitle: { fontSize: 16, fontWeight: "800", color: COLORS.waterDark },
   montajeCtaSub: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, lineHeight: 18 },
+  vocabBox: {
+    marginTop: 12,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.lg,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  vocabTitle: { fontSize: 15, fontWeight: "800", color: COLORS.primaryDark },
+  vocabSub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2, marginBottom: 8 },
+  vocabChips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  vocabChip: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
 });
