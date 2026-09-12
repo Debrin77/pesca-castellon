@@ -433,8 +433,152 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
   {
     id: "vocabulario",
     titulo: "Vocabulario",
-    subtitulo: "Palabras que verás en carteles y en la app",
+    subtitulo: "Técnicas y señuelos con foto + palabras de carteles y de la app",
     items: [
+      {
+        id: "voc-spinning",
+        titulo: "Spinning",
+        resumen: "Caña + carrete frontal + señuelo: lanzas y recuperas.",
+        detalle:
+          "Es la técnica de orilla más habitual en embalse y costa ligera. El señuelo (cucharilla, vinilo, minnow…) «nada» al recuperar. Empieza con emerillón + snap para cambiar sin rehacer el nudo.",
+        diagrama: "voc-spinning",
+        tags: ["técnica", "foto", "principiante"],
+      },
+      {
+        id: "voc-surfcasting",
+        titulo: "Surfcasting",
+        resumen: "Pesca desde playa o rompiente, a menudo con lance largo.",
+        detalle:
+          "Caña más larga, plomo pirámide (80–150 g) que se clava en la arena y cebo o señuelo en el bajo. En Castellón: fuera de puertos y bandas de baño.",
+        diagrama: "voc-surfcasting",
+        tags: ["técnica", "costa", "foto"],
+      },
+      {
+        id: "voc-texas",
+        titulo: "Texas (montaje)",
+        resumen: "Plomo bala + offset + vinilo con la punta escondida.",
+        detalle:
+          "Weedless / antihierba: la punta del anzuelo queda embutida en el softbait. Ideal bass en hierba de embalse. Empieza con bala 3–7 g.",
+        diagrama: "voc-texas",
+        tags: ["montaje", "bass", "foto"],
+      },
+      {
+        id: "voc-dropshot",
+        titulo: "Drop shot",
+        resumen: "Peso al final; anzuelo 30–60 cm arriba.",
+        detalle:
+          "Presentación fina: el vinilo trabaja quieto o con tirones cortos mientras el plomo toca fondo. Típico 5–10 g en orilla.",
+        diagrama: "voc-dropshot",
+        tags: ["montaje", "bass", "foto"],
+      },
+      {
+        id: "voc-carolina",
+        titulo: "Carolina (montaje)",
+        resumen: "Plomo deslizante + bajo largo + vinilo.",
+        detalle:
+          "El peso va separado del cebo por un bajo (a menudo 50–100 cm). Útil para barrer fondo limpio o cascajo con softbait.",
+        diagrama: "voc-carolina",
+        tags: ["montaje", "bass", "foto"],
+      },
+      {
+        id: "voc-football-jig",
+        titulo: "Football jig",
+        resumen: "Jig de cabeza redondeada/ovalada para cascajo.",
+        detalle:
+          "Se arrastra y «salta» el fondo; suele llevar trailer de vinilo. No es un jighead simple: la forma ayuda a no clavarse tanto en piedras.",
+        diagrama: "voc-football-jig",
+        tags: ["señuelo", "bass", "foto"],
+      },
+      {
+        id: "voc-popper",
+        titulo: "Popper",
+        resumen: "Señuelo de superficie que «escupe» al tirar.",
+        detalle:
+          "Boca cóncava: al recuperar a tirones hace ruido y salpicadura. Lubina y bass al alba o con poca luz.",
+        diagrama: "voc-popper",
+        tags: ["señuelo", "topwater", "foto"],
+      },
+      {
+        id: "voc-stickbait",
+        titulo: "Stickbait / pencil",
+        resumen: "Cuerpo largo de superficie; se anima a tirones.",
+        detalle:
+          "También llamado pencil bait. Técnica «walk the dog»: zig-zag en superficie. Más sutil que un popper.",
+        diagrama: "voc-stickbait",
+        tags: ["señuelo", "topwater", "foto"],
+      },
+      {
+        id: "voc-spinnerbait",
+        titulo: "Spinnerbait",
+        resumen: "Brazo en V con pala(s) + falda o vinilo.",
+        detalle:
+          "No es una cucharilla: la pala gira en un brazo de alambre y el cuerpo lleva falda. Pasa bien entre hierba.",
+        diagrama: "voc-spinnerbait",
+        tags: ["señuelo", "bass", "foto"],
+      },
+      {
+        id: "voc-jerkbait",
+        titulo: "Jerkbait / minnow",
+        resumen: "Señuelo duro alargado; tirones + pausas.",
+        detalle:
+          "Imita un pez herido. Suspensión o hundido según modelo. Muy usado a lubina y bass en agua clara.",
+        diagrama: "voc-jerkbait",
+        tags: ["señuelo", "foto"],
+      },
+      {
+        id: "voc-crankbait",
+        titulo: "Crankbait",
+        resumen: "Señuelo duro con pala: bucea y vibra al recuperar.",
+        detalle:
+          "Recuperación continua. Pala corta = poco fondo; pala larga = más profundidad. Útil para peinar orillas y puntos.",
+        diagrama: "voc-crankbait",
+        tags: ["señuelo", "foto"],
+      },
+      {
+        id: "voc-eging",
+        titulo: "Eging",
+        resumen: "Sepia/calamar con egí (jig de tela y pinchos).",
+        detalle:
+          "El egí se lanza y se anima con pausas y subidas cortas. En costa de Castellón: respeta vedas y tallas de cefalópodos.",
+        diagrama: "voc-eging",
+        tags: ["técnica", "costa", "foto"],
+      },
+      {
+        id: "voc-feeder",
+        titulo: "Feeder / fondo",
+        resumen: "Cebador o plomo deslizante cerca del fondo.",
+        detalle:
+          "Cebas el punto y el pez encuentra el anzuelo. Típico barbo/carpa donde cebar esté permitido (no en trucheros).",
+        diagrama: "voc-feeder",
+        tags: ["técnica", "foto"],
+      },
+      {
+        id: "voc-rockfishing",
+        titulo: "Rockfishing",
+        resumen: "Spinning ligero en roca o escollera.",
+        detalle:
+          "Jigs y vinilos pequeños (1–5 g) a sargo, serrano, etc. Cuidado con enganches y oleaje.",
+        diagrama: "voc-rockfishing",
+        tags: ["técnica", "costa", "foto"],
+      },
+      {
+        id: "voc-jighead",
+        titulo: "Jighead / cabeza plomada",
+        resumen: "Plomo y anzuelo integrados para vinilos.",
+        detalle:
+          "Ensartas el softbait y pescas a saltitos o arrastre. Elige gramos según profundidad y corriente.",
+        diagrama: "voc-jighead",
+        tags: ["accesorio", "foto"],
+      },
+      {
+        id: "voc-topwater",
+        titulo: "Topwater",
+        resumen: "Familia de señuelos que trabajan en superficie.",
+        detalle:
+          "Incluye poppers, stickbaits y walkers. El pez ve la silueta y ataca arriba: espectacular al alba/atardecer.",
+        diagrama: "voc-topwater",
+        tags: ["señuelo", "foto"],
+      },
       {
         id: "voc-zpl",
         titulo: "ZPL — Zona de pesca libre",
@@ -499,7 +643,6 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         tags: ["coto"],
       },
       {
-        id: "voc-saih",
         id: "voc-solunar",
         titulo: "Solunar",
         resumen: "Ventanas mayores/menores según sol y luna (orientativo).",

@@ -6,8 +6,13 @@ import {
   Modal,
   Pressable,
   Platform,
+  Image,
+  ScrollView,
+  View,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { terminoGlosario } from "../data/glosario";
+import { primeraFotoGuia } from "../data/consejosMedia";
 import { COLORS, RADIUS, SHADOW, SPACING } from "../theme";
 
 type Props = {
@@ -17,7 +22,7 @@ type Props = {
   variante?: "clara" | "sobreOscuro";
 };
 
-/** Palabra con «?» que abre ficha corta del glosario. */
+/** Palabra con «?» que abre ficha corta del glosario (con foto si hay). */
 export default function TerminoAyuda({
   id,
   children,
@@ -25,11 +30,22 @@ export default function TerminoAyuda({
   variante = "clara",
 }: Props) {
   const [abierto, setAbierto] = useState(false);
+  const navigation = useNavigation<any>();
   const t = terminoGlosario(id);
   if (!t) {
     return <Text style={textStyle}>{children ?? id}</Text>;
   }
   const sobreOscuro = variante === "sobreOscuro";
+  const foto = primeraFotoGuia(t.diagramaId);
+
+  const irFicha = () => {
+    setAbierto(false);
+    if (!t.consejoId) return;
+    navigation.navigate("Consejos", {
+      consejoId: t.consejoId,
+      categoria: "vocabulario",
+    });
+  };
 
   return (
     <>
@@ -49,18 +65,40 @@ export default function TerminoAyuda({
       <Modal visible={abierto} transparent animationType="fade" onRequestClose={() => setAbierto(false)}>
         <Pressable style={styles.backdrop} onPress={() => setAbierto(false)}>
           <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-            <Text style={styles.sheetKicker}>Glosario</Text>
-            <Text style={styles.sheetTitle}>{t.etiqueta}</Text>
-            <Text style={styles.sheetResumen}>{t.resumen}</Text>
-            {t.detalle ? <Text style={styles.sheetDetalle}>{t.detalle}</Text> : null}
-            <TouchableOpacity
-              style={styles.cerrar}
-              onPress={() => setAbierto(false)}
-              accessibilityRole="button"
-              accessibilityLabel="Cerrar"
-            >
-              <Text style={styles.cerrarTxt}>Entendido</Text>
-            </TouchableOpacity>
+            <ScrollView style={{ maxHeight: Platform.OS === "web" ? 520 : 480 }} bounces={false}>
+              <Text style={styles.sheetKicker}>Glosario</Text>
+              <Text style={styles.sheetTitle}>{t.etiqueta}</Text>
+              {foto ? (
+                <Image
+                  source={foto}
+                  style={styles.foto}
+                  resizeMode="cover"
+                  accessibilityLabel={`Ejemplo de ${t.etiqueta}`}
+                />
+              ) : null}
+              <Text style={styles.sheetResumen}>{t.resumen}</Text>
+              {t.detalle ? <Text style={styles.sheetDetalle}>{t.detalle}</Text> : null}
+            </ScrollView>
+            <View>
+              {t.consejoId ? (
+                <TouchableOpacity
+                  style={styles.secundario}
+                  onPress={irFicha}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Ver ficha de ${t.etiqueta} en Consejos`}
+                >
+                  <Text style={styles.secundarioTxt}>Ver ficha con foto</Text>
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity
+                style={styles.cerrar}
+                onPress={() => setAbierto(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar"
+              >
+                <Text style={styles.cerrarTxt}>Entendido</Text>
+              </TouchableOpacity>
+            </View>
           </Pressable>
         </Pressable>
       </Modal>
@@ -96,10 +134,27 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sheetTitle: { fontSize: 20, fontWeight: "800", color: COLORS.textPrimary, marginBottom: 8 },
+  foto: {
+    width: "100%",
+    height: 160,
+    borderRadius: RADIUS.md,
+    marginBottom: 12,
+    backgroundColor: COLORS.background,
+  },
   sheetResumen: { fontSize: 15, fontWeight: "600", color: COLORS.textPrimary, lineHeight: 22 },
   sheetDetalle: { marginTop: 10, fontSize: 14, color: COLORS.textSecondary, lineHeight: 21 },
+  secundario: {
+    marginTop: SPACING.md,
+    alignSelf: "flex-start",
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: RADIUS.sm,
+  },
+  secundarioTxt: { color: COLORS.primaryDark, fontWeight: "800", fontSize: 14 },
   cerrar: {
-    marginTop: SPACING.lg,
+    marginTop: SPACING.sm,
     alignSelf: "flex-start",
     backgroundColor: COLORS.primary,
     paddingHorizontal: 16,

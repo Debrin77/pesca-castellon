@@ -45,3 +45,15 @@ Sin croquis ni diagramas esquemáticos: solo foto real.
 - `aparejos/cebo-gusano.jpg` — File:Baiting the worm on the hook Claytor Lake State Park no app (16426021766).jpg — CC BY 2.0 — vastateparksstaff
 - `aparejos/cebo-maiz.jpg` — File:Corn kernels.jpg — CC BY-SA 3.0 — Danielgrad
 - `aparejos/egi-jigs.jpg` — File:Hand made leather squid jigs.jpg — CC BY-SA 4.0 — RoccoTorezz
+
+- `aparejos/popper.jpg` — File:Popper zum Angeln.jpg — CC BY-SA 4.0 — Kevin Behrendt
+- `aparejos/stickbait-pencil.jpg` — File:Pencilbait.jpg — Public domain — Musky~jawiki
+- `aparejos/topwater-wobblers.jpg` — File:Zwei Wobbler für das Angeln an der Oberfläche.jpg — CC0 — Danndorfer1914
+- `aparejos/spinnerbait.jpg` — File:Spinnerbait.png — CC0 — Danndorfer1914
+- `aparejos/crankbaits.jpg` — File:Verschiedene Crankbaits.jpg — CC0 — Danndorfer1914
+- `aparejos/wobbler-minnow.jpg` — File:Angeln zubehoer wobbler 01.jpg — CC BY-SA 2.5 — Raboe001
+- `aparejos/montaje-dropshot.jpg` — File:Das Drop-Shot-Rig.jpg — CC0 — Danndorfer1914
+- `aparejos/montaje-carolina.jpg` — File:Das Caroliner-Rig.jpg — CC0 — Danndorfer1914
+- `aparejos/montajes-finesse.jpg` — File:Rigs für das Finesse Angeln.jpg — CC0 — Danndorfer1914
+- `aparejos/senuelos-jig-varios.jpg` — File:4 hooked fishing bait lures viz jig spoonlure plug spinnerbait.jpg — CC BY 4.0 — R. Henrik Nilsson
+- `aparejos/surfcasting-orilla.jpg` — File:Surf fishing at sunrise- Daytona Beach, Florida (9101400819).jpg — Public domain — State Library and Archives of Florida

@@ -47,7 +47,24 @@ export type IdDiagrama =
   | "montaje-jurel-cucharilla"
   | "montaje-pulpo-fondo"
   | "montaje-barbo-feeder"
-  | "montaje-siluro-spinning";
+  | "montaje-siluro-spinning"
+  /** Vocabulario técnico ilustrado */
+  | "voc-spinning"
+  | "voc-surfcasting"
+  | "voc-texas"
+  | "voc-dropshot"
+  | "voc-carolina"
+  | "voc-football-jig"
+  | "voc-popper"
+  | "voc-stickbait"
+  | "voc-spinnerbait"
+  | "voc-jerkbait"
+  | "voc-crankbait"
+  | "voc-eging"
+  | "voc-feeder"
+  | "voc-rockfishing"
+  | "voc-jighead"
+  | "voc-topwater";
 
 export type PasoMedia = {
   source: ImageSourcePropType;
@@ -107,9 +124,29 @@ const A = {
   vinilos: require("../../assets/consejos/aparejos/vinilos-varios.jpg"),
   twister: require("../../assets/consejos/aparejos/vinilos-twister.jpg"),
   gummifish: require("../../assets/consejos/aparejos/vinilos-peces.jpg"),
+  dropshot: require("../../assets/consejos/aparejos/montaje-dropshot.jpg"),
+  carolina: require("../../assets/consejos/aparejos/montaje-carolina.jpg"),
+  finesse: require("../../assets/consejos/aparejos/montajes-finesse.jpg"),
+  popper: require("../../assets/consejos/aparejos/popper.jpg"),
+  stickbait: require("../../assets/consejos/aparejos/stickbait-pencil.jpg"),
+  topwater: require("../../assets/consejos/aparejos/topwater-wobblers.jpg"),
+  spinnerbait: require("../../assets/consejos/aparejos/spinnerbait.jpg"),
+  crankbaits: require("../../assets/consejos/aparejos/crankbaits.jpg"),
+  jerkbait: require("../../assets/consejos/aparejos/wobbler-minnow.jpg"),
+  jigVarios: require("../../assets/consejos/aparejos/senuelos-jig-varios.jpg"),
+  surfcasting: require("../../assets/consejos/aparejos/surfcasting-orilla.jpg"),
+  egi: require("../../assets/consejos/aparejos/egi-jigs.jpg"),
+  boyas: require("../../assets/consejos/aparejos/boyas.jpg"),
 };
 
 /** Guías fotográficas. Si no hay entrada, se usa el esquema View de respaldo. */
+/** Primera foto de una guía (para chips / modal del glosario). */
+export function primeraFotoGuia(id: IdDiagrama | undefined): ImageSourcePropType | null {
+  if (!id) return null;
+  const g = GUIAS_MEDIA[id];
+  return g?.pasos?.[0]?.source ?? null;
+}
+
 export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
   "nudo-palomar": {
     modo: "secuencia",
@@ -354,12 +391,17 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
   },
   "plomo-gota": {
     modo: "identificacion",
-    credito: "Fotos © Junyu-K · CC BY-SA 4.0 · Wikimedia Commons",
+    credito: "Fotos © Danndorfer1914 · CC0 · Junyu-K · CC BY-SA 4.0 · Wikimedia",
     pasos: [
+      {
+        source: A.dropshot,
+        caption:
+          "Drop shot — El peso va al final del bajo; el anzuelo queda 30–60 cm arriba. Elige el más ligero que toque fondo (5–10 g).",
+      },
       {
         source: A.plomosVarios,
         caption:
-          "Drop shot — El peso va al final del bajo; el anzuelo queda 30–60 cm arriba. Elige el más ligero que toque fondo (5–10 g).",
+          "Plomo gota / pera — Forma típica del peso de drop shot. Empieza con 5–10 g en orilla de embalse.",
       },
     ],
   },
@@ -517,6 +559,235 @@ export const GUIAS_MEDIA: Partial<Record<IdDiagrama, GuiaMedia>> = {
       {
         source: A.blancos,
         caption: "Solo donde cebar esté permitido (no trucheros). Revisa cupos y tallas.",
+      },
+    ],
+  },
+  "voc-spinning": {
+    modo: "identificacion",
+    credito: "Fotos libres Wikimedia Commons",
+    pasos: [
+      {
+        source: A.spinnerMontado,
+        caption:
+          "Spinning — Caña + carrete frontal + señuelo (cucharilla, vinilo, minnow). Lanzas y recuperas: el señuelo «nada».",
+      },
+      {
+        source: A.emerillones,
+        caption: "Orden típico — Línea → (bajo) → emerillón/snap → señuelo. Cambias de señuelo sin rehacer el nudo.",
+      },
+    ],
+  },
+  "voc-surfcasting": {
+    modo: "identificacion",
+    credito: "Fotos PD / Wikimedia Commons",
+    pasos: [
+      {
+        source: A.surfcasting,
+        caption:
+          "Surfcasting — Pesca desde la orilla de playa o rompiente, a menudo con lance largo y plomo pesado.",
+      },
+      {
+        source: A.plomoPiramide,
+        caption:
+          "Plomo pirámide — Se clava en la arena para no moverse con la ola. Típico 80–150 g en costa de Castellón.",
+      },
+    ],
+  },
+  "voc-texas": {
+    modo: "identificacion",
+    credito: "Fotos © BRDSWRD · CC BY-SA 4.0 · Danndorfer1914 · CC0 · Wikimedia",
+    pasos: [
+      {
+        source: A.texas,
+        caption:
+          "Texas rig — Plomo bala + anzuelo offset + vinilo con la punta escondida (weedless / antihierba).",
+      },
+      {
+        source: A.texasDetalle,
+        caption: "Detalle — Línea → bala → nudo al ojal → softbait. Ideal en hierba de embalse (bass).",
+      },
+    ],
+  },
+  "voc-dropshot": {
+    modo: "identificacion",
+    credito: "Fotos © Danndorfer1914 · CC0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.dropshot,
+        caption:
+          "Drop shot — Peso al final; anzuelo 30–60 cm arriba. El vinilo trabaja quieto o con tirones cortos.",
+      },
+      {
+        source: A.finesse,
+        caption: "Familia finesse — Drop shot, Carolina y variantes: poco peso, presentación fina.",
+      },
+    ],
+  },
+  "voc-carolina": {
+    modo: "identificacion",
+    credito: "Fotos © Danndorfer1914 · CC0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.carolina,
+        caption:
+          "Carolina rig — Plomo deslizante arriba + emerillón + bajo largo + anzuelo/vinilo. Barrido lento de fondo.",
+      },
+      {
+        source: A.finesse,
+        caption: "Comparado con Texas — Carolina deja el cebo más separado del peso; útil en fondo limpio o cascajo.",
+      },
+    ],
+  },
+  "voc-football-jig": {
+    modo: "identificacion",
+    credito: "Fotos © R. Henrik Nilsson · CC BY 4.0 · Danndorfer1914 · CC0 · Wikimedia",
+    pasos: [
+      {
+        source: A.jigVarios,
+        caption:
+          "Jig — Cabeza de plomo + anzuelo (a veces con «falda»). El football jig tiene cabeza redondeada/ovalada para rodar en cascajo.",
+      },
+      {
+        source: A.vinilos,
+        caption: "Trailer — Suele llevar un vinilo (craw, creature) enganchado detrás. Arrastra y salta el fondo.",
+      },
+    ],
+  },
+  "voc-popper": {
+    modo: "identificacion",
+    credito: "Foto © Kevin Behrendt · CC BY-SA 4.0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.popper,
+        caption:
+          "Popper — Señuelo de superficie con boca cóncava: al tirar «escupe» y hace ruido. Lubina/bass al alba.",
+      },
+      {
+        source: A.topwater,
+        caption: "Familia topwater — Poppers y wobblers de superficie: el pez ataca viendo la silueta arriba.",
+      },
+    ],
+  },
+  "voc-stickbait": {
+    modo: "identificacion",
+    credito: "Fotos PD / CC0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.stickbait,
+        caption:
+          "Stickbait / pencil — Cuerpo largo y recto de superficie o semisumergido; se anima a tirones («walk the dog»).",
+      },
+      {
+        source: A.topwater,
+        caption: "Con poppers — Ambos van arriba. El stickbait suele ser más sutil; el popper más ruidoso.",
+      },
+    ],
+  },
+  "voc-spinnerbait": {
+    modo: "identificacion",
+    credito: "Fotos © Danndorfer1914 · CC0 · R. Henrik Nilsson · CC BY 4.0 · Wikimedia",
+    pasos: [
+      {
+        source: A.spinnerbait,
+        caption:
+          "Spinnerbait — Brazo en «V» con pala(s) giratoria(s) + falda/vinilo. Pasa bien entre hierba; no es una cucharilla simple.",
+      },
+      {
+        source: A.jigVarios,
+        caption: "Familia de cabezas — Jig, spoon, plug y spinnerbait: formas distintas, mismo objetivo (depredador).",
+      },
+    ],
+  },
+  "voc-jerkbait": {
+    modo: "identificacion",
+    credito: "Foto © Raboe001 · CC BY-SA 2.5 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.jerkbait,
+        caption:
+          "Jerkbait / minnow — Señuelo duro alargado (wobbler). Tirones + pausas: imita pez herido. Lubina y bass.",
+      },
+    ],
+  },
+  "voc-crankbait": {
+    modo: "identificacion",
+    credito: "Fotos © Danndorfer1914 · CC0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.crankbaits,
+        caption:
+          "Crankbait — Señuelo duro con pala delantera: bucea y «vibra» al recuperar continuo. Elige pala corta o larga según profundidad.",
+      },
+    ],
+  },
+  "voc-eging": {
+    modo: "identificacion",
+    credito: "Foto © RoccoTorezz · CC BY-SA 4.0 · Wikimedia Commons",
+    pasos: [
+      {
+        source: A.egi,
+        caption:
+          "Eging — Técnica a sepia/calamar con egí (jig de tela/plumas y corona de pinchos). Pauses y subidas cortas.",
+      },
+    ],
+  },
+  "voc-feeder": {
+    modo: "identificacion",
+    credito: "Fotos libres Wikimedia Commons",
+    pasos: [
+      {
+        source: A.plomoCilindro,
+        caption:
+          "Feeder / fondo — Cebador o plomo deslizante + bajo + anzuelo. Cebas el punto; típico barbo/carpa donde esté permitido.",
+      },
+      {
+        source: A.boyas,
+        caption: "No confundir — Con boya el cebo flota a una profundidad; con feeder trabaja cerca del fondo.",
+      },
+    ],
+  },
+  "voc-rockfishing": {
+    modo: "identificacion",
+    credito: "Fotos libres Wikimedia Commons",
+    pasos: [
+      {
+        source: A.jigVarios,
+        caption:
+          "Rockfishing — Spinning ligero en roca/escollera: jigs y vinilos pequeños a sargo, serrano, etc.",
+      },
+      {
+        source: A.vinilos,
+        caption: "Señuelos — Softbaits 2–5 cm y cabezas 1–5 g. Cuidado con enganches en fondo irregular.",
+      },
+    ],
+  },
+  "voc-jighead": {
+    modo: "identificacion",
+    credito: "Fotos © R. Henrik Nilsson · CC BY 4.0 · Danndorfer1914 · CC0 · Wikimedia",
+    pasos: [
+      {
+        source: A.jigVarios,
+        caption:
+          "Jighead / cabeza plomada — Plomo + anzuelo integrados. Ensartas el vinilo y pescas a saltitos o arrastre.",
+      },
+      {
+        source: A.twister,
+        caption: "Con twister o shad — La cola vibra en la recogida. Empieza con 3–7 g en orilla.",
+      },
+    ],
+  },
+  "voc-topwater": {
+    modo: "identificacion",
+    credito: "Fotos © Kevin Behrendt · CC BY-SA 4.0 · Danndorfer1914 · CC0 · Wikimedia",
+    pasos: [
+      {
+        source: A.topwater,
+        caption:
+          "Topwater — Cualquier señuelo que trabaja en superficie (popper, stickbait, some walkers). Ataques espectaculares.",
+      },
+      {
+        source: A.popper,
+        caption: "Popper — El más ruidoso de la familia. Mejor con poca luz o agua picada suave.",
       },
     ],
   },
