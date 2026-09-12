@@ -341,6 +341,14 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
     subtitulo: "Montajes reales que cubren el 90 % de salidas",
     items: [
       {
+        id: "ap-guia-compra",
+        titulo: "Guía de compra por especie",
+        resumen: "Anzuelo, arponcillo, cebador y plomo según cebo — en Aparejos.",
+        detalle:
+          "En la pantalla Aparejos elige la especie y verás una tabla: tipo y talla de anzuelo, si lleva arponcillo, si hace falta cebador (y cuál), gramos de plomo según lo que pongas en el anzuelo, lista corta de tienda y restricciones de tu provincia (p. ej. sin arpón en trucheros, PORN Serranía sin patos, costa CS con 2 cañas).",
+        tags: ["compra", "principiante", "aparejo"],
+      },
+      {
         id: "ap-kit-principiante",
         titulo: "Kit mínimo para no desanimarte",
         resumen: "Caja plana: snaps, emerillones, plomos y anzuelos sin arponcillo.",
