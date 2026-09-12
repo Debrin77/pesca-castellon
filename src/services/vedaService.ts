@@ -101,7 +101,16 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
   if (esProvinciaAndalucia(provincia.id)) {
     if (especieId === "barbo_gitano") return !periodoBarboAbierto(fecha);
     if (especieId === "boga") return !periodoBogaAbierto(fecha);
-    if (especieId === "tenca" || especieId === "cacho") return true;
+    /** Tenca/cacho prohibidos (art. 2.2); anguila no objeto (Decreto 209/2020); siluro/alburno no objeto. */
+    if (
+      especieId === "tenca" ||
+      especieId === "cacho" ||
+      especieId === "anguila" ||
+      especieId === "siluro" ||
+      especieId === "alburno"
+    ) {
+      return true;
+    }
     return false;
   }
 

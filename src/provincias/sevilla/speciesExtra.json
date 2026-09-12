@@ -18,7 +18,7 @@
       "diciembre",
       "enero"
     ],
-    "ventanas": "Mañanas de corriente; pico tras crecidas suaves de primavera",
+    "ventanas": "Mañanas de corriente en periodo hábil (1 jul–25 feb); pico tras crecidas suaves de otoño",
     "mejorHora": {
       "resumen": "Más probable por la mañana en tablas de corriente. Pico extra si el agua va un poco teñida tras lluvias.",
       "verano": "Aprox. 7:00–12:00 y segundo pico 17:00–20:00 en orillas sombreadas.",
@@ -57,15 +57,17 @@
     "tallaOficial": "Captura y suelta obligatoria (art. 7.2 Orden 13/01/2023). Sin talla de retención.",
     "cupo": "0 de retención. Periodo hábil: 1 de mayo a 31 de enero.",
     "mejoresMeses": [
-      "abril",
       "mayo",
-      "junio"
+      "junio",
+      "septiembre",
+      "octubre",
+      "noviembre"
     ],
-    "ventanas": "Mañanas claras en corriente suave; primavera tras lluvias",
+    "ventanas": "Mañanas claras en corriente suave (solo en periodo hábil 1 may–31 ene)",
     "mejorHora": {
       "resumen": "Más probable a media mañana en tablas con corriente suave y fondo limpio.",
       "verano": "Aprox. 7:00–11:30; evita el mediodía de calor en orillas sin sombra.",
-      "invierno": "Aprox. 10:00–14:00 en tramos soleados.",
+      "invierno": "Aprox. 10:00–14:00 en tramos soleados (hasta el 31 ene).",
       "noche": "Poco activa de noche. No se pesca de noche."
     },
     "habitats": "Guadaíra medio, Corbones, Rivera del Agrio y colas de Cala y Melonares",
@@ -87,7 +89,7 @@
         "Maíz pequeño",
         "Asticot si está permitido"
       ],
-      "tecnica": "Pesca fina a fondo o a la deriva en corriente suave; cebado discreto"
+      "tecnica": "Pesca fina a fondo o a la deriva en corriente suave; cebo en el anzuelo. No cebar (art. 9.4)."
     }
   },
   {
@@ -134,6 +136,36 @@
         "Mosca pequeña"
       ],
       "tecnica": "Pesca fina en superficie o media agua sobre cardúmenes visibles; no traslocar ejemplares"
+    }
+  },
+  {
+    "id": "anguila",
+    "nombre": "Anguila europea",
+    "nombreCientifico": "Anguilla anguilla",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐍",
+    "notas": "En Andalucía no es especie objeto de pesca (Decreto 209/2020 y Orden 13/01/2023). Presente en el bajo Guadalquivir y afluentes, pero la pesca recreativa está prohibida.",
+    "tallaOficial": "Pesca recreativa prohibida (no es objeto de pesca).",
+    "cupo": "0. No retener.",
+    "mejoresMeses": [],
+    "ventanas": "No aplicable como objetivo recreativo.",
+    "mejorHora": {
+      "resumen": "No es modalidad objetivo en Sevilla.",
+      "verano": "No aplicable.",
+      "invierno": "No aplicable.",
+      "noche": "No aplicable."
+    },
+    "habitats": "Bajo Guadalquivir y tramos conectados (no pescar como objetivo)",
+    "senuelosClave": [],
+    "normativaResumen": "Andalucía: anguila no es objeto de pesca (Decreto 209/2020). No retener.",
+    "normativaEspecial": "⚠️ ANDALUCÍA (Sevilla): anguila — pesca recreativa prohibida. Si entra de forma fortuita, no la retengas como captura objetivo; confirma Decreto 209/2020 y BOJA vigente.",
+    "equipo": {
+      "cana": "No es modalidad objetivo",
+      "carrete": "—",
+      "linea": "—",
+      "senuelosCebos": [],
+      "tecnica": "No pescar como objetivo."
     }
   }
 ]

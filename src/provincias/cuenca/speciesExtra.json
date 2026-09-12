@@ -88,5 +88,35 @@
       "senuelosCebos": ["Microseñuelos"],
       "tecnica": "No devolver."
     }
+  },
+  {
+    "id": "anguila",
+    "nombre": "Anguila europea",
+    "nombreCientifico": "Anguilla anguilla",
+    "categoria": "autoctona",
+    "invasora": false,
+    "icono": "🐍",
+    "notas": "En Castilla-La Mancha la pesca de anguila está prohibida en la temporada 2026 (Orden 20/2026 / marco UE). No es especie objeto de pesca.",
+    "tallaOficial": "Pesca prohibida (Orden de vedas CLM).",
+    "cupo": "0. No retener.",
+    "mejoresMeses": [],
+    "ventanas": "No aplicable.",
+    "mejorHora": {
+      "resumen": "No es modalidad objetivo en Cuenca.",
+      "verano": "No aplicable.",
+      "invierno": "No aplicable.",
+      "noche": "No aplicable."
+    },
+    "habitats": "Tramos bajos y conexiones fluviales (no pescar)",
+    "senuelosClave": [],
+    "normativaResumen": "CLM: pesca de anguila prohibida (temporada 2026).",
+    "normativaEspecial": "⚠️ CASTILLA-LA MANCHA (Cuenca): anguila — pesca prohibida (Orden 20/2026 / normativa UE). No retener.",
+    "equipo": {
+      "cana": "No es modalidad objetivo",
+      "carrete": "—",
+      "linea": "—",
+      "senuelosCebos": [],
+      "tecnica": "No pescar como objetivo."
+    }
   }
 ]
