@@ -11,7 +11,7 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 type Props = {
   rec: RecomendacionAparejo;
   provinciaId: string;
-  /** Costa vs río: matiza el color del encabezado */
+  /** Costa vs río: matiza el color del encabezado y filtra restricciones de orilla */
   mar?: boolean;
 };
 
@@ -29,7 +29,7 @@ function severidadStyle(s: SeveridadRestriccion) {
  * Tabla clara de compra: anzuelo, arponcillo, cebador, plomo según cebo y restricciones.
  */
 export default function TablaRecomendacionAparejo({ rec, provinciaId, mar }: Props) {
-  const restricciones = restriccionesParaProvincia(rec, provinciaId);
+  const restricciones = restriccionesParaProvincia(rec, provinciaId, mar ? "costa" : "rio");
   const accent = mar ? COLORS.waterDark : COLORS.primaryDark;
   const accentSoft = mar ? COLORS.waterLight : COLORS.mist;
 

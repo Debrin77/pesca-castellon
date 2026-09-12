@@ -34,6 +34,7 @@ for (const needle of [
   "pirámide",
   "PORN Serranía",
   "Decreto 41/2013",
+  "soloAmbito",
   "ambito: \"costa\"",
 ]) {
   if (!data.includes(needle)) fail(`recomendacionesAparejo.ts falta «${needle}»`);

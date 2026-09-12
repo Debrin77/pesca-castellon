@@ -32,6 +32,8 @@ export type RestriccionAparejo = {
   provincias: ProvinciaId[];
   texto: string;
   severidad: SeveridadRestriccion;
+  /** Si se indica, solo mostrar en ese ámbito (río/costa). */
+  soloAmbito?: "rio" | "costa";
 };
 
 export type RecomendacionAparejo = {
@@ -85,8 +87,9 @@ const ANDALUCIA_SEGURO: RestriccionAparejo = {
 
 const COSTA_CS: RestriccionAparejo = {
   provincias: ["castellon"],
+  soloAmbito: "costa",
   texto:
-    "Costa Castellón (Decreto 41/2013): máx. 2 cañas, 100 m de bañistas, fuera de dársena/puerto. No pesques de noche. Irta: pesca a pie vedada.",
+    "Costa Castellón (Decreto 41/2013): máx. 2 cañas desde tierra, 100 m de bañistas, fuera de dársena/puerto. Irta: pesca a pie vedada. La caña desde orilla no tiene veda nocturna general (sí la submarina).",
   severidad: "obligatorio",
 };
 
@@ -322,11 +325,12 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
   {
     especieId: "anguila",
     ambito: "rio",
-    resumenCompra: "Fondo nocturno legal; anzuelo #4–#1/0; sin cebador tipico.",
+    resumenCompra: "Fondo con cebo; anzuelo #4–#1/0; sin cebador típico.",
     anzueloTipo: "Simple fuerte (circle o j)",
     anzueloTalla: "#4–#1/0",
     arponcillo: "opcional",
-    arponcilloNota: "Revisa cupo/talla y horarios: muchas zonas prohíben pesca de noche.",
+    arponcilloNota:
+      "Revisa cupo/talla. En continental CV la noche está vedada salvo molinà autorizada; no improvises pesca nocturna.",
     cebador: { recomendado: false, tipos: "—", nota: "Cebo en anzuelo (lombriz/pescado); no jaula típica." },
     plomos: [
       { enAnzuelo: "Lombriz grande / trozo de pescado", plomoG: "20–60 g", nota: "Fondo pegado a orilla/estructura" },
@@ -359,7 +363,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
       { enAnzuelo: "Fondo ligero", plomoG: "10–30 g" },
     ],
     compraRapida: ["Spinning 2,4 m o surf ligero", "Nylon 0,20–0,28", "Anzuelos #10–#6", "Boya 1–4 g"],
-    restricciones: [COSTA_CS, ANDALUCIA_SEGURO],
+    restricciones: [ANDALUCIA_SEGURO],
   },
   {
     especieId: "boga",
@@ -626,7 +630,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     anzueloTalla: "#10–#6",
     arponcillo: "recomendado_sin",
     arponcilloNota: "Sin arpón recomendado.",
-    cebador: { recomendado: false, tipos: "—", nota: "Activa al anochecer: tú no puedes pescar de noche cerrada." },
+    cebador: { recomendado: false, tipos: "—", nota: "Activa al anochecer: la caña desde tierra no tiene veda nocturna general, pero revisa bando municipal y acceso a playa." },
     plomos: [
       { enAnzuelo: "Gusano / masa / tita", plomoG: "40–100 g según lance" },
     ],
@@ -830,9 +834,14 @@ export function etiquetaArponcillo(estado: ArponcilloEstado): string {
 
 export function restriccionesParaProvincia(
   rec: RecomendacionAparejo,
-  provinciaId: string
+  provinciaId: string,
+  ambito?: "rio" | "costa"
 ): RestriccionAparejo[] {
-  return rec.restricciones.filter(
-    (r) => r.provincias.includes("*") || r.provincias.includes(provinciaId as ProvinciaId)
-  );
+  return rec.restricciones.filter((r) => {
+    if (!(r.provincias.includes("*") || r.provincias.includes(provinciaId as ProvinciaId))) {
+      return false;
+    }
+    if (r.soloAmbito && ambito && r.soloAmbito !== ambito) return false;
+    return true;
+  });
 }
