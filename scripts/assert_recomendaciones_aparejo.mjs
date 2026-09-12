@@ -48,6 +48,13 @@ if ((data.match(/especieId: "boga"/g) || []).length < 2) {
   fail("boga debe tener ficha río y costa");
 }
 
+for (const sp of ["llobarro", "lucioperca"]) {
+  if (!data.includes(`especieId: "${sp}"`)) fail(`Falta ficha recomendación ${sp}`);
+}
+for (const needle of ["CLM_SILURO_NO_OBJETO", "CS_SILURO_TRANSPORTE", "ANDALUCIA_NO_CEBAR"]) {
+  if (!data.includes(needle)) fail(`recomendacionesAparejo falta «${needle}»`);
+}
+
 const tabla = read("src/components/TablaRecomendacionAparejo.tsx");
 for (const needle of [
   "Guía de compra del aparejo",

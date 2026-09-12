@@ -62,7 +62,7 @@ export default function ConsultaPescaCard({
   const lngEfectiva = lng ?? punto?.lng ?? null;
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
-  const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada) : false;
+  const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) : false;
   const mar = consulta.ambito === "maritimo";
   const acento = mar ? COLORS.water : COLORS.primary;
   const certeza = certezaDeConsulta(consulta, { provinciaId: provincia.id });

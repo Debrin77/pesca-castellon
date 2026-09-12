@@ -108,6 +108,18 @@ const consejosScreen = read("src/screens/ConsejosScreen.tsx");
 if (!consejosScreen.includes("consejoId") || !consejosScreen.includes("route.params")) {
   fail("ConsejosScreen debe abrir un consejo por params");
 }
+if (!consejosScreen.includes("montajesParaProvincia") || !consejosScreen.includes("TAGS_COSTA")) {
+  fail("ConsejosScreen debe filtrar montajes/tips de costa según provincia");
+}
+if (!montajes.includes("montajesParaProvincia") || !montajes.includes("SILURO_NO_OBJETO")) {
+  fail("montajesEspecie debe filtrar siluro no-objeto y costa continental");
+}
+if (!montajes.includes("barbo_gitano")) {
+  fail("Montaje barbo debe cubrir barbo_gitano");
+}
+if (!montajes.includes("Andalucía art. 9.4") && !montajes.includes("art. 9.4")) {
+  fail("Montaje carpa/barbo debe avisar art. 9.4 sin cebar");
+}
 
 const especies = read("src/screens/EspeciesScreen.tsx");
 if (!especies.includes("onMontaje") || !especies.includes("consejoIdMontajeEspecie")) {

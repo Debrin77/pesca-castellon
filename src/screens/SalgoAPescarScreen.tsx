@@ -341,13 +341,13 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       ? consulta.especiesIds?.[0]
       : consulta.tramo?.especies?.[0]
     : undefined;
-  const consejoMontaje = especieDestacada ? consejoIdMontajeEspecie(especieDestacada) : undefined;
-  const montajeTipico = especieDestacada ? montajesParaEspecie(especieDestacada)[0] : undefined;
+  const consejoMontaje = especieDestacada ? consejoIdMontajeEspecie(especieDestacada, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) : undefined;
+  const montajeTipico = especieDestacada ? montajesParaEspecie(especieDestacada, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly })[0] : undefined;
   const pasoVisual = elegirUbicacion || !hayResultado ? 0 : Math.min(paso + 1, 3);
   const labelsPaso = ["Sitio", "Normativa", "Clima", "Qué llevar"];
 
   function irMontaje(especieId: string) {
-    const consejoId = consejoIdMontajeEspecie(especieId);
+    const consejoId = consejoIdMontajeEspecie(especieId, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
     if (!consejoId) return;
     navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
   }

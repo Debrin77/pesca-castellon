@@ -123,7 +123,7 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     consejoId: "montaje-carpa-boya",
     diagramaId: "montaje-carpa-boya",
     titulo: "Carpa · boya / zig",
-    resumen: "Boya grande + plomo + anzuelo con maíz o boilies. Embalse tranquilo.",
+    resumen: "Boya grande + plomo + anzuelo con maíz o boilie en el anzuelo. Embalse tranquilo.",
     ambito: "rio",
     especieIds: ["carpa", "carpin", "tenca"],
     piezas: [
@@ -131,18 +131,20 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
       { tipo: "boya", etiqueta: "Boya carpodromo / stick", detalle: "visible a distancia" },
       { tipo: "plomo", etiqueta: "Oliva / balines", detalle: "bajo la boya" },
       { tipo: "anzuelo", etiqueta: "Anzuelo 8–4", detalle: "sin arponcillo si sueltas" },
-      { tipo: "cebo", etiqueta: "Maíz / boilie / pellet" },
+      { tipo: "cebo", etiqueta: "Maíz / boilie / pellet", detalle: "en el anzuelo" },
     ],
     regulacion: [
-      "Ceba a media agua o cerca del fondo según actividad (burbujas).",
+      "El cebo va en el anzuelo (o hair). No cebes el agua donde esté prohibido.",
+      "Andalucía art. 9.4: prohibido cebar (precebo/spod/method) salvo FAPD autorizada.",
       "La boya debe quedar vertical con ½–⅔ fuera; ajústala con plomo.",
-      "Solo donde el cebado esté permitido (no tramos trucheros).",
+      "Tramos trucheros: sin cebado ni cage.",
     ],
-    alternativa: "Feeder / method: jaula + bajo corto (ver montaje fondo en Aparejos).",
+    alternativa:
+      "Fondo con oliva deslizante + maíz/boilie en anzuelo (sin jaula method). En Andalucía no uses method/spod de cebado.",
     pasos: [
       "Fija la profundidad con el tope de la boya (prueba midiendo).",
       "Equilibra plomos hasta que la boya quede a punta.",
-      "Anzuelo con maíz o boilie; lanza suave a la zona cebada.",
+      "Anzuelo con maíz o boilie; lanza suave a la zona (sin cebar el vaso si la norma lo prohíbe).",
       "Espera picadas lentas; no claves al primer meneo.",
     ],
   },
@@ -312,27 +314,28 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     consejoId: "montaje-barbo-feeder",
     diagramaId: "montaje-barbo-feeder",
     titulo: "Barbo · feeder / fondo de río",
-    resumen: "Plomo deslizante o cage + bajo + anzuelo. Donde cebar esté permitido.",
+    resumen: "Plomo deslizante o cage + bajo + anzuelo. Solo donde cebar esté permitido.",
     ambito: "rio",
-    especieIds: ["barbo"],
+    especieIds: ["barbo", "barbo_gitano"],
     piezas: [
       { tipo: "linea", etiqueta: "Nylon 0.22–0.28" },
-      { tipo: "plomo", etiqueta: "Oliva / cage 20–50 g", detalle: "deslizante" },
+      { tipo: "plomo", etiqueta: "Oliva / cage 20–50 g", detalle: "deslizante · cage solo si cebar es legal" },
       { tipo: "emerillon", etiqueta: "Tope + emerillón" },
       { tipo: "linea", etiqueta: "Bajo 0.18–0.22", detalle: "40–70 cm" },
       { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "sin arponcillo si sueltas" },
-      { tipo: "cebo", etiqueta: "Lombriz / maíz / pellet" },
+      { tipo: "cebo", etiqueta: "Lombriz / maíz / pellet", detalle: "en el anzuelo" },
     ],
     regulacion: [
       "Ajusta el plomo para que aguante la corriente sin rodar.",
-      "Bajo más fino en agua clara; más corto con basura en el cauce.",
-      "Barbo autóctono: sin muerte donde lo marque el cartel.",
+      "Andalucía (barbo gitano): captura y suelta; art. 9.4 sin cebar — usa oliva, no cage de cebado.",
+      "Barbo autóctono CV/CLM: sin muerte donde lo marque el cartel.",
+      "Tramos trucheros: sin cage ni cebado.",
     ],
     alternativa: "Spinning ligero con cucharilla pequeña en pozas (ver trucha UL).",
     pasos: [
-      "Pasa la línea por el plomo deslizante.",
+      "Pasa la línea por el plomo deslizante (oliva; cage solo si la norma permite cebar).",
       "Ata emerillón de tope y el bajo con anzuelo.",
-      "Ceba y lanza a la vena o al final de una poza.",
+      "Cebo en el anzuelo; lanza a la vena o al final de una poza.",
       "Espera picadas en serie; no claves al primer toque.",
     ],
   },
@@ -341,26 +344,29 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     consejoId: "montaje-siluro-spinning",
     diagramaId: "montaje-siluro-spinning",
     titulo: "Siluro · spinning / fondo pesado",
-    resumen: "Material robusto: trenza gruesa + bajo + vinilo grande o cebo de fondo. Embalse / tramo legal.",
+    resumen:
+      "Solo donde el siluro sea pescable como objetivo. En Andalucía y CLM no prepares este montaje: no es objeto de pesca.",
     ambito: "rio",
     especieIds: ["siluro"],
     piezas: [
       { tipo: "linea", etiqueta: "Trenza 0.20–0.35", detalle: "o nylon muy fuerte" },
-      { tipo: "linea", etiqueta: "Bajo acero / flúoro grueso", detalle: "80–120 cm" },
+      { tipo: "linea", etiqueta: "Bajo acero / flúor grueso", detalle: "80–120 cm" },
       { tipo: "emerillon", etiqueta: "Emerillón + snap XXL" },
-      { tipo: "senuelo", etiqueta: "Vinilo / shad 15–25 cm", detalle: "o montaje de fondo" },
+      { tipo: "senuelo", etiqueta: "Vinilo / shad 15–25 cm", detalle: "sin pez vivo" },
     ],
     regulacion: [
-      "Recupera lenta cerca del fondo; pausas largas junto a estructura.",
-      "Comprueba normativa local (invasora / obligación de sacrificio según tramo).",
+      "Andalucía / CLM: siluro no es objeto de pesca — no uses este esquema como objetivo.",
+      "Castellón/CV: invasora; prohibido transportar vivo o muerto; notifica a agentes.",
+      "Prohibido pez vivo como cebo con carácter general.",
       "Caña y carrete de potencia: no improvises con UL.",
     ],
-    alternativa: "Fondo con pez muerto o pellet grande donde esté permitido cebar.",
+    alternativa:
+      "En Andalucía/CLM: no hay alternativa legal de pesca dirigida. Captura fortuita → sacrificio / no devolver.",
     pasos: [
-      "Monta bajo reforzado al final de la trenza.",
-      "Snap grande + señuelo pesado (o plomo + cebo de fondo).",
-      "Lanza a profundidad (presa, canal, árbol sumergido).",
-      "Clava con decisión y pelea sin aflojar el drag de golpe.",
+      "Comprueba primero si en tu provincia el siluro es objeto de pesca (en AN/CLM no lo es).",
+      "Si aplica (p. ej. CV): monta bajo reforzado al final de la trenza.",
+      "Snap grande + señuelo pesado (nunca pez vivo).",
+      "Lanza a profundidad; clava con decisión. No transportes el ejemplar donde esté prohibido.",
     ],
   },
 ];
@@ -373,10 +379,41 @@ export function montajePorDiagramaId(diagramaId: string): MontajeEspecie | undef
   return MONTAJES_ESPECIE.find((m) => m.diagramaId === diagramaId);
 }
 
-export function montajesParaEspecie(especieId: string): MontajeEspecie[] {
-  return MONTAJES_ESPECIE.filter((m) => m.especieIds.includes(especieId));
+/** Provincias donde el siluro no es objeto de pesca dirigida. */
+const SILURO_NO_OBJETO = new Set(["sevilla", "cordoba", "cuenca"]);
+
+export function montajesParaEspecie(
+  especieId: string,
+  opts?: { provinciaId?: string | null; soloContinental?: boolean }
+): MontajeEspecie[] {
+  let list = MONTAJES_ESPECIE.filter((m) => m.especieIds.includes(especieId));
+  if (opts?.soloContinental) {
+    list = list.filter((m) => m.ambito !== "costa");
+  }
+  if (opts?.provinciaId && SILURO_NO_OBJETO.has(opts.provinciaId) && especieId === "siluro") {
+    list = [];
+  }
+  return list;
 }
 
-export function consejoIdMontajeEspecie(especieId: string): string | undefined {
-  return montajesParaEspecie(especieId)[0]?.consejoId;
+export function consejoIdMontajeEspecie(
+  especieId: string,
+  opts?: { provinciaId?: string | null; soloContinental?: boolean }
+): string | undefined {
+  return montajesParaEspecie(especieId, opts)[0]?.consejoId;
+}
+
+/** Lista de montajes visibles en Consejos según provincia. */
+export function montajesParaProvincia(opts: {
+  provinciaId?: string | null;
+  soloContinental?: boolean;
+}): MontajeEspecie[] {
+  let list = [...MONTAJES_ESPECIE];
+  if (opts.soloContinental) {
+    list = list.filter((m) => m.ambito !== "costa");
+  }
+  if (opts.provinciaId && SILURO_NO_OBJETO.has(opts.provinciaId)) {
+    list = list.filter((m) => m.id !== "siluro-spinning");
+  }
+  return list;
 }

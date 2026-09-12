@@ -11,9 +11,11 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute, useScrollToTop } from "@react-navigation/native";
 import { SECCIONES_CONSEJOS, CategoriaConsejo, ConsejoItem } from "../data/consejos";
+import { montajesParaProvincia } from "../data/montajesEspecie";
 import DiagramaConsejo from "../components/DiagramaConsejo";
 import { COLORS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
+import { useProvincia } from "../context/ProvinciaContext";
 
 function coincide(item: ConsejoItem, q: string): boolean {
   if (!q) return true;
@@ -21,6 +23,8 @@ function coincide(item: ConsejoItem, q: string): boolean {
   const blob = `${item.titulo} ${item.resumen} ${item.detalle} ${pasos} ${(item.tags || []).join(" ")}`.toLowerCase();
   return blob.includes(q);
 }
+
+const TAGS_COSTA = new Set(["costa", "surfcasting", "eging", "cefalopodos", "mar"]);
 
 type ParamsConsejos = {
   consejoId?: string;
@@ -34,6 +38,9 @@ export default function ConsejosScreen() {
   const { width: winW } = useWindowDimensions();
   const diagramW = Math.min(340, Math.max(280, winW - 56));
   const params = (route.params ?? {}) as ParamsConsejos;
+  const { provincia } = useProvincia();
+  const soloContinental = !!provincia?.continentalOnly;
+  const provinciaId = provincia?.id ?? null;
 
   const [categoria, setCategoria] = useState<CategoriaConsejo | "todas">(params.categoria ?? "montajes");
   const [busqueda, setBusqueda] = useState("");
@@ -54,11 +61,27 @@ export default function ConsejosScreen() {
 
   const q = busqueda.trim().toLowerCase();
 
+  const idsMontajeOk = useMemo(() => {
+    return new Set(
+      montajesParaProvincia({ provinciaId, soloContinental }).map((m) => m.consejoId)
+    );
+  }, [provinciaId, soloContinental]);
+
   const secciones = useMemo(() => {
     return SECCIONES_CONSEJOS.filter((s) => categoria === "todas" || s.id === categoria)
-      .map((s) => ({ ...s, items: s.items.filter((it) => coincide(it, q)) }))
+      .map((s) => {
+        let items = s.items.filter((it) => coincide(it, q));
+        if (s.id === "montajes") {
+          items = items.filter((it) => idsMontajeOk.has(it.id));
+        } else if (soloContinental) {
+          items = items.filter(
+            (it) => !(it.tags || []).some((t) => TAGS_COSTA.has(t.toLowerCase()))
+          );
+        }
+        return { ...s, items };
+      })
       .filter((s) => s.items.length > 0);
-  }, [categoria, q]);
+  }, [categoria, q, idsMontajeOk, soloContinental]);
 
   return (
     <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={{ paddingBottom: 110 }}>
