@@ -651,13 +651,26 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.pulsoCardSub}>Orientativo · el permiso está arriba en el veredicto</Text>
           {indiceHoy && catInfo ? (
             <View style={styles.pulsoRow}>
-              <View style={styles.pulsoIndice}>
-                <Text style={styles.pulsoIndexLabel}>{EJE_METEO.indexLabel}</Text>
-                <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
-                <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
+              <View
+                style={[
+                  styles.pulsoIndice,
+                  { backgroundColor: catInfo.fondo, borderColor: catInfo.color },
+                ]}
+                accessibilityLabel={`Condiciones ${indiceHoy.puntuacion} de 100, ${catInfo.texto}`}
+              >
+                <Text style={[styles.pulsoIndexLabel, { color: catInfo.color }]}>
+                  {EJE_METEO.indexLabel}
+                </Text>
+                <View style={[styles.pulsoScoreBadge, { backgroundColor: catInfo.color }]}>
+                  <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
+                </View>
+                <View style={[styles.indexCatPill, { backgroundColor: "rgba(255,255,255,0.72)" }]}>
                   <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
                     {catInfo.icono} {catInfo.texto}
-                    <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
+                    <Text style={[styles.indexMoon, { color: catInfo.color }]}>
+                      {" "}
+                      · {indiceHoy.iconoLuna}
+                    </Text>
                   </Text>
                 </View>
               </View>
@@ -1123,6 +1136,20 @@ const styles = StyleSheet.create({
     flex: 1.35,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: RADIUS.md,
+    borderWidth: 1.5,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  pulsoScoreBadge: {
+    marginTop: 6,
+    marginBottom: 8,
+    minWidth: 88,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    justifyContent: "center",
   },
   pulsoClima: {
     flex: 1,
@@ -1332,11 +1359,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   pulsoIndexScore: {
-    fontSize: 40,
-    fontWeight: "200",
-    color: COLORS.textPrimary,
+    fontSize: 44,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+    color: "#fff",
     letterSpacing: -1,
-    marginTop: 2,
+    lineHeight: 48,
   },
   pulsoClimaCard: {
     flex: 1,
