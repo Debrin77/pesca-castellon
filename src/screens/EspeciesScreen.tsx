@@ -14,7 +14,7 @@ import { especiesOrillaParaSeleccion } from "../services/catalogoEspeciesService
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { COLORS, PIN, RADIUS } from "../theme";
+import { COLORS, PIN, RADIUS, TYPE, FONTS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
@@ -485,7 +485,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             />
           ))}
           {marcador && (
-            <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
+            <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}
         </MapView>
         <BotonMiPosicion onPress={() => usarMiUbicacion()} cargando={cargandoUbicacion} />

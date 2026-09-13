@@ -15,7 +15,7 @@ import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
 import AvisoHorarioLegal from "./AvisoHorarioLegal";
 import { certezaDeConsulta } from "../data/certezaConsulta";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 

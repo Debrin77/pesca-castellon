@@ -57,7 +57,7 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
-import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
+import { COLORS, PIN, RADIUS, SHADOW, FONTS, TYPE } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -894,7 +894,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Marker coordinate={yo} pinColor={PIN.yo} identifier="user" title="Tú" />
           )}
           {marcador && (!yo || marcador.latitude !== yo.latitude) && (
-            <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
+            <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}
         </MapView>
         {capas.radar ? (
@@ -1108,7 +1108,7 @@ const styles = StyleSheet.create({
   },
   modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
-  modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
+  modoTxt: { ...TYPE.mapChip, fontSize: 14, color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
   radarPlacaWrap: {
@@ -1184,6 +1184,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   capasExtraTitulo: { fontSize: 13, fontWeight: "800", color: COLORS.textMuted },
+  capasExtraTitulo: { ...TYPE.overline, color: COLORS.textPrimary },
   cerrarCapasBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,

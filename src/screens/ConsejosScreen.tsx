@@ -13,7 +13,7 @@ import { useRoute, useScrollToTop } from "@react-navigation/native";
 import { SECCIONES_CONSEJOS, CategoriaConsejo, ConsejoItem } from "../data/consejos";
 import { montajesParaProvincia } from "../data/montajesEspecie";
 import DiagramaConsejo from "../components/DiagramaConsejo";
-import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import { useProvincia } from "../context/ProvinciaContext";
 
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     textTransform: "uppercase",
   },
-  heroTitle: { color: "#fff", fontSize: 28, fontWeight: "700", fontFamily: FONTS.display, marginTop: 4 },
+  heroTitle: { ...TYPE.displayHero, color: "#fff", marginTop: 4 },
   heroSub: { color: "#eef7f1", marginTop: 8, fontSize: 14, lineHeight: 20 },
   body: { padding: SPACING.md },
   introCard: {
