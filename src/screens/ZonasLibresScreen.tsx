@@ -5,7 +5,7 @@ import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
   consultarPuntoPesca,
   consultarPorTramo,
-  colorAprovechamiento,
+  aspectoMapaTramo,
   todosLosTramos,
   ConsultaPesca,
   TramoOficial,
@@ -845,7 +845,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             })}
           {modo === "continental" &&
             tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
-            const color = colorAprovechamiento(z.aprovechamiento);
+            const { color } = aspectoMapaTramo(z);
             return (
               <Circle
                 key={`r-${z.id}`}
@@ -857,16 +857,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             );
           })}
           {modo === "continental" &&
-          tramosVisibles.map((z) => (
+          tramosVisibles.map((z) => {
+            const { color, identifier } = aspectoMapaTramo(z);
+            return (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "vedado"}
+              pinColor={color}
+              identifier={identifier}
               title={`${z.aprovechamiento} · ${z.nombre}`}
               onPress={() => evaluarTramo(z)}
             />
-          ))}
+            );
+          })}
           {capas.misPuntos &&
             sitiosPersonales.map((s) => (
               <Marker

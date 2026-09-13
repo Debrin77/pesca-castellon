@@ -5,7 +5,13 @@ import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
-import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
+import {
+  consultarPorTramo,
+  ConsultaPesca,
+  aspectoMapaTramo,
+  tramoUsaRadioAnexo,
+  TramoOficial,
+} from "../services/consultaPescaService";
 import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
@@ -464,26 +470,32 @@ export default function EspeciesScreen({ navigation, route }: Props) {
               );
             })}
           {!costa &&
-            tramos.filter(tramoUsaRadioAnexo).map((z) => (
-            <Circle
-              key={`r-${z.id}`}
-              center={{ latitude: z.lat, longitude: z.lng }}
-              radius={z.radioKm * 1000}
-              strokeColor={colorAprovechamiento(z.aprovechamiento)}
-              fillColor={colorAprovechamiento(z.aprovechamiento) + "33"}
-            />
-          ))}
+            tramos.filter(tramoUsaRadioAnexo).map((z) => {
+            const { color } = aspectoMapaTramo(z);
+            return (
+              <Circle
+                key={`r-${z.id}`}
+                center={{ latitude: z.lat, longitude: z.lng }}
+                radius={z.radioKm * 1000}
+                strokeColor={color}
+                fillColor={color + "33"}
+              />
+            );
+          })}
           {!costa &&
-            tramos.map((z) => (
+            tramos.map((z) => {
+            const { color, identifier } = aspectoMapaTramo(z);
+            return (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPL" ? "libre" : z.aprovechamiento === "ZPC" ? "coto" : "vedado"}
+              pinColor={color}
+              identifier={identifier}
               title={z.nombre}
               onPress={() => evaluarTramo(z)}
             />
-          ))}
+            );
+          })}
           {marcador && (
             <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}

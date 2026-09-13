@@ -36,7 +36,7 @@ if (!theme.includes("seleccion:")) {
 }
 
 const leyenda = read("src/components/LeyendaMapa.tsx");
-for (const k of ["Tú", "Consulta", "TYPE.mapLegend", "PIN.seleccion", "PIN.captura"]) {
+for (const k of ["Tú", "Consulta", "TYPE.mapLegend", "PIN.seleccion", "PIN.captura", "Hoy sí", "Hoy no"]) {
   if (!leyenda.includes(k)) fail("LeyendaMapa falta " + k);
 }
 

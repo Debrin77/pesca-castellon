@@ -408,6 +408,31 @@ export function consultarPorTramo(t: TramoOficial, fecha: Date = new Date()): Co
   return evaluarTramo(t, 0, fuente, fecha);
 }
 
+/**
+ * Color e identificador del pin/radio = mismo semáforo que la ficha (HOY SÍ / HOY NO / COTO).
+ * Así un ZPL salmonícola fuera de temporada no se ve verde si hoy no se puede pescar.
+ */
+export function aspectoMapaTramo(
+  t: TramoOficial,
+  fecha: Date = new Date()
+): { color: string; identifier: "libre" | "coto" | "vedado" } {
+  const c = consultarPorTramo(t, fecha);
+  const color = colorSemaforo(c);
+  if (c.veredicto === "coto") return { color, identifier: "coto" };
+  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha" || !c.sePuedePescarHoy) {
+    return { color, identifier: "vedado" };
+  }
+  return { color, identifier: "libre" };
+}
+
+export function colorMarcadorTramo(t: TramoOficial, fecha: Date = new Date()): string {
+  return aspectoMapaTramo(t, fecha).color;
+}
+
+export function identifierMarcadorTramo(t: TramoOficial, fecha: Date = new Date()): string {
+  return aspectoMapaTramo(t, fecha).identifier;
+}
+
 export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new Date()): ConsultaPesca {
   const provincia = getProvinciaActiva();
 
