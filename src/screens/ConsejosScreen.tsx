@@ -13,7 +13,7 @@ import { useRoute, useScrollToTop } from "@react-navigation/native";
 import { SECCIONES_CONSEJOS, CategoriaConsejo, ConsejoItem } from "../data/consejos";
 import { montajesParaProvincia } from "../data/montajesEspecie";
 import DiagramaConsejo from "../components/DiagramaConsejo";
-import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
 import { useProvincia } from "../context/ProvinciaContext";
 
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     textTransform: "uppercase",
   },
-  heroTitle: { color: "#fff", fontSize: 28, fontWeight: "700", fontFamily: FONTS.display, marginTop: 4 },
+  heroTitle: { ...TYPE.displayHero, color: "#fff", marginTop: 4 },
   heroSub: { color: "#eef7f1", marginTop: 8, fontSize: 14, lineHeight: 20 },
   body: { padding: SPACING.md },
   introCard: {
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   chipTxtOn: { color: "#fff" },
   empty: { textAlign: "center", color: COLORS.textMuted, marginTop: 24, fontSize: 14 },
   section: { marginTop: 14 },
-  sectionTitle: { fontSize: 18, fontWeight: "800", color: COLORS.textPrimary },
+  sectionTitle: { ...TYPE.displayTitle, color: COLORS.textPrimary },
   sectionSub: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 8, marginTop: 2 },
   card: {
     backgroundColor: COLORS.surface,
@@ -256,11 +256,11 @@ const styles = StyleSheet.create({
   },
   cardOpen: { borderColor: COLORS.water },
   cardHead: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
-  cardTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
-  cardResumen: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2, lineHeight: 18 },
+  cardTitle: { ...TYPE.title, color: COLORS.textPrimary },
+  cardResumen: { ...TYPE.body, color: COLORS.textSecondary },
   chevron: { fontSize: 16, color: COLORS.textMuted, fontWeight: "800" },
   cardBody: { marginTop: 10 },
-  cardDetalle: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, marginTop: 8 },
+  cardDetalle: { ...TYPE.body, color: COLORS.textSecondary },
   pasosBox: { marginTop: 8, gap: 8 },
   pasoRow: { flexDirection: "row", gap: 10, alignItems: "flex-start" },
   pasoNum: {

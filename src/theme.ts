@@ -43,17 +43,24 @@ export const SEMAFORO = {
   neutro: COLORS.textSecondary,
 };
 
-/** Pines del mapa: tres significados + tú / mis puntos. */
+/**
+ * Pines del mapa (campo): cada significado un color distinto.
+ * Antes captura/yo/playa compartían el mismo azul → ilegible al vuelo.
+ */
 export const PIN = {
   playa: COLORS.water,
   libre: COLORS.success,
   coto: COLORS.warning,
   vedado: COLORS.danger,
   puerto: COLORS.puerto,
+  /** Tu GPS. */
   yo: COLORS.water,
+  /** Puntos guardados / spots personales. */
   spot: COLORS.gold,
-  /** Capturas geolocalizadas en el mapa. */
-  captura: COLORS.water,
+  /** Capturas del diario: terracota, no confundir con agua/GPS. */
+  captura: "#a84828",
+  /** Punto de consulta seleccionado (anillo visual + color propio). */
+  seleccion: "#5b2d8e",
 };
 
 export const GRADIENTS = {
@@ -100,4 +107,87 @@ export const FONTS = {
   display: "Fraunces_700Bold",
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
+};
+
+/**
+ * Escala tipográfica de producto (pesca de campo).
+ * Fraunces = veredicto / marca / títulos de sheet.
+ * Source Sans = UI, chips de mapa, cuerpo y meta.
+ */
+export const TYPE = {
+  displayHero: {
+    fontFamily: FONTS.display,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.4,
+    fontWeight: "700" as const,
+  },
+  displayTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 22,
+    lineHeight: 28,
+    letterSpacing: -0.3,
+    fontWeight: "700" as const,
+  },
+  displaySheet: {
+    fontFamily: FONTS.display,
+    fontSize: 20,
+    lineHeight: 26,
+    letterSpacing: -0.35,
+    fontWeight: "700" as const,
+  },
+  /** Veredicto legal grande (HOY SÍ / HOY NO). */
+  displayVerdict: {
+    fontFamily: FONTS.display,
+    fontSize: 34,
+    lineHeight: 38,
+    letterSpacing: 0.4,
+    fontWeight: "700" as const,
+  },
+  title: {
+    fontFamily: FONTS.bold,
+    fontSize: 17,
+    lineHeight: 22,
+    letterSpacing: -0.2,
+    fontWeight: "700" as const,
+  },
+  body: {
+    fontFamily: FONTS.regular,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "400" as const,
+  },
+  bodyStrong: {
+    fontFamily: FONTS.semibold,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "600" as const,
+  },
+  caption: {
+    fontFamily: FONTS.semibold,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "600" as const,
+  },
+  overline: {
+    fontFamily: FONTS.extrabold,
+    fontSize: 11,
+    lineHeight: 14,
+    letterSpacing: 0.7,
+    textTransform: "uppercase" as const,
+    fontWeight: "800" as const,
+  },
+  mapChip: {
+    fontFamily: FONTS.bold,
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: "700" as const,
+  },
+  mapLegend: {
+    fontFamily: FONTS.semibold,
+    fontSize: 11.5,
+    lineHeight: 14,
+    letterSpacing: 0.15,
+    fontWeight: "600" as const,
+  },
 };

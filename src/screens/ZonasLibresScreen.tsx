@@ -57,7 +57,7 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
-import { COLORS, PIN, RADIUS, SHADOW } from "../theme";
+import { COLORS, PIN, RADIUS, SHADOW, FONTS, TYPE } from "../theme";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -894,7 +894,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Marker coordinate={yo} pinColor={PIN.yo} identifier="user" title="Tú" />
           )}
           {marcador && (!yo || marcador.latitude !== yo.latitude) && (
-            <Marker coordinate={marcador} pinColor={PIN.yo} identifier="user" title="Punto consultado" />
+            <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}
         </MapView>
         {capas.radar ? (
@@ -1108,7 +1108,7 @@ const styles = StyleSheet.create({
   },
   modoBtnOnBosque: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
-  modoTxt: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
+  modoTxt: { ...TYPE.mapChip, fontSize: 14, color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
   radarPlacaWrap: {
@@ -1167,7 +1167,7 @@ const styles = StyleSheet.create({
   },
   layerChipActive: { backgroundColor: COLORS.mist, borderColor: COLORS.primary },
   layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
-  layerChipText: { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
+  layerChipText: { ...TYPE.mapChip, color: COLORS.textSecondary },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
   capasExtraPanel: {
     paddingHorizontal: 12,
@@ -1183,7 +1183,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  capasExtraTitulo: { fontSize: 12, fontWeight: "800", color: COLORS.textMuted },
+  capasExtraTitulo: { ...TYPE.overline, color: COLORS.textPrimary },
   cerrarCapasBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -1203,7 +1203,7 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   pieMapaMar: { backgroundColor: COLORS.waterLight, borderTopColor: "#b7d4de" },
-  hint: { fontSize: 13, color: COLORS.textPrimary, lineHeight: 19, textAlign: "center", fontWeight: "600" },
+  hint: { ...TYPE.caption, color: COLORS.textSecondary, textAlign: "center" },
   reabrir: {
     marginTop: 8,
     alignItems: "center",

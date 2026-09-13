@@ -5,7 +5,7 @@ import { EJE_LEGAL } from "../data/ejesLegalMeteo";
 import { certezaDeConsulta } from "../data/certezaConsulta";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 
 export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
   if (c.veredicto === "coto") return { texto: "COTO", sub: "Hace falta permiso del titular" };
@@ -115,11 +115,8 @@ const styles = StyleSheet.create({
     opacity: 0.96,
   },
   kicker: {
+    ...TYPE.overline,
     color: "rgba(255,255,255,0.88)",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1,
-    textTransform: "uppercase",
   },
   pregunta: {
     color: "#fff",
@@ -129,11 +126,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   texto: {
+    ...TYPE.displayVerdict,
     color: "#fff",
-    fontSize: 32,
-    fontWeight: "800",
-    letterSpacing: 1.2,
-    lineHeight: 36,
   },
   sub: {
     color: "#fff",

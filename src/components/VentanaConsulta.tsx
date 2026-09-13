@@ -11,7 +11,7 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, TYPE } from "../theme";
 
 type Props = {
   visible: boolean;
@@ -148,10 +148,9 @@ const styles = StyleSheet.create({
   },
   titulo: {
     flex: 1,
-    fontSize: 17,
-    fontWeight: "800",
+    ...TYPE.displaySheet,
     paddingRight: 8,
-    letterSpacing: -0.3,
+    color: COLORS.textPrimary,
   },
   cerrar: {
     width: 44,

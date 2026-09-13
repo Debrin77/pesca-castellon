@@ -8,7 +8,7 @@ export function aplicarEstilosWeb() {
   const font = document.createElement("link");
   font.rel = "stylesheet";
   font.href =
-    "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap";
+    "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap";
   document.head.appendChild(font);
 
   const style = document.createElement("style");
@@ -20,6 +20,21 @@ export function aplicarEstilosWeb() {
       font-size: 16px;
       line-height: 1.45;
       color: #122018;
+    }
+    .pesca-display {
+      font-family: "Fraunces", "Source Sans 3", Georgia, serif;
+      font-optical-sizing: auto;
+    }
+    .pesca-pin--selected {
+      transform: scale(1.18);
+      filter: drop-shadow(0 2px 4px rgba(91,45,142,0.45));
+    }
+    .leaflet-container {
+      font-family: "Source Sans 3", system-ui, sans-serif;
+    }
+    .leaflet-popup-content {
+      font-size: 13px;
+      line-height: 1.35;
     }
     * { -webkit-tap-highlight-color: transparent; }
     #root input, #root textarea, #root button {
