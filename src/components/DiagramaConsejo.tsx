@@ -869,16 +869,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 2,
   },
-  pasoTxt: { color: "#fff", fontSize: 11, fontWeight: "800" },
+  pasoTxt: { color: "#fff", fontSize: 12, fontWeight: "800" },
   miniLabel: {
     position: "absolute",
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "700",
     color: COLORS.textMuted,
   },
   etiqueta: {
     position: "absolute",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
     color: COLORS.textSecondary,
   },
@@ -907,7 +907,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: RADIUS.sm,
   },
-  badgeTxt: { fontSize: 11, fontWeight: "800", color: COLORS.primaryDark },
+  badgeTxt: { fontSize: 12, fontWeight: "800", color: COLORS.primaryDark },
   badgeWarn: {
     position: "absolute",
     backgroundColor: COLORS.warningLight,
@@ -915,7 +915,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: RADIUS.sm,
   },
-  badgeWarnTxt: { fontSize: 11, fontWeight: "800", color: COLORS.warning },
+  badgeWarnTxt: { fontSize: 12, fontWeight: "800", color: COLORS.warning },
   triBase: {
     width: 0,
     height: 0,
@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
   },
   tablaTitulo: {
     position: "absolute",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     color: COLORS.primaryDark,
   },
@@ -941,6 +941,6 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     paddingBottom: 2,
   },
-  tablaSp: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary, width: "38%" },
-  tablaT: { fontSize: 11.5, fontWeight: "600", color: COLORS.waterDark, flex: 1, textAlign: "right" },
+  tablaSp: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary, width: "38%" },
+  tablaT: { fontSize: 12, fontWeight: "600", color: COLORS.waterDark, flex: 1, textAlign: "right" },
 });

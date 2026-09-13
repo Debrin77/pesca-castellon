@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 16, fontWeight: "800", marginBottom: 4 },
   resumen: { fontSize: 14, color: COLORS.textPrimary, fontWeight: "700", lineHeight: 20 },
-  disclaimer: { fontSize: 12, color: COLORS.textMuted, marginTop: 6, marginBottom: 12, lineHeight: 17 },
+  disclaimer: { fontSize: 13, color: COLORS.textMuted, marginTop: 6, marginBottom: 12, lineHeight: 17 },
   tabla: {
     borderRadius: RADIUS.md,
     padding: 12,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   fila: { marginBottom: 8 },
   filaLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     color: COLORS.water,
     letterSpacing: 0.4,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   filaValor: { fontSize: 14, color: COLORS.textPrimary, marginTop: 2, lineHeight: 20 },
   filaValorStrong: { fontWeight: "800", fontSize: 15 },
-  filaNota: { fontSize: 12, color: COLORS.textSecondary, lineHeight: 17, marginBottom: 8, marginTop: -4 },
+  filaNota: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 17, marginBottom: 8, marginTop: -4 },
   subtitulo: { fontSize: 14, fontWeight: "800", marginTop: 16, marginBottom: 8 },
   plomoTabla: {
     borderWidth: 1,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 10,
   },
-  plomoHCell: { fontSize: 11, fontWeight: "800", color: "#fff", letterSpacing: 0.3 },
+  plomoHCell: { fontSize: 12, fontWeight: "800", color: "#fff", letterSpacing: 0.3 },
   plomoRow: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -158,8 +158,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
   },
   plomoRowAlt: { backgroundColor: COLORS.mist },
-  plomoCebo: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 18 },
-  plomoNota: { fontSize: 11, color: COLORS.textSecondary, marginTop: 2, lineHeight: 15 },
+  plomoCebo: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 18 },
+  plomoNota: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2, lineHeight: 15 },
   plomoG: { fontSize: 14, fontWeight: "800", color: COLORS.waterDark, lineHeight: 18 },
   bullet: { fontSize: 14, color: COLORS.textPrimary, marginBottom: 4, lineHeight: 20 },
   restBox: {
@@ -171,9 +171,9 @@ const styles = StyleSheet.create({
   restOblig: { backgroundColor: COLORS.dangerLight, borderColor: COLORS.danger },
   restAviso: { backgroundColor: "#FEF3E6", borderColor: "#D97706" },
   restOrient: { backgroundColor: COLORS.mist, borderColor: COLORS.border },
-  restTag: { fontSize: 10, fontWeight: "800", letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 4 },
+  restTag: { fontSize: 12, fontWeight: "800", letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 4 },
   restObligLabel: { color: "#7a1414" },
   restAvisoLabel: { color: "#9A4A0A" },
   restOrientLabel: { color: COLORS.textSecondary },
-  restText: { fontSize: 13, color: COLORS.textPrimary, lineHeight: 18, fontWeight: "600" },
+  restText: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 18, fontWeight: "600" },
 });

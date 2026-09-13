@@ -44,5 +44,5 @@ const styles = StyleSheet.create({
   nombre: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, lineHeight: 22 },
   meta: { fontSize: 14, fontWeight: "600", color: COLORS.textSecondary, marginTop: 4, lineHeight: 20 },
   detalle: { fontSize: 16, color: COLORS.textPrimary, marginTop: 4, lineHeight: 24 },
-  aviso: { fontSize: 13, color: COLORS.textMuted, lineHeight: 18, marginTop: 4 },
+  aviso: { fontSize: 14, color: COLORS.textMuted, lineHeight: 18, marginTop: 4 },
 });

@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   hint: {
     flex: 1,
     textAlign: "center",
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.textMuted,
     fontWeight: "700",
     letterSpacing: 0.3,
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginTop: 3,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
     letterSpacing: 0.1,
   },

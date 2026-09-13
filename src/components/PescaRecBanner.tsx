@@ -49,13 +49,13 @@ const styles = StyleSheet.create({
   },
   boxCompact: { padding: 10 },
   kicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     color: COLORS.waterDark,
     letterSpacing: 0.6,
     marginBottom: 4,
   },
-  text: { fontSize: 12.5, color: COLORS.textPrimary, lineHeight: 18 },
+  text: { fontSize: 13, color: COLORS.textPrimary, lineHeight: 18 },
   row: { flexDirection: "row", gap: 8, marginTop: 10 },
   btn: {
     backgroundColor: COLORS.water,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  btnText: { color: "#fff", fontWeight: "700", fontSize: 12 },
+  btnText: { color: "#fff", fontWeight: "700", fontSize: 13 },
   btnGhost: {
     borderRadius: RADIUS.sm,
     paddingHorizontal: 12,
@@ -71,5 +71,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.water,
   },
-  btnGhostText: { color: COLORS.waterDark, fontWeight: "700", fontSize: 12 },
+  btnGhostText: { color: COLORS.waterDark, fontWeight: "700", fontSize: 13 },
 });

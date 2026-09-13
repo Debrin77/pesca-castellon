@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.28)",
   },
   kicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.9,
     textTransform: "uppercase",
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   preguntaClaro: { color: COLORS.textPrimary },
   preguntaOscuro: { color: "#fff" },
   aviso: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
     marginTop: 3,
     lineHeight: 16,

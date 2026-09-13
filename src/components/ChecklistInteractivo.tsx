@@ -179,13 +179,13 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   progresoLbl: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.6,
     textTransform: "uppercase",
     color: COLORS.textMuted,
   },
-  progresoNum: { fontSize: 13, fontWeight: "800", color: COLORS.primary },
+  progresoNum: { fontSize: 14, fontWeight: "800", color: COLORS.primary },
   barra: {
     height: 6,
     borderRadius: 999,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   listoTitle: { fontSize: 15, fontWeight: "800", color: COLORS.primary },
-  listoSub: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 2, lineHeight: 17 },
+  listoSub: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2, lineHeight: 17 },
   row: {
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   boxOn: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
-  boxTxt: { color: "#fff", fontSize: 12, fontWeight: "900" },
-  txt: { flex: 1, fontSize: 13, lineHeight: 18, color: COLORS.textPrimary, fontWeight: "600" },
+  boxTxt: { color: "#fff", fontSize: 13, fontWeight: "900" },
+  txt: { flex: 1, fontSize: 14, lineHeight: 18, color: COLORS.textPrimary, fontWeight: "600" },
   txtOn: { color: COLORS.textSecondary },
   linkBtn: {
     alignSelf: "flex-start",
@@ -242,5 +242,5 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: COLORS.mist,
   },
-  linkTxt: { fontSize: 12, fontWeight: "800", color: COLORS.primary },
+  linkTxt: { fontSize: 13, fontWeight: "800", color: COLORS.primary },
 });

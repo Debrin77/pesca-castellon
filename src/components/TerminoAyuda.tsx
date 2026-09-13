@@ -108,9 +108,9 @@ export default function TerminoAyuda({
 
 const styles = StyleSheet.create({
   hit: { flexDirection: "row", alignItems: "center" },
-  label: { fontSize: 13, fontWeight: "800", color: COLORS.waterDark },
+  label: { fontSize: 14, fontWeight: "800", color: COLORS.waterDark },
   labelOscuro: { color: "rgba(255,255,255,0.95)" },
-  q: { fontSize: 12, fontWeight: "700", color: COLORS.goldText },
+  q: { fontSize: 13, fontWeight: "700", color: COLORS.goldText },
   qOscuro: { color: "rgba(255,255,255,0.7)" },
   backdrop: {
     flex: 1,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     ...Platform.select({ web: { maxWidth: 420, alignSelf: "center", width: "100%" } }),
   },
   sheetKicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.8,
     textTransform: "uppercase",

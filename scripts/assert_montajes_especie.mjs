@@ -174,4 +174,30 @@ if (
   fail("Inicio debe enlazar Consejos con etiqueta Montajes");
 }
 
-console.log("OK: montajes visuales por especie (12 + enlaces + Salgo a pescar)");
+
+if (!montajes.includes("nudoId") || !montajes.includes("NUDO_ETIQUETA") || !montajes.includes("NudoMontajeId")) {
+  fail("montajesEspecie debe tipar nudoId / NUDO_ETIQUETA por pieza");
+}
+const nudos = (montajes.match(/nudoId: "/g) || []).length;
+if (nudos < 12) fail(`Se esperan ≥12 piezas con nudo recomendado (hay ${nudos})`);
+for (const nid of ["nudo-palomar", "nudo-albright", "nudo-clinch"]) {
+  if (!montajes.includes(`"${nid}"`)) fail(`Falta nudo ${nid} en montajes`);
+  if (!consejos.includes(`id: "${nid}"`)) fail(`consejos.ts debe tener ${nid}`);
+}
+const esquemaNudo = read("src/components/EsquemaMontajeLinea.tsx");
+if (!esquemaNudo.includes("nudoId") || !esquemaNudo.includes("NUDO_ETIQUETA") || !esquemaNudo.includes("Ver pasos")) {
+  fail("EsquemaMontajeLinea debe mostrar nudo recomendado y enlace a pasos");
+}
+if (!esquemaNudo.includes("irAConsejos") || !esquemaNudo.includes('categoria: "nudos"')) {
+  fail("EsquemaMontajeLinea debe deep-link al consejo del nudo");
+}
+if (!esquemaNudo.includes("FONT_SIZE")) {
+  fail("EsquemaMontajeLinea debe usar FONT_SIZE del theme");
+}
+const theme = read("src/theme.ts");
+if (!theme.includes("export const FONT_SIZE") || !theme.includes("md: 14")) {
+  fail("theme.ts debe exportar FONT_SIZE con cuerpo ≥14");
+}
+
+console.log("OK: montajes visuales por especie (12 + nudos + tipografía + enlaces)");
+

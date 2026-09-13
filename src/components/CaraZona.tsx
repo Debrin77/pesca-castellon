@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 48 },
   kicker: {
     color: "rgba(255,255,255,0.92)",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.5,
     textTransform: "uppercase",
     marginBottom: 2,
   },
   titulo: { color: "#fff", fontSize: 22, fontWeight: "800", letterSpacing: -0.3 },
-  sub: { color: "rgba(255,255,255,0.95)", fontSize: 13, marginTop: 3, fontWeight: "600" },
+  sub: { color: "rgba(255,255,255,0.95)", fontSize: 14, marginTop: 3, fontWeight: "600" },
 });

@@ -5,12 +5,16 @@ import {
   Image,
   StyleSheet,
   Platform,
+  Pressable,
   type ImageSourcePropType,
 } from "react-native";
 import { Asset } from "expo-asset";
-import type { MontajeEspecie, PiezaMontaje } from "../data/montajesEspecie";
+import { useNavigation } from "@react-navigation/native";
+import type { MontajeEspecie, PiezaMontaje, NudoMontajeId } from "../data/montajesEspecie";
+import { NUDO_ETIQUETA } from "../data/montajesEspecie";
 import { CREDITO_FOTOS_MONTAJE, fotoDePiezaMontaje } from "../data/montajePiezasMedia";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, FONT_SIZE } from "../theme";
+import { irAConsejos } from "../navigation/irATab";
 
 type Props = {
   montaje: MontajeEspecie;
@@ -25,6 +29,14 @@ const FOTO = 72;
  * En nativo: Image + require(), como GuiaFotoConsejo.
  */
 export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
+  const navigation = useNavigation<any>();
+  const verNudo = (nudoId: NudoMontajeId) => {
+    // Si ya estamos en Consejos, setParams abre el nudo; irAConsejos cubre otras pantallas.
+    if (typeof navigation.setParams === "function") {
+      navigation.setParams({ consejoId: nudoId, categoria: "nudos" });
+    }
+    irAConsejos(navigation, { consejoId: nudoId, categoria: "nudos" });
+  };
   return (
     <View
       style={[styles.wrap, { width }]}
@@ -45,6 +57,20 @@ export default function EsquemaMontajeLinea({ montaje, width = 320 }: Props) {
             <Text style={styles.tipo}>{etiquetaTipo(p.tipo)}</Text>
             <Text style={styles.etiqueta}>{p.etiqueta}</Text>
             {p.detalle ? <Text style={styles.detalle}>{p.detalle}</Text> : null}
+            {p.nudoId ? (
+              <Pressable
+                onPress={() => verNudo(p.nudoId!)}
+                accessibilityRole="button"
+                accessibilityLabel={`Ver nudo ${NUDO_ETIQUETA[p.nudoId]}`}
+                style={styles.nudoBtn}
+              >
+                <Text style={styles.nudoLabel}>
+                  Nudo: {NUDO_ETIQUETA[p.nudoId]}
+                  {p.nudoNota ? ` · ${p.nudoNota}` : ""}
+                </Text>
+                <Text style={styles.nudoLink}>Ver pasos →</Text>
+              </Pressable>
+            ) : null}
           </View>
         </View>
       ))}
@@ -184,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   kicker: {
-    fontSize: 11,
+    fontSize: FONT_SIZE.xs,
     fontWeight: "800",
     color: COLORS.waterDark,
     textTransform: "uppercase",
@@ -226,13 +252,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  tipo: { fontSize: 10, fontWeight: "800", color: COLORS.textMuted, textTransform: "uppercase" },
-  etiqueta: { fontSize: 14, fontWeight: "800", color: COLORS.textPrimary, marginTop: 1 },
-  detalle: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2, lineHeight: 16 },
+  tipo: { fontSize: FONT_SIZE.xs, fontWeight: "800", color: COLORS.textMuted, textTransform: "uppercase" },
+  etiqueta: { fontSize: FONT_SIZE.md, fontWeight: "800", color: COLORS.textPrimary, marginTop: 1 },
+  detalle: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary, marginTop: 2, lineHeight: 18 },
   alt: {
     marginTop: 4,
-    fontSize: 12,
-    lineHeight: 17,
+    fontSize: FONT_SIZE.sm,
+    lineHeight: 18,
     color: COLORS.textSecondary,
     fontWeight: "600",
   },
@@ -243,18 +269,36 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   regTitle: {
-    fontSize: 11,
+    fontSize: FONT_SIZE.xs,
     fontWeight: "800",
     color: COLORS.primaryDark,
     textTransform: "uppercase",
     marginBottom: 4,
   },
-  regItem: { fontSize: 12, lineHeight: 17, color: COLORS.textSecondary, marginBottom: 2 },
+  regItem: { fontSize: FONT_SIZE.sm, lineHeight: 18, color: COLORS.textSecondary, marginBottom: 2 },
   credito: {
     marginTop: 10,
-    fontSize: 10,
+    fontSize: FONT_SIZE.xs,
     color: COLORS.textMuted,
-    lineHeight: 14,
+    lineHeight: 16,
     fontStyle: "italic",
+  },
+  nudoBtn: {
+    marginTop: 6,
+    paddingTop: 6,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+  },
+  nudoLabel: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: "700",
+    color: COLORS.primaryDark,
+    lineHeight: 18,
+  },
+  nudoLink: {
+    marginTop: 2,
+    fontSize: FONT_SIZE.xs,
+    fontWeight: "700",
+    color: COLORS.waterDark,
   },
 });

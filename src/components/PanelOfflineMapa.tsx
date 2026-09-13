@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
-  sub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, lineHeight: 17 },
-  meta: { fontSize: 11.5, color: COLORS.primary, fontWeight: "700", marginTop: 8 },
-  nota: { fontSize: 11.5, color: COLORS.textMuted, marginTop: 4, lineHeight: 16 },
+  sub: { fontSize: 13, color: COLORS.textSecondary, marginTop: 4, lineHeight: 17 },
+  meta: { fontSize: 12, color: COLORS.primary, fontWeight: "700", marginTop: 8 },
+  nota: { fontSize: 12, color: COLORS.textMuted, marginTop: 4, lineHeight: 16 },
   btn: {
     marginTop: 12,
     backgroundColor: COLORS.primary,
@@ -89,6 +89,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   btnDisabled: { opacity: 0.7 },
-  btnText: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  btnText: { color: "#fff", fontWeight: "800", fontSize: 14 },
   row: { flexDirection: "row", alignItems: "center" },
 });

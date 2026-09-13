@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   inner: { paddingVertical: SPACING.lg, paddingHorizontal: SPACING.lg, overflow: "hidden" },
   row: { flexDirection: "row", alignItems: "center", gap: 8, zIndex: 1 },
   kicker: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
     letterSpacing: 0.9,
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
     marginBottom: 8,
   },
-  pillTxt: { fontSize: 13, fontWeight: "800" },
-  sub: { fontSize: 13, color: "rgba(255,255,255,0.88)", lineHeight: 18 },
+  pillTxt: { fontSize: 14, fontWeight: "800" },
+  sub: { fontSize: 14, color: "rgba(255,255,255,0.88)", lineHeight: 18 },
   chevron: { color: "#fff", fontSize: 32, fontWeight: "200", marginTop: -4 },
   vacio: {
     backgroundColor: COLORS.surface,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   vacioLineaTxt: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
     color: COLORS.textSecondary,
   },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     color: COLORS.waterDark,
   },
   vacioKicker: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.8,
     textTransform: "uppercase",

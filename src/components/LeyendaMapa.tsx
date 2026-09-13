@@ -49,12 +49,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   item: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "rgba(18,32,24,0.12)",
-  },
-  txt: { ...TYPE.mapLegend, color: COLORS.textPrimary },
+  dot: { width: 10, height: 10, borderRadius: 5 },
+  txt: { fontSize: 13, color: COLORS.textPrimary, fontWeight: "700" },
 });

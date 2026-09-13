@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   boxOk: { backgroundColor: COLORS.primaryLight, borderColor: "#b7d4c4" },
   boxOff: { backgroundColor: COLORS.warningLight, borderColor: "#f0d2a8" },
   kicker: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "700",
     color: COLORS.textMuted,
     textTransform: "uppercase",

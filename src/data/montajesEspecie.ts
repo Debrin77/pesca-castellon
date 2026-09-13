@@ -3,6 +3,22 @@
  * Un montaje “de siempre” + alternativa corta; enlazado desde Especies / Aparejos / Consejos.
  */
 
+/** Ids de consejos de nudos (sección «nudos» en consejos.ts). */
+export type NudoMontajeId =
+  | "nudo-palomar"
+  | "nudo-trilene"
+  | "nudo-albright"
+  | "nudo-clinch"
+  | "nudo-loop";
+
+export const NUDO_ETIQUETA: Record<NudoMontajeId, string> = {
+  "nudo-palomar": "Palomar",
+  "nudo-trilene": "Trilene",
+  "nudo-albright": "Albright",
+  "nudo-clinch": "Clinch",
+  "nudo-loop": "Lazo del pescador",
+};
+
 export type PiezaMontaje = {
   /** Etiqueta corta en el esquema */
   etiqueta: string;
@@ -10,6 +26,13 @@ export type PiezaMontaje = {
   detalle?: string;
   /** Tipo de elemento → foto en EsquemaMontajeLinea (montajePiezasMedia) */
   tipo: "linea" | "emerillon" | "snap" | "boya" | "plomo" | "anzuelo" | "senuelo" | "cebo";
+  /**
+   * Nudo recomendado para unir esta pieza a la anterior (o a la línea principal).
+   * Omitir en piezas que solo se enroscan/enganchan (señuelo en snap, cebo, plomo deslizante).
+   */
+  nudoId?: NudoMontajeId;
+  /** Matiz breve: «o anilla micro», «o Trilene»… */
+  nudoNota?: string;
 };
 
 export type MontajeEspecie = {
@@ -44,8 +67,12 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     especieIds: ["lubina", "anjova", "palometon"],
     piezas: [
       { tipo: "linea", etiqueta: "Trenza 0.10–0.14", detalle: "o nylon 0.25–0.30" },
-      { tipo: "linea", etiqueta: "Bajo flúoro 0.28–0.35", detalle: "0,8–1,5 m" },
-      { tipo: "emerillon", etiqueta: "Emerillón + snap", detalle: "talla media" },
+      { tipo: "linea", etiqueta: "Bajo flúoro 0.28–0.35", detalle: "0,8–1,5 m",
+        nudoId: "nudo-albright",
+        nudoNota: "trenza→flúoro · o anilla micro" },
+      { tipo: "emerillon", etiqueta: "Emerillón + snap", detalle: "talla media",
+        nudoId: "nudo-palomar",
+        nudoNota: "o Trilene en nylon" },
       { tipo: "senuelo", etiqueta: "Vinilo / jerk / cucharilla", detalle: "7–21 g según oleaje" },
     ],
     regulacion: [
@@ -72,9 +99,14 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     piezas: [
       { tipo: "linea", etiqueta: "Nylon 0.30–0.40", detalle: "o trenza + bajo" },
       { tipo: "plomo", etiqueta: "Pirámide / spike", detalle: "80–150 g según mar" },
-      { tipo: "emerillon", etiqueta: "Tope + emerillón", detalle: "el plomo no aprieta el nudo" },
-      { tipo: "linea", etiqueta: "Bajo 0.25–0.30", detalle: "40–80 cm" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo 1–2/0", detalle: "sin muerte si sueltas" },
+      { tipo: "emerillon", etiqueta: "Tope + emerillón", detalle: "el plomo no aprieta el nudo",
+        nudoId: "nudo-palomar",
+        nudoNota: "línea al ojal" },
+      { tipo: "linea", etiqueta: "Bajo 0.25–0.30", detalle: "40–80 cm",
+        nudoId: "nudo-clinch",
+        nudoNota: "al otro ojal del emerillón" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 1–2/0", detalle: "sin muerte si sueltas",
+        nudoId: "nudo-palomar" },
       { tipo: "cebo", etiqueta: "Gusano / tita / marisco", detalle: "bien cubierto" },
     ],
     regulacion: [
@@ -102,7 +134,9 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
       { tipo: "linea", etiqueta: "Nylon / flúoro 0.22–0.28" },
       { tipo: "boya", etiqueta: "Boya stick o bola", detalle: "1–3 g · sensible" },
       { tipo: "plomo", etiqueta: "Perdigones / oliva", detalle: "reparte bajo la boya" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo 8–2", detalle: "según cebo" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 8–2", detalle: "según cebo",
+        nudoId: "nudo-palomar",
+        nudoNota: "o Clinch en nylon fino" },
       { tipo: "cebo", etiqueta: "Cangrejo / muergo / gusano" },
     ],
     regulacion: [
@@ -130,7 +164,8 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
       { tipo: "linea", etiqueta: "Nylon 0.28–0.35" },
       { tipo: "boya", etiqueta: "Boya carpodromo / stick", detalle: "visible a distancia" },
       { tipo: "plomo", etiqueta: "Oliva / balines", detalle: "bajo la boya" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo 8–4", detalle: "sin arponcillo si sueltas" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 8–4", detalle: "sin arponcillo si sueltas",
+        nudoId: "nudo-palomar" },
       { tipo: "cebo", etiqueta: "Maíz / boilie / pellet", detalle: "en el anzuelo" },
     ],
     regulacion: [
@@ -157,9 +192,12 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     ambito: "rio",
     especieIds: ["black_bass", "lucio"],
     piezas: [
-      { tipo: "linea", etiqueta: "Trenza 0.10–0.14", detalle: "+ bajo flúoro" },
+      { tipo: "linea", etiqueta: "Trenza 0.10–0.14", detalle: "+ bajo flúoro",
+        nudoId: "nudo-albright",
+        nudoNota: "si usas bajo flúoro" },
       { tipo: "plomo", etiqueta: "Bala 3–10 g", detalle: "punta hacia el anzuelo" },
-      { tipo: "anzuelo", etiqueta: "Offset / worm", detalle: "1/0–3/0" },
+      { tipo: "anzuelo", etiqueta: "Offset / worm", detalle: "1/0–3/0",
+        nudoId: "nudo-palomar" },
       { tipo: "senuelo", etiqueta: "Vinilo weedless", detalle: "puntas ocultas" },
     ],
     regulacion: [
@@ -185,7 +223,9 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     especieIds: ["trucha_comun", "trucha_arcoiris"],
     piezas: [
       { tipo: "linea", etiqueta: "Nylon 0.14–0.18", detalle: "UL" },
-      { tipo: "emerillon", etiqueta: "Emerillón micro + snap", detalle: "anti-enredo" },
+      { tipo: "emerillon", etiqueta: "Emerillón micro + snap", detalle: "anti-enredo",
+        nudoId: "nudo-palomar",
+        nudoNota: "o Clinch en nylon fino" },
       { tipo: "senuelo", etiqueta: "Cucharilla n.º 0–2", detalle: "giratoria u ondulante" },
     ],
     regulacion: [
@@ -213,7 +253,9 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
       { tipo: "linea", etiqueta: "Nylon 0.20–0.25" },
       { tipo: "boya", etiqueta: "Boya ligera 1–4 g", detalle: "muy sensible" },
       { tipo: "plomo", etiqueta: "1–2 perdigones" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "fino" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "fino",
+        nudoId: "nudo-clinch",
+        nudoNota: "o Palomar si el ojal lo permite" },
       { tipo: "cebo", etiqueta: "Pan / pasta / pequeño trozo de gusano" },
     ],
     regulacion: [
@@ -238,8 +280,11 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     ambito: "costa",
     especieIds: ["sepia", "calamar"],
     piezas: [
-      { tipo: "linea", etiqueta: "Trenza 0.08–0.12", detalle: "+ bajo flúoro" },
-      { tipo: "snap", etiqueta: "Snap micro", detalle: "o emerillón fino" },
+      { tipo: "linea", etiqueta: "Trenza 0.08–0.12", detalle: "+ bajo flúoro",
+        nudoId: "nudo-albright",
+        nudoNota: "trenza→bajo flúoro" },
+      { tipo: "snap", etiqueta: "Snap micro", detalle: "o emerillón fino",
+        nudoId: "nudo-palomar" },
       { tipo: "senuelo", etiqueta: "Egí 2.0–3.5", detalle: "según profundidad" },
     ],
     regulacion: [
@@ -264,8 +309,11 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     ambito: "costa",
     especieIds: ["jurel", "caballa"],
     piezas: [
-      { tipo: "linea", etiqueta: "Trenza 0.08–0.12", detalle: "+ bajo flúoro 0.25–0.30" },
-      { tipo: "emerillon", etiqueta: "Emerillón + snap", detalle: "anti-enredo" },
+      { tipo: "linea", etiqueta: "Trenza 0.08–0.12", detalle: "+ bajo flúoro 0.25–0.30",
+        nudoId: "nudo-albright",
+        nudoNota: "trenza→bajo" },
+      { tipo: "emerillon", etiqueta: "Emerillón + snap", detalle: "anti-enredo",
+        nudoId: "nudo-palomar" },
       { tipo: "senuelo", etiqueta: "Cucharilla / metal 7–21 g", detalle: "brillante o azul" },
     ],
     regulacion: [
@@ -292,8 +340,12 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     piezas: [
       { tipo: "linea", etiqueta: "Nylon / trenza 0.25–0.35" },
       { tipo: "plomo", etiqueta: "Oliva / pirámide 40–80 g", detalle: "según corriente" },
-      { tipo: "linea", etiqueta: "Bajo corto 30–50 cm", detalle: "resistente a roca" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo / jig pulpo", detalle: "cebo bien fijado" },
+      { tipo: "linea", etiqueta: "Bajo corto 30–50 cm", detalle: "resistente a roca",
+        nudoId: "nudo-palomar",
+        nudoNota: "al ojal del plomo o tope" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo / jig pulpo", detalle: "cebo bien fijado",
+        nudoId: "nudo-palomar",
+        nudoNota: "o Clinch reforzado" },
       { tipo: "cebo", etiqueta: "Sardina / cangrejo / jig", detalle: "cerca de grietas" },
     ],
     regulacion: [
@@ -320,9 +372,14 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     piezas: [
       { tipo: "linea", etiqueta: "Nylon 0.22–0.28" },
       { tipo: "plomo", etiqueta: "Oliva / cage 20–50 g", detalle: "deslizante · cage solo si cebar es legal" },
-      { tipo: "emerillon", etiqueta: "Tope + emerillón" },
-      { tipo: "linea", etiqueta: "Bajo 0.18–0.22", detalle: "40–70 cm" },
-      { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "sin arponcillo si sueltas" },
+      { tipo: "emerillon", etiqueta: "Tope + emerillón",
+        nudoId: "nudo-palomar",
+        nudoNota: "línea al ojal" },
+      { tipo: "linea", etiqueta: "Bajo 0.18–0.22", detalle: "40–70 cm",
+        nudoId: "nudo-clinch",
+        nudoNota: "al otro ojal" },
+      { tipo: "anzuelo", etiqueta: "Anzuelo 10–6", detalle: "sin arponcillo si sueltas",
+        nudoId: "nudo-palomar" },
       { tipo: "cebo", etiqueta: "Lombriz / maíz / pellet", detalle: "en el anzuelo" },
     ],
     regulacion: [
@@ -350,8 +407,12 @@ export const MONTAJES_ESPECIE: MontajeEspecie[] = [
     especieIds: ["siluro"],
     piezas: [
       { tipo: "linea", etiqueta: "Trenza 0.20–0.35", detalle: "o nylon muy fuerte" },
-      { tipo: "linea", etiqueta: "Bajo acero / flúor grueso", detalle: "80–120 cm" },
-      { tipo: "emerillon", etiqueta: "Emerillón + snap XXL" },
+      { tipo: "linea", etiqueta: "Bajo acero / flúor grueso", detalle: "80–120 cm",
+        nudoId: "nudo-albright",
+        nudoNota: "trenza→bajo · o manguito" },
+      { tipo: "emerillon", etiqueta: "Emerillón + snap XXL",
+        nudoId: "nudo-palomar",
+        nudoNota: "doble Palomar si el ojal es grueso" },
       { tipo: "senuelo", etiqueta: "Vinilo / shad 15–25 cm", detalle: "sin pez vivo" },
     ],
     regulacion: [

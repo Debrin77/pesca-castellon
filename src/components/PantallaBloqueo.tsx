@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     color: "#e8f5ee",
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
-    fontSize: 13,
+    fontSize: 14,
     letterSpacing: 0.6,
     textTransform: "uppercase",
     marginBottom: 8,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   hint: {
     marginTop: 16,
     color: "rgba(255,255,255,0.75)",
-    fontSize: 12,
+    fontSize: 13,
     textAlign: "center",
     fontFamily: FONTS.semibold,
   },

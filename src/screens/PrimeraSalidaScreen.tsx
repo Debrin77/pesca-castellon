@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   kicker: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
     letterSpacing: 0.8,
@@ -296,13 +296,13 @@ const styles = StyleSheet.create({
   optTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
   optSub: {
     marginTop: 2,
-    fontSize: 12.5,
+    fontSize: 13,
     lineHeight: 17,
     color: COLORS.textSecondary,
     fontWeight: "600",
   },
   note: {
-    fontSize: 12.5,
+    fontSize: 13,
     lineHeight: 17,
     color: COLORS.textMuted,
     fontWeight: "600",
