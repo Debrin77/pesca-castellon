@@ -61,8 +61,8 @@ if (!campo.includes("trioCard") || !campo.includes("activarRadar: true") || !cam
 
 // 5 tabs visibles
 const tabScreens = [...app.matchAll(/<Tab\.Screen name="([^"]+)"/g)].map((m) => m[1]);
-const esperadas = ["Inicio", "Mapa", "Especies", "Previsión", "Capturas"];
-if (tabScreens.length !== 5 || esperadas.some((t, i) => tabScreens[i] !== t)) {
+const esperadas = ["Inicio", "Mapa", "Especies", "Consejos", "Previsión", "Capturas"];
+if (tabScreens.length !== 6 || esperadas.some((t, i) => tabScreens[i] !== t)) {
   fail(`App tabs visibles deben ser ${esperadas.join(" · ")} (got ${tabScreens.join(" · ")})`);
 }
 if (app.includes('name="Aparejos" component={AparejosStackScreen}') || app.includes("AparejosStackScreen")) {
@@ -72,12 +72,15 @@ if (!app.includes('HomeStack.Screen name="Aparejos"') || !app.includes('HomeStac
   fail("HomeStack debe incluir Aparejos y Consejos");
 }
 
-// Barra: 5 iconos, sin Aparejos/Consejos en ICONO_POR_TAB
-if (tabs.includes("Aparejos:") || tabs.includes("Consejos:")) {
-  fail("BarraTabsScroll no debe mapear tabs Aparejos/Consejos");
+// Barra: Aparejos sigue fuera de tabs; Consejos sí es tab
+if (tabs.includes("Aparejos:")) {
+  fail("BarraTabsScroll no debe mapear tab Aparejos");
+}
+if (!tabs.includes('Consejos: "book"') && !tabs.includes("Consejos: \"book\"")) {
+  if (!tabs.includes("Consejos:")) fail("BarraTabsScroll debe mapear tab Consejos");
 }
 if (!tabs.includes("ANCHO_ITEM = 78")) {
-  fail("BarraTabsScroll debería usar ANCHO_ITEM = 78 para 5 tabs");
+  fail("BarraTabsScroll debería usar ANCHO_ITEM = 78");
 }
 
 // Mapa: capas plegadas + cierre visible

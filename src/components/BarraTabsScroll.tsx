@@ -21,16 +21,16 @@ const ICONO_POR_TAB: Record<string, NombreIcono> = {
   Inicio: "home",
   Mapa: "water",
   Especies: "fish",
+  Consejos: "book",
   Previsión: "partly-sunny",
   Capturas: "bookmark",
 };
 
-/** Ancho pensado para 5 tabs visibles sin forzar scroll en la mayoría de móviles. */
+/** Ancho por tab; con 6 tabs la barra hace scroll en móviles estrechos. */
 const ANCHO_ITEM = 78;
 
 /**
- * Barra inferior compacta: sin fila «Menú» cuando caben las 5 tabs.
- * Flechas solo si hace falta scroll horizontal.
+ * Barra inferior compacta: scroll + flechas si no caben todas las tabs.
  */
 export default function BarraTabsScroll({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();

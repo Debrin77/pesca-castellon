@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
+import { irAConsejos } from "../navigation/irATab";
 import aparejosOrilla from "../data/aparejosOrilla.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
@@ -285,7 +286,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               <TouchableOpacity
                 style={styles.montajeCta}
                 onPress={() =>
-                  navigation?.navigate("Consejos", {
+                  irAConsejos(navigation, {
                     consejoId: consejoIdMontajeEspecie(sp.id, optsMontaje),
                     categoria: "montajes",
                   })

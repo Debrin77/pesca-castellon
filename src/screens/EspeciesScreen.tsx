@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
@@ -347,7 +348,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     }
     setFichaAbierta(false);
     setCatalogoAbierto(false);
-    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+    irAConsejos(navigation, { consejoId, categoria: "montajes" });
   }
 
   const especiesConsulta =

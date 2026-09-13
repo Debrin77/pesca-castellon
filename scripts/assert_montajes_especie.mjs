@@ -167,7 +167,10 @@ if (!pkg.includes("assert_montajes_especie.mjs")) {
 }
 
 const homeChip = read("src/screens/HomeScreen.tsx");
-if (!homeChip.includes('navigate("Consejos"') || !homeChip.includes("Montajes")) {
+if (
+  !(homeChip.includes('navigate("Consejos"') || homeChip.includes("irAConsejos(")) ||
+  !homeChip.includes("Montajes")
+) {
   fail("Inicio debe enlazar Consejos con etiqueta Montajes");
 }
 
