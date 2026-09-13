@@ -55,7 +55,7 @@ import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
-import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
 import SiguientePasoCard from "../components/SiguientePasoCard";
@@ -1055,15 +1055,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: RADIUS.xl,
     overflow: "hidden",
   },
-  brandPulse: {
-    fontSize: 28,
-    fontWeight: "700",
-    fontFamily: FONTS.display,
-    color: "#fff",
-    letterSpacing: -0.3,
-    marginBottom: 2,
-    zIndex: 1,
-  },
+  brandPulse: { ...TYPE.displayHero, color: "#fff", marginBottom: 2, zIndex: 1 },
   dateText: {
     fontSize: 15,
     color: "rgba(255,255,255,0.92)",
@@ -1487,7 +1479,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: SPACING.sm,
   },
-  sectionTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
+  sectionTitle: { ...TYPE.displayTitle, fontSize: 18, color: COLORS.textPrimary },
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
   linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
   saihChip: {

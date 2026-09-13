@@ -22,7 +22,7 @@ const ir = read("src/navigation/irATab.ts");
 const consejos = read("src/screens/ConsejosScreen.tsx");
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");
 
-if (!home.includes("FONTS.display")) fail("Home debe usar Fraunces (FONTS.display) en el hero");
+if (!home.includes("FONTS.display") && !home.includes("TYPE.displayHero")) fail("Home debe usar Fraunces en el hero");
 if (!home.includes("brandPulse") || !home.includes("veredictoRapido") || !home.includes("ctaSalgoTitle")) {
   fail("Home hero debe tener marca + veredicto + CTA Salgo");
 }
@@ -47,8 +47,8 @@ if (!app.includes("ConsejosStackScreen") || !app.includes('name="ConsejosMain"')
   fail("App debe tener stack ConsejosMain");
 }
 if (!ir.includes("irAConsejos") || !ir.includes('"Consejos"')) fail("irATab debe exponer irAConsejos");
-if (!consejos.includes("FONTS.display")) fail("Consejos hero debe usar Fraunces");
-if (!salgo.includes("FONTS.display")) fail("Salgo a pescar título debe usar Fraunces");
+if (!consejos.includes("FONTS.display") && !consejos.includes("TYPE.displayHero")) fail("Consejos hero debe usar Fraunces");
+if (!salgo.includes("FONTS.display") && !salgo.includes("TYPE.displayHero") && !salgo.includes("TYPE.displayTitle")) fail("Salgo a pescar título debe usar Fraunces");
 
 const pkg = read("package.json");
 if (!pkg.includes("assert_inicio_hero_consejos_tab.mjs")) {

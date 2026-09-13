@@ -76,6 +76,10 @@ function inyectarCssMapa() {
     .pesca-map .leaflet-popup-tip {
       box-shadow: none;
     }
+    .pesca-pin--selected {
+      transform: scale(1.15);
+      filter: drop-shadow(0 2px 5px rgba(91,45,142,0.5));
+    }
     .pesca-pin {
       position: relative;
       width: 22px;
@@ -155,8 +159,9 @@ function zoomDesdeDelta(delta?: number): number {
   return 13;
 }
 
-function tipoMarcador(identifier?: string, pinColor?: string, title?: string): "user" | "spot" | "pin" {
+function tipoMarcador(identifier?: string, pinColor?: string, title?: string): "user" | "spot" | "seleccion" | "pin" {
   if (identifier === "user" || title === "Tú") return "user";
+  if (identifier === "seleccion" || title === "Punto consultado" || title === "Consulta") return "seleccion";
   if (identifier === "spot" || pinColor === "#c4921a" || pinColor === "#f9a825") return "spot";
   return "pin";
 }
@@ -174,7 +179,7 @@ function iconoMarcador(pinColor: string, identifier?: string, title?: string) {
   }
   return L.divIcon({
     className: "pesca-pin-wrap",
-    html: `<div class="pesca-pin" style="--pin:${pinColor}"><i></i><span></span></div>`,
+    html: `<div class="pesca-pin${tipo === "seleccion" ? " pesca-pin--selected" : ""}" style="--pin:${pinColor}"><i></i><span></span></div>`,
     iconSize: [22, 32],
     iconAnchor: [11, 30],
     popupAnchor: [0, -28],

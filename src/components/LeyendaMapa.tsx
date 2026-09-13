@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { COLORS, PIN } from "../theme";
+import { COLORS, PIN, TYPE } from "../theme";
 
 type Modo = "continental" | "costa";
 
@@ -9,6 +9,8 @@ const ITEMS: Record<Modo, { color: string; label: string }[]> = {
     { color: PIN.libre, label: "Libre" },
     { color: PIN.coto, label: "Coto" },
     { color: PIN.vedado, label: "Vedado" },
+    { color: PIN.yo, label: "Tú" },
+    { color: PIN.seleccion, label: "Consulta" },
     { color: PIN.spot, label: "Punto" },
     { color: PIN.captura, label: "Captura" },
   ],
@@ -16,14 +18,17 @@ const ITEMS: Record<Modo, { color: string; label: string }[]> = {
     { color: PIN.playa, label: "Playa" },
     { color: PIN.vedado, label: "Vedado" },
     { color: PIN.puerto, label: "Puerto" },
+    { color: PIN.yo, label: "Tú" },
+    { color: PIN.seleccion, label: "Consulta" },
     { color: PIN.spot, label: "Punto" },
     { color: PIN.captura, label: "Captura" },
   ],
 };
 
+/** Leyenda compacta para leer el mapa al sol, con guantes o con prisa. */
 export default function LeyendaMapa({ modo }: { modo: Modo }) {
   return (
-    <View style={styles.row}>
+    <View style={styles.row} accessibilityRole="summary" accessibilityLabel="Leyenda del mapa">
       {ITEMS[modo].map((it) => (
         <View key={it.label} style={styles.item}>
           <View style={[styles.dot, { backgroundColor: it.color }]} />
@@ -35,8 +40,21 @@ export default function LeyendaMapa({ modo }: { modo: Modo }) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row", flexWrap: "wrap", gap: 14, justifyContent: "center", marginTop: 8 },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "center",
+    marginTop: 8,
+    paddingHorizontal: 4,
+  },
   item: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dot: { width: 10, height: 10, borderRadius: 5 },
-  txt: { fontSize: 12, color: COLORS.textPrimary, fontWeight: "700" },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(18,32,24,0.12)",
+  },
+  txt: { ...TYPE.mapLegend, color: COLORS.textPrimary },
 });

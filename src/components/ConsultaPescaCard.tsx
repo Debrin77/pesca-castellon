@@ -15,7 +15,7 @@ import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
 import AvisoHorarioLegal from "./AvisoHorarioLegal";
 import { certezaDeConsulta } from "../data/certezaConsulta";
-import { COLORS, RADIUS } from "../theme";
+import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     color: COLORS.warning,
     lineHeight: 15,
   },
-  title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, lineHeight: 20 },
+  title: { ...TYPE.title, color: COLORS.textPrimary },
   meta: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 4, marginBottom: 8 },
   claveKicker: {
     fontSize: 11,
@@ -461,8 +461,8 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 2,
   },
-  ok: { fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 18, marginBottom: 4 },
-  warn: { fontSize: 12.5, color: COLORS.danger, lineHeight: 18, marginBottom: 4, fontWeight: "600" },
+  ok: { ...TYPE.caption, color: COLORS.textSecondary, marginBottom: 4 },
+  warn: { ...TYPE.caption, color: COLORS.danger, marginBottom: 4 },
   especies: { fontSize: 12, marginTop: 6, fontWeight: "600" },
   fuenteBox: { marginTop: 10, paddingTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
   fuenteKicker: { fontSize: 10, fontWeight: "800", color: COLORS.textMuted, letterSpacing: 0.4, marginBottom: 2 },

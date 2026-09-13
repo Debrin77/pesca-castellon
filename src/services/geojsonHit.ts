@@ -140,7 +140,8 @@ export function tramosConPoligono(): Set<string> {
 }
 
 export function colorCapaIcv(capa: CapaIcv): string {
-  if (capa === "zpc") return "#9a4a0a";
-  if (capa === "zpl") return "#1a6b3c";
-  return "#b42318";
+  // Alineado con PIN del tema (libre / coto / vedado).
+  if (capa === "zpc") return "#9a4a0a"; // PIN.coto
+  if (capa === "zpl") return "#246b3d"; // PIN.libre
+  return "#b42318"; // PIN.vedado
 }
