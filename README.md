@@ -39,7 +39,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 
 ### Inicio y salida
 - Veredicto rápido: **¿Puedo?** (norma) vs **¿Pinta?** (meteo).
-- Índice de pesca 0–100, clima Open-Meteo, hidrología SAIH (CHJ / CHG).
+- Índice de pesca 0–100 (presión, temp. aire/agua, nubes, viento, lluvia, luna/solunar + franjas), clima Open-Meteo, hidrología SAIH (CHJ / CHG).
 - Flujo **«Salgo a pescar»** y **primera salida** para principiantes.
 - Checklist, avisos de seguridad, recomendaciones del día.
 

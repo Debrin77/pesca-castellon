@@ -673,6 +673,11 @@ export default function HomeScreen({ navigation }: Props) {
                     </Text>
                   </Text>
                 </View>
+                {indiceHoy.mejorFranjaInicio && indiceHoy.mejorFranjaFin ? (
+                  <Text style={[styles.pulsoFranja, { color: catInfo.color }]} numberOfLines={1}>
+                    Mejor franja ~ {indiceHoy.mejorFranjaInicio}–{indiceHoy.mejorFranjaFin}
+                  </Text>
+                ) : null}
               </View>
               <View style={styles.pulsoClimaCard}>
                 {tiempo && clima ? (
@@ -1357,6 +1362,12 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
+  },
+  pulsoFranja: {
+    marginTop: 6,
+    fontSize: 11,
+    fontWeight: "600",
+    opacity: 0.9,
   },
   pulsoIndexScore: {
     fontSize: 44,

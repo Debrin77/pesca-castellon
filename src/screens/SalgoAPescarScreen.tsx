@@ -729,6 +729,9 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                     </Text>
                     <Text style={styles.indexMeta}>
                       {indice.puntuacion}/100 · {indice.faseLunar} {indice.iconoLuna}
+                      {indice.mejorFranjaInicio && indice.mejorFranjaFin
+                        ? ` · franja ${indice.mejorFranjaInicio}–${indice.mejorFranjaFin}`
+                        : ""}
                     </Text>
                   </View>
                 ) : (

@@ -51,7 +51,11 @@ export async function programarAlertasPesca(dias: IndicePescaDia[]): Promise<num
     const esExcelente = dia.categoria === "excelente";
     const fechaDia = new Date(dia.fecha + "T00:00:00");
 
-    const cuerpoBase = `Índice de pesca: ${dia.puntuacion}/100 · ${dia.faseLunar} ${dia.iconoLuna} · Viento ${dia.vientoMaxKmh} km/h`;
+    const franja =
+      dia.mejorFranjaInicio && dia.mejorFranjaFin
+        ? ` · Franja ${dia.mejorFranjaInicio}–${dia.mejorFranjaFin}`
+        : "";
+    const cuerpoBase = `Índice de pesca: ${dia.puntuacion}/100 · ${dia.faseLunar} ${dia.iconoLuna} · Viento ${dia.vientoMaxKmh} km/h${franja}`;
 
     // Aviso la víspera a las 20:00
     const vispera = new Date(fechaDia);

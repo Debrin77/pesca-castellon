@@ -376,10 +376,18 @@ export default function PrevisionScreen() {
               <View style={[styles.glassCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
                 <View style={styles.indexHead}>
                   <Text style={styles.glassLabel}>{EJE_METEO.indexLabel}</Text>
-                <Text style={styles.glassHint}>No es permiso legal · solo clima y luna</Text>
+                <Text style={styles.glassHint}>No es permiso legal · clima, agua y luna</Text>
                   <Text style={styles.glassStrong}>
                     {ind.puntuacion} · {cat.texto}
                   </Text>
+                  {ind.mejorFranjaInicio && ind.mejorFranjaFin ? (
+                    <Text style={styles.glassHint}>
+                      Mejor franja ~ {ind.mejorFranjaInicio}–{ind.mejorFranjaFin}
+                      {ind.tempAguaC != null
+                        ? ` · agua ${Math.round(ind.tempAguaC)}°${ind.fuenteTempAgua === "mar" ? " mar" : ""}`
+                        : ""}
+                    </Text>
+                  ) : null}
                 </View>
                 <View style={styles.meterTrack} accessibilityLabel={`Puntuación ${ind.puntuacion} de 100`}>
                   <View
@@ -390,7 +398,7 @@ export default function PrevisionScreen() {
                   />
                 </View>
                 <Text style={styles.glassHint}>
-                  No es permiso legal. Orientativo (presión, nubes, viento, lluvia y luna). No es un aviso oficial.
+                  No es permiso legal. Orientativo (presión, temperatura, nubes, viento, lluvia y luna). No es un aviso oficial.
                 </Text>
               </View>
             </ListaAnimada>
