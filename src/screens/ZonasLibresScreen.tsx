@@ -30,7 +30,7 @@ import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import SelectorModalidad from "../components/SelectorModalidad";
-import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
+import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
@@ -803,26 +803,30 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           {mar && capas.vedado ? <CapaVedadosCosta /> : null}
           {mar &&
             capas.zpl &&
-            playas.map((p) => (
+            playas.map((p) => {
+              const { color, identifier } = aspectoMapaPlaya(p);
+              return (
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={PIN.playa}
-                identifier="playa"
+                pinColor={color}
+                identifier={identifier}
                 title={p.nombre}
                 onPress={() => evaluarPlaya(p.id)}
               />
-            ))}
+              );
+            })}
           {mar &&
             capas.zpc &&
             todosLosPuertos().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.puerto}
-                  identifier="puerto"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -832,12 +836,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             capas.vedado &&
             todosLosVedadosCosta().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.vedado}
-                  identifier="vedado"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />

@@ -15,9 +15,8 @@ const ITEMS: Record<Modo, { color: string; label: string }[]> = {
     { color: PIN.captura, label: "Captura" },
   ],
   costa: [
-    { color: PIN.playa, label: "Playa" },
-    { color: PIN.vedado, label: "Vedado" },
-    { color: PIN.puerto, label: "Puerto" },
+    { color: PIN.libre, label: "Hoy sí" },
+    { color: PIN.vedado, label: "Hoy no" },
     { color: PIN.yo, label: "Tú" },
     { color: PIN.seleccion, label: "Consulta" },
     { color: PIN.spot, label: "Punto" },
@@ -34,7 +33,7 @@ export default function LeyendaMapa({ modo }: { modo: Modo }) {
       accessibilityLabel={
         modo === "continental"
           ? "Leyenda del mapa. Verde hoy sí, ámbar coto, rojo hoy no o vedado"
-          : "Leyenda del mapa"
+          : "Leyenda del mapa. Verde hoy sí en orilla, rojo hoy no (veda o puerto)"
       }
     >
       <View style={styles.row}>
@@ -45,9 +44,11 @@ export default function LeyendaMapa({ modo }: { modo: Modo }) {
           </View>
         ))}
       </View>
-      {modo === "continental" ? (
-        <Text style={styles.nota}>Color = si puedes hoy (temporada y días hábiles)</Text>
-      ) : null}
+      <Text style={styles.nota}>
+        {modo === "continental"
+          ? "Color = si puedes hoy (temporada y días hábiles)"
+          : "Color = si puedes hoy en orilla (veda/puerto = no)"}
+      </Text>
     </View>
   );
 }

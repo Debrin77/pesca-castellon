@@ -12,7 +12,7 @@ import {
   tramoUsaRadioAnexo,
   TramoOficial,
 } from "../services/consultaPescaService";
-import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
+import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
@@ -431,25 +431,29 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           {costa ? <CapaPuertos /> : null}
           {costa ? <CapaVedadosCosta /> : null}
           {costa &&
-            playas.map((p) => (
+            playas.map((p) => {
+              const { color, identifier } = aspectoMapaPlaya(p);
+              return (
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={PIN.playa}
-                identifier="playa"
+                pinColor={color}
+                identifier={identifier}
                 title={p.nombre}
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
-            ))}
+              );
+            })}
           {costa &&
             todosLosPuertos().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.puerto}
-                  identifier="puerto"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -458,12 +462,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           {costa &&
             todosLosVedadosCosta().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.vedado}
-                  identifier="vedado"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
