@@ -566,6 +566,17 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
         ) : null}
 
+        {!consultaViva || permisoDenegado ? (
+          <TouchableOpacity
+            style={styles.gpsChip}
+            onPress={() => void usarMiUbicacion()}
+            accessibilityRole="button"
+            accessibilityLabel="Usar mi ubicación"
+          >
+            <Text style={styles.gpsChipTxt}>Usar mi ubicación</Text>
+          </TouchableOpacity>
+        ) : null}
+
         <PulsePress
           onPress={() => navigation.navigate("SalgoAPescar")}
           style={styles.ctaSalgo}
@@ -703,7 +714,7 @@ export default function HomeScreen({ navigation }: Props) {
               ))}
             </View>
           ) : null}
-
+        </View>
 
         <View>
                     <SiguientePasoCard
