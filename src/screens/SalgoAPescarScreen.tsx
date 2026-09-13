@@ -38,7 +38,7 @@ import type { FuentePuntoConsulta } from "../services/puntoConsultaService";
 import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import ListaAnimada from "../components/ListaAnimada";
-import { irAEspeciesDelPunto } from "../navigation/irATab";
+import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import {
   consejoIdMontajeEspecie,
   montajesParaEspecie,
@@ -349,7 +349,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   function irMontaje(especieId: string) {
     const consejoId = consejoIdMontajeEspecie(especieId, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
     if (!consejoId) return;
-    navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+    irAConsejos(navigation, { consejoId, categoria: "montajes" });
   }
 
   async function registrarSalidaHoy() {
@@ -870,8 +870,8 @@ const styles = StyleSheet.create({
   title: {
     color: "#fff",
     fontSize: 30,
-    fontWeight: "800",
-    fontFamily: FONTS.extrabold,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
     marginTop: 4,
     letterSpacing: -0.3,
     zIndex: 1,

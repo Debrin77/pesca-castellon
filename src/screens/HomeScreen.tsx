@@ -52,7 +52,7 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
-import { irAEspeciesDelPunto } from "../navigation/irATab";
+import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
@@ -529,135 +529,92 @@ export default function HomeScreen({ navigation }: Props) {
           </Text>
         ) : null}
 
-        {cargando && !clima && !indiceHoy ? (
-          <ActivityIndicator color="#fff" style={{ marginVertical: 24 }} />
-        ) : !clima && permisoDenegado && !punto ? (
-          <View style={{ alignItems: "center", marginVertical: 12 }}>
-            <Text style={styles.weatherFallback}>
-              Activa la ubicación o toca un tramo en el mapa para ver el pulso del día
+        {cargando && !clima && !indiceHoy && !consultaViva ? (
+          <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
+        ) : null}
+
+        {consultaViva && hoyEtiqueta ? (
+          <TouchableOpacity
+            style={[styles.veredictoRapido, { backgroundColor: colorSemaforo(consultaViva) }]}
+            onPress={abrirVeredictoRapido}
+            activeOpacity={0.88}
+            accessibilityRole="button"
+            accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
+          >
+            <View style={styles.veredictoRapidoTxt}>
+              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+              <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
+              <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
+                {hoyEtiqueta.sub}
+                {consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}
+              </Text>
+            </View>
+            <Text style={styles.veredictoRapidoChevron}>›</Text>
+          </TouchableOpacity>
+        ) : !cargando ? (
+          <TouchableOpacity
+            style={styles.veredictoRapidoVacio}
+            onPress={() => navigation.navigate("Mapa")}
+            activeOpacity={0.88}
+            accessibilityRole="button"
+            accessibilityLabel="Elegir punto en el mapa para el veredicto"
+          >
+            <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+            <Text style={styles.veredictoRapidoSub}>
+              Elige un punto para saber si puedes pescar hoy
             </Text>
-            <TouchableOpacity style={styles.retryChip} onPress={() => cargar()}>
-              <Text style={styles.retryChipText}>Reintentar</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        <PulsePress
+          onPress={() => navigation.navigate("SalgoAPescar")}
+          style={styles.ctaSalgo}
+          accessibilityRole="button"
+          accessibilityLabel="Salgo a pescar"
+        >
+          <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
+            <OndaAgua intensidad={0.9} />
+            <View style={styles.ctaSalgoRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
+                <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
+                <Text style={styles.ctaSalgoSub}>Punto del día y qué llevar</Text>
+              </View>
+              <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
+                <Text style={styles.ctaSalgoArrowTxt}>→</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </PulsePress>
+
+        {consultaViva ? (
+          <View style={styles.atajosPunto}>
+            <TouchableOpacity
+              style={styles.atajoChip}
+              onPress={() => navigation.navigate("Aparejos")}
+              accessibilityRole="button"
+              accessibilityLabel="Ver aparejos"
+            >
+              <Text style={styles.atajoChipTxt}>Aparejos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.atajoChip}
+              onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
+              accessibilityRole="button"
+              accessibilityLabel="Ver consejos y montajes"
+            >
+              <Text style={styles.atajoChipTxt}>Consejos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.atajoChip}
+              onPress={() => irAEspeciesDelPunto(navigation)}
+              accessibilityRole="button"
+              accessibilityLabel="Ver especies del punto"
+            >
+              <Text style={styles.atajoChipTxt}>Especies</Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <>
-            <Text style={styles.climaOrigen} numberOfLines={1}>
-              {etiquetaClima}
-            </Text>
-            {permisoDenegado && !punto ? (
-              <TouchableOpacity
-                style={styles.gpsChip}
-                onPress={() => void usarMiUbicacion()}
-                accessibilityRole="button"
-                accessibilityLabel="Usar mi ubicación"
-              >
-                <Text style={styles.gpsChipTxt}>Usar mi ubicación</Text>
-              </TouchableOpacity>
-            ) : null}
-
-            {indiceHoy && catInfo ? (
-              <View>
-                <View style={styles.pulsoRow}>
-                <View style={styles.pulsoIndice}>
-                  <Text style={styles.indexLabel}>{EJE_METEO.indexLabel}</Text>
-                  <Text style={styles.indexHint}>Orientativo · no es el permiso</Text>
-                  <Text style={styles.indexScore}>{indiceHoy.puntuacion}</Text>
-                  <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
-                    <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
-                      {catInfo.icono} {catInfo.texto}
-                      <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.pulsoClima}>
-                  {tiempo && clima ? (
-                    <>
-                      <Text style={styles.weatherIconSm}>{tiempo.icono}</Text>
-                      <Text style={styles.weatherTempSm}>{Math.round(clima.temperatura)}°</Text>
-                      <Text style={styles.weatherDescSm} numberOfLines={2}>
-                        {tiempo.texto}
-                      </Text>
-                    </>
-                  ) : (
-                    <Text style={styles.weatherFallback}>Sin clima</Text>
-                  )}
-                </View>
-              </View>
-              </View>
-            ) : (
-              <View style={styles.heroClima}>
-                {tiempo && clima ? (
-                  <>
-                    <Text style={styles.weatherIcon}>{tiempo.icono}</Text>
-                    <Text style={styles.weatherTemp}>{Math.round(clima.temperatura)}°</Text>
-                    <Text style={styles.weatherDesc}>{tiempo.texto}</Text>
-                  </>
-                ) : (
-                  <Text style={styles.weatherFallback}>Sin datos de clima</Text>
-                )}
-              </View>
-            )}
-
-            {clima ? (
-              <Text style={styles.climaMeta} numberOfLines={1}>
-                Viento {Math.round(clima.velocidadVientoKmh)} km/h
-                {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
-                {clima.precipitacionMm != null && clima.precipitacionMm > 0
-                  ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
-                  : ""}
-              </Text>
-            ) : null}
-
-            {alertasClima.length > 0 && (
-              <View style={styles.alertRow}>
-                {alertasClima.slice(0, 1).map((alerta, idx) => (
-                  <View
-                    key={idx}
-                    style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
-                  >
-                    <Text style={styles.weatherAlertText}>
-                      {alerta.icono} {alerta.texto}{alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {consultaViva && hoyEtiqueta ? (
-              <TouchableOpacity
-                style={[styles.veredictoRapido, { backgroundColor: colorSemaforo(consultaViva) }]}
-                onPress={abrirVeredictoRapido}
-                activeOpacity={0.88}
-                accessibilityRole="button"
-                accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
-              >
-                <View style={styles.veredictoRapidoTxt}>
-                  <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-                  <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
-                  <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
-                    {hoyEtiqueta.sub}
-                    {consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}
-                  </Text>
-                </View>
-                <Text style={styles.veredictoRapidoChevron}>›</Text>
-              </TouchableOpacity>
-            ) : !cargando ? (
-              <TouchableOpacity
-                style={styles.veredictoRapidoVacio}
-                onPress={() => navigation.navigate("Mapa")}
-                activeOpacity={0.88}
-                accessibilityRole="button"
-                accessibilityLabel="Elegir punto en el mapa para el veredicto"
-              >
-                <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-                <Text style={styles.veredictoRapidoSub}>
-                  Elige un punto para saber si puedes pescar hoy
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-          </>
-        )}
+        ) : null}
       </LinearGradient>
 
       <View style={styles.body}>
@@ -675,30 +632,81 @@ export default function HomeScreen({ navigation }: Props) {
           >
             <Text style={styles.provinciaCambio}>Cambiar</Text>
           </TouchableOpacity>
+        
         </View>
 
-        <View>
-          <PulsePress
-            onPress={() => navigation.navigate("SalgoAPescar")}
-            style={styles.ctaSalgo}
-            accessibilityRole="button"
-            accessibilityLabel="Salgo a pescar"
-          >
-            <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
-              <OndaAgua intensidad={0.9} />
-              <View style={styles.ctaSalgoRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
-                  <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-                  <Text style={styles.ctaSalgoSub}>Punto del día y qué llevar</Text>
-                </View>
-                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
-                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
+        <View style={styles.pulsoCard} accessibilityLabel="Pulso del día">
+          <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
+          <Text style={styles.pulsoCardSub}>Orientativo · el permiso está arriba en el veredicto</Text>
+          {indiceHoy && catInfo ? (
+            <View style={styles.pulsoRow}>
+              <View style={styles.pulsoIndice}>
+                <Text style={styles.pulsoIndexLabel}>{EJE_METEO.indexLabel}</Text>
+                <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
+                <View style={[styles.indexCatPill, { backgroundColor: catInfo.fondo }]}>
+                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
+                    {catInfo.icono} {catInfo.texto}
+                    <Text style={styles.indexMoon}> · {indiceHoy.iconoLuna}</Text>
+                  </Text>
                 </View>
               </View>
-            </LinearGradient>
-          </PulsePress>
-          <SiguientePasoCard
+              <View style={styles.pulsoClimaCard}>
+                {tiempo && clima ? (
+                  <>
+                    <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
+                    <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
+                    <Text style={styles.pulsoWeatherDesc} numberOfLines={2}>
+                      {tiempo.texto}
+                    </Text>
+                  </>
+                ) : (
+                  <Text style={styles.pulsoFallback}>Sin clima</Text>
+                )}
+              </View>
+            </View>
+          ) : clima && tiempo ? (
+            <View style={styles.pulsoRow}>
+              <View style={styles.pulsoIndice}>
+                <Text style={styles.pulsoFallback}>Sin índice aún</Text>
+              </View>
+              <View style={styles.pulsoClimaCard}>
+                <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
+                <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
+              </View>
+            </View>
+          ) : (
+            <Text style={styles.pulsoFallback}>
+              Activa la ubicación o toca un tramo en el mapa
+            </Text>
+          )}
+          {clima ? (
+            <Text style={styles.pulsoMeta} numberOfLines={1}>
+              Viento {Math.round(clima.velocidadVientoKmh)} km/h
+              {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
+              {clima.precipitacionMm != null && clima.precipitacionMm > 0
+                ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
+                : ""}
+            </Text>
+          ) : null}
+          {alertasClima.length > 0 ? (
+            <View style={styles.alertRow}>
+              {alertasClima.slice(0, 1).map((alerta, idx) => (
+                <View
+                  key={idx}
+                  style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
+                >
+                  <Text style={styles.weatherAlertText}>
+                    {alerta.icono} {alerta.texto}
+                    {alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
+
+        <View>
+                    <SiguientePasoCard
             provinciaId={provincia.id}
             checklistTextos={provincia.checklistAntesDePescar}
             tienePunto={!!consultaViva && !!ubicacion && !permisoDenegado}
@@ -794,7 +802,7 @@ export default function HomeScreen({ navigation }: Props) {
                       onMontaje={(id) => {
                         const consejoId = consejoIdMontajeEspecie(id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
                         if (!consejoId) return;
-                        navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
+                        irAConsejos(navigation, { consejoId, categoria: "montajes" });
                       }}
                     />
                   </View>
@@ -857,8 +865,8 @@ export default function HomeScreen({ navigation }: Props) {
 
         {mostrarAprende ? (
           <BloqueAprende
-            onKit={() => navigation.navigate("Consejos", { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
-            onNudo={() => navigation.navigate("Consejos", { consejoId: "nudo-palomar", categoria: "nudos" })}
+            onKit={() => irAConsejos(navigation, { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
+            onNudo={() => irAConsejos(navigation, { consejoId: "nudo-palomar", categoria: "nudos" })}
             onSitios={() => navigation.navigate("PrimeraSalida")}
             onPrimeraSalida={() => navigation.navigate("PrimeraSalida")}
           />
@@ -1017,7 +1025,7 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
-            onPress={() => navigation.navigate("Consejos", { categoria: "montajes" })}
+            onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
             accessibilityRole="button"
             accessibilityLabel="Consejos: montajes por especie, nudos y aparejos"
           >
@@ -1048,12 +1056,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   brandPulse: {
-    fontSize: 15,
-    fontWeight: "800",
-    fontFamily: FONTS.extrabold,
+    fontSize: 28,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
     color: "#fff",
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
+    letterSpacing: -0.3,
     marginBottom: 2,
     zIndex: 1,
   },
@@ -1254,9 +1261,10 @@ const styles = StyleSheet.create({
   },
   veredictoRapidoTitulo: {
     color: "#fff",
-    fontSize: 22,
-    fontWeight: "800",
-    letterSpacing: 0.8,
+    fontSize: 24,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
+    letterSpacing: -0.2,
     marginTop: 2,
   },
   veredictoRapidoSub: {
@@ -1271,6 +1279,95 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     marginTop: -2,
   },
+  atajosPunto: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 12,
+    zIndex: 1,
+  },
+  atajoChip: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+  },
+  atajoChipTxt: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
+  },
+  pulsoCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    padding: 14,
+    marginBottom: SPACING.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...SHADOW_SOFT,
+  },
+  pulsoCardTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
+    color: COLORS.textPrimary,
+  },
+  pulsoCardSub: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+    marginBottom: 10,
+  },
+  pulsoIndexLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: COLORS.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  pulsoIndexScore: {
+    fontSize: 40,
+    fontWeight: "200",
+    color: COLORS.textPrimary,
+    letterSpacing: -1,
+    marginTop: 2,
+  },
+  pulsoClimaCard: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.md,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
+  pulsoWeatherIcon: { fontSize: 26 },
+  pulsoWeatherTemp: {
+    fontSize: 28,
+    fontWeight: "200",
+    color: COLORS.textPrimary,
+  },
+  pulsoWeatherDesc: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    marginTop: 2,
+  },
+  pulsoFallback: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+  },
+  pulsoMeta: {
+    marginTop: 10,
+    fontSize: 12.5,
+    color: COLORS.textSecondary,
+    fontWeight: "600",
+  },
+
   body: {
     paddingHorizontal: SPACING.lg,
     marginTop: -SPACING.md,
@@ -1303,6 +1400,7 @@ const styles = StyleSheet.create({
     color: COLORS.water,
   },
   ctaSalgo: {
+    marginTop: 12,
     borderRadius: RADIUS.lg,
     overflow: "hidden",
     marginBottom: SPACING.md,

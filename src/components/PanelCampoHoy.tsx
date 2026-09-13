@@ -136,7 +136,7 @@ export default function PanelCampoHoy({ navigation }: Props) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.atajo}
-          onPress={() => navigation.navigate("Consejos")}
+          onPress={() => irATab(navigation, "Consejos", "ConsejosMain")}
           accessibilityRole="button"
         >
           <Text style={styles.atajoTxt}>Nudos</Text>
