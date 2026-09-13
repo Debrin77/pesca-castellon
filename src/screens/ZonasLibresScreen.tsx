@@ -950,8 +950,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               ? "Pulsa el mapa · confirma con «Usar esta ubicación»."
               : "Pulsa el mapa · en la ficha elige «Guardar este punto»."
             : mar
-              ? "Pin de agua = playa. Rojo = vedado. Gris = puerto. La ficha se abre a pantalla completa."
-              : "Verde = libre. Ámbar = coto. Rojo = vedado. Pulsa el mapa para consultar o guardar un punto."}
+              ? "Verde = hoy sí en orilla. Rojo = hoy no (veda o puerto). La ficha se abre a pantalla completa."
+              : "Verde = hoy sí. Ámbar = coto. Rojo = hoy no. Pulsa el mapa para consultar o guardar un punto."}
         </Text>
         {pickConfirmar && marcador ? (
           <TouchableOpacity

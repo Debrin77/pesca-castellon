@@ -44,6 +44,13 @@ for (const k of ["Hoy sí", "Hoy no", "si puedes hoy"]) {
   if (!leyenda.includes(k)) fail(`LeyendaMapa falta «${k}»`);
 }
 if (leyenda.includes('label: "Playa"')) fail("Leyenda costa no debe usar categoría Playa como color de semáforo");
+const zonas = read("src/screens/ZonasLibresScreen.tsx");
+if (zonas.includes("Pin de agua") || zonas.includes("Gris = puerto")) {
+  fail("ZonasLibresScreen no debe explicar pines de costa por categoría (playa/puerto)");
+}
+if (!zonas.includes("hoy sí en orilla") && !zonas.includes("Verde = hoy sí")) {
+  fail("ZonasLibresScreen debe explicar color = si puedes hoy");
+}
 
 const capa = read("src/components/CapaPoligonosIcv.tsx");
 if (!capa.includes("colorMarcadorTramo")) {
