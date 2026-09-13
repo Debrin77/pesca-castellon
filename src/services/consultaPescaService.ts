@@ -7,7 +7,11 @@ import {
 } from "../data/normativa2026";
 import { periodoBarboAbierto, periodoBogaAbierto, avisosPorNotaAnexo as avisosPorNotaAnexoSevilla } from "../provincias/sevilla/normativa";
 import { avisosPorNotaAnexo as avisosPorNotaAnexoCordoba } from "../provincias/cordoba/normativa";
-import { avisosPorNotaAnexoClm } from "../provincias/cuenca/normativa";
+import {
+  avisosPorNotaAnexoClm,
+  etiquetaTemporadaTruchaCuenca,
+  periodoTruchaCuencaAbierto,
+} from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { distanciaKm } from "./geoService";
@@ -197,6 +201,12 @@ function evaluarTramo(
   const truchaOk = temporadaTruchaAbierta(fecha);
   const nota = notaDias(t.notaAnexo);
   const diaOk = diaHabilMijares(nota, fecha);
+  /** CLM: vocación/nota truchera (no "régimen especial" de ciprínidos). */
+  const trucheraClm =
+    esClm &&
+    (t.notaAnexo === "TRUCHERA" ||
+      (/truchera/i.test(t.vocacion) && !/r[eé]gimen especial/i.test(t.vocacion)));
+  const truchaClmOk = periodoTruchaCuencaAbierto(fecha);
   const dow = fecha.toLocaleDateString("es-ES", { weekday: "long" });
 
   const restricciones: string[] = [];
@@ -377,6 +387,14 @@ function evaluarTramo(
     permisos.push(
       "Horario diurno legal (1 h antes del orto – 1 h después del ocaso), salvo excepciones (p. ej. cangrejo). Cotos: permiso del titular / plan técnico JCCM."
     );
+    if (trucheraClm) {
+      permisos.push(etiquetaTemporadaTruchaCuenca(fecha.getFullYear()));
+      if (!truchaClmOk) {
+        restricciones.push(
+          "Fuera del periodo hábil de aguas trucheras (art. 2 Orden 20/2026): pesca cerrada salvo régimen especial de ciprínidos señalizado."
+        );
+      }
+    }
   } else {
     permisos.push(
       "Aguas no trucheras: artículos 2 y 8 de la Orden 30/2016. Lombriz/asticot permitidos. Autóctonos de la tabla 2.2 con talla o sin muerte según especie."
@@ -386,6 +404,7 @@ function evaluarTramo(
   let sePuedePescarHoy = true;
   if (t.aprovechamiento === "ZPC") sePuedePescarHoy = false;
   if (!esAndalucia && salmonicola && (!truchaOk || !diaOk)) sePuedePescarHoy = false;
+  if (trucheraClm && !truchaClmOk) sePuedePescarHoy = false;
 
   return {
     ...base,
@@ -406,6 +425,31 @@ export function consultarPorTramo(t: TramoOficial, fecha: Date = new Date()): Co
     ? "radio_anexo"
     : "poligono_icv";
   return evaluarTramo(t, 0, fuente, fecha);
+}
+
+/**
+ * Color e identificador del pin/radio = mismo semáforo que la ficha (HOY SÍ / HOY NO / COTO).
+ * Así un ZPL salmonícola fuera de temporada no se ve verde si hoy no se puede pescar.
+ */
+export function aspectoMapaTramo(
+  t: TramoOficial,
+  fecha: Date = new Date()
+): { color: string; identifier: "libre" | "coto" | "vedado" } {
+  const c = consultarPorTramo(t, fecha);
+  const color = colorSemaforo(c);
+  if (c.veredicto === "coto") return { color, identifier: "coto" };
+  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha" || !c.sePuedePescarHoy) {
+    return { color, identifier: "vedado" };
+  }
+  return { color, identifier: "libre" };
+}
+
+export function colorMarcadorTramo(t: TramoOficial, fecha: Date = new Date()): string {
+  return aspectoMapaTramo(t, fecha).color;
+}
+
+export function identifierMarcadorTramo(t: TramoOficial, fecha: Date = new Date()): string {
+  return aspectoMapaTramo(t, fecha).identifier;
 }
 
 export function consultarPuntoPesca(lat: number, lng: number, fecha: Date = new Date()): ConsultaPesca {

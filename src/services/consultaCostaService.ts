@@ -2,7 +2,12 @@ import puertos from "../data/puertosCastellon.json";
 import vedados from "../data/vedadosCosta.json";
 import playasData from "../data/playasEspigonesCosta.json";
 import { puntoEnPoligono, distanciaAPolylineKm } from "./geoService";
-import { ConsultaPesca, consultarPuntoPesca, fuenteDetalleConsulta } from "./consultaPescaService";
+import {
+  ConsultaPesca,
+  colorSemaforo,
+  consultarPuntoPesca,
+  fuenteDetalleConsulta,
+} from "./consultaPescaService";
 import { FUENTE_MARITIMA, NOTA_CEFALOPODOS_ORILLA, REGLAS_ORILLA_MAR } from "../data/normativaMaritima";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { SEMAFORO } from "../theme";
@@ -197,4 +202,25 @@ export function consultarToqueMapa(lat: number, lng: number): ConsultaPesca {
     return consultarCosta(lat, lng);
   }
   return consultarPuntoPesca(lat, lng);
+}
+
+/**
+ * Color del pin de playa = mismo semáforo que la ficha (HOY SÍ / HOY NO).
+ * Las playas con vedaOrilla dejan de verse azules/verdes si hoy no se puede.
+ */
+export function aspectoMapaPlaya(p: PlayaCosta): { color: string; identifier: "libre" | "vedado" } {
+  const c = consultarCosta(p.lat, p.lng);
+  const color = colorSemaforo(c);
+  return { color, identifier: c.sePuedePescarHoy ? "libre" : "vedado" };
+}
+
+/** Puertos y vedados de orilla: siempre HOY NO (prohibido desde tierra). */
+export function aspectoMapaZonaCostaProhibida(z: ZonaCosta): { color: string; identifier: "vedado" } {
+  const c = centroZona(z.anillo);
+  const cons = consultarCosta(c.lat, c.lng);
+  return { color: colorSemaforo(cons), identifier: "vedado" };
+}
+
+export function colorMarcadorPlaya(p: PlayaCosta): string {
+  return aspectoMapaPlaya(p).color;
 }

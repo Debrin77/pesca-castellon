@@ -5,7 +5,7 @@ import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
   consultarPuntoPesca,
   consultarPorTramo,
-  colorAprovechamiento,
+  aspectoMapaTramo,
   todosLosTramos,
   ConsultaPesca,
   TramoOficial,
@@ -30,7 +30,7 @@ import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import SelectorModalidad from "../components/SelectorModalidad";
-import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas } from "../services/consultaCostaService";
+import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
@@ -803,26 +803,30 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           {mar && capas.vedado ? <CapaVedadosCosta /> : null}
           {mar &&
             capas.zpl &&
-            playas.map((p) => (
+            playas.map((p) => {
+              const { color, identifier } = aspectoMapaPlaya(p);
+              return (
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={PIN.playa}
-                identifier="playa"
+                pinColor={color}
+                identifier={identifier}
                 title={p.nombre}
                 onPress={() => evaluarPlaya(p.id)}
               />
-            ))}
+              );
+            })}
           {mar &&
             capas.zpc &&
             todosLosPuertos().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.puerto}
-                  identifier="puerto"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -832,12 +836,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             capas.vedado &&
             todosLosVedadosCosta().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.vedado}
-                  identifier="vedado"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -845,7 +850,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             })}
           {modo === "continental" &&
             tramosVisibles.filter(tramoUsaRadioAnexo).map((z) => {
-            const color = colorAprovechamiento(z.aprovechamiento);
+            const { color } = aspectoMapaTramo(z);
             return (
               <Circle
                 key={`r-${z.id}`}
@@ -857,16 +862,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             );
           })}
           {modo === "continental" &&
-          tramosVisibles.map((z) => (
+          tramosVisibles.map((z) => {
+            const { color, identifier } = aspectoMapaTramo(z);
+            return (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPC" ? "coto" : z.aprovechamiento === "ZPL" ? "libre" : "vedado"}
+              pinColor={color}
+              identifier={identifier}
               title={`${z.aprovechamiento} · ${z.nombre}`}
               onPress={() => evaluarTramo(z)}
             />
-          ))}
+            );
+          })}
           {capas.misPuntos &&
             sitiosPersonales.map((s) => (
               <Marker
@@ -942,8 +950,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               ? "Pulsa el mapa · confirma con «Usar esta ubicación»."
               : "Pulsa el mapa · en la ficha elige «Guardar este punto»."
             : mar
-              ? "Pin de agua = playa. Rojo = vedado. Gris = puerto. La ficha se abre a pantalla completa."
-              : "Verde = libre. Ámbar = coto. Rojo = vedado. Pulsa el mapa para consultar o guardar un punto."}
+              ? "Verde = hoy sí en orilla. Rojo = hoy no (veda o puerto). La ficha se abre a pantalla completa."
+              : "Verde = hoy sí. Ámbar = coto. Rojo = hoy no. Pulsa el mapa para consultar o guardar un punto."}
         </Text>
         {pickConfirmar && marcador ? (
           <TouchableOpacity

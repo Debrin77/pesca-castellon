@@ -5,8 +5,14 @@ import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
 import orilla from "../data/especiesOrilla.json";
-import { consultarPorTramo, ConsultaPesca, colorAprovechamiento, tramoUsaRadioAnexo, TramoOficial } from "../services/consultaPescaService";
-import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona } from "../services/consultaCostaService";
+import {
+  consultarPorTramo,
+  ConsultaPesca,
+  aspectoMapaTramo,
+  tramoUsaRadioAnexo,
+  TramoOficial,
+} from "../services/consultaPescaService";
+import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
@@ -425,25 +431,29 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           {costa ? <CapaPuertos /> : null}
           {costa ? <CapaVedadosCosta /> : null}
           {costa &&
-            playas.map((p) => (
+            playas.map((p) => {
+              const { color, identifier } = aspectoMapaPlaya(p);
+              return (
               <Marker
                 key={p.id}
                 coordinate={{ latitude: p.lat, longitude: p.lng }}
-                pinColor={PIN.playa}
-                identifier="playa"
+                pinColor={color}
+                identifier={identifier}
                 title={p.nombre}
                 onPress={() => evaluarPunto(p.lat, p.lng)}
               />
-            ))}
+              );
+            })}
           {costa &&
             todosLosPuertos().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.puerto}
-                  identifier="puerto"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
@@ -452,38 +462,45 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           {costa &&
             todosLosVedadosCosta().map((p) => {
               const c = centroZona(p.anillo);
+              const { color, identifier } = aspectoMapaZonaCostaProhibida(p);
               return (
                 <Marker
                   key={p.id}
                   coordinate={{ latitude: c.lat, longitude: c.lng }}
-                  pinColor={PIN.vedado}
-                  identifier="vedado"
+                  pinColor={color}
+                  identifier={identifier}
                   title={p.nombre}
                   onPress={() => evaluarPunto(c.lat, c.lng)}
                 />
               );
             })}
           {!costa &&
-            tramos.filter(tramoUsaRadioAnexo).map((z) => (
-            <Circle
-              key={`r-${z.id}`}
-              center={{ latitude: z.lat, longitude: z.lng }}
-              radius={z.radioKm * 1000}
-              strokeColor={colorAprovechamiento(z.aprovechamiento)}
-              fillColor={colorAprovechamiento(z.aprovechamiento) + "33"}
-            />
-          ))}
+            tramos.filter(tramoUsaRadioAnexo).map((z) => {
+            const { color } = aspectoMapaTramo(z);
+            return (
+              <Circle
+                key={`r-${z.id}`}
+                center={{ latitude: z.lat, longitude: z.lng }}
+                radius={z.radioKm * 1000}
+                strokeColor={color}
+                fillColor={color + "33"}
+              />
+            );
+          })}
           {!costa &&
-            tramos.map((z) => (
+            tramos.map((z) => {
+            const { color, identifier } = aspectoMapaTramo(z);
+            return (
             <Marker
               key={z.id}
               coordinate={{ latitude: z.lat, longitude: z.lng }}
-              pinColor={colorAprovechamiento(z.aprovechamiento)}
-              identifier={z.aprovechamiento === "ZPL" ? "libre" : z.aprovechamiento === "ZPC" ? "coto" : "vedado"}
+              pinColor={color}
+              identifier={identifier}
               title={z.nombre}
               onPress={() => evaluarTramo(z)}
             />
-          ))}
+            );
+          })}
           {marcador && (
             <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}
