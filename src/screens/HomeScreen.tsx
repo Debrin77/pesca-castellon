@@ -1374,6 +1374,8 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     paddingVertical: 10,
     paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   pulsoWeatherIcon: { fontSize: 26 },
   pulsoWeatherTemp: {
