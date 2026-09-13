@@ -74,14 +74,14 @@ const styles = StyleSheet.create({
     borderColor: COLORS.warning,
   },
   kicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.8,
     color: COLORS.warning,
     marginBottom: 4,
   },
   title: { fontSize: 16, fontWeight: "800", color: COLORS.textPrimary },
-  body: { marginTop: 4, fontSize: 13, lineHeight: 18, color: COLORS.textSecondary, fontWeight: "600" },
+  body: { marginTop: 4, fontSize: 14, lineHeight: 18, color: COLORS.textSecondary, fontWeight: "600" },
   row: { flexDirection: "row", gap: 8, marginTop: 12, flexWrap: "wrap" },
   cta: {
     backgroundColor: COLORS.warning,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  ctaTxt: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  ctaTxt: { color: "#fff", fontWeight: "800", fontSize: 14 },
   ghost: {
     borderWidth: 1,
     borderColor: COLORS.warning,
@@ -97,5 +97,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  ghostTxt: { color: COLORS.warning, fontWeight: "800", fontSize: 13 },
+  ghostTxt: { color: COLORS.warning, fontWeight: "800", fontSize: 14 },
 });

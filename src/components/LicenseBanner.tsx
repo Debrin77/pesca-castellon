@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginRight: 8,
   },
-  badgeText: { color: "#fff", fontSize: 10, fontWeight: "800", letterSpacing: 0.6 },
-  title: { flex: 1, color: COLORS.textPrimary, fontSize: 13, fontWeight: "800" },
+  badgeText: { color: "#fff", fontSize: 12, fontWeight: "800", letterSpacing: 0.6 },
+  title: { flex: 1, color: COLORS.textPrimary, fontSize: 14, fontWeight: "800" },
   minimize: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -166,12 +166,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  minimizeTxt: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
-  text: { color: COLORS.textSecondary, fontSize: 12.5, lineHeight: 18, fontWeight: "500" },
+  minimizeTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textSecondary },
+  text: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: "500" },
   em: { color: COLORS.textPrimary, fontWeight: "700" },
   resumen: {
     marginTop: 8,
-    fontSize: 11.5,
+    fontSize: 12,
     color: COLORS.waterDark,
     fontWeight: "700",
   },
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
-  ctaTxt: { flex: 1, color: COLORS.primaryDark, fontSize: 12.5, fontWeight: "700" },
+  ctaTxt: { flex: 1, color: COLORS.primaryDark, fontSize: 13, fontWeight: "700" },
   chevron: { color: COLORS.primaryDark, fontSize: 20, marginLeft: 6 },
   collapsed: {
     flexDirection: "row",
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   collapsedMain: { flex: 1, flexDirection: "row", alignItems: "center" },
-  collapsedText: { flex: 1, color: COLORS.textPrimary, fontSize: 12, fontWeight: "700" },
+  collapsedText: { flex: 1, color: COLORS.textPrimary, fontSize: 13, fontWeight: "700" },
   chevronDown: { color: COLORS.textMuted, fontSize: 14, marginHorizontal: 6 },
   collapsedGo: {
     paddingHorizontal: 10,
@@ -205,5 +205,5 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: COLORS.primaryLight,
   },
-  collapsedGoTxt: { fontSize: 12, fontWeight: "800", color: COLORS.primaryDark },
+  collapsedGoTxt: { fontSize: 13, fontWeight: "800", color: COLORS.primaryDark },
 });

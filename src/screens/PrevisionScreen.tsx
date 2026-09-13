@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   kicker: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     letterSpacing: 1.4,
     color: "#ffffff",
@@ -623,9 +623,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.45)",
   },
-  origenBtnTxt: { color: "#fff", fontWeight: "800", fontSize: 13 },
+  origenBtnTxt: { color: "#fff", fontWeight: "800", fontSize: 14 },
   subtitleSoft: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#ffffff",
     marginBottom: 10,
     lineHeight: 19,
@@ -706,12 +706,12 @@ const styles = StyleSheet.create({
   dayChipOn: {
     borderWidth: 2,
   },
-  dayChipTop: { fontSize: 13, fontWeight: "800", color: "#ffffff", letterSpacing: 0.4 },
+  dayChipTop: { fontSize: 14, fontWeight: "800", color: "#ffffff", letterSpacing: 0.4 },
   dayChipTopOn: { color: "#fff" },
   dayChipNum: { fontSize: 20, fontWeight: "800", color: glassText, marginBottom: 2 },
   dayChipTemp: { fontSize: 17, fontWeight: "800", color: glassText, marginTop: 4 },
   dayChipCond: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
     color: "#ffffff",
     textAlign: "center",
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
   },
   indexHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   glassLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     letterSpacing: 0.6,
     textTransform: "uppercase",
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
   },
   meterFill: { height: "100%", borderRadius: 5 },
   glassHint: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#ffffff",
     marginTop: 10,
     lineHeight: 18,
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   hourTime: { fontSize: 14, fontWeight: "800", color: "#ffffff" },
   hourTemp: { fontSize: 22, fontWeight: "800", color: glassText, marginTop: 6 },
   hourRain: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
     color: "#ffffff",
     textAlign: "center",
@@ -808,7 +808,7 @@ const styles = StyleSheet.create({
   whyMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#FFD60A", marginTop: 7 },
   whyText: { flex: 1, fontSize: 15, color: glassText, lineHeight: 22, fontWeight: "700" },
   fuente: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#ffffff",
     marginTop: 20,
     lineHeight: 19,

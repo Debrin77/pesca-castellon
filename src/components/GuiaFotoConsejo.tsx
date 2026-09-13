@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badge: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     color: COLORS.waterDark,
     backgroundColor: COLORS.waterLight,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
     overflow: "hidden",
   },
-  contador: { fontSize: 12, fontWeight: "700", color: COLORS.textSecondary },
+  contador: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary },
   frame: {
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     minWidth: 88,
   },
   navBtnOff: { opacity: 0.35 },
-  navTxt: { fontSize: 12.5, fontWeight: "800", color: COLORS.primaryDark },
+  navTxt: { fontSize: 13, fontWeight: "800", color: COLORS.primaryDark },
   navTxtOff: { color: COLORS.textMuted },
   dots: { flexDirection: "row", gap: 6, alignItems: "center" },
   dot: {
@@ -199,11 +199,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 1,
   },
-  pasoChipTxt: { color: "#fff", fontSize: 12, fontWeight: "800" },
-  caption: { flex: 1, fontSize: 13.5, lineHeight: 20, color: COLORS.textPrimary, fontWeight: "600" },
+  pasoChipTxt: { color: "#fff", fontSize: 13, fontWeight: "800" },
+  caption: { flex: 1, fontSize: 14, lineHeight: 20, color: COLORS.textPrimary, fontWeight: "600" },
   credito: {
     marginTop: 8,
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.textMuted,
     lineHeight: 14,
     fontStyle: "italic",

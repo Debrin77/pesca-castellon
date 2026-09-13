@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   coord: {
     position: "absolute",
-    fontSize: 8,
+    fontSize: 11,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: "rgba(70,90,50,0.55)",
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   labelTxt: {
-    fontSize: 9,
+    fontSize: 11,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.textPrimary,
@@ -358,14 +358,14 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0,0,0,0.08)",
   },
   barraTit: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: FONTS.extrabold,
     fontWeight: "800",
     color: COLORS.primaryDark,
     letterSpacing: 0.15,
   },
   barraSub: {
-    fontSize: 9,
+    fontSize: 11,
     fontFamily: FONTS.semibold,
     color: COLORS.textSecondary,
     marginTop: 1,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryDark,
   },
   escalaTxt: {
-    fontSize: 8,
+    fontSize: 11,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.primaryDark,
@@ -412,12 +412,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0,0,0,0.1)",
   },
   norteArrow: {
-    fontSize: 8,
+    fontSize: 11,
     color: COLORS.danger,
     marginBottom: -2,
   },
   norteTxt: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: FONTS.extrabold,
     fontWeight: "800",
     color: COLORS.primaryDark,

@@ -95,14 +95,14 @@ const styles = StyleSheet.create({
   },
   selloTxt: {
     color: "#fff",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "900",
     letterSpacing: 1,
   },
   selloEtiqueta: {
     flex: 1,
     color: "rgba(255,255,255,0.92)",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
   },
   caja: {
@@ -116,14 +116,14 @@ const styles = StyleSheet.create({
   },
   kicker: {
     color: "rgba(255,255,255,0.88)",
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 1,
     textTransform: "uppercase",
   },
   pregunta: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "700",
     marginTop: 2,
     marginBottom: 8,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   aviso: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
     marginTop: 8,
     textAlign: "center",
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   avisoCerteza: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     marginTop: 8,
     textAlign: "center",

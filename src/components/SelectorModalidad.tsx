@@ -54,7 +54,7 @@ export default function SelectorModalidad({ value, onChange, filtroAmbito }: Pro
 
 const styles = StyleSheet.create({
   wrap: { marginBottom: 8 },
-  label: { fontSize: 11, fontWeight: "800", color: COLORS.textMuted, marginBottom: 4 },
+  label: { fontSize: 12, fontWeight: "800", color: COLORS.textMuted, marginBottom: 4 },
   row: { gap: 6 },
   chip: {
     paddingHorizontal: 12,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   chipOn: { backgroundColor: COLORS.water, borderColor: COLORS.water },
-  chipText: { fontSize: 12.5, fontWeight: "700", color: COLORS.textPrimary },
+  chipText: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary },
   chipTextOn: { color: "#fff" },
-  nota: { fontSize: 11, color: COLORS.textSecondary, marginTop: 6, lineHeight: 15 },
+  nota: { fontSize: 12, color: COLORS.textSecondary, marginTop: 6, lineHeight: 15 },
 });

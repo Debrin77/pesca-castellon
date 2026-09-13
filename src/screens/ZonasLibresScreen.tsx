@@ -1060,7 +1060,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryLight,
     borderColor: COLORS.primary,
   },
-  sitiosChipTxt: { fontSize: 12.5, fontWeight: "700", color: COLORS.textSecondary },
+  sitiosChipTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textSecondary },
   sitiosChipTxtOn: { color: COLORS.primaryDark },
   suggestionsBox: {
     backgroundColor: COLORS.surface,
@@ -1078,9 +1078,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  suggestionText: { fontSize: 13, color: COLORS.textPrimary, fontWeight: "600" },
-  suggestionSub: { fontSize: 11, color: COLORS.textMuted, marginTop: 2 },
-  suggestionMeta: { fontSize: 10, color: COLORS.textMuted, fontWeight: "700", textTransform: "uppercase" },
+  suggestionText: { fontSize: 14, color: COLORS.textPrimary, fontWeight: "600" },
+  suggestionSub: { fontSize: 12, color: COLORS.textMuted, marginTop: 2 },
+  suggestionMeta: { fontSize: 12, color: COLORS.textMuted, fontWeight: "700", textTransform: "uppercase" },
   cuencaRow: { paddingTop: 8, paddingBottom: 2, gap: 6 },
   cuencaChip: {
     paddingHorizontal: 10,
@@ -1092,7 +1092,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   cuencaChipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
-  cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textPrimary },
+  cuencaTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary },
   cuencaTxtOn: { color: "#fff" },
   modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
   modoBarMar: { backgroundColor: COLORS.waterLight },
@@ -1131,7 +1131,7 @@ const styles = StyleSheet.create({
   },
   radarPlacaTxt: {
     color: "rgba(255,255,255,0.92)",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
   },
   radarPlacaHora: {
@@ -1150,7 +1150,7 @@ const styles = StyleSheet.create({
   },
   radarBannerTitle: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     textAlign: "center",
   },
@@ -1167,7 +1167,7 @@ const styles = StyleSheet.create({
   },
   layerChipActive: { backgroundColor: COLORS.mist, borderColor: COLORS.primary },
   layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
-  layerChipText: { fontSize: 12, color: COLORS.textSecondary, fontWeight: "700" },
+  layerChipText: { fontSize: 13, color: COLORS.textSecondary, fontWeight: "700" },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
   capasExtraPanel: {
     paddingHorizontal: 12,
@@ -1183,7 +1183,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  capasExtraTitulo: { fontSize: 12, fontWeight: "800", color: COLORS.textMuted },
+  capasExtraTitulo: { fontSize: 13, fontWeight: "800", color: COLORS.textMuted },
   cerrarCapasBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -1192,7 +1192,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  cerrarCapasTxt: { fontSize: 12, fontWeight: "800", color: COLORS.primaryDark },
+  cerrarCapasTxt: { fontSize: 13, fontWeight: "800", color: COLORS.primaryDark },
   map: { flex: 1 },
   pieMapa: {
     backgroundColor: COLORS.surface,
@@ -1203,7 +1203,7 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   pieMapaMar: { backgroundColor: COLORS.waterLight, borderTopColor: "#b7d4de" },
-  hint: { fontSize: 13, color: COLORS.textPrimary, lineHeight: 19, textAlign: "center", fontWeight: "600" },
+  hint: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 19, textAlign: "center", fontWeight: "600" },
   reabrir: {
     marginTop: 8,
     alignItems: "center",
@@ -1220,7 +1220,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
     marginTop: 10,
   },
-  saveSpotButtonText: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 13 },
+  saveSpotButtonText: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 14 },
   bannerAnadir: {
     flexDirection: "row",
     alignItems: "center",
@@ -1228,7 +1228,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  bannerAnadirTitulo: { color: "#fff", fontWeight: "700", fontSize: 13 },
-  bannerAnadirTxt: { color: "#d7e8df", fontSize: 11.5, marginTop: 2, lineHeight: 15 },
-  bannerAnadirCancel: { color: "#fff", fontWeight: "700", fontSize: 12 },
+  bannerAnadirTitulo: { color: "#fff", fontWeight: "700", fontSize: 14 },
+  bannerAnadirTxt: { color: "#d7e8df", fontSize: 12, marginTop: 2, lineHeight: 15 },
+  bannerAnadirCancel: { color: "#fff", fontWeight: "700", fontSize: 13 },
 });

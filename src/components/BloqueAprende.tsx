@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   title: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
-  sub: { marginTop: 2, fontSize: 12.5, lineHeight: 17, color: COLORS.textSecondary, fontWeight: "600" },
+  sub: { marginTop: 2, fontSize: 13, lineHeight: 17, color: COLORS.textSecondary, fontWeight: "600" },
   row: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 10 },
   chip: {
     backgroundColor: COLORS.primaryLight,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  chipTxt: { color: COLORS.primaryDark ?? COLORS.primary, fontWeight: "800", fontSize: 12.5 },
+  chipTxt: { color: COLORS.primaryDark ?? COLORS.primary, fontWeight: "800", fontSize: 13 },
   link: { marginTop: 10 },
-  linkTxt: { color: COLORS.primary, fontWeight: "800", fontSize: 13 },
+  linkTxt: { color: COLORS.primary, fontWeight: "800", fontSize: 14 },
 });

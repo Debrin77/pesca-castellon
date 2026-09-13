@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   titulo: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     letterSpacing: 0.4,
     textTransform: "uppercase",

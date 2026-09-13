@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   estado: { fontSize: 14, fontWeight: "700", marginTop: 6, lineHeight: 20 },
-  norma: { fontSize: 13, color: COLORS.textSecondary, marginTop: 8, lineHeight: 19 },
-  disclaimer: { fontSize: 12, color: COLORS.textMuted, marginTop: 8, lineHeight: 17 },
-  muted: { fontSize: 13, color: COLORS.textMuted },
+  norma: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, lineHeight: 19 },
+  disclaimer: { fontSize: 13, color: COLORS.textMuted, marginTop: 8, lineHeight: 17 },
+  muted: { fontSize: 14, color: COLORS.textMuted },
 });

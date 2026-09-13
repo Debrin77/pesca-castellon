@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   sub: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: FONTS.regular,
     color: COLORS.textMuted,
     marginBottom: 8,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     lineHeight: 15,
   },
   subInline: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: FONTS.regular,
     color: COLORS.textMuted,
     marginBottom: 6,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   section: { marginTop: 6 },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.primaryDark,
@@ -189,13 +189,13 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   ctaTitle: {
-    fontSize: 13.5,
+    fontSize: 14,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.textPrimary,
   },
   ctaDesc: {
-    fontSize: 11.5,
+    fontSize: 12,
     fontFamily: FONTS.regular,
     color: COLORS.textSecondary,
     marginTop: 2,
@@ -213,14 +213,14 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
   },
   portalNombre: {
-    fontSize: 13.5,
+    fontSize: 14,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.primaryDark,
   },
   portalCta: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.primary,
@@ -231,26 +231,26 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   fecha: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: FONTS.extrabold,
     fontWeight: "800",
     color: COLORS.primary,
   },
   nombre: {
-    fontSize: 13.5,
+    fontSize: 14,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.textPrimary,
     marginTop: 2,
   },
   meta: {
-    fontSize: 11.5,
+    fontSize: 12,
     fontFamily: FONTS.regular,
     color: COLORS.textSecondary,
     marginTop: 2,
   },
   notas: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: FONTS.regular,
     color: COLORS.textMuted,
     marginTop: 3,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   linkHint: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.primary,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
   },
   clubNombre: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: FONTS.bold,
     fontWeight: "700",
     color: COLORS.textPrimary,

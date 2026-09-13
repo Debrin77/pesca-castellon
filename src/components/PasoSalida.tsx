@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.08 }],
   },
   dotTxt: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
   },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   dotTxtOnLight: { color: "#fff" },
   label: {
     marginTop: 4,
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "700",
     fontFamily: FONTS.bold,
     letterSpacing: 0.2,

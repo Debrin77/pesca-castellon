@@ -886,7 +886,7 @@ export default function HomeScreen({ navigation }: Props) {
             >
               <View style={{ flex: 1 }}>
                 <Text style={styles.bloqueTitulo}>Antes de salir</Text>
-                <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: -2, marginBottom: 4 }}>
+                <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginTop: -2, marginBottom: 4 }}>
                   {avisosCargando
                     ? "Consultando avisos…"
                     : avisosSeguridad.length === 0
@@ -1076,14 +1076,14 @@ const styles = StyleSheet.create({
   },
   actualizandoTxt: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
     marginTop: 4,
     letterSpacing: 0.2,
   },
   climaOrigen: {
     color: "rgba(255,255,255,0.95)",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     textAlign: "center",
     marginTop: 8,
@@ -1100,12 +1100,12 @@ const styles = StyleSheet.create({
   },
   gpsChipTxt: {
     color: "#fff",
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: "800",
   },
   climaMeta: {
     color: "rgba(255,255,255,0.88)",
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 10,
@@ -1159,13 +1159,13 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   weatherDescSm: {
-    fontSize: 12.5,
+    fontSize: 13,
     color: "rgba(255,255,255,0.92)",
     fontWeight: "600",
     textAlign: "center",
     marginTop: 2,
   },
-  weatherFallback: { color: "#fff", fontSize: 13, textAlign: "center" },
+  weatherFallback: { color: "#fff", fontSize: 14, textAlign: "center" },
   retryChip: {
     marginTop: 12,
     backgroundColor: "rgba(255,255,255,0.22)",
@@ -1173,16 +1173,16 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: RADIUS.pill,
   },
-  retryChipText: { color: "#fff", fontWeight: "700", fontSize: 12 },
+  retryChipText: { color: "#fff", fontWeight: "700", fontSize: 13 },
   indexLabel: {
-    fontSize: 11,
+    fontSize: 12,
     color: "rgba(255,255,255,0.9)",
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 1,
   },
   indexHint: {
-    fontSize: 11,
+    fontSize: 12,
     color: "rgba(255,255,255,0.78)",
     fontWeight: "600",
     marginTop: 2,
@@ -1224,7 +1224,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.35)",
   },
   weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
-  weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
+  weatherAlertText: { fontSize: 13, color: "#fff", fontWeight: "700" },
   veredictoRapido: {
     marginTop: 14,
     borderRadius: RADIUS.md,
@@ -1248,13 +1248,13 @@ const styles = StyleSheet.create({
   veredictoRapidoTxt: { flex: 1 },
   veredictoRapidoAviso: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "600",
     marginTop: 2,
   },
   veredictoRapidoKicker: {
     color: "rgba(255,255,255,0.88)",
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.7,
     textTransform: "uppercase",
@@ -1269,7 +1269,7 @@ const styles = StyleSheet.create({
   },
   veredictoRapidoSub: {
     color: "rgba(255,255,255,0.95)",
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: "600",
     marginTop: 2,
   },
@@ -1296,7 +1296,7 @@ const styles = StyleSheet.create({
   },
   atajoChipTxt: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
   },
@@ -1316,13 +1316,13 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   pulsoCardSub: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 2,
     marginBottom: 10,
   },
   pulsoIndexLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     color: COLORS.textSecondary,
     textTransform: "uppercase",
@@ -1351,19 +1351,19 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   pulsoWeatherDesc: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.textSecondary,
     textAlign: "center",
     marginTop: 2,
   },
   pulsoFallback: {
-    fontSize: 13,
+    fontSize: 14,
     color: COLORS.textSecondary,
     textAlign: "center",
   },
   pulsoMeta: {
     marginTop: 10,
-    fontSize: 12.5,
+    fontSize: 13,
     color: COLORS.textSecondary,
     fontWeight: "600",
   },
@@ -1386,7 +1386,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   provinciaLbl: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
     color: COLORS.textSecondary,
   },
@@ -1395,7 +1395,7 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   provinciaCambio: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     color: COLORS.water,
   },
@@ -1419,7 +1419,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   ctaSalgoKicker: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
     letterSpacing: 0.8,
@@ -1435,7 +1435,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   ctaSalgoSub: {
-    fontSize: 13,
+    fontSize: 14,
     color: "rgba(255,255,255,0.95)",
     fontWeight: "700",
     fontFamily: FONTS.bold,
@@ -1466,7 +1466,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   bloqueTitulo: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     color: COLORS.textSecondary,
     textTransform: "uppercase",
@@ -1475,7 +1475,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
   },
   bloqueSub: {
-    fontSize: 13,
+    fontSize: 14,
     color: COLORS.textSecondary,
     marginTop: -2,
     marginBottom: 4,
@@ -1488,8 +1488,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   sectionTitle: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary },
-  sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
-  linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
+  sectionMeta: { fontSize: 12, color: COLORS.textMuted, fontWeight: "600" },
+  linkMini: { fontSize: 13, fontWeight: "700", color: COLORS.water },
   saihChip: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
@@ -1500,7 +1500,7 @@ const styles = StyleSheet.create({
     minWidth: 88,
     ...SHADOW_SOFT,
   },
-  saihName: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
+  saihName: { fontSize: 12, fontWeight: "700", color: COLORS.textSecondary },
   saihPct: { fontSize: 18, fontWeight: "800", color: COLORS.waterDark, marginTop: 2 },
   favChip: {
     width: 130,
@@ -1521,9 +1521,9 @@ const styles = StyleSheet.create({
     ...SHADOW_SOFT,
   },
   favChipStar: { color: COLORS.goldText, fontWeight: "800", marginBottom: 4 },
-  favChipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 16 },
+  favChipTxt: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 16 },
   sinConsulta: {
-    fontSize: 13,
+    fontSize: 14,
     color: COLORS.textSecondary,
     lineHeight: 18,
     marginBottom: 10,
@@ -1551,7 +1551,7 @@ const styles = StyleSheet.create({
   },
   mapaCtaIcon: { fontSize: 16, color: COLORS.water, fontWeight: "800" },
   mapaCtaTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
-  mapaCtaSub: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 2 },
+  mapaCtaSub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   chevron: { fontSize: 22, color: COLORS.textMuted },
   linksRow: {
     flexDirection: "row",
@@ -1569,7 +1569,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   linkChipTxt: {
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: "700",
     color: COLORS.textSecondary,
   },

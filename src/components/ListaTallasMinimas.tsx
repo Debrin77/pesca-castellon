@@ -84,9 +84,9 @@ export default function ListaTallasMinimas({ onEspecie }: { onEspecie?: (id: str
 }
 
 const styles = StyleSheet.create({
-  aviso: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19, marginBottom: 14 },
+  aviso: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 19, marginBottom: 14 },
   bloque: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "800",
     color: COLORS.waterDark,
     letterSpacing: 0.4,

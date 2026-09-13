@@ -34,5 +34,5 @@ const styles = StyleSheet.create({
     minWidth: 88,
     alignItems: "center",
   },
-  fabText: { fontSize: 13, fontWeight: "800", color: COLORS.water },
+  fabText: { fontSize: 14, fontWeight: "800", color: COLORS.water },
 });

@@ -101,3 +101,28 @@ export const FONTS = {
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
 };
+
+/**
+ * Escala tipográfica (dp / pt).
+ * Suelo de UI legible ≥12 (Apple HIG mínimo 11; Material caption 12).
+ * Cuerpo de lectura ≥14. El chrome de mapa puede usar `map` (11).
+ * React Native escala con el tamaño del sistema (allowFontScaling por defecto).
+ */
+export const FONT_SIZE = {
+  /** Solo chrome de mapa / north arrow (mín. HIG). */
+  map: 11,
+  /** Kickers, badges, créditos, captions. */
+  xs: 12,
+  /** Meta, footnotes, labels secundarios. */
+  sm: 13,
+  /** Cuerpo de lectura, pasos, detalle. */
+  md: 14,
+  /** Títulos de fila / CTA. */
+  lg: 15,
+  /** Títulos de sección / nav. */
+  xl: 17,
+  /** Encabezados. */
+  xxl: 20,
+  /** Display / héroes. */
+  display: 28,
+} as const;

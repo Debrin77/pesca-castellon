@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   cardTop: { marginBottom: 8 },
   cardKicker: {
     color: COLORS.primary,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "700",
     fontFamily: FONTS.bold,
     textTransform: "uppercase",
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   chipTxt: {
     color: COLORS.primaryDark,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
     fontFamily: FONTS.semibold,
   },
@@ -224,13 +224,13 @@ const styles = StyleSheet.create({
   masInfo: { marginTop: 12 },
   masInfoTxt: {
     color: COLORS.textMuted,
-    fontSize: 12.5,
+    fontSize: 13,
     fontWeight: "700",
     fontFamily: FONTS.bold,
   },
   tecnico: {
     marginTop: 6,
-    fontSize: 12.5,
+    fontSize: 13,
     lineHeight: 18,
     color: COLORS.textSecondary,
     fontFamily: FONTS.regular,
