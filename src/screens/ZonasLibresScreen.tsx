@@ -27,10 +27,24 @@ import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
 import CapaPuertos from "../components/CapaPuertos";
 import CapaVedadosCosta from "../components/CapaVedadosCosta";
+import CapaVedadosMarinos from "../components/CapaVedadosMarinos";
 import ListaAnimada from "../components/ListaAnimada";
 import LeyendaMapa from "../components/LeyendaMapa";
 import SelectorModalidad from "../components/SelectorModalidad";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
+import {
+  consultarEmbarcacion,
+  todasLasRampas,
+  todosLosVedadosMarinos,
+} from "../services/consultaEmbarcacionService";
+import {
+  estimarProfundidadMarCastellon,
+  etaAPuerto,
+  guardarWaypointMarino,
+  listarWaypointsMarinos,
+  type WaypointMarino,
+} from "../services/navegacionEmbarcacionService";
+import { esModalidadEmbarcacionMar } from "../data/modalidades";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
@@ -112,14 +126,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [modoAnadir, setModoAnadir] = useState(false);
   const [motivoPick, setMotivoPick] = useState<MotivoUbicacionPendiente | null>(null);
   const [capasExtra, setCapasExtra] = useState(false);
+  const [waypoints, setWaypoints] = useState<WaypointMarino[]>([]);
+  const [infoNavegacion, setInfoNavegacion] = useState<string | null>(null);
   const mar = !soloContinental && modo === "costa";
+  const modoBarco = mar && esModalidadEmbarcacionMar(modalidad);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: mar ? `Mapa · Costa · ${provincia.nombre}` : `Mapa · ${provincia.nombre}`,
+      title: modoBarco
+        ? `Mapa · Embarcación · ${provincia.nombre}`
+        : mar
+          ? `Mapa · Costa · ${provincia.nombre}`
+          : `Mapa · ${provincia.nombre}`,
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
     });
-  }, [mar, navigation, provincia.nombre]);
+  }, [mar, modoBarco, navigation, provincia.nombre]);
 
   useEffect(() => {
     setModo("continental");
@@ -227,7 +248,29 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   useEffect(() => {
     setModalidad(mar ? "orilla_mar" : "orilla_continental");
+    setInfoNavegacion(null);
   }, [mar]);
+
+  useEffect(() => {
+    if (!modoBarco) return;
+    void listarWaypointsMarinos().then(setWaypoints);
+  }, [modoBarco, provinciaId]);
+
+  useEffect(() => {
+    if (!marcador || !mar) return;
+    if (esModalidadEmbarcacionMar(modalidad)) {
+      const r = consultarEmbarcacion(marcador.latitude, marcador.longitude);
+      setConsulta(r);
+      const prof = estimarProfundidadMarCastellon(marcador.latitude, marcador.longitude);
+      const eta = etaAPuerto(marcador.latitude, marcador.longitude);
+      setInfoNavegacion(
+        [prof.etiqueta, eta?.etiqueta, "Orientativo · no sustituye carta náutica."].filter(Boolean).join("\n")
+      );
+    } else if (modalidad === "orilla_mar") {
+      setConsulta(consultarCosta(marcador.latitude, marcador.longitude));
+      setInfoNavegacion(null);
+    }
+  }, [modalidad]);
 
   useEffect(() => {
     if (!grabandoId || !yo) return;
@@ -344,6 +387,20 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }
 
   function evaluarPunto(lat: number, lng: number) {
+    if (modoBarco || (mar && esModalidadEmbarcacionMar(modalidad))) {
+      const r = consultarEmbarcacion(lat, lng);
+      setModo("costa");
+      setCamara({ latitude: lat, longitude: lng, zoom: 12, nonce: Date.now() });
+      mostrarFicha(r);
+      setMarcador({ latitude: lat, longitude: lng });
+      const prof = estimarProfundidadMarCastellon(lat, lng);
+      const eta = etaAPuerto(lat, lng);
+      setInfoNavegacion(
+        [prof.etiqueta, eta?.etiqueta, "Carta/batimetría: consulta orientativa, no navegar solo con esto."].filter(Boolean).join("\n")
+      );
+      void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
+      return;
+    }
     const r = consultarToqueMapa(lat, lng);
     if (!soloContinental && r.ambito === "maritimo") {
       setModo("costa");
@@ -351,6 +408,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     } else {
       setModo("continental");
     }
+    setInfoNavegacion(null);
     mostrarFicha(r);
     setMarcador({ latitude: lat, longitude: lng });
     void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
@@ -733,6 +791,25 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             onChange={setModalidad}
             filtroAmbito={mar ? "maritimo" : "continental"}
           />
+          {modoBarco && marcador ? (
+            <TouchableOpacity
+              style={[styles.layerChip, { alignSelf: "flex-start", marginTop: 6 }]}
+              onPress={async () => {
+                const prof = estimarProfundidadMarCastellon(marcador.latitude, marcador.longitude);
+                const w = await guardarWaypointMarino({
+                  nombre: consulta?.titulo?.slice(0, 40) || "Waypoint",
+                  lat: marcador.latitude,
+                  lng: marcador.longitude,
+                  profundidadM: prof.profundidadM,
+                  nota: prof.etiqueta,
+                });
+                setWaypoints(await listarWaypointsMarinos());
+                Alert.alert("Waypoint", `Guardado: ${w.nombre} (${prof.isobataAprox})`);
+              }}
+            >
+              <Text style={styles.layerChipText}>★ Guardar waypoint</Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start", marginRight: 0 }]}
             onPress={async () => {
@@ -801,8 +878,47 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           ) : null}
           {mar && capas.zpc ? <CapaPuertos /> : null}
           {mar && capas.vedado ? <CapaVedadosCosta /> : null}
+          {modoBarco ? <CapaVedadosMarinos /> : null}
+          {modoBarco &&
+            todasLasRampas().map((r) => (
+              <Marker
+                key={r.id}
+                coordinate={{ latitude: r.lat, longitude: r.lng }}
+                pinColor={PIN.yo}
+                title={r.nombre}
+                description={r.nota}
+                onPress={() => evaluarPunto(r.lat, r.lng)}
+              />
+            ))}
+          {modoBarco &&
+            waypoints.map((w) => (
+              <Marker
+                key={w.id}
+                coordinate={{ latitude: w.lat, longitude: w.lng }}
+                pinColor={PIN.spot}
+                title={w.nombre}
+                description={w.nota}
+                onPress={() => evaluarPunto(w.lat, w.lng)}
+              />
+            ))}
+          {modoBarco &&
+            capas.vedado &&
+            todosLosVedadosMarinos().map((p) => {
+              const c = centroZona(p.anillo);
+              return (
+                <Marker
+                  key={`vm-${p.id}`}
+                  coordinate={{ latitude: c.lat, longitude: c.lng }}
+                  pinColor={PIN.vedado}
+                  identifier="vedado"
+                  title={p.nombre}
+                  onPress={() => evaluarPunto(c.lat, c.lng)}
+                />
+              );
+            })}
           {mar &&
             capas.zpl &&
+            !modoBarco &&
             playas.map((p) => {
               const { color, identifier } = aspectoMapaPlaya(p);
               return (
@@ -1014,6 +1130,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
               }}
             />
+            {infoNavegacion ? (
+              <View style={styles.navInfoBox}>
+                <Text style={styles.navInfoTitulo}>{modoBarco ? "Navegación ligera" : "Info"}</Text>
+                <Text style={styles.navInfoTxt}>{infoNavegacion}</Text>
+              </View>
+            ) : null}
             {(consulta.tramo || consulta.ambito === "maritimo" || marcador) && (
               <>
                 {pickConfirmar ? (
@@ -1221,6 +1343,16 @@ const styles = StyleSheet.create({
   },
   reabrirMar: { backgroundColor: COLORS.waterLight },
   reabrirTxt: { color: COLORS.primaryDark, fontWeight: "700", fontSize: 14 },
+  navInfoBox: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.waterLight,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+  },
+  navInfoTitulo: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.waterDark, marginBottom: 4 },
+  navInfoTxt: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.textPrimary, lineHeight: 18 },
   saveSpotButton: {
     alignItems: "center",
     paddingVertical: 12,

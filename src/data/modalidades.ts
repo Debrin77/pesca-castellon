@@ -33,7 +33,7 @@ export const MODALIDADES: {
     corta: "Kayak",
     ambito: "ambos",
     notaLegal:
-      "En mar puede exigirse licencia de embarcación o artefacto flotante según CCAA/Estado. No confundir con orilla.",
+      "En mar: licencia de artefacto flotante / embarcación según caso, no la de orilla. PescaREC si aplica. Columbretes: reserva.",
   },
   {
     id: "embarcacion",
@@ -41,16 +41,22 @@ export const MODALIDADES: {
     corta: "Barco",
     ambito: "ambos",
     notaLegal:
-      "Modalidad distinta a orilla: licencia/autorización de embarcación y, en mar, PescaREC para especies protegidas.",
+      "Mar Castellón: licencia desde embarcación (no «desde tierra»), fuera de dársena, sin Columbretes. PescaREC cuando la norma lo exija.",
   },
   {
     id: "submarina",
     etiqueta: "Submarina",
     corta: "Sub",
     ambito: "maritimo",
-    notaLegal: "Normativa específica (licencia submarina, zonas, horario). Esta app orienta; no sustituye el BOE/CCAA.",
+    notaLegal:
+      "Normativa específica (licencia submarina, zonas, horario ocaso→orto). Esta app orienta; no sustituye el BOE/CCAA.",
   },
 ];
+
+/** Modalidades de mar que usan catálogo / consulta de embarcación (no orilla). */
+export function esModalidadEmbarcacionMar(id: ModalidadPesca): boolean {
+  return id === "embarcacion" || id === "kayak";
+}
 
 export function modalidadPorId(id: ModalidadPesca) {
   return MODALIDADES.find((m) => m.id === id) ?? MODALIDADES[0];

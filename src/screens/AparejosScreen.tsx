@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "rea
 import { useScrollToTop } from "@react-navigation/native";
 import { irAConsejos } from "../navigation/irATab";
 import aparejosOrilla from "../data/aparejosOrilla.json";
+import aparejosEmbarcacion from "../data/aparejosEmbarcacion.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import {
   especiesOrillaParaSeleccion,
+  especiesEmbarcacionUsuales,
   idsOrillaConocidos,
   resolverEspecie,
 } from "../services/catalogoEspeciesService";
@@ -49,8 +51,9 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
   const costaLista = useMemo(() => especiesOrillaParaSeleccion(), []);
+  const barcoLista = useMemo(() => especiesEmbarcacionUsuales(), []);
   const costaIds = useMemo(() => idsOrillaConocidos(), []);
-  const [ambito, setAmbito] = useState<"rio" | "costa">("rio");
+  const [ambito, setAmbito] = useState<"rio" | "costa" | "barco">("rio");
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
 
   useEffect(() => {
@@ -59,21 +62,32 @@ export default function AparejosScreen({ route, navigation }: Props) {
   }, [provincia.id]);
 
   useEffect(() => {
-    if (soloContinental && ambito === "costa") {
+    if (soloContinental && (ambito === "costa" || ambito === "barco")) {
       setAmbito("rio");
       setSeleccionada(speciesCatalog[0]?.id ?? null);
     }
   }, [soloContinental, ambito, speciesCatalog]);
 
   useLayoutEffect(() => {
+    const titulo =
+      ambito === "barco" ? "Aparejos · Embarcación" : ambito === "costa" ? "Aparejos · Costa" : "Aparejos";
     navigation?.setOptions({
-      title: ambito === "costa" ? "Aparejos · Costa" : "Aparejos",
-      headerStyle: { backgroundColor: ambito === "costa" ? COLORS.waterDark : COLORS.primaryDark },
+      title: titulo,
+      headerStyle: {
+        backgroundColor: ambito === "rio" ? COLORS.primaryDark : COLORS.waterDark,
+      },
     });
   }, [ambito, navigation]);
 
   useEffect(() => {
     const id = route?.params?.especieId;
+    const forzarBarco = !!(route?.params as { ambitoEmbarcacion?: boolean } | undefined)?.ambitoEmbarcacion;
+    if (!id && !forzarBarco) return;
+    if (forzarBarco && !soloContinental) {
+      setAmbito("barco");
+      setSeleccionada(id || barcoLista[0]?.id || null);
+      return;
+    }
     if (!id) return;
     if (!soloContinental && costaIds.has(id)) {
       setAmbito("costa");
@@ -82,11 +96,16 @@ export default function AparejosScreen({ route, navigation }: Props) {
       setAmbito("rio");
       setSeleccionada(id);
     }
-  }, [route?.params?.especieId, costaIds, soloContinental]);
+  }, [route?.params?.especieId, (route?.params as any)?.ambitoEmbarcacion, costaIds, soloContinental, barcoLista]);
 
-  const listaBase = ambito === "costa" && !soloContinental ? costaLista : speciesCatalog;
+  const listaBase =
+    ambito === "barco" && !soloContinental
+      ? barcoLista
+      : ambito === "costa" && !soloContinental
+        ? costaLista
+        : speciesCatalog;
   const lista = useMemo(() => {
-    if (ambito !== "costa" || !seleccionada) return listaBase;
+    if ((ambito !== "costa" && ambito !== "barco") || !seleccionada) return listaBase;
     if (listaBase.some((s: any) => s.id === seleccionada)) return listaBase;
     const extra = resolverEspecie(seleccionada, []);
     return extra ? [...listaBase, extra] : listaBase;
@@ -94,10 +113,16 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const sp: any = lista.find((s: any) => s.id === seleccionada) ?? lista[0];
   const foto = fotoEspecie(sp?.id);
   const equipo: Equipo | undefined =
-    ambito === "costa" ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id] : sp?.equipo;
+    ambito === "barco"
+      ? (aparejosEmbarcacion.porId as Record<string, Equipo>)[sp?.id]
+      : ambito === "costa"
+        ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id]
+        : sp?.equipo;
   const talla = sp ? tallaDestacada(sp) : null;
-  const mar = ambito === "costa" && !soloContinental;
-  const guiaCompra = sp ? recomendacionAparejo(sp.id, ambito === "costa" ? "costa" : "rio") : undefined;
+  const mar = (ambito === "costa" || ambito === "barco") && !soloContinental;
+  const guiaCompra = sp
+    ? recomendacionAparejo(sp.id, ambito === "costa" || ambito === "barco" ? "costa" : "rio")
+    : undefined;
   const terminosFicha = useMemo(() => {
     if (!sp) return [];
     return terminosEnTexto(
@@ -122,7 +147,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               setSeleccionada(speciesCatalog[0]?.id ?? null);
             }}
           >
-            <Text style={[styles.modoTxt, ambito === "rio" && styles.modoTxtOn]}>Ríos y embalses</Text>
+            <Text style={[styles.modoTxt, ambito === "rio" && styles.modoTxtOn]}>Ríos</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOnMar]}
@@ -131,8 +156,19 @@ export default function AparejosScreen({ route, navigation }: Props) {
               setSeleccionada(costaLista[0]?.id ?? null);
             }}
           >
-            <Text style={[styles.modoTxt, ambito === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
+            <Text style={[styles.modoTxt, ambito === "costa" && styles.modoTxtOn]}>Orilla</Text>
           </TouchableOpacity>
+          {provincia.id === "castellon" ? (
+            <TouchableOpacity
+              style={[styles.modoBtn, ambito === "barco" && styles.modoBtnOnMar]}
+              onPress={() => {
+                setAmbito("barco");
+                setSeleccionada(barcoLista[0]?.id ?? null);
+              }}
+            >
+              <Text style={[styles.modoTxt, ambito === "barco" && styles.modoTxtOn]}>Barco</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       ) : null}
 
@@ -166,11 +202,21 @@ export default function AparejosScreen({ route, navigation }: Props) {
         {sp ? (
           <ListaAnimada key={`${ambito}-${sp.id}`} replayKey={`${ambito}-${sp.id}`} index={0}>
             <LinearGradient
-              colors={sp.invasora || sp.id === "cangrejo_azul" ? GRADIENTS.sunset : ambito === "costa" ? GRADIENTS.water : GRADIENTS.primary}
+              colors={
+                sp.invasora || sp.id === "cangrejo_azul"
+                  ? GRADIENTS.sunset
+                  : ambito === "costa" || ambito === "barco"
+                    ? GRADIENTS.water
+                    : GRADIENTS.primary
+              }
               style={styles.headerCard}
             >
               <Text style={styles.headerKicker}>
-                {ambito === "costa" ? "Desde tierra · Mediterráneo" : `Continental · ${provincia.nombre}`}
+                {ambito === "barco"
+                  ? "Embarcación / kayak · Castellón"
+                  : ambito === "costa"
+                    ? "Desde tierra · Mediterráneo"
+                    : `Continental · ${provincia.nombre}`}
               </Text>
               <View style={styles.headerHero}>
                 {foto ? (
@@ -207,7 +253,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               <Text style={styles.notes}>No lo confundas con: {sp.noConfundirCon}</Text>
             ) : null}
 
-            <MejorHoraPesca especie={sp} ambito={ambito === "costa" ? "maritimo" : "continental"} />
+            <MejorHoraPesca especie={sp} ambito={ambito === "costa" || ambito === "barco" ? "maritimo" : "continental"} />
 
             {ambito === "rio" && (sp.habitats || sp.senuelosClave?.length) ? (
               <View style={[styles.gearCard, { marginTop: 12 }]}>
@@ -236,8 +282,11 @@ export default function AparejosScreen({ route, navigation }: Props) {
 
             {equipo ? (
               <View style={styles.gearCard}>
-                <Text style={styles.gearTitle}>{ambito === "costa" ? "Equipo de orilla" : "Equipo recomendado"}</Text>
+                <Text style={styles.gearTitle}>
+                  {ambito === "barco" ? "Equipo de embarcación" : ambito === "costa" ? "Equipo de orilla" : "Equipo recomendado"}
+                </Text>
                 {ambito === "costa" ? <Text style={styles.gearAviso}>{aparejosOrilla.aviso}</Text> : null}
+                {ambito === "barco" ? <Text style={styles.gearAviso}>{aparejosEmbarcacion.aviso}</Text> : null}
                 <FilaAparejo tipo="cana" titulo="Caña">
                   <Text style={styles.gearRowValue}>{equipo.cana}</Text>
                 </FilaAparejo>

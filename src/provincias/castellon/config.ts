@@ -33,13 +33,14 @@ export const castellonConfig: ProvinciaConfig = {
   etiquetaLicenciaContinental: "Licencia de pesca continental GVA.",
   requisitosLicencia: {
     resumen:
-      "En Castellón hacen falta licencias distintas según el agua: continental (ríos, embalses y cotos) y, en la orilla del mar, la de pesca marítima recreativa desde tierra (GVA). No se sustituyen entre sí. En cotos (ZPC) puede exigirse además el permiso del coto.",
+      "En Castellón hacen falta licencias distintas según el agua: continental, marítima desde tierra (orilla) y, si zarpas, embarcación/artefacto flotante según tu caso. No se sustituyen entre sí. En cotos (ZPC) puede exigirse además el permiso del coto.",
     seguroObligatorio: false,
     seguroNota:
       "En la Comunitat Valenciana no se exige seguro de responsabilidad civil para tramitar ni ejercer la licencia de pesca.",
     requisitos: [
       "Licencia continental GVA en ríos y embalses.",
       "Licencia marítima recreativa desde tierra (GVA) si pescas en la orilla del mar.",
+      "Embarcación / kayak: licencia de embarcación (no solo «desde tierra») + PescaREC cuando aplique; Columbretes es reserva.",
       "En ZPC: además, permiso del coto / PTOP del día.",
       "No hace falta seguro de RC de pescador (a diferencia de Andalucía).",
     ],

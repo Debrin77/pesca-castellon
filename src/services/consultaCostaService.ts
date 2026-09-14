@@ -159,7 +159,7 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
       sePuedePescarHoy: false,
       restriccionesHoy: [
         "Ese toque no está en la franja de playa (unos 2 km de la orilla).",
-        "Columbretes y pesca en barco no están en esta versión.",
+        "Para barco/kayak cambia a modalidad Embarcación (mapa o Salgo a pescar).",
       ],
       permisos: [],
     };

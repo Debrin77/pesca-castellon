@@ -1,0 +1,183 @@
+{
+  "aviso": "Catálogo orientativo de pesca marítima recreativa desde embarcación / kayak en aguas de Castellón. No sustituye BOE ni PescaREC. Columbretes: reserva.",
+  "usualesIds": [
+    "lubina",
+    "dorada",
+    "sargo",
+    "jurel",
+    "caballa",
+    "bonito",
+    "palometon",
+    "anjova",
+    "espeton",
+    "denton",
+    "pagel",
+    "sepia",
+    "calamar",
+    "llisa",
+    "corvina"
+  ],
+  "tecnicas": [
+    { "id": "currican", "etiqueta": "Curricán costero", "resumen": "Señuelo a popa a 2–5 kn, 5–25 m de sonda." },
+    { "id": "jigging", "etiqueta": "Jigging / slow jig", "resumen": "Vertical sobre fondos de 20–80 m." },
+    { "id": "spinning_barco", "etiqueta": "Spinning embarcado", "resumen": "Pases a estructura, desembocaduras legales y rompientes." },
+    { "id": "fondo", "etiqueta": "Fondo / espera", "resumen": "Anzuelo con cebo en 15–50 m." },
+    { "id": "eging_deriva", "etiqueta": "Eging a la deriva", "resumen": "Poteras a sepia/calamar al alba y ocaso." }
+  ],
+  "noCapturar": [
+    {
+      "id": "columbretes_aviso",
+      "nombre": "Fauna de Columbretes",
+      "motivo": "Reserva marina: no pesques dentro del polígono orientativo sin comprobar la norma oficial."
+    },
+    {
+      "id": "nacra",
+      "nombre": "Nacra",
+      "nombreCientifico": "Pinna nobilis",
+      "motivo": "Protegida. Ni tocarla."
+    },
+    {
+      "id": "tortuga",
+      "nombre": "Tortuga marina",
+      "motivo": "Fauna protegida. Si engancha, corta cerca y avisa 112."
+    }
+  ],
+  "pescables": [
+    {
+      "id": "lubina",
+      "nombre": "Lubina",
+      "nombreCientifico": "Dicentrarchus labrax",
+      "tallaCm": 23,
+      "tecnicas": ["spinning_barco", "currican"],
+      "profundidadM": "2–15",
+      "notas": "Desde kayak o barco bajo: pases paralelos a orilla y desembocaduras legales."
+    },
+    {
+      "id": "dorada",
+      "nombre": "Dorada",
+      "nombreCientifico": "Sparus aurata",
+      "tallaCm": 20,
+      "tecnicas": ["fondo", "spinning_barco"],
+      "profundidadM": "5–25",
+      "notas": "Fondo con gusano cerca de cambios de cota y desembocaduras."
+    },
+    {
+      "id": "sargo",
+      "nombre": "Sargo",
+      "nombreCientifico": "Diplodus sargus",
+      "tallaCm": 15,
+      "tecnicas": ["fondo", "spinning_barco"],
+      "profundidadM": "3–20",
+      "notas": "Roca y espigones sumergidos; fuera de dársena."
+    },
+    {
+      "id": "jurel",
+      "nombre": "Jurel",
+      "nombreCientifico": "Trachurus spp.",
+      "tallaCm": 12,
+      "tecnicas": ["currican", "jigging", "spinning_barco"],
+      "profundidadM": "5–40",
+      "notas": "Cardúmenes; plumas y jigs ligeros."
+    },
+    {
+      "id": "caballa",
+      "nombre": "Caballa",
+      "nombreCientifico": "Scomber scombrus",
+      "tallaCm": 18,
+      "tecnicas": ["currican", "spinning_barco"],
+      "profundidadM": "5–30",
+      "notas": "Pases con agua fresca; minnows y plumas."
+    },
+    {
+      "id": "bonito",
+      "nombre": "Bonito",
+      "nombreCientifico": "Sarda sarda",
+      "tallaCm": null,
+      "tallaOficial": "Sin talla numérica estatal habitual; revisa BOE/UE vigente",
+      "tecnicas": ["currican"],
+      "profundidadM": "10–50",
+      "notas": "Curricán pelágico costa afuera (no Columbretes). Velocidad 4–6 kn."
+    },
+    {
+      "id": "palometon",
+      "nombre": "Palometón",
+      "nombreCientifico": "Lichia amia",
+      "tallaCm": null,
+      "tecnicas": ["currican", "spinning_barco"],
+      "profundidadM": "3–20",
+      "notas": "Pases agresivos cerca de orilla y espigones."
+    },
+    {
+      "id": "anjova",
+      "nombre": "Anjova / Llampuga",
+      "nombreCientifico": "Pomatomus saltatrix",
+      "tallaCm": null,
+      "tecnicas": ["currican", "spinning_barco"],
+      "profundidadM": "5–25",
+      "notas": "Ataques en superficie; sedal resistente."
+    },
+    {
+      "id": "espeton",
+      "nombre": "Espetón",
+      "nombreCientifico": "Sphyraena viridensis / sphyraena",
+      "tallaCm": null,
+      "tecnicas": ["currican", "spinning_barco"],
+      "profundidadM": "5–30",
+      "notas": "Curricán costero y pases a estructura."
+    },
+    {
+      "id": "denton",
+      "nombre": "Dentón",
+      "nombreCientifico": "Dentex dentex",
+      "tallaCm": null,
+      "tecnicas": ["jigging", "fondo"],
+      "profundidadM": "25–80",
+      "notas": "Jigging sobre fondos duros; tallas y cupos según norma vigente."
+    },
+    {
+      "id": "pagel",
+      "nombre": "Pagel / breca",
+      "nombreCientifico": "Pagellus erythrinus",
+      "tallaCm": 15,
+      "tecnicas": ["fondo", "jigging"],
+      "profundidadM": "20–60",
+      "notas": "Fondo con cebo o jig ligero."
+    },
+    {
+      "id": "sepia",
+      "nombre": "Sepia",
+      "nombreCientifico": "Sepia officinalis",
+      "tallaCm": null,
+      "tecnicas": ["eging_deriva"],
+      "profundidadM": "3–25",
+      "notas": "Egi a la deriva al alba; máx. dos poteras."
+    },
+    {
+      "id": "calamar",
+      "nombre": "Calamar",
+      "nombreCientifico": "Loligo vulgaris",
+      "tallaCm": null,
+      "tecnicas": ["eging_deriva"],
+      "profundidadM": "10–40",
+      "notas": "Poteras de noche o al ocaso en deriva."
+    },
+    {
+      "id": "llisa",
+      "nombre": "Llisa / mujol",
+      "nombreCientifico": "Mugilidae",
+      "tallaCm": 16,
+      "tecnicas": ["spinning_barco", "fondo"],
+      "profundidadM": "1–10",
+      "notas": "Cerca de golas legales; no marjales vedados."
+    },
+    {
+      "id": "corvina",
+      "nombre": "Corvina",
+      "nombreCientifico": "Argyrosomus regius",
+      "tallaCm": null,
+      "tecnicas": ["fondo", "spinning_barco"],
+      "profundidadM": "5–30",
+      "notas": "Desembocaduras y fondos blandos; revisa talla/cupo vigente."
+    }
+  ]
+}

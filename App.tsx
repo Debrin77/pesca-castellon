@@ -35,6 +35,7 @@ import MyCatchesScreen from "./src/screens/MyCatchesScreen";
 import ConsejosScreen from "./src/screens/ConsejosScreen";
 import AjustesScreen from "./src/screens/AjustesScreen";
 import SalgoAPescarScreen from "./src/screens/SalgoAPescarScreen";
+import SalgoEnBarcoScreen from "./src/screens/SalgoEnBarcoScreen";
 import { COLORS } from "./src/theme";
 
 const Tab = createBottomTabNavigator();
@@ -70,6 +71,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
       <HomeStack.Screen name="SalgoAPescar" component={SalgoAPescarScreen} options={{ title: "Salgo a pescar" }} />
+      <HomeStack.Screen name="SalgoEnBarco" component={SalgoEnBarcoScreen} options={{ title: "Salgo en barco" }} />
       <HomeStack.Screen
         name="PrimeraSalida"
         component={PrimeraSalidaScreen}

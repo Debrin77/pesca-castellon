@@ -598,6 +598,28 @@ export default function HomeScreen({ navigation }: Props) {
           </LinearGradient>
         </PulsePress>
 
+        {!provincia.continentalOnly && provincia.id === "castellon" ? (
+          <PulsePress
+            onPress={() => navigation.navigate("SalgoEnBarco")}
+            style={[styles.ctaSalgo, { marginTop: 10 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Salgo en barco"
+          >
+            <LinearGradient colors={[...GRADIENTS.dusk]} style={styles.ctaSalgoInner}>
+              <View style={styles.ctaSalgoRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.ctaSalgoKicker}>Embarcación / kayak</Text>
+                  <Text style={styles.ctaSalgoTitle}>Salgo en barco</Text>
+                  <Text style={styles.ctaSalgoSub}>Legal · oleaje · checklist · Columbretes</Text>
+                </View>
+                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
+                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </PulsePress>
+        ) : null}
+
         {consultaViva ? (
           <View style={styles.atajosPunto}>
             <TouchableOpacity

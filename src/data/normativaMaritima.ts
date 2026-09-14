@@ -1,12 +1,20 @@
 /**
- * Pesca marítima recreativa DESDE TIERRA en Castellón.
- * Decreto 41/2013 (aguas interiores CV) + normas estatales en aguas exteriores.
- * No cubre embarcación ni submarina.
+ * Pesca marítima recreativa en Castellón.
+ * Orilla: Decreto 41/2013 (aguas interiores CV) + normas estatales.
+ * Embarcación / kayak: marco estatal (RD 347/2011) + reservas (p. ej. Columbretes) + PescaREC.
  */
 export const FUENTE_MARITIMA = {
   titulo: "Decreto 41/2013 (pesca marítima recreativa CV) + licencia GVA desde tierra",
   urlLicencia:
     "https://sede.gva.es/es/inicio/procedimientos?id_proc=17170",
+};
+
+export const FUENTE_EMBARCACION = {
+  titulo: "Pesca marítima recreativa desde embarcación (RD 347/2011 + reservas estatales)",
+  urlPescaRec:
+    "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
+  urlColumbretes:
+    "https://www.mapa.gob.es/es/pesca/temas/proteccion-recursos-pesqueros/reservas-marinas-de-interes-pesquero/rm-islas-columbretes/",
 };
 
 export const REGLAS_ORILLA_MAR = [
@@ -18,7 +26,33 @@ export const REGLAS_ORILLA_MAR = [
   "Tope habitual: 5 kg por licencia y día (puede no computar una pieza). Decreto 41/2013.",
   "Desde tierra: como máximo dos cañas por licencia (máx. 3 m entre ellas si son del mismo titular), o un aparejo a mano. Máximo seis anzuelos o dos poteras por pescador. Los cebos artificiales cuentan como anzuelo. Anzuelos no menores de 12 mm de largo y 5 mm de ancho. Sin nasas, redes ni artes profesionales.",
   "Horario caña desde tierra: Decreto 41/2013 y RD 347/2011 no fijan veda nocturna general (la prohibición ocaso→orto es de la modalidad submarina). Un bando municipal o el acceso a la playa sí pueden limitar.",
-  "Esta app no cubre pesca desde embarcación ni submarina.",
+  "Embarcación y kayak tienen otro flujo legal en la app (modalidad Barco / Kayak): no uses el semáforo de orilla para zarpar.",
+];
+
+/** Checklist / reglas orientativas para zarpar a pescar (no sustituyen BOE ni el patrón). */
+export const REGLAS_EMBARCACION_MAR = [
+  "Licencia/autorización de pesca marítima recreativa desde embarcación o artefacto flotante según tu caso (estatal/CCAA). La de «desde tierra» no cubre barco.",
+  "PescaREC: declara cuando la norma lo exija (especies/zonas). Esta app solo enlaza; no declara por ti.",
+  "Prohibido pescar en dársena, canales de entrada y zonas de fondeo/varada salvo autorización del puerto.",
+  "Reserva marina de las Islas Columbretes: no entres a pescar sin comprobar la cartografía y normas oficiales.",
+  "Respeta distancias a bañistas, boyas de balizamiento y zonas de baño balizadas.",
+  "No vender capturas. Tallas y cupos: RD 560/1995, RD 347/2011 y actualizaciones UE/BOE.",
+  "Artes de recreo: sin redes ni artes profesionales. Poteras: máximo habitual dos en recreo.",
+  "Meteo: oleaje, viento y rachas mandan más que la marea astronómica en Castellón (micromareal).",
+  "Seguridad: chaleco, medios de comunicación, combustible de sobra y plan de regreso al puerto.",
+];
+
+export const CHECKLIST_EMBARCACION = [
+  "Licencia de embarcación / kayak en regla (no solo «desde tierra»).",
+  "PescaREC instalado o a mano para declarar si aplica.",
+  "Chaleco salvavidas para todos a bordo.",
+  "Móvil cargado / VHF si llevas; avisa a alguien de la hora de vuelta.",
+  "Combustible o baterías de sobra + ancla ligera si el barco lo lleva.",
+  "Revisa oleaje, viento y rachas en el punto (índice «Salgo en barco»).",
+  "Puerto o rampa de salida elegido; no pesques en dársena.",
+  "Columbretes y vedados marinos: fuera del polígono de pesca.",
+  "Botiquín básico, agua y protección solar.",
+  "Plan de regreso: ETA al puerto con margen de luz de día.",
 ];
 
 /** Texto corto para avisos de franja solar en costa (caña desde tierra). */
