@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { consultarEmbarcacion, todasLasRampas } from "../services/consultaEmbarcacionService";
 import type { ConsultaPesca } from "../services/consultaPescaService";
@@ -49,6 +50,16 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const [etiqueta, setEtiqueta] = useState<string | null>(null);
   const [navTxt, setNavTxt] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const insets = useSafeAreaInsets();
+  /** Hueco para la barra de tabs horizontal + home indicator. */
+  const paddingBottom = 120 + Math.max(insets.bottom, 8);
+
+  function irAlPaso(n: number) {
+    setPaso(n);
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -70,9 +81,8 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
     const eta = etaAPuerto(lat, lng);
     setNavTxt([prof.etiqueta, eta?.etiqueta].filter(Boolean).join("\n"));
     void fijarPunto({ lat, lng, fuente: "zona", etiqueta: etiquetaPunto });
-    setPaso(1);
     setCargando(false);
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
+    irAlPaso(1);
   }
 
   async function usarGps() {
@@ -99,7 +109,12 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   }
 
   return (
-    <ScrollView ref={scrollRef} style={styles.wrap} contentContainerStyle={styles.content}>
+    <ScrollView
+      ref={scrollRef}
+      style={styles.wrap}
+      contentContainerStyle={[styles.content, { paddingBottom }]}
+      keyboardShouldPersistTaps="handled"
+    >
       <LinearGradient colors={[...GRADIENTS.water]} style={styles.hero}>
         <Text style={styles.heroKicker}>CASTELLÓN · EMBARCACIÓN</Text>
         <Text style={styles.heroTitle}>Salgo en barco</Text>
@@ -158,7 +173,12 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             ocultarSemaforo
           />
           {navTxt ? <Text style={styles.navTxt}>{navTxt}</Text> : null}
-          <TouchableOpacity style={styles.btnSec} onPress={() => setPaso(2)}>
+          <TouchableOpacity
+            style={styles.btnSec}
+            onPress={() => irAlPaso(2)}
+            accessibilityRole="button"
+            accessibilityLabel="Siguiente paso: meteo marina"
+          >
             <Text style={styles.btnSecTxt}>Siguiente · meteo marina</Text>
           </TouchableOpacity>
         </View>
@@ -172,7 +192,12 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           {indice?.alertaSalida ? (
             <Text style={styles.alerta}>Con esta meteo el índice recomienda no salir. Tú decides.</Text>
           ) : null}
-          <TouchableOpacity style={styles.btnSec} onPress={() => setPaso(3)}>
+          <TouchableOpacity
+            style={styles.btnSec}
+            onPress={() => irAlPaso(3)}
+            accessibilityRole="button"
+            accessibilityLabel="Siguiente paso: checklist"
+          >
             <Text style={styles.btnSecTxt}>Siguiente · checklist</Text>
           </TouchableOpacity>
         </View>
@@ -213,20 +238,24 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           >
             <Text style={styles.btnPrimaryTxt}>Ver aparejos de embarcación</Text>
           </PulsePress>
-          <TouchableOpacity style={styles.btnSec} onPress={() => setPaso(0)}>
+          <TouchableOpacity
+            style={styles.btnSec}
+            onPress={() => irAlPaso(0)}
+            accessibilityRole="button"
+            accessibilityLabel="Elegir otra salida"
+          >
             <Text style={styles.btnSecTxt}>Elegir otra salida</Text>
           </TouchableOpacity>
         </View>
       ) : null}
-
-      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingBottom: 24 },
+  /** paddingBottom real se aplica en runtime (tabs + safe area). */
+  content: { flexGrow: 1 },
   hero: { padding: SPACING.lg, paddingTop: SPACING.xl, gap: 6 },
   heroKicker: { fontFamily: FONTS.semibold, fontSize: 11, color: "rgba(255,255,255,0.75)", letterSpacing: 0.8 },
   heroTitle: { fontFamily: FONTS.display, fontSize: 28, color: "#fff" },
