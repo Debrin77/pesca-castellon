@@ -19,6 +19,6 @@ export const EJE_METEO = {
   tituloCorto: "Condiciones · clima",
   /** Etiqueta del índice 0–100 */
   indexLabel: "Condiciones (clima)",
-  aviso: "Orientativo por tiempo y luna · no autoriza a pescar",
-  a11y: "Condiciones de pesca por clima. No es el permiso legal del tramo.",
+  aviso: "Orientativo por tiempo, agua y luna · no autoriza a pescar",
+  a11y: "Condiciones de pesca por clima, temperatura y luna. No es el permiso legal del tramo.",
 } as const;
