@@ -53,10 +53,10 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
   /**
-   * BarraTabsScroll es position:absolute → hay que reservar hueco a mano.
-   * Misma magnitud que el pie de EspeciesScreen (~110 + safe area).
+   * BarraTabsScroll es position:absolute (con fila «Desliza» puede superar ~120px).
+   * Reservamos holgura de toque para que «Siguiente» no quede pegado/tapado.
    */
-  const piePadBottom = 110 + Math.max(insets.bottom, 12);
+  const piePadBottom = 150 + Math.max(insets.bottom, 12);
   const tienePieCta = paso === 1 || paso === 2 || paso === 3;
   const scrollPadBottom = tienePieCta ? 24 : piePadBottom;
 

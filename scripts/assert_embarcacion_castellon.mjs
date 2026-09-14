@@ -114,6 +114,9 @@ if (/paso\s*>=\s*[123]/.test(ritual)) {
 if (!ritual.includes("ctaPie") || !ritual.includes("piePadBottom")) {
   fail("SalgoEnBarco: falta pie CTA (ctaPie/piePadBottom) por encima de la barra de tabs");
 }
+if (!/piePadBottom\s*=\s*1[5-9]\d\s*\+/.test(ritual) && !/piePadBottom\s*=\s*[2-9]\d{2}\s*\+/.test(ritual)) {
+  fail("SalgoEnBarco: piePadBottom debe ser ≥150 + safe area (tabs flotantes con «Desliza»)");
+}
 if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
   fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
 }
