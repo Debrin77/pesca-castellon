@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
@@ -28,7 +29,6 @@ import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import PasoSalida from "../components/PasoSalida";
 import PulsePress from "../components/PulsePress";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
-import { Linking } from "react-native";
 
 interface Props {
   navigation: any;
@@ -122,7 +122,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             <TouchableOpacity
               key={r.id}
               style={styles.rampa}
-              onPress={() => void cargarPunto(r.lat, r.lng, r.nombre)}
+              onPress={() => void cargarPunto(r.lat, r.lng, `Salida · ${r.nombre}`)}
               disabled={cargando}
             >
               <Text style={styles.rampaNombre}>{r.nombre}</Text>
