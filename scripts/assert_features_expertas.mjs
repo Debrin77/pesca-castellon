@@ -97,6 +97,16 @@ if (!mapa.includes("activarRadar") || !mapa.includes("Radar lluvia")) {
   console.error("FAIL Mapa sin activarRadar / etiqueta Radar lluvia");
   fallos++;
 }
+if (!mapa.includes("setPausaTrack") || !mapa.includes("❚❚ Pausar") || !mapa.includes("▶ Reanudar")) {
+  console.error("FAIL Mapa sin botones Pausar/Reanudar ruta GPS");
+  fallos++;
+}
+
+const trackSvc = fs.readFileSync(path.join(root, "src/services/trackService.ts"), "utf8");
+if (!trackSvc.includes("setPausaTrack") || !trackSvc.includes("pausado") || !trackSvc.includes("t.pausado")) {
+  console.error("FAIL trackService sin pausa (setPausaTrack / no añadir puntos si pausado)");
+  fallos++;
+}
 
 const campo = fs.readFileSync(path.join(root, "src/components/PanelCampoHoy.tsx"), "utf8");
 if (campo.includes('navigate("Prevision")') || !campo.includes('"Previsión"')) {

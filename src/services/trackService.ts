@@ -14,6 +14,8 @@ export interface TrackPesca {
   modalidad: ModalidadPesca;
   iniciadoEn: string;
   finalizadoEn?: string;
+  /** Si true, no se añaden puntos GPS hasta reanudar. */
+  pausado?: boolean;
   puntos: TrackPunto[];
   provinciaId?: string;
 }
@@ -46,6 +48,7 @@ export async function iniciarTrack(nombre: string, modalidad: ModalidadPesca): P
     nombre,
     modalidad,
     iniciadoEn: new Date().toISOString(),
+    pausado: false,
     puntos: [],
     provinciaId: getProvinciaIdActiva(),
   };
@@ -58,7 +61,7 @@ export async function anadirPuntoTrack(trackId: string, lat: number, lng: number
   const i = lista.findIndex((t) => t.id === trackId);
   if (i < 0) return null;
   const t = lista[i];
-  if (t.finalizadoEn) return t;
+  if (t.finalizadoEn || t.pausado) return t;
   const ultimo = t.puntos[t.puntos.length - 1];
   if (ultimo) {
     const dlat = ultimo.lat - lat;
@@ -71,11 +74,21 @@ export async function anadirPuntoTrack(trackId: string, lat: number, lng: number
   return t;
 }
 
+export async function setPausaTrack(trackId: string, pausado: boolean): Promise<TrackPesca | null> {
+  const lista = await obtenerTracks();
+  const i = lista.findIndex((t) => t.id === trackId);
+  if (i < 0) return null;
+  if (lista[i].finalizadoEn) return lista[i];
+  lista[i] = { ...lista[i], pausado };
+  await guardarTodos(lista);
+  return lista[i];
+}
+
 export async function finalizarTrack(trackId: string): Promise<TrackPesca | null> {
   const lista = await obtenerTracks();
   const i = lista.findIndex((t) => t.id === trackId);
   if (i < 0) return null;
-  lista[i] = { ...lista[i], finalizadoEn: new Date().toISOString() };
+  lista[i] = { ...lista[i], finalizadoEn: new Date().toISOString(), pausado: false };
   await guardarTodos(lista);
   return lista[i];
 }
