@@ -1,0 +1,14 @@
+[
+  {
+    "id": "columbretes",
+    "nombre": "Reserva marina de las Islas Columbretes",
+    "tipo": "reserva_marina",
+    "norma": "Reserva marina estatal (OM 19/04/1990 y actualizaciones): pesca recreativa prohibida o muy restringida según zona. El polígono es orientativo; manda el BOE y la señalización. No entres a pescar sin comprobar la cartografía oficial.",
+    "anillo": [
+      { "lat": 39.94, "lng": 0.62 },
+      { "lat": 39.94, "lng": 0.76 },
+      { "lat": 39.84, "lng": 0.76 },
+      { "lat": 39.84, "lng": 0.62 }
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "aviso": "Rampas y puertos de salida orientativos en Castellón. La dársena no es zona de pesca: zarpas y pescas fuera. Confirma tarifas, horarios y normas del puerto.",
+  "rampas": [
+    {
+      "id": "rampa_vinaros",
+      "nombre": "Rampa / puerto de Vinaròs",
+      "lat": 40.465,
+      "lng": 0.475,
+      "municipio": "Vinaròs",
+      "nota": "Salida norte de la provincia. No pesques en dársena."
+    },
+    {
+      "id": "rampa_benicarlo",
+      "nombre": "Rampa / puerto de Benicarló",
+      "lat": 40.418,
+      "lng": 0.428,
+      "municipio": "Benicarló",
+      "nota": "Buena base para costa norte. Fuera de aguas portuarias."
+    },
+    {
+      "id": "rampa_peniscola",
+      "nombre": "Puerto de Peñíscola",
+      "lat": 40.357,
+      "lng": 0.402,
+      "municipio": "Peñíscola",
+      "nota": "Puerto deportivo; respeta canales y bañistas."
+    },
+    {
+      "id": "rampa_alcossebre",
+      "nombre": "Puerto de Alcossebre",
+      "lat": 40.234,
+      "lng": 0.275,
+      "municipio": "Alcalà de Xivert",
+      "nota": "Salida media. Irta a pie ≠ zona de fondeo libre."
+    },
+    {
+      "id": "rampa_orpesa",
+      "nombre": "Puerto de Orpesa",
+      "lat": 40.092,
+      "lng": 0.138,
+      "municipio": "Orpesa",
+      "nota": "Base hacia Benicàssim / Grao."
+    },
+    {
+      "id": "rampa_grao",
+      "nombre": "Puerto del Grao de Castellón",
+      "lat": 39.978,
+      "lng": 0.015,
+      "municipio": "Castelló de la Plana",
+      "nota": "Principal. Curricán y jigging costero fuera de dársena. Columbretes: reserva."
+    },
+    {
+      "id": "rampa_burriana",
+      "nombre": "Puerto de Burriana",
+      "lat": 39.845,
+      "lng": -0.068,
+      "municipio": "Burriana",
+      "nota": "Sur de la Plana. No pesques en el recinto portuario."
+    }
+  ]
+}

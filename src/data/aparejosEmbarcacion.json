@@ -1,0 +1,110 @@
+{
+  "aviso": "Equipo orientativo para pesca marítima recreativa desde embarcación o kayak en Castellón. No es orilla. Dársena no. Columbretes: reserva. Declara en PescaREC cuando aplique.",
+  "porId": {
+    "lubina": {
+      "cana": "Spinning 2,10–2,40 m MH (10–40 g) desde kayak/barco bajo",
+      "carrete": "4000–5000",
+      "linea": "Trenzado 0,12–0,18 mm + bajo fluoro 0,30–0,40",
+      "senuelosCebos": ["Minnow 10–14 cm", "Shad 10–12 cm", "Curricán corto con lipped crank"],
+      "tecnica": "Spinning embarcado o curricán lento (2–3 kn) paralelo a orilla legal."
+    },
+    "dorada": {
+      "cana": "Fondo / boat 2,10–2,40 m media",
+      "carrete": "4000–6000",
+      "linea": "Nylon 0,30–0,40 o trenza + bajo",
+      "senuelosCebos": ["Gusano", "Tita", "Montaje running 60–120 g"],
+      "tecnica": "Fondo en 8–25 m cerca de cambios de cota."
+    },
+    "sargo": {
+      "cana": "Light boat / spinning 5–25 g",
+      "carrete": "2500–4000",
+      "linea": "Fluoro 0,22–0,28",
+      "senuelosCebos": ["Cangrejo", "Gusano", "Jig 7–15 g"],
+      "tecnica": "Fondo a piedra; fondea fuera de puerto."
+    },
+    "jurel": {
+      "cana": "Spinning L-ML o jigging ligero",
+      "carrete": "3000–4000",
+      "linea": "Trenza 0,10–0,14",
+      "senuelosCebos": ["Plumas", "Jig 10–30 g", "Cucharilla"],
+      "tecnica": "Curricán ligero o jigging vertical sobre cardumen."
+    },
+    "caballa": {
+      "cana": "Spinning MH / curricán",
+      "carrete": "4000",
+      "linea": "Trenza 0,12–0,16",
+      "senuelosCebos": ["Minnow hundido", "Plumas", "Jig 15–30 g"],
+      "tecnica": "Curricán costero 3–5 kn."
+    },
+    "bonito": {
+      "cana": "Curricán 2,10–2,40 m potencia media-alta",
+      "carrete": "5000–8000 buen freno",
+      "linea": "Trenza 0,20–0,30 + bajo resistente",
+      "senuelosCebos": ["Cintas / feathers", "Minnow 12–16 cm", "Skipjack-style"],
+      "tecnica": "Curricán pelágico fuera de reserva; no Columbretes."
+    },
+    "palometon": {
+      "cana": "Spinning MH–H",
+      "carrete": "5000",
+      "linea": "Trenza 0,18–0,25",
+      "senuelosCebos": ["Stickbait", "Minnow grande", "Curricán superficial"],
+      "tecnica": "Pases agresivos y curricán corto."
+    },
+    "anjova": {
+      "cana": "Spinning MH",
+      "carrete": "4000–5000",
+      "linea": "Trenza 0,16–0,22 + bajo acero/fluoro grueso",
+      "senuelosCebos": ["Minnow", "Metal jig", "Curricán"],
+      "tecnica": "Ataques en superficie; revisa dientes."
+    },
+    "espeton": {
+      "cana": "Curricán / spinning MH",
+      "carrete": "4000–5000",
+      "linea": "Trenza 0,16–0,22 + bajo",
+      "senuelosCebos": ["Minnow alargado", "Curricán con lip"],
+      "tecnica": "Curricán costero a media agua."
+    },
+    "denton": {
+      "cana": "Jigging 2,00–2,20 m PE 1.5–3",
+      "carrete": "Carrete jigging / 4000–6000",
+      "linea": "PE 1.5–3 + líder fluoro",
+      "senuelosCebos": ["Slow jig 80–200 g", "Inchiku", "Cebo natural a fondo"],
+      "tecnica": "Vertical 30–80 m sobre fondo duro."
+    },
+    "pagel": {
+      "cana": "Fondo ligero / jigging light",
+      "carrete": "3000–4000",
+      "linea": "Trenza fina + bajo",
+      "senuelosCebos": ["Jig 30–80 g", "Gusano / marisco"],
+      "tecnica": "Fondo 20–50 m."
+    },
+    "sepia": {
+      "cana": "Eging 2,40–2,60 m",
+      "carrete": "2500–3000",
+      "linea": "Trenza 0,8–1.2 PE + bajo fluoro",
+      "senuelosCebos": ["Egi 2.5–3.5", "Máximo dos poteras"],
+      "tecnica": "Deriva al alba; 3–20 m."
+    },
+    "calamar": {
+      "cana": "Eging / jigging ligero",
+      "carrete": "2500–3000",
+      "linea": "Trenza PE fina",
+      "senuelosCebos": ["Egi 3.0–3.5", "Poteras luminosas"],
+      "tecnica": "Deriva al ocaso/noche legal."
+    },
+    "llisa": {
+      "cana": "Spinning ligero",
+      "carrete": "2500–4000",
+      "linea": "Nylon 0,25–0,30",
+      "senuelosCebos": ["Masa", "Alga", "Gusano superficie"],
+      "tecnica": "Cerca de golas legales; no humedales vedados."
+    },
+    "corvina": {
+      "cana": "Fondo / spinning MH",
+      "carrete": "4000–6000",
+      "linea": "Trenza 0,16–0,22",
+      "senuelosCebos": ["Vinilo shad", "Cebo natural a fondo"],
+      "tecnica": "Desembocaduras y fondos blandos 8–30 m."
+    }
+  }
+}
