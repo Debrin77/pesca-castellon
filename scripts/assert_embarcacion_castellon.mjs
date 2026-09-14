@@ -108,7 +108,16 @@ if (!ritual.includes("CHECKLIST_EMBARCACION") || !ritual.includes("calcularIndic
 if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard") && !ritual.includes("ocultarSemaforo")) {
   fail("SalgoEnBarco: si muestra SemaforoVeredicto y ConsultaPescaCard, el card debe ir con ocultarSemaforo");
 }
-ok("ritual SalgoEnBarco");
+if (/paso\s*>=\s*[123]/.test(ritual)) {
+  fail("SalgoEnBarco: no acumular pasos (usar paso === n); el CTA Siguiente quedaba tapado por las tabs");
+}
+if (!ritual.includes("ctaPie") || !ritual.includes("piePadBottom")) {
+  fail("SalgoEnBarco: falta pie CTA (ctaPie/piePadBottom) por encima de la barra de tabs");
+}
+if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
+  fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
+}
+ok("ritual SalgoEnBarco (pasos exclusivos + CTA sobre tabs)");
 
 if (fallos) {
   console.error(`\n${fallos} fallos`);
