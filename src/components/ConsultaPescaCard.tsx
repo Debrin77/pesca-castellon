@@ -35,6 +35,8 @@ interface Props {
    * certeza (OFICIAL/ORIENTATIVO) + ficha, sin repetir el veredicto.
    */
   ocultarVeredictoCompacto?: boolean;
+  /** No pintar SemaforoVeredicto (el padre ya lo muestra). */
+  ocultarSemaforo?: boolean;
   /** Control externo del expandido (Inicio: gesto del hero). */
   expandido?: boolean;
   onToggleDetalle?: () => void;
@@ -51,6 +53,7 @@ export default function ConsultaPescaCard({
   onMontaje,
   compacto = false,
   ocultarVeredictoCompacto = false,
+  ocultarSemaforo = false,
   expandido,
   onToggleDetalle,
   lat,
@@ -212,7 +215,7 @@ export default function ConsultaPescaCard({
               <Text style={[styles.btnDetalleTxt, { color: acento }]}>Ver detalle ›</Text>
             </TouchableOpacity>
           </>
-        ) : ocultarVeredictoCompacto ? (
+        ) : ocultarVeredictoCompacto || ocultarSemaforo ? (
           <>
             <View
               style={[

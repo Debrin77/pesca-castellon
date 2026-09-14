@@ -151,7 +151,12 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           <Text style={styles.bloqueTitulo}>2. ¿Puedo aquí?</Text>
           {etiqueta ? <Text style={styles.etiqueta}>{etiqueta}</Text> : null}
           <SemaforoVeredicto consulta={consulta} />
-          <ConsultaPescaCard consulta={consulta} />
+          <ConsultaPescaCard
+            consulta={consulta}
+            lat={coords?.lat}
+            lng={coords?.lng}
+            ocultarSemaforo
+          />
           {navTxt ? <Text style={styles.navTxt}>{navTxt}</Text> : null}
           <TouchableOpacity style={styles.btnSec} onPress={() => setPaso(2)}>
             <Text style={styles.btnSecTxt}>Siguiente · meteo marina</Text>

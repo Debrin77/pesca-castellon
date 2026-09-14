@@ -681,6 +681,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                     consulta={consulta}
                     lat={coords?.lat}
                     lng={coords?.lng}
+                    ocultarSemaforo
                     onFicha={
                       consulta.tramo?.fichaId
                         ? () => navigation.navigate("ZoneDetail", { zoneId: consulta.tramo!.fichaId })
