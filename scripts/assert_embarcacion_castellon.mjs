@@ -105,6 +105,9 @@ const ritual = read("src/screens/SalgoEnBarcoScreen.tsx");
 if (!ritual.includes("CHECKLIST_EMBARCACION") || !ritual.includes("calcularIndiceBarco")) {
   fail("ritual SalgoEnBarco incompleto");
 }
+if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard")) {
+  fail("SalgoEnBarco no debe duplicar SemaforoVeredicto + ConsultaPescaCard (el card ya trae el semáforo)");
+}
 ok("ritual SalgoEnBarco");
 
 if (fallos) {
