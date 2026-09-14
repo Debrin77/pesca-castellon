@@ -66,6 +66,10 @@ if (prev.includes('eje="meteo"')) {
 if (!prev.includes("no es permiso legal")) {
   fail("PrevisionScreen debe aclarar que el índice no es permiso legal");
 }
+// No recuadro «Condiciones (clima)» bajo la franja semanal (el índice va en puntos + «Por qué»)
+if (prev.includes("glassCard") || prev.includes("meterTrack") || prev.includes("styles.indexHead")) {
+  fail("Previsión no debe mostrar el recuadro glassCard de condiciones bajo la previsión semanal");
+}
 
 const pkg = read("package.json");
 if (!pkg.includes("assert_legal_vs_meteo.mjs")) {

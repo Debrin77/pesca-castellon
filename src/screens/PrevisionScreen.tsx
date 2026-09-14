@@ -202,7 +202,6 @@ export default function PrevisionScreen() {
 
   const dia = dias.find((d) => d.fecha === seleccion) ?? dias[0];
   const ind = dia ? indice.find((x) => x.fecha === dia.fecha) : undefined;
-  const cat = ind ? CATEGORIA_INFO[ind.categoria] : null;
   const tiempo = dia ? descripcionTiempo(dia.codigoTiempo) : null;
   const cielo = dia ? cieloDeCodigo(dia.codigoTiempo) : cieloDeCodigo(2);
   const alertas = dia
@@ -363,46 +362,13 @@ export default function PrevisionScreen() {
                         { backgroundColor: CATEGORIA_INFO[iDia.categoria].fondo },
                         { borderColor: CATEGORIA_INFO[iDia.categoria].color },
                       ]}
-                      accessibilityLabel={`Condiciones (clima) ${CATEGORIA_INFO[iDia.categoria].texto}`}
+                      accessibilityLabel={`${EJE_METEO.indexLabel} ${CATEGORIA_INFO[iDia.categoria].texto}`}
                     />
                   ) : null}
                 </Pressable>
               );
             })}
           </ScrollView>
-
-          {cat && ind ? (
-            <ListaAnimada replayKey={`idx-${dia.fecha}`} index={1}>
-              <View style={[styles.glassCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
-                <View style={styles.indexHead}>
-                  <Text style={styles.glassLabel}>{EJE_METEO.indexLabel}</Text>
-                <Text style={styles.glassHint}>No es permiso legal · clima, agua y luna</Text>
-                  <Text style={styles.glassStrong}>
-                    {ind.puntuacion} · {cat.texto}
-                  </Text>
-                  {ind.mejorFranjaInicio && ind.mejorFranjaFin ? (
-                    <Text style={styles.glassHint}>
-                      Mejor franja ~ {ind.mejorFranjaInicio}–{ind.mejorFranjaFin}
-                      {ind.tempAguaC != null
-                        ? ` · agua ${Math.round(ind.tempAguaC)}°${ind.fuenteTempAgua === "mar" ? " mar" : ""}`
-                        : ""}
-                    </Text>
-                  ) : null}
-                </View>
-                <View style={styles.meterTrack} accessibilityLabel={`Puntuación ${ind.puntuacion} de 100`}>
-                  <View
-                    style={[
-                      styles.meterFill,
-                      { width: `${ind.puntuacion}%`, backgroundColor: cat.fondo },
-                    ]}
-                  />
-                </View>
-                <Text style={styles.glassHint}>
-                  No es permiso legal. Orientativo (presión, temperatura, nubes, viento, lluvia y luna). No es un aviso oficial.
-                </Text>
-              </View>
-            </ListaAnimada>
-          ) : null}
 
           <VentanasSolunarMarea
             solunar={solunar}
@@ -495,6 +461,15 @@ export default function PrevisionScreen() {
           {ind?.desglose?.length ? (
             <View style={[styles.why, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
               <Text style={styles.sectionTitle}>Por qué este índice</Text>
+              <Text style={styles.glassHint}>
+                {EJE_METEO.indexLabel}: no es permiso legal · clima, agua y luna
+                {ind.mejorFranjaInicio && ind.mejorFranjaFin
+                  ? ` · mejor franja ~ ${ind.mejorFranjaInicio}–${ind.mejorFranjaFin}`
+                  : ""}
+                {ind.tempAguaC != null
+                  ? ` · agua ${Math.round(ind.tempAguaC)}°${ind.fuenteTempAgua === "mar" ? " mar" : ""}`
+                  : ""}
+              </Text>
               {ind.desglose.map((motivo, i) => (
                 <ListaAnimada key={i} index={i} replayKey={dia.fecha}>
                   <View style={styles.whyRow}>
@@ -728,14 +703,6 @@ const styles = StyleSheet.create({
     minHeight: 30,
   },
   dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6, borderWidth: 1.5 },
-  glassCard: {
-    borderRadius: RADIUS.lg,
-    padding: 16,
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-  },
-  indexHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   glassLabel: {
     fontSize: 12,
     fontWeight: "800",
@@ -743,15 +710,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: "#ffffff",
   },
-  glassStrong: { fontSize: 17, fontWeight: "800", color: glassText },
-  meterTrack: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "rgba(255,255,255,0.28)",
-    marginTop: 12,
-    overflow: "hidden",
-  },
-  meterFill: { height: "100%", borderRadius: 5 },
   glassHint: {
     fontSize: 13,
     color: "#ffffff",
