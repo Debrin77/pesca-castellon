@@ -20,6 +20,7 @@ import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { etaAPuerto, estimarProfundidadMarCastellon } from "../services/navegacionEmbarcacionService";
+import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import IndiceBarcoCard from "../components/IndiceBarcoCard";
 import ChecklistInteractivo, { itemsDesdeTextos } from "../components/ChecklistInteractivo";
@@ -149,7 +150,13 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           <EjeLegalMeteo eje="legal" />
           <Text style={styles.bloqueTitulo}>2. ¿Puedo aquí?</Text>
           {etiqueta ? <Text style={styles.etiqueta}>{etiqueta}</Text> : null}
-          <ConsultaPescaCard consulta={consulta} lat={coords?.lat} lng={coords?.lng} />
+          <SemaforoVeredicto consulta={consulta} />
+          <ConsultaPescaCard
+            consulta={consulta}
+            lat={coords?.lat}
+            lng={coords?.lng}
+            ocultarSemaforo
+          />
           {navTxt ? <Text style={styles.navTxt}>{navTxt}</Text> : null}
           <TouchableOpacity style={styles.btnSec} onPress={() => setPaso(2)}>
             <Text style={styles.btnSecTxt}>Siguiente · meteo marina</Text>

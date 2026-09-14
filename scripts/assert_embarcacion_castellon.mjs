@@ -105,8 +105,8 @@ const ritual = read("src/screens/SalgoEnBarcoScreen.tsx");
 if (!ritual.includes("CHECKLIST_EMBARCACION") || !ritual.includes("calcularIndiceBarco")) {
   fail("ritual SalgoEnBarco incompleto");
 }
-if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard")) {
-  fail("SalgoEnBarco no debe duplicar SemaforoVeredicto + ConsultaPescaCard (el card ya trae el semáforo)");
+if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard") && !ritual.includes("ocultarSemaforo")) {
+  fail("SalgoEnBarco: si muestra SemaforoVeredicto y ConsultaPescaCard, el card debe ir con ocultarSemaforo");
 }
 ok("ritual SalgoEnBarco");
 
