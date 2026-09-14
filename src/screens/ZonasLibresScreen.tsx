@@ -62,6 +62,7 @@ import {
   finalizarTrack,
   iniciarTrack,
   obtenerTracks,
+  setPausaTrack,
   trackActivo,
   TrackPesca,
 } from "../services/trackService";
@@ -123,6 +124,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [tracks, setTracks] = useState<TrackPesca[]>([]);
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
+  const rutaPausada = !!(grabandoId && tracks.find((t) => t.id === grabandoId)?.pausado);
   const [modoAnadir, setModoAnadir] = useState(false);
   const [motivoPick, setMotivoPick] = useState<MotivoUbicacionPendiente | null>(null);
   const [capasExtra, setCapasExtra] = useState(false);
@@ -273,11 +275,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [modalidad]);
 
   useEffect(() => {
-    if (!grabandoId || !yo) return;
+    if (!grabandoId || !yo || rutaPausada) return;
     void anadirPuntoTrack(grabandoId, yo.latitude, yo.longitude).then(() => {
       void obtenerTracks().then(setTracks);
     });
-  }, [yo?.latitude, yo?.longitude, grabandoId]);
+  }, [yo?.latitude, yo?.longitude, grabandoId, rutaPausada]);
 
   useEffect(() => {
     let cancelar: (() => void) | undefined;
@@ -810,41 +812,81 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               <Text style={styles.layerChipText}>★ Guardar waypoint</Text>
             </TouchableOpacity>
           ) : null}
-          <TouchableOpacity
-            style={[styles.layerChip, grabandoId ? styles.layerChipActive : null, { alignSelf: "flex-start", marginRight: 0 }]}
-            onPress={async () => {
-              if (grabandoId) {
-                await finalizarTrack(grabandoId);
-                setGrabandoId(null);
+          {grabandoId ? (
+            <View style={styles.rutaBtns}>
+              <TouchableOpacity
+                style={[styles.layerChip, styles.layerChipActive]}
+                onPress={async () => {
+                  await setPausaTrack(grabandoId, !rutaPausada);
+                  setTracks(await obtenerTracks());
+                }}
+                accessibilityRole="button"
+                accessibilityLabel={rutaPausada ? "Reanudar ruta GPS" : "Pausar ruta GPS"}
+              >
+                <Text style={[styles.layerChipText, styles.layerChipTextActive]}>
+                  {rutaPausada ? "▶ Reanudar" : "❚❚ Pausar"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.layerChip, styles.layerChipActive]}
+                onPress={async () => {
+                  await finalizarTrack(grabandoId);
+                  setGrabandoId(null);
+                  setTracks(await obtenerTracks());
+                  Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Finalizar ruta GPS"
+              >
+                <Text style={[styles.layerChipText, styles.layerChipTextActive]}>■ Parar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[styles.layerChip, { alignSelf: "flex-start", marginRight: 0 }]}
+              onPress={async () => {
+                const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
+                setGrabandoId(t.id);
                 setTracks(await obtenerTracks());
-                Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
-                return;
-              }
-              const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
-              setGrabandoId(t.id);
-              setTracks(await obtenerTracks());
-              Alert.alert("Grabando ruta", "Se añaden puntos con tu GPS. Pulsa de nuevo para finalizar.");
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={grabandoId ? "Finalizar ruta GPS" : "Grabar ruta GPS"}
-          >
-            <Text style={[styles.layerChipText, grabandoId ? styles.layerChipTextActive : null]}>
-              {grabandoId ? "■ Parar ruta" : "● Grabar ruta"}
-            </Text>
-          </TouchableOpacity>
+                Alert.alert(
+                  "Grabando ruta",
+                  "Se añaden puntos con tu GPS. Puedes pausar o parar cuando quieras."
+                );
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Grabar ruta GPS"
+            >
+              <Text style={styles.layerChipText}>● Grabar ruta</Text>
+            </TouchableOpacity>
+          )}
         </View>
       ) : grabandoId ? (
-        <View style={{ paddingHorizontal: 12, paddingBottom: 6 }}>
+        <View style={[styles.rutaBtns, { paddingHorizontal: 12, paddingBottom: 6 }]}>
           <TouchableOpacity
-            style={[styles.layerChip, styles.layerChipActive, { alignSelf: "flex-start" }]}
+            style={[styles.layerChip, styles.layerChipActive]}
+            onPress={async () => {
+              await setPausaTrack(grabandoId, !rutaPausada);
+              setTracks(await obtenerTracks());
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={rutaPausada ? "Reanudar ruta GPS" : "Pausar ruta GPS"}
+          >
+            <Text style={[styles.layerChipText, styles.layerChipTextActive]}>
+              {rutaPausada ? "▶ Reanudar" : "❚❚ Pausar"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.layerChip, styles.layerChipActive]}
             onPress={async () => {
               await finalizarTrack(grabandoId);
               setGrabandoId(null);
               setTracks(await obtenerTracks());
               Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
             }}
+            accessibilityRole="button"
+            accessibilityLabel="Finalizar ruta GPS"
           >
-            <Text style={[styles.layerChipText, styles.layerChipTextActive]}>■ Parar ruta</Text>
+            <Text style={[styles.layerChipText, styles.layerChipTextActive]}>■ Parar</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -1299,6 +1341,7 @@ const styles = StyleSheet.create({
   layerChipMar: { backgroundColor: COLORS.waterLight, borderColor: COLORS.water },
   layerChipText: { ...TYPE.mapChip, color: COLORS.textSecondary },
   layerChipTextActive: { color: COLORS.primaryDark, fontWeight: "800" },
+  rutaBtns: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 4 },
   capasExtraPanel: {
     paddingHorizontal: 12,
     paddingTop: 4,
