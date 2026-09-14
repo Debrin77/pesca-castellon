@@ -23,7 +23,6 @@ import {
 } from "../services/weatherService";
 import { NOTA_MAREAS_CASTELLON } from "../data/normativaMaritima";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
-import { EJE_METEO } from "../data/ejesLegalMeteo";
 import { calcularSolunarDia, DiaSolunar } from "../services/solunarService";
 import { calcularMareaHoy, claveMareaProvincia, ResumenMarea } from "../services/tideService";
 import VentanasSolunarMarea from "../components/VentanasSolunarMarea";
@@ -202,7 +201,6 @@ export default function PrevisionScreen() {
 
   const dia = dias.find((d) => d.fecha === seleccion) ?? dias[0];
   const ind = dia ? indice.find((x) => x.fecha === dia.fecha) : undefined;
-  const cat = ind ? CATEGORIA_INFO[ind.categoria] : null;
   const tiempo = dia ? descripcionTiempo(dia.codigoTiempo) : null;
   const cielo = dia ? cieloDeCodigo(dia.codigoTiempo) : cieloDeCodigo(2);
   const alertas = dia
@@ -265,7 +263,7 @@ export default function PrevisionScreen() {
                   ? "También puedes tocar un tramo en el mapa."
                   : "Toca otro tramo en el mapa para cambiar el punto."
               }`
-            : "Cielo animado, hora a hora e índice de pesca según el día elegido."}
+            : "Cielo animado y previsión hora a hora según el día elegido."}
         </Text>
         {origen && origen.fuente !== "gps" ? (
           <TouchableOpacity
@@ -371,39 +369,6 @@ export default function PrevisionScreen() {
             })}
           </ScrollView>
 
-          {cat && ind ? (
-            <ListaAnimada replayKey={`idx-${dia.fecha}`} index={1}>
-              <View style={[styles.glassCard, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
-                <View style={styles.indexHead}>
-                  <Text style={styles.glassLabel}>{EJE_METEO.indexLabel}</Text>
-                <Text style={styles.glassHint}>No es permiso legal · clima, agua y luna</Text>
-                  <Text style={styles.glassStrong}>
-                    {ind.puntuacion} · {cat.texto}
-                  </Text>
-                  {ind.mejorFranjaInicio && ind.mejorFranjaFin ? (
-                    <Text style={styles.glassHint}>
-                      Mejor franja ~ {ind.mejorFranjaInicio}–{ind.mejorFranjaFin}
-                      {ind.tempAguaC != null
-                        ? ` · agua ${Math.round(ind.tempAguaC)}°${ind.fuenteTempAgua === "mar" ? " mar" : ""}`
-                        : ""}
-                    </Text>
-                  ) : null}
-                </View>
-                <View style={styles.meterTrack} accessibilityLabel={`Puntuación ${ind.puntuacion} de 100`}>
-                  <View
-                    style={[
-                      styles.meterFill,
-                      { width: `${ind.puntuacion}%`, backgroundColor: cat.fondo },
-                    ]}
-                  />
-                </View>
-                <Text style={styles.glassHint}>
-                  No es permiso legal. Orientativo (presión, temperatura, nubes, viento, lluvia y luna). No es un aviso oficial.
-                </Text>
-              </View>
-            </ListaAnimada>
-          ) : null}
-
           <VentanasSolunarMarea
             solunar={solunar}
             marea={marea}
@@ -491,20 +456,6 @@ export default function PrevisionScreen() {
               </ScrollView>
             </View>
           )}
-
-          {ind?.desglose?.length ? (
-            <View style={[styles.why, { backgroundColor: cielo.glass, borderColor: cielo.glassBorder }]}>
-              <Text style={styles.sectionTitle}>Por qué este índice</Text>
-              {ind.desglose.map((motivo, i) => (
-                <ListaAnimada key={i} index={i} replayKey={dia.fecha}>
-                  <View style={styles.whyRow}>
-                    <View style={styles.whyMark} />
-                    <Text style={styles.whyText}>{motivo}</Text>
-                  </View>
-                </ListaAnimada>
-              ))}
-            </View>
-          ) : null}
 
           {provincia.oleaje && oleaje.length > 0 ? (
             <View style={{ marginTop: 16 }}>
@@ -728,14 +679,6 @@ const styles = StyleSheet.create({
     minHeight: 30,
   },
   dot: { width: 10, height: 10, borderRadius: 5, marginTop: 6, borderWidth: 1.5 },
-  glassCard: {
-    borderRadius: RADIUS.lg,
-    padding: 16,
-    marginTop: 6,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-  },
-  indexHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   glassLabel: {
     fontSize: 12,
     fontWeight: "800",
@@ -743,15 +686,6 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: "#ffffff",
   },
-  glassStrong: { fontSize: 17, fontWeight: "800", color: glassText },
-  meterTrack: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "rgba(255,255,255,0.28)",
-    marginTop: 12,
-    overflow: "hidden",
-  },
-  meterFill: { height: "100%", borderRadius: 5 },
   glassHint: {
     fontSize: 13,
     color: "#ffffff",
@@ -805,16 +739,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     lineHeight: 16,
   },
-  why: {
-    marginTop: 16,
-    borderRadius: RADIUS.lg,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-  },
-  whyRow: { flexDirection: "row", gap: 12, marginBottom: 10, alignItems: "flex-start" },
-  whyMark: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#FFD60A", marginTop: 7 },
-  whyText: { flex: 1, fontSize: 15, color: glassText, lineHeight: 22, fontWeight: "700" },
   fuente: {
     fontSize: 13,
     color: "#ffffff",

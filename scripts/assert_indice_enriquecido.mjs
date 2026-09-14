@@ -48,8 +48,8 @@ if (!home.includes("mejorFranjaInicio") || !home.includes("pulsoFranja")) {
 }
 
 const prev = read("src/screens/PrevisionScreen.tsx");
-if (!prev.includes("tempAguaC") || !prev.includes("clima, agua y luna")) {
-  fail("PrevisionScreen debe mostrar agua/franja del índice enriquecido");
+if (prev.includes("Por qué este índice") || prev.includes("EJE_METEO.indexLabel")) {
+  fail("PrevisionScreen no debe mostrar el recuadro/desglose del índice");
 }
 
 const ejes = read("src/data/ejesLegalMeteo.ts");

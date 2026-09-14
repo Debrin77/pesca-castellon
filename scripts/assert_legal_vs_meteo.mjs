@@ -59,12 +59,14 @@ if (salgo.includes('["Ubicación", "Veredicto", "Checklist"]')) {
 }
 
 const prev = read("src/screens/PrevisionScreen.tsx");
-if (!prev.includes("EJE_METEO")) fail("PrevisionScreen sin EJE_METEO");
 if (prev.includes('eje="meteo"')) {
   fail("Previsión no debe mostrar la pregunta «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
 }
+if (prev.includes("CONDICIONES (CLIMA)") || prev.includes("Por qué este índice") || prev.includes("EJE_METEO.indexLabel")) {
+  fail("PrevisionScreen no debe mostrar el recuadro de índice/condiciones (batiburrillo)");
+}
 if (!prev.includes("no es permiso legal")) {
-  fail("PrevisionScreen debe aclarar que el índice no es permiso legal");
+  fail("PrevisionScreen debe aclarar (comentario/copy) que el índice no es permiso legal");
 }
 
 const pkg = read("package.json");
