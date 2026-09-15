@@ -53,6 +53,15 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 - Ventanas solunar / marea (costa) cuando aplica.
 - Alertas locales de buen día (solo app nativa, no web).
 
+### Embarcación / kayak (Castellón)
+- Ritual **Salgo en barco**: rampa → ¿Puedo? (legal) → ¿Pinta? (oleaje/viento) → checklist.
+- Capas Columbretes, rampas (Vinaròs→Moncofa), waypoints marinos y grabación de ruta GPS.
+- Catálogo de especies/aparejos de barco y enlace a **PescaREC**.
+- **Herramientas complementarias**: esta app no es plotter. Para navegar usa **Navionics**
+  (u otra carta / plotter) + consulta IHM; el bloque «día de la salida» está en el ritual
+  y en Consejos → Seguridad.
+- Caché offline del índice barco; el mapa offline calienta también costa y rampas.
+
 ### Capturas (diario íntimo)
 - Favoritos, puntos guardados y capturas con foto/GPS.
 - Cupos, filtro por ámbito, exportar **GPX** (compartir es una acción, no un feed).
@@ -124,6 +133,9 @@ src/
 - Identificación de especie por rasgos, no por foto con ML.
 - Sin tiendas App Store / Play todavía (Expo Go + PWA).
 - PescaREC es complemento obligatorio en marítimo estatal; aquí solo se enlaza.
+- Navegación: profundidad/ETA son orientativas; para zarpar lejos de costa complementa
+  con carta náutica (Navionics, plotter del barco o IHM). Esta app no sustituye al patrón.
+- Ritual de embarcación: solo Castellón (otras provincias cargadas son continentales).
 
 ## Próximos pasos alineados con el producto
 

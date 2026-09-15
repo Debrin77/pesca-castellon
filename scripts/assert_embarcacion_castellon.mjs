@@ -120,7 +120,44 @@ if (!/piePadBottom\s*=\s*1[5-9]\d\s*\+/.test(ritual) && !/piePadBottom\s*=\s*[2-
 if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
   fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
 }
-ok("ritual SalgoEnBarco (pasos exclusivos + CTA sobre tabs)");
+if (!ritual.includes("Herramientas complementarias") || !ritual.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO")) {
+  fail("SalgoEnBarco: falta bloque de herramientas complementarias (Navionics / día de la salida)");
+}
+if (!ritual.includes("guardarCacheOffline") || !ritual.includes("indiceBarco")) {
+  fail("SalgoEnBarco: falta caché offline del índice barco");
+}
+ok("ritual SalgoEnBarco (pasos exclusivos + CTA sobre tabs + complemento Navionics)");
+
+const normaExtra = read("src/data/normativaMaritima.ts");
+if (!normaExtra.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO") || !normaExtra.includes("urlNavionics")) {
+  fail("normativa sin HERRAMIENTAS_COMPLEMENTARIAS_BARCO / urlNavionics");
+}
+ok("herramientas complementarias");
+
+const consejos = read("src/data/consejos.ts");
+if (!consejos.includes("seg-herramientas-barco")) {
+  fail("consejos sin seg-herramientas-barco (día de la salida)");
+}
+ok("consejo día de la salida");
+
+const rampas = JSON.parse(read("src/data/rampasEmbarcacion.json"));
+if (!Array.isArray(rampas.rampas) || rampas.rampas.length < 8) {
+  fail("rampas embarcación: se esperan ≥8 (añadir Moncofa/sur Plana)");
+}
+if (!rampas.rampas.some((r) => r.id === "rampa_moncofa")) {
+  fail("falta rampa_moncofa");
+}
+ok("rampas embarcación (≥8 + Moncofa)");
+
+const offlineMap = read("src/services/offlineMapService.ts");
+if (!offlineMap.includes("regionCosta") || !offlineMap.includes("rampasEmbarcacion")) {
+  fail("offline mapa sin prefetch costa/rampas");
+}
+ok("offline mapa costa/rampas");
+
+const offline = read("src/services/offlineService.ts");
+if (!offline.includes("indiceBarco")) fail("offlineService sin indiceBarco");
+ok("offlineService indiceBarco");
 
 if (fallos) {
   console.error(`\n${fallos} fallos`);

@@ -15,6 +15,10 @@ export interface CacheOffline {
   actualizadoEn: string;
   clima?: any;
   indiceHoy?: any;
+  /** Último índice «Salgo en barco» (oleaje/viento) cacheado en el ritual. */
+  indiceBarco?: any;
+  /** Etiqueta de la última salida (rampa / GPS) asociada al índice barco. */
+  etiquetaBarco?: string | null;
   saih?: any;
   avisos?: any;
   ubicacion?: { lat: number; lng: number };
@@ -94,6 +98,9 @@ export function mensajeOfflineCorto(online: boolean, cache: CacheOffline | null)
       hour: "2-digit",
       minute: "2-digit",
     })})`;
+  }
+  if (cache?.indiceBarco) {
+    return "Sin red · índice de barco y normativa locales; clima se actualizará al reconectar";
   }
   return "Sin red · mapa y normativa locales disponibles; clima se actualizará al reconectar";
 }

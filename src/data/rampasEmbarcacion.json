@@ -56,6 +56,22 @@
       "lng": -0.068,
       "municipio": "Burriana",
       "nota": "Sur de la Plana. No pesques en el recinto portuario."
+    },
+    {
+      "id": "rampa_moncofa",
+      "nombre": "Puerto / Grau de Moncofa",
+      "lat": 39.791,
+      "lng": -0.147,
+      "municipio": "Moncofa",
+      "nota": "Salida sur Plana. Confirma acceso y normas del puerto; fuera de dársena."
+    },
+    {
+      "id": "rampa_nules",
+      "nombre": "Acceso náutico Nules (orientativo)",
+      "lat": 39.82,
+      "lng": -0.1,
+      "municipio": "Nules",
+      "nota": "Entre Burriana y Moncofa. Verifica rampa/varadero local; muchas salidas usan Burriana o Moncofa."
     }
   ]
 }
