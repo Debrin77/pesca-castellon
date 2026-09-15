@@ -39,7 +39,8 @@ interface Props {
 
 /**
  * Ritual «Salgo en barco» (Castellón): rampa → legal → índice marino → checklist.
- * Los CTA «Siguiente» van en un pie fijo por encima de la barra de tabs flotante.
+ * Los CTA van dentro del ScrollView (no pie fijo): un pie con holgura de tabs
+ * dejaba el contenido en una franja minúscula encima del botón.
  */
 export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
@@ -57,14 +58,9 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   /**
    * BarraTabsScroll es position:absolute (con fila «Desliza» puede superar ~120px).
-   * Reservamos holgura de toque para que «Siguiente» no quede pegado/tapado.
+   * Padding inferior del scroll para que los CTA no queden bajo las tabs.
    */
   const piePadBottom = 150 + Math.max(insets.bottom, 12);
-  /** Solo pasos 1–2: «Siguiente» en pie fijo. En checklist (paso 3) los CTA van
-   * dentro del scroll: un pie con 3 botones + 150px dejaba el checklist en una
-   * franja minúscula encima de «Ver aparejos». */
-  const tienePieCta = paso === 1 || paso === 2;
-  const scrollPadBottom = tienePieCta ? 24 : piePadBottom;
 
   function irAlPaso(n: number) {
     setPaso(n);
@@ -143,7 +139,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
-        contentContainerStyle={[styles.content, { paddingBottom: scrollPadBottom }]}
+        contentContainerStyle={[styles.content, { paddingBottom: piePadBottom }]}
         keyboardShouldPersistTaps="handled"
       >
         <LinearGradient colors={[...GRADIENTS.water]} style={styles.hero}>
@@ -206,6 +202,16 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
               ocultarSemaforo
             />
             {navTxt ? <Text style={styles.navTxt}>{navTxt}</Text> : null}
+            <View style={styles.ctaEnScroll}>
+              <PulsePress
+                onPress={() => irAlPaso(2)}
+                style={styles.btnPrimary}
+                accessibilityRole="button"
+                accessibilityLabel="Siguiente paso: meteo marina"
+              >
+                <Text style={styles.btnPrimaryTxt}>Siguiente · meteo marina</Text>
+              </PulsePress>
+            </View>
           </View>
         ) : null}
 
@@ -221,6 +227,19 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             {indice?.alertaSalida ? (
               <Text style={styles.alerta}>Con esta meteo el índice recomienda no salir. Tú decides.</Text>
             ) : null}
+            <View style={styles.ctaEnScroll}>
+              <PulsePress
+                onPress={() => irAlPaso(3)}
+                style={styles.btnPrimary}
+                accessibilityRole="button"
+                accessibilityLabel="Siguiente paso: checklist"
+              >
+                <Text style={styles.btnPrimaryTxt}>Siguiente · checklist</Text>
+              </PulsePress>
+              <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(1)}>
+                <Text style={styles.link}>← Volver a normativa</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : null}
 
@@ -252,7 +271,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
               <Text style={styles.link}>Reserva Columbretes (oficial)</Text>
             </TouchableOpacity>
 
-            <View style={styles.ctaChecklist}>
+            <View style={styles.ctaEnScroll}>
               <PulsePress
                 onPress={() => {
                   navigation.navigate("Aparejos", { especieId: "lubina", ambitoEmbarcacion: true });
@@ -311,36 +330,6 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           </View>
         ) : null}
       </ScrollView>
-
-      {paso === 1 && consulta ? (
-        <View style={[styles.ctaPie, { paddingBottom: piePadBottom }]} accessibilityRole="summary">
-          <TouchableOpacity
-            style={styles.btnSec}
-            onPress={() => irAlPaso(2)}
-            accessibilityRole="button"
-            accessibilityLabel="Siguiente paso: meteo marina"
-          >
-            <Text style={styles.btnSecTxt}>Siguiente · meteo marina</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
-      {paso === 2 ? (
-        <View style={[styles.ctaPie, { paddingBottom: piePadBottom }]}>
-          <TouchableOpacity
-            style={styles.btnSec}
-            onPress={() => irAlPaso(3)}
-            accessibilityRole="button"
-            accessibilityLabel="Siguiente paso: checklist"
-          >
-            <Text style={styles.btnSecTxt}>Siguiente · checklist</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(1)}>
-            <Text style={styles.link}>← Volver a normativa</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-
     </View>
   );
 }
@@ -376,15 +365,6 @@ const styles = StyleSheet.create({
   },
   rampaNombre: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.textPrimary },
   rampaNota: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-  /** Pie fijo: CTA siempre por encima de BarraTabsScroll. */
-  ctaPie: {
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.sm,
-    gap: 8,
-    backgroundColor: COLORS.background,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
-  },
   btnPrimary: {
     backgroundColor: COLORS.water,
     borderRadius: RADIUS.md,
@@ -408,8 +388,8 @@ const styles = StyleSheet.create({
   linkMapa: { paddingVertical: 8 },
   link: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.water, textAlign: "center" },
   linkIzq: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.water, marginTop: 4 },
-  /** CTAs del checklist dentro del scroll (no pie fijo). */
-  ctaChecklist: {
+  /** CTAs dentro del scroll (no pie fijo que encoja el contenido). */
+  ctaEnScroll: {
     marginTop: 4,
     gap: 8,
     paddingTop: 8,
