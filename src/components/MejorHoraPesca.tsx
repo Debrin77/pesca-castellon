@@ -1,7 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { HORARIO_LEGAL_PESCA } from "../data/normativa2026";
-import { HORARIO_LEGAL_ORILLA_MAR } from "../data/normativaMaritima";
+import {
+  HORARIO_LEGAL_ORILLA_MAR,
+  HORARIO_LEGAL_EMBARCACION_MAR,
+} from "../data/normativaMaritima";
 import { HORARIO_ORIENTATIVO_ANDALUCIA } from "../provincias/sevilla/normativa";
 import { HORARIO_LEGAL_CLM } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -22,8 +25,8 @@ type EspecieHora = {
 
 type Props = {
   especie: EspecieHora;
-  /** Si es costa, no mostrar el horario continental (±1 h). */
-  ambito?: "continental" | "maritimo";
+  /** Continental ±1 h · orilla mar · embarcación (no reutilizar texto de orilla). */
+  ambito?: "continental" | "maritimo" | "embarcacion";
 };
 
 export default function MejorHoraPesca({ especie, ambito = "continental" }: Props) {
@@ -32,13 +35,15 @@ export default function MejorHoraPesca({ especie, ambito = "continental" }: Prop
 
   const id = getProvinciaActiva().id;
   const horarioLegal =
-    ambito === "maritimo"
-      ? HORARIO_LEGAL_ORILLA_MAR
-      : esProvinciaAndalucia(id)
-        ? HORARIO_ORIENTATIVO_ANDALUCIA
-        : esProvinciaCastillaLaMancha(id)
-          ? HORARIO_LEGAL_CLM
-          : HORARIO_LEGAL_PESCA;
+    ambito === "embarcacion"
+      ? HORARIO_LEGAL_EMBARCACION_MAR
+      : ambito === "maritimo"
+        ? HORARIO_LEGAL_ORILLA_MAR
+        : esProvinciaAndalucia(id)
+          ? HORARIO_ORIENTATIVO_ANDALUCIA
+          : esProvinciaCastillaLaMancha(id)
+            ? HORARIO_LEGAL_CLM
+            : HORARIO_LEGAL_PESCA;
 
   return (
     <View

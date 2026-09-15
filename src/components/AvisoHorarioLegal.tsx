@@ -51,7 +51,7 @@ export default function AvisoHorarioLegal({
     };
   }, [ambito, lat, lng, provinciaId]);
 
-  const mar = ambito === "maritimo";
+  const mar = ambito === "maritimo" || ambito === "embarcacion";
   const acento = mar ? COLORS.waterDark : COLORS.primaryDark;
   const fondo = mar ? COLORS.waterLight : COLORS.primaryLight;
 

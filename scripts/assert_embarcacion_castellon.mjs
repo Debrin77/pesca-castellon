@@ -101,9 +101,24 @@ if (!nav.includes("estimarProfundidadMarCastellon") || !nav.includes("etaAPuerto
 }
 ok("navegacionEmbarcacionService");
 
+const embSvc = read("src/services/consultaEmbarcacionService.ts");
+if (!embSvc.includes('modalidadMar: "embarcacion"')) {
+  fail("consultaEmbarcacion debe marcar modalidadMar embarcacion (evita horario de orilla)");
+}
+ok("consultaEmbarcacion modalidadMar");
+
+const costaSvc = read("src/services/consultaCostaService.ts");
+if (!costaSvc.includes('modalidadMar: "orilla"')) {
+  fail("consultaCosta debe marcar modalidadMar orilla");
+}
+ok("consultaCosta modalidadMar");
+
 const ritual = read("src/screens/SalgoEnBarcoScreen.tsx");
 if (!ritual.includes("CHECKLIST_EMBARCACION") || !ritual.includes("calcularIndiceBarco")) {
   fail("ritual SalgoEnBarco incompleto");
+}
+if (!ritual.includes("ConsultaPescaCard")) {
+  fail("SalgoEnBarco debe mostrar ConsultaPescaCard (con horario de embarcación vía modalidadMar)");
 }
 if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard") && !ritual.includes("ocultarSemaforo")) {
   fail("SalgoEnBarco: si muestra SemaforoVeredicto y ConsultaPescaCard, el card debe ir con ocultarSemaforo");

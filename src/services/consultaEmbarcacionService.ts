@@ -55,14 +55,26 @@ function buscaZona(lat: number, lng: number, zonas: ZonaCosta[]): ZonaCosta | nu
 
 function baseMar(): Pick<
   ConsultaPesca,
-  "tramo" | "fuenteGeometria" | "confianza" | "ambito" | "fuenteNormativaDetalle"
+  | "tramo"
+  | "fuenteGeometria"
+  | "confianza"
+  | "ambito"
+  | "modalidadMar"
+  | "fuenteNormativaDetalle"
 > {
   return {
     tramo: null,
     fuenteGeometria: "ninguna",
     confianza: "aproximada",
     ambito: "maritimo",
-    fuenteNormativaDetalle: fuenteDetalleConsulta("maritimo"),
+    modalidadMar: "embarcacion",
+    fuenteNormativaDetalle: {
+      titulo: "Pesca marítima recreativa desde embarcación (RD 347/2011 + reservas)",
+      vigenciaNota:
+        "Modalidad embarcación/kayak — no uses el horario ni el semáforo de caña desde tierra. Verifica BOE, Columbretes y PescaREC.",
+      urlOrden: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
+      consultadoEn: new Date().toISOString().slice(0, 10),
+    },
   };
 }
 
