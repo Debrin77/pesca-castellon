@@ -18,9 +18,12 @@ export const FUENTE_EMBARCACION = {
   /** Carta náutica comercial (Garmin). Complemento de navegación; no es oficial IHM. */
   urlNavionics:
     "https://www.garmin.com/es-ES/p/136701",
-  /** Instituto Hidrográfico de la Marina — cartografía oficial de consulta. */
-  urlIhm:
-    "https://www.armada.mde.es/ArmadaPortal/page/Portal/ArmadaEspannola/cienciaihm1/prefLang-es/",
+  /**
+   * Instituto Hidrográfico de la Marina — cartografía oficial de consulta.
+   * Portal IdeIHM en HTTPS (evita el aviso «No seguro» de Safari en iPhone
+   * que provocaba el enlace antiguo del portal de la Armada).
+   */
+  urlIhm: "https://ideihm.covam.es/portal/",
 };
 
 /**
@@ -61,8 +64,8 @@ export const HERRAMIENTAS_COMPLEMENTARIAS_BARCO: {
     nombre: "Carta IHM (consulta)",
     rol: "Cartografía oficial de referencia",
     paraQue:
-      "Instituto Hidrográfico de la Marina. Consulta en tierra; no uses capturas de pantalla como única carta a bordo.",
-    url: "https://www.armada.mde.es/ArmadaPortal/page/Portal/ArmadaEspannola/cienciaihm1/prefLang-es/",
+      "Instituto Hidrográfico de la Marina (IdeIHM). Consulta en tierra; no uses capturas de pantalla como única carta a bordo.",
+    url: FUENTE_EMBARCACION.urlIhm,
   },
 ];
 
