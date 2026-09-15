@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Pesca Castellón",
+    "name": "Pesca",
     "slug": "pesca-castellon",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -34,8 +34,8 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "name": "Pesca Castellón",
-      "shortName": "Pesca CS",
+      "name": "Pesca",
+      "shortName": "Pesca",
       "themeColor": "#1b5e3f",
       "backgroundColor": "#f4f7f5",
       "lang": "es"

@@ -127,7 +127,19 @@ export default function HomeScreen({ navigation }: Props) {
   const [mostrarAprende, setMostrarAprende] = useState(false);
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: provincia.nombreApp });
+    navigation.setOptions({
+      title: provincia.nombreApp,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Ajustes")}
+          style={{ paddingHorizontal: 12, paddingVertical: 6 }}
+          accessibilityRole="button"
+          accessibilityLabel="Ajustes"
+        >
+          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>Ajustes</Text>
+        </TouchableOpacity>
+      ),
+    });
   }, [navigation, provincia.nombreApp]);
 
   const coordsFavorito = useCallback(
