@@ -126,11 +126,19 @@ if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard
 if (/paso\s*>=\s*[123]/.test(ritual)) {
   fail("SalgoEnBarco: no acumular pasos (usar paso === n); el CTA Siguiente quedaba tapado por las tabs");
 }
-if (!ritual.includes("ctaPie") || !ritual.includes("piePadBottom")) {
-  fail("SalgoEnBarco: falta pie CTA (ctaPie/piePadBottom) por encima de la barra de tabs");
+if (!ritual.includes("ctaPie") || !ritual.includes("tabsHueco")) {
+  fail("SalgoEnBarco: falta pie CTA (ctaPie/tabsHueco) anclado encima de la barra de tabs");
 }
-if (!/piePadBottom\s*=\s*1[5-9]\d\s*\+/.test(ritual) && !/piePadBottom\s*=\s*[2-9]\d{2}\s*\+/.test(ritual)) {
-  fail("SalgoEnBarco: piePadBottom debe ser ≥150 + safe area (tabs flotantes con «Desliza»)");
+if (!/position:\s*[\"']absolute[\"']/.test(ritual) || !/bottom:\s*tabsHueco/.test(ritual)) {
+  fail("SalgoEnBarco: ctaPie debe ser absolute con bottom: tabsHueco (CTA bajo, no a media pantalla)");
+}
+if (!/tabsHueco\s*=\s*1\d{2}\s*\+/.test(ritual)) {
+  fail("SalgoEnBarco: tabsHueco debe reservar ~100px + safe area para BarraTabsScroll");
+}
+const iVolverPaso3 = ritual.indexOf("← Volver a normativa");
+const iSiguienteChecklist = ritual.indexOf("Siguiente · checklist");
+if (iVolverPaso3 < 0 || iSiguienteChecklist < 0 || iVolverPaso3 > iSiguienteChecklist) {
+  fail("SalgoEnBarco: en el punto 3, «Siguiente · checklist» debe ir debajo de «Volver» (más bajo)");
 }
 if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
   fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
