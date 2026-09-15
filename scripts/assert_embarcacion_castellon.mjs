@@ -146,6 +146,12 @@ if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente
 if (!ritual.includes("Herramientas complementarias") || !ritual.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO")) {
   fail("SalgoEnBarco: falta bloque de herramientas complementarias (Navionics / día de la salida)");
 }
+if (!ritual.includes("ctaChecklist") || !ritual.includes("Ver aparejos de embarcación")) {
+  fail("SalgoEnBarco: CTAs del checklist deben ir en scroll (ctaChecklist), no en pie fijo");
+}
+if (/tienePieCta\s*=\s*paso\s*===\s*1\s*\|\|\s*paso\s*===\s*2\s*\|\|\s*paso\s*===\s*3/.test(ritual)) {
+  fail("SalgoEnBarco: paso 3 no debe usar pie fijo (deja el checklist en una franja minúscula)");
+}
 if (!ritual.includes("guardarCacheOffline") || !ritual.includes("indiceBarco")) {
   fail("SalgoEnBarco: falta caché offline del índice barco");
 }
@@ -154,6 +160,12 @@ ok("ritual SalgoEnBarco (pasos exclusivos + CTA sobre tabs + complemento Navioni
 const normaExtra = read("src/data/normativaMaritima.ts");
 if (!normaExtra.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO") || !normaExtra.includes("urlNavionics")) {
   fail("normativa sin HERRAMIENTAS_COMPLEMENTARIAS_BARCO / urlNavionics");
+}
+if (!normaExtra.includes("urlIhm") || !normaExtra.includes("https://ideihm.covam.es/portal/")) {
+  fail("urlIhm debe apuntar a IdeIHM HTTPS (ideihm.covam.es), no al portal armada que cae a HTTP");
+}
+if (/https?:\/\/[^"'`\s]*armada\.(mde\.es|defensa\.gob\.es)/i.test(normaExtra)) {
+  fail("normativa no debe enlazar el portal Armada (HTTP / aviso Safari iPhone); usar IdeIHM");
 }
 ok("herramientas complementarias");
 

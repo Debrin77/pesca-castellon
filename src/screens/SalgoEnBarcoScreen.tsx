@@ -39,7 +39,8 @@ interface Props {
 
 /**
  * Ritual «Salgo en barco» (Castellón): rampa → legal → índice marino → checklist.
- * Los CTA «Siguiente» van en un pie fijo por encima de la barra de tabs flotante.
+ * Los CTA «Siguiente» (pasos 1–2) van en pie absoluto sobre las tabs; en checklist
+ * los CTA van dentro del scroll para no aplastar la lista.
  */
 export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
@@ -57,13 +58,15 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   /**
    * BarraTabsScroll es absolute (bottom:8 + iconos ~72 + «Desliza» + safe area).
-   * El pie CTA también es absolute y se ancla con `bottom: tabsHueco` para que
+   * Pie CTA absoluto anclado con `bottom: tabsHueco` solo en pasos 1–2, para que
    * «Siguiente» quede justo encima de las tabs (no flotando a media pantalla).
+   * En checklist (paso 3) los CTA van en scroll (`ctaChecklist`): un pie fijo
+   * con 3 botones dejaba el checklist en una franja minúscula.
    */
   const tabsHueco = 100 + Math.max(insets.bottom, 8);
-  const tienePieCta = paso === 1 || paso === 2 || paso === 3;
+  const tienePieCta = paso === 1 || paso === 2;
   /** Alto aproximado del bloque de botones del pie (sin contar tabsHueco). */
-  const altoPieCta = paso === 1 ? 64 : paso === 2 ? 104 : paso === 3 ? 168 : 0;
+  const altoPieCta = paso === 1 ? 64 : paso === 2 ? 104 : 0;
   const scrollPadBottom = tienePieCta ? altoPieCta + tabsHueco + 16 : tabsHueco + 16;
 
   function irAlPaso(n: number) {
@@ -252,6 +255,28 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
               <Text style={styles.link}>Reserva Columbretes (oficial)</Text>
             </TouchableOpacity>
 
+            <View style={styles.ctaChecklist}>
+              <PulsePress
+                onPress={() => {
+                  navigation.navigate("Aparejos", { especieId: "lubina", ambitoEmbarcacion: true });
+                }}
+                style={styles.btnPrimary}
+              >
+                <Text style={styles.btnPrimaryTxt}>Ver aparejos de embarcación</Text>
+              </PulsePress>
+              <TouchableOpacity
+                style={styles.btnSec}
+                onPress={() => irAlPaso(0)}
+                accessibilityRole="button"
+                accessibilityLabel="Elegir otra salida"
+              >
+                <Text style={styles.btnSecTxt}>Elegir otra salida</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(2)}>
+                <Text style={styles.link}>← Volver a meteo</Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.complementoBox}>
               <Text style={styles.bloqueTitulo}>Herramientas complementarias</Text>
               <Text style={styles.bloqueSub}>
@@ -316,30 +341,6 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           >
             <Text style={styles.btnSecTxt}>Siguiente · checklist</Text>
           </TouchableOpacity>
-        </View>
-      ) : null}
-
-      {paso === 3 ? (
-        <View style={[styles.ctaPie, { bottom: tabsHueco }]}>
-          <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(2)}>
-            <Text style={styles.link}>← Volver a meteo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btnSec}
-            onPress={() => irAlPaso(0)}
-            accessibilityRole="button"
-            accessibilityLabel="Elegir otra salida"
-          >
-            <Text style={styles.btnSecTxt}>Elegir otra salida</Text>
-          </TouchableOpacity>
-          <PulsePress
-            onPress={() => {
-              navigation.navigate("Aparejos", { especieId: "lubina", ambitoEmbarcacion: true });
-            }}
-            style={styles.btnPrimary}
-          >
-            <Text style={styles.btnPrimaryTxt}>Ver aparejos de embarcación</Text>
-          </PulsePress>
         </View>
       ) : null}
     </View>
@@ -414,6 +415,14 @@ const styles = StyleSheet.create({
   linkMapa: { paddingVertical: 8 },
   link: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.water, textAlign: "center" },
   linkIzq: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.water, marginTop: 4 },
+  /** CTAs del checklist dentro del scroll (no pie fijo). */
+  ctaChecklist: {
+    marginTop: 4,
+    gap: 8,
+    paddingTop: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+  },
   complementoBox: {
     marginTop: 8,
     paddingTop: 12,
