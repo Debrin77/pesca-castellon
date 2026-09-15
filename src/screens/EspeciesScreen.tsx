@@ -12,7 +12,7 @@ import {
   tramoUsaRadioAnexo,
   TramoOficial,
 } from "../services/consultaPescaService";
-import { consultarToqueMapa, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
+import { consultarToqueMapa, consultarCosta, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
@@ -314,10 +314,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   }
 
   function evaluarPunto(lat: number, lng: number) {
-    const r = consultarToqueMapa(lat, lng);
+    // En Costa (orilla): no inventar un río/coto si el toque es mar adentro.
+    const r = costa ? consultarCosta(lat, lng) : consultarToqueMapa(lat, lng);
     setConsulta(r);
     setMarcador({ latitude: lat, longitude: lng });
-    if (!soloContinental && r.ambito === "maritimo") {
+    if (!soloContinental && (costa || r.ambito === "maritimo")) {
       setModo("costa");
       setCatalogo("mar");
     } else {

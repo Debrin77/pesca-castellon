@@ -403,6 +403,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
       return;
     }
+    // En Costa (orilla): no caer al tramo continental si el toque es mar adentro.
+    if (mar) {
+      const r = consultarCosta(lat, lng);
+      setModo("costa");
+      setCamara({ latitude: lat, longitude: lng, zoom: 14, nonce: Date.now() });
+      setInfoNavegacion(null);
+      mostrarFicha(r);
+      setMarcador({ latitude: lat, longitude: lng });
+      void fijarPunto({ lat, lng, fuente: "mapa", etiqueta: r.titulo });
+      return;
+    }
     const r = consultarToqueMapa(lat, lng);
     if (!soloContinental && r.ambito === "maritimo") {
       setModo("costa");
