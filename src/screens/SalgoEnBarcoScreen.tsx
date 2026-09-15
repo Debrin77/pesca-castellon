@@ -60,7 +60,10 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
    * Reservamos holgura de toque para que «Siguiente» no quede pegado/tapado.
    */
   const piePadBottom = 150 + Math.max(insets.bottom, 12);
-  const tienePieCta = paso === 1 || paso === 2 || paso === 3;
+  /** Solo pasos 1–2: «Siguiente» en pie fijo. En checklist (paso 3) los CTA van
+   * dentro del scroll: un pie con 3 botones + 150px dejaba el checklist en una
+   * franja minúscula encima de «Ver aparejos». */
+  const tienePieCta = paso === 1 || paso === 2;
   const scrollPadBottom = tienePieCta ? 24 : piePadBottom;
 
   function irAlPaso(n: number) {
@@ -249,6 +252,28 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
               <Text style={styles.link}>Reserva Columbretes (oficial)</Text>
             </TouchableOpacity>
 
+            <View style={styles.ctaChecklist}>
+              <PulsePress
+                onPress={() => {
+                  navigation.navigate("Aparejos", { especieId: "lubina", ambitoEmbarcacion: true });
+                }}
+                style={styles.btnPrimary}
+              >
+                <Text style={styles.btnPrimaryTxt}>Ver aparejos de embarcación</Text>
+              </PulsePress>
+              <TouchableOpacity
+                style={styles.btnSec}
+                onPress={() => irAlPaso(0)}
+                accessibilityRole="button"
+                accessibilityLabel="Elegir otra salida"
+              >
+                <Text style={styles.btnSecTxt}>Elegir otra salida</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(2)}>
+                <Text style={styles.link}>← Volver a meteo</Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.complementoBox}>
               <Text style={styles.bloqueTitulo}>Herramientas complementarias</Text>
               <Text style={styles.bloqueSub}>
@@ -316,29 +341,6 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
         </View>
       ) : null}
 
-      {paso === 3 ? (
-        <View style={[styles.ctaPie, { paddingBottom: piePadBottom }]}>
-          <PulsePress
-            onPress={() => {
-              navigation.navigate("Aparejos", { especieId: "lubina", ambitoEmbarcacion: true });
-            }}
-            style={styles.btnPrimary}
-          >
-            <Text style={styles.btnPrimaryTxt}>Ver aparejos de embarcación</Text>
-          </PulsePress>
-          <TouchableOpacity
-            style={styles.btnSec}
-            onPress={() => irAlPaso(0)}
-            accessibilityRole="button"
-            accessibilityLabel="Elegir otra salida"
-          >
-            <Text style={styles.btnSecTxt}>Elegir otra salida</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(2)}>
-            <Text style={styles.link}>← Volver a meteo</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -406,6 +408,14 @@ const styles = StyleSheet.create({
   linkMapa: { paddingVertical: 8 },
   link: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.water, textAlign: "center" },
   linkIzq: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.water, marginTop: 4 },
+  /** CTAs del checklist dentro del scroll (no pie fijo). */
+  ctaChecklist: {
+    marginTop: 4,
+    gap: 8,
+    paddingTop: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+  },
   complementoBox: {
     marginTop: 8,
     paddingTop: 12,
