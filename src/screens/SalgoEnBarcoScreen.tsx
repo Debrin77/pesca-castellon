@@ -39,7 +39,8 @@ interface Props {
 
 /**
  * Ritual «Salgo en barco» (Castellón): rampa → legal → índice marino → checklist.
- * Los CTA «Siguiente» van en un pie fijo por encima de la barra de tabs flotante.
+ * Los CTA «Siguiente» (pasos 1–2) van en pie absoluto sobre las tabs; en checklist
+ * los CTA van dentro del scroll para no aplastar la lista.
  */
 export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
@@ -56,15 +57,17 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const scrollRef = useRef<ScrollView>(null);
   const insets = useSafeAreaInsets();
   /**
-   * BarraTabsScroll es position:absolute (con fila «Desliza» puede superar ~120px).
-   * Reservamos holgura de toque para que «Siguiente» no quede pegado/tapado.
+   * BarraTabsScroll es absolute (bottom:8 + iconos ~72 + «Desliza» + safe area).
+   * Pie CTA absoluto anclado con `bottom: tabsHueco` solo en pasos 1–2, para que
+   * «Siguiente» quede justo encima de las tabs (no flotando a media pantalla).
+   * En checklist (paso 3) los CTA van en scroll (`ctaChecklist`): un pie fijo
+   * con 3 botones dejaba el checklist en una franja minúscula.
    */
-  const piePadBottom = 150 + Math.max(insets.bottom, 12);
-  /** Solo pasos 1–2: «Siguiente» en pie fijo. En checklist (paso 3) los CTA van
-   * dentro del scroll: un pie con 3 botones + 150px dejaba el checklist en una
-   * franja minúscula encima de «Ver aparejos». */
+  const tabsHueco = 100 + Math.max(insets.bottom, 8);
   const tienePieCta = paso === 1 || paso === 2;
-  const scrollPadBottom = tienePieCta ? 24 : piePadBottom;
+  /** Alto aproximado del bloque de botones del pie (sin contar tabsHueco). */
+  const altoPieCta = paso === 1 ? 64 : paso === 2 ? 104 : 0;
+  const scrollPadBottom = tienePieCta ? altoPieCta + tabsHueco + 16 : tabsHueco + 16;
 
   function irAlPaso(n: number) {
     setPaso(n);
@@ -313,7 +316,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
       </ScrollView>
 
       {paso === 1 && consulta ? (
-        <View style={[styles.ctaPie, { paddingBottom: piePadBottom }]} accessibilityRole="summary">
+        <View style={[styles.ctaPie, { bottom: tabsHueco }]} accessibilityRole="summary">
           <TouchableOpacity
             style={styles.btnSec}
             onPress={() => irAlPaso(2)}
@@ -326,7 +329,10 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
       ) : null}
 
       {paso === 2 ? (
-        <View style={[styles.ctaPie, { paddingBottom: piePadBottom }]}>
+        <View style={[styles.ctaPie, { bottom: tabsHueco }]}>
+          <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(1)}>
+            <Text style={styles.link}>← Volver a normativa</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.btnSec}
             onPress={() => irAlPaso(3)}
@@ -335,12 +341,8 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           >
             <Text style={styles.btnSecTxt}>Siguiente · checklist</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.linkMapa} onPress={() => irAlPaso(1)}>
-            <Text style={styles.link}>← Volver a normativa</Text>
-          </TouchableOpacity>
         </View>
       ) : null}
-
     </View>
   );
 }
@@ -376,10 +378,15 @@ const styles = StyleSheet.create({
   },
   rampaNombre: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.textPrimary },
   rampaNota: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
-  /** Pie fijo: CTA siempre por encima de BarraTabsScroll. */
+  /** Pie absoluto: anclado con bottom=tabsHueco, justo encima de BarraTabsScroll. */
   ctaPie: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 40,
     paddingHorizontal: SPACING.md,
     paddingTop: SPACING.sm,
+    paddingBottom: SPACING.sm,
     gap: 8,
     backgroundColor: COLORS.background,
     borderTopWidth: StyleSheet.hairlineWidth,
