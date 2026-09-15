@@ -126,28 +126,34 @@ if (ritual.includes("<SemaforoVeredicto") && ritual.includes("<ConsultaPescaCard
 if (/paso\s*>=\s*[123]/.test(ritual)) {
   fail("SalgoEnBarco: no acumular pasos (usar paso === n); el CTA Siguiente quedaba tapado por las tabs");
 }
-if (!ritual.includes("ctaPie") || !ritual.includes("piePadBottom")) {
-  fail("SalgoEnBarco: falta pie CTA (ctaPie/piePadBottom) por encima de la barra de tabs");
+if (!ritual.includes("piePadBottom")) {
+  fail("SalgoEnBarco: falta piePadBottom para holgura bajo las tabs flotantes");
 }
 if (!/piePadBottom\s*=\s*1[5-9]\d\s*\+/.test(ritual) && !/piePadBottom\s*=\s*[2-9]\d{2}\s*\+/.test(ritual)) {
   fail("SalgoEnBarco: piePadBottom debe ser ≥150 + safe area (tabs flotantes con «Desliza»)");
 }
+if (ritual.includes("ctaPie") || ritual.includes("tienePieCta")) {
+  fail("SalgoEnBarco: no usar pie fijo (ctaPie/tienePieCta); los CTA van en scroll (ctaEnScroll)");
+}
+if (!ritual.includes("ctaEnScroll")) {
+  fail("SalgoEnBarco: CTAs deben ir en scroll (ctaEnScroll)");
+}
 if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
   fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
+}
+if (!ritual.includes("PulsePress") || !ritual.includes("Siguiente · checklist")) {
+  fail("SalgoEnBarco: Siguiente · checklist debe usar PulsePress dentro del scroll");
 }
 if (!ritual.includes("Herramientas complementarias") || !ritual.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO")) {
   fail("SalgoEnBarco: falta bloque de herramientas complementarias (Navionics / día de la salida)");
 }
-if (!ritual.includes("ctaChecklist") || !ritual.includes("Ver aparejos de embarcación")) {
-  fail("SalgoEnBarco: CTAs del checklist deben ir en scroll (ctaChecklist), no en pie fijo");
-}
-if (/tienePieCta\s*=\s*paso\s*===\s*1\s*\|\|\s*paso\s*===\s*2\s*\|\|\s*paso\s*===\s*3/.test(ritual)) {
-  fail("SalgoEnBarco: paso 3 no debe usar pie fijo (deja el checklist en una franja minúscula)");
+if (!ritual.includes("Ver aparejos de embarcación")) {
+  fail("SalgoEnBarco: falta CTA Ver aparejos de embarcación");
 }
 if (!ritual.includes("guardarCacheOffline") || !ritual.includes("indiceBarco")) {
   fail("SalgoEnBarco: falta caché offline del índice barco");
 }
-ok("ritual SalgoEnBarco (pasos exclusivos + CTA sobre tabs + complemento Navionics)");
+ok("ritual SalgoEnBarco (pasos exclusivos + CTA en scroll + complemento Navionics)");
 
 const normaExtra = read("src/data/normativaMaritima.ts");
 if (!normaExtra.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO") || !normaExtra.includes("urlNavionics")) {
