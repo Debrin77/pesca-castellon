@@ -108,6 +108,13 @@ export const CHECKLIST_EMBARCACION = [
 export const HORARIO_LEGAL_ORILLA_MAR =
   "Caña desde tierra: sin veda nocturna general en Dec. 41/2013 / RD 347/2011. La prohibición de noche (ocaso→orto) aplica a la pesca submarina. Revisa bando municipal y acceso a playa.";
 
+/**
+ * Embarcación / kayak: no reutilizar el texto de «caña desde tierra».
+ * Luz solar = seguridad y plan de regreso; no es el semáforo de orilla.
+ */
+export const HORARIO_LEGAL_EMBARCACION_MAR =
+  "Embarcación / kayak: el RD 347/2011 no fija veda nocturna general de caña a bordo (la prohibición ocaso→orto es de la modalidad submarina). Prioriza luz de día por seguridad y ETA al puerto. Bandos del puerto, Columbretes y el patrón mandan.";
+
 /** Submarina (no cubierta por la app, pero evita confusiones). */
 export const HORARIO_SUBMARINA_CV =
   "Pesca submarina: prohibida de noche, desde el ocaso al orto (Dec. 41/2013 art. 13 / RD 347/2011).";

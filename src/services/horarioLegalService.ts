@@ -2,10 +2,12 @@
  * Franjas horarias legales / de luz según ámbito.
  * Continental CV / Andalucía: 1 h antes del orto → 1 h después del ocaso.
  * Costa caña desde tierra (CV): sin veda nocturna general; orto/ocaso como referencia de luz.
+ * Embarcación / kayak: luz solar orienta seguridad/regreso — no reutilizar el texto de orilla.
  * Submarina: ocaso → orto prohibido (no cubierta por la app).
  */
 import {
   HORARIO_LEGAL_ORILLA_MAR,
+  HORARIO_LEGAL_EMBARCACION_MAR,
   HORARIO_SUBMARINA_CV,
 } from "../data/normativaMaritima";
 import { HORARIO_LEGAL_PESCA } from "../data/normativa2026";
@@ -15,7 +17,7 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
 import { GRAO_CASTELLON, OrtoOcasoDia, obtenerOrtoOcaso } from "./weatherService";
 
-export type AmbitoHorario = "continental" | "maritimo";
+export type AmbitoHorario = "continental" | "maritimo" | "embarcacion";
 
 export type EstadoFranja = "dentro" | "fuera" | "luz_dia" | "noche" | "sin_datos";
 
@@ -84,9 +86,10 @@ export function construirAvisoHorario(args: {
   const disclaimer =
     "Orientativo (orto/ocaso Open-Meteo). No sustituye BOE, DOGV ni bandos municipales.";
 
-  if (args.ambito === "maritimo") {
+  if (args.ambito === "maritimo" || args.ambito === "embarcacion") {
     const ortoTxt = args.ortoOcaso?.ortoTxt ?? null;
     const ocasoTxt = args.ortoOcaso?.ocasoTxt ?? null;
+    const embarcacion = args.ambito === "embarcacion";
     let estado: EstadoFranja = "sin_datos";
     let estadoTxt = "Sin datos de sol ahora.";
     if (args.ortoOcaso) {
@@ -94,20 +97,30 @@ export function construirAvisoHorario(args: {
       const ocaso = parseIsoLocal(args.ortoOcaso.ocasoIso);
       const deDia = ahora.getTime() >= orto.getTime() && ahora.getTime() <= ocaso.getTime();
       estado = deDia ? "luz_dia" : "noche";
-      estadoTxt = deDia
-        ? "Ahora hay luz solar (referencia, no semáforo legal de caña)."
-        : "Ahora es de noche astronómica (luz). En caña desde tierra no hay veda nocturna general.";
+      estadoTxt = embarcacion
+        ? deDia
+          ? "Ahora hay luz solar (referencia de seguridad para zarpar / volver)."
+          : "Ahora es de noche astronómica. En barco prioriza no zarpar sin plan de luz y regreso."
+        : deDia
+          ? "Ahora hay luz solar (referencia, no semáforo legal de caña)."
+          : "Ahora es de noche astronómica (luz). En caña desde tierra no hay veda nocturna general.";
     }
     return {
-      ambito: "maritimo",
-      titulo: "Horario · costa (caña desde tierra)",
+      ambito: args.ambito,
+      titulo: embarcacion
+        ? "Horario · embarcación / kayak"
+        : "Horario · costa (caña desde tierra)",
       franjaTxt:
         ortoTxt && ocasoTxt
-          ? `Hoy luz solar: orto ${ortoTxt} → ocaso ${ocasoTxt}`
+          ? embarcacion
+            ? `Hoy luz solar (seguridad): orto ${ortoTxt} → ocaso ${ocasoTxt}`
+            : `Hoy luz solar: orto ${ortoTxt} → ocaso ${ocasoTxt}`
           : "Hoy: orto/ocaso no disponibles (sin red o caché).",
       estado,
       estadoTxt,
-      normaTxt: `${HORARIO_LEGAL_ORILLA_MAR} ${HORARIO_SUBMARINA_CV}`,
+      normaTxt: embarcacion
+        ? `${HORARIO_LEGAL_EMBARCACION_MAR} ${HORARIO_SUBMARINA_CV}`
+        : `${HORARIO_LEGAL_ORILLA_MAR} ${HORARIO_SUBMARINA_CV}`,
       disclaimer,
       ortoTxt,
       ocasoTxt,
@@ -168,7 +181,7 @@ export async function obtenerAvisoHorarioLegal(args: {
 }): Promise<AvisoHorarioLegal> {
   const provincia = getProvinciaActiva();
   const fallback =
-    args.ambito === "maritimo"
+    args.ambito === "maritimo" || args.ambito === "embarcacion"
       ? GRAO_CASTELLON
       : { lat: provincia.regionMapa.latitude, lng: provincia.regionMapa.longitude };
   const lat = args.lat ?? fallback.lat;

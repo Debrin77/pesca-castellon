@@ -83,12 +83,21 @@ export function esFranjaCosteraCastellon(lat: number, lng: number): boolean {
 
 const COLORES = { libre: SEMAFORO.si, vedado: SEMAFORO.no, fuera: SEMAFORO.neutro };
 
-function baseMar(): Pick<ConsultaPesca, "tramo" | "fuenteGeometria" | "confianza" | "ambito" | "fuenteNormativaDetalle"> {
+function baseMar(): Pick<
+  ConsultaPesca,
+  | "tramo"
+  | "fuenteGeometria"
+  | "confianza"
+  | "ambito"
+  | "modalidadMar"
+  | "fuenteNormativaDetalle"
+> {
   return {
     tramo: null,
     fuenteGeometria: "ninguna",
     confianza: "aproximada",
     ambito: "maritimo",
+    modalidadMar: "orilla",
     fuenteNormativaDetalle: fuenteDetalleConsulta("maritimo"),
   };
 }

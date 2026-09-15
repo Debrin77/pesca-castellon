@@ -28,11 +28,12 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
   if (c.sePuedePescarHoy) {
     return {
       texto: "HOY SÍ",
-      sub: c.ambito === "maritimo"
-        ? c.titulo.toLowerCase().includes("mar ·") || c.permisos.some((p) => /embarcaci[oó]n/i.test(p))
-          ? "Mar · embarcación (orientativo)"
-          : "Orilla · licencia marítima"
-        : "Zona libre · con licencia",
+      sub:
+        c.ambito === "maritimo"
+          ? c.modalidadMar === "embarcacion"
+            ? "Mar · embarcación / kayak (orientativo)"
+            : "Orilla · licencia marítima"
+          : "Zona libre · con licencia",
     };
   }
   return { texto: "HOY NO", sub: "Restricción de día o temporada" };

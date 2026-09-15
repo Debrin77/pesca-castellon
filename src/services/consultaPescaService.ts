@@ -64,6 +64,11 @@ export interface ConsultaPesca {
   fuenteGeometria: "poligono_icv" | "radio_anexo" | "ninguna";
   confianza: "oficial" | "aproximada";
   ambito?: "continental" | "maritimo";
+  /**
+   * En mar: orilla vs embarcación/kayak.
+   * Evita mostrar el horario de «caña desde tierra» en el ritual Salgo en barco.
+   */
+  modalidadMar?: "orilla" | "embarcacion";
   especiesHabituales?: string;
   especiesIds?: string[];
   sitiosCosta?: { nombre: string; especies: string; cuando: string; detalle: string }[];

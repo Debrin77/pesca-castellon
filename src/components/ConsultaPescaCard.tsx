@@ -253,7 +253,13 @@ export default function ConsultaPescaCard({
         {mostrarTodo ? (
           <>
             <AvisoHorarioLegal
-              ambito={mar ? "maritimo" : "continental"}
+              ambito={
+                consulta.modalidadMar === "embarcacion"
+                  ? "embarcacion"
+                  : mar
+                    ? "maritimo"
+                    : "continental"
+              }
               lat={latEfectiva}
               lng={lngEfectiva}
               provinciaId={provincia.id}
@@ -357,7 +363,11 @@ export default function ConsultaPescaCard({
                 {mar ? (
                   <SitiosOrientativos
                     sitios={consulta.sitiosCosta ?? []}
-                    titulo="Dónde se pesca a caña (uso habitual)"
+                    titulo={
+                      consulta.modalidadMar === "embarcacion"
+                        ? "Referencias de salida (embarcación)"
+                        : "Dónde se pesca a caña (uso habitual)"
+                    }
                     aviso={avisoSitiosCosta()}
                   />
                 ) : consulta.tramo &&

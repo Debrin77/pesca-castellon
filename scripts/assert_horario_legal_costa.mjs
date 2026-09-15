@@ -35,12 +35,19 @@ for (const n of [
   "sumarHoras",
   "maritimo",
   "continental",
+  "embarcacion",
   "HORARIO_LEGAL_ORILLA_MAR",
+  "HORARIO_LEGAL_EMBARCACION_MAR",
   "HORARIO_SUBMARINA_CV",
   "Hoy permitido (aprox.)",
   "Hoy luz solar",
+  "Horario · embarcación",
+  "caña desde tierra",
 ]) {
   if (!svc.includes(n)) fail(`horarioLegalService sin ${n}`);
+}
+if (!svc.includes('ambito === "embarcacion"') && !svc.includes("ambito === 'embarcacion'")) {
+  fail("horarioLegalService debe ramificar ambito embarcacion (no reutilizar orilla)");
 }
 
 // Franja continental = orto−1h / ocaso+1h
@@ -51,10 +58,12 @@ if (!svc.includes("sumarHoras(orto, -1)") || !svc.includes("sumarHoras(ocaso, 1)
 const norma = read("src/data/normativaMaritima.ts");
 for (const n of [
   "HORARIO_LEGAL_ORILLA_MAR",
+  "HORARIO_LEGAL_EMBARCACION_MAR",
   "HORARIO_SUBMARINA_CV",
   "sin veda nocturna general",
   "ocaso→orto",
   "submarina",
+  "Embarcación / kayak",
 ]) {
   if (!norma.includes(n)) fail(`normativaMaritima sin ${n}`);
 }
@@ -67,6 +76,12 @@ for (const n of ["obtenerAvisoHorarioLegal", "franjaTxt", "estadoTxt", "Calculan
 const card = read("src/components/ConsultaPescaCard.tsx");
 if (!card.includes("AvisoHorarioLegal")) fail("ConsultaPescaCard debe mostrar AvisoHorarioLegal");
 if (!card.includes("latEfectiva")) fail("ConsultaPescaCard debe resolver coords del punto");
+if (!card.includes('modalidadMar === "embarcacion"') || !card.includes('"embarcacion"')) {
+  fail("ConsultaPescaCard debe usar ambito embarcacion cuando modalidadMar es embarcacion");
+}
+if (card.includes('ambito={mar ? "maritimo" : "continental"}')) {
+  fail("ConsultaPescaCard no debe tratar todo el mar como caña desde tierra");
+}
 
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");
 if (!salgo.includes("AvisoHorarioLegal")) fail("SalgoAPescar debe mostrar AvisoHorarioLegal");
@@ -74,7 +89,11 @@ if (!salgo.includes("ambito={medio}")) fail("Salgo debe pasar medio como ambito 
 
 const mejor = read("src/components/MejorHoraPesca.tsx");
 if (!mejor.includes("HORARIO_LEGAL_ORILLA_MAR")) fail("MejorHoraPesca debe usar horario de orilla en costa");
+if (!mejor.includes("HORARIO_LEGAL_EMBARCACION_MAR")) {
+  fail("MejorHoraPesca debe usar horario de embarcación (no el de orilla) en barco");
+}
 if (!mejor.includes('ambito === "maritimo"')) fail("MejorHoraPesca debe ramificar por ambito");
+if (!mejor.includes('ambito === "embarcacion"')) fail("MejorHoraPesca debe ramificar por embarcacion");
 
 const orilla = read("src/data/especiesOrilla.json");
 if (orilla.includes("tú hasta 1 h después del ocaso")) {
