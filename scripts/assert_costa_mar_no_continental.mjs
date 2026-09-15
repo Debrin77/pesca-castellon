@@ -5,6 +5,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { spawnSync } from "child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -59,6 +60,35 @@ ok("especies costa → consultarCosta");
 const pkg = read("package.json");
 if (!pkg.includes("assert_costa_mar_no_continental.mjs")) {
   fail("package.json assert debe incluir assert_costa_mar_no_continental.mjs");
+}
+
+// Runtime: punto en mar ≠ tramo continental más cercano.
+const runtime = `
+import { setProvinciaActiva } from './src/provincias/runtime.ts';
+import { consultarToqueMapa } from './src/services/consultaCostaService.ts';
+import { consultarPuntoPesca } from './src/services/consultaPescaService.ts';
+setProvinciaActiva('castellon');
+const mar = { lat: 39.98, lng: 0.15 };
+const sea = consultarToqueMapa(mar.lat, mar.lng);
+const cont = consultarPuntoPesca(mar.lat, mar.lng);
+if (sea.ambito !== 'maritimo') throw new Error('ambito=' + sea.ambito);
+if (sea.tramo) throw new Error('tramo continental inesperado: ' + sea.tramo.nombre);
+if (!String(sea.titulo).includes('Mar abierto')) throw new Error('titulo=' + sea.titulo);
+if (sea.titulo === cont.titulo) throw new Error('mismo titulo que continental');
+if (!(sea.distanciaKm > 2)) throw new Error('distanciaKm=' + sea.distanciaKm);
+console.log('RUNTIME_OK', sea.titulo, 'vs', cont.titulo);
+`;
+const run = spawnSync("npx", ["--yes", "tsx", "-e", runtime], {
+  cwd: root,
+  encoding: "utf8",
+  timeout: 60_000,
+});
+if (run.status !== 0) {
+  fail(`runtime mar≠continental: ${(run.stderr || run.stdout || "").slice(0, 500)}`);
+} else if (!(run.stdout || "").includes("RUNTIME_OK")) {
+  fail("runtime sin RUNTIME_OK");
+} else {
+  ok((run.stdout || "").trim().split("\n").pop());
 }
 
 if (fallos) {
