@@ -19,6 +19,7 @@ import {
   todosLosPuertos,
   centroZona,
   esFranjaCosteraCastellon,
+  esMarCastellon,
   type ZonaCosta,
 } from "./consultaCostaService";
 import { SEMAFORO } from "../theme";
@@ -83,6 +84,8 @@ export function esMarConsultaEmbarcacion(lat: number, lng: number): boolean {
   if (getProvinciaActiva().id !== "castellon") return false;
   // Amplía la franja de orilla: barco pesca más afuera.
   if (esFranjaCosteraCastellon(lat, lng)) return true;
+  // Solo mar (este de la orilla), no tierra interior del bbox provincial.
+  if (!esMarCastellon(lat, lng)) return false;
   // Bounding box costa Castellón + Columbretes
   return lat >= 39.7 && lat <= 40.55 && lng >= -0.3 && lng <= 0.85;
 }

@@ -81,6 +81,30 @@ export function esFranjaCosteraCastellon(lat: number, lng: number): boolean {
   return distanciaAPolylineKm(lat, lng, playasData.lineaCosta) <= playasData.kmOrilla;
 }
 
+/** Distancia aproximada (km) a la línea de costa de Castellón. */
+export function distanciaACostaCastellonKm(lat: number, lng: number): number {
+  return distanciaAPolylineKm(lat, lng, playasData.lineaCosta);
+}
+
+/**
+ * ¿El punto queda al este (mar Mediterráneo) de la orilla de Castellón?
+ * Heurística por longitud frente al vértice de costa más cercano en latitud.
+ */
+export function esMarCastellon(lat: number, lng: number): boolean {
+  const linea = playasData.lineaCosta as { lat: number; lng: number }[];
+  if (!linea?.length) return false;
+  let mejor = linea[0];
+  let dMin = Infinity;
+  for (const p of linea) {
+    const d = Math.abs(p.lat - lat);
+    if (d < dMin) {
+      dMin = d;
+      mejor = p;
+    }
+  }
+  return lng > mejor.lng;
+}
+
 const COLORES = { libre: SEMAFORO.si, vedado: SEMAFORO.no, fuera: SEMAFORO.neutro };
 
 function baseMar(): Pick<
@@ -158,19 +182,32 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
   }
 
   if (!esFranjaCosteraCastellon(lat, lng)) {
+    const kmCosta = distanciaACostaCastellonKm(lat, lng);
+    const enMar = esMarCastellon(lat, lng);
+    const kmTxt = kmCosta.toFixed(1);
     return {
       ...baseMar(),
       veredicto: "fuera_catalogo",
-      titulo: "Fuera de la orilla de Castellón",
+      titulo: enMar
+        ? `Mar abierto · ~${kmTxt} km de la orilla`
+        : "Fuera de la orilla de Castellón",
       color: COLORES.fuera,
-      distanciaKm: null,
+      distanciaKm: kmCosta,
       dentroDelRadio: false,
       sePuedePescarHoy: false,
-      restriccionesHoy: [
-        "Ese toque no está en la franja de playa (unos 2 km de la orilla).",
-        "Para barco/kayak cambia a modalidad Embarcación (mapa o Salgo a pescar).",
-      ],
-      permisos: [],
+      restriccionesHoy: enMar
+        ? [
+            `Este punto está en el mar (~${kmTxt} km de la costa), no en la franja de pesca desde orilla (~${playasData.kmOrilla} km).`,
+            "No es un tramo continental (río/embalse): no uses este punto como pesca desde tierra.",
+            "Si pescas desde barco o kayak, cambia a modalidad Embarcación en el mapa o usa Salgo en barco.",
+          ]
+        : [
+            `Ese toque no está en la franja de playa (unos ${playasData.kmOrilla} km de la orilla; ~${kmTxt} km al trazo de costa).`,
+            "Para ríos y embalses cambia a «Ríos y embalses». Para barco/kayak usa Embarcación.",
+          ],
+      permisos: enMar
+        ? ["Modalidad actual: pesca marítima desde tierra — este punto no es orilla."]
+        : [],
     };
   }
 
@@ -204,10 +241,16 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
   };
 }
 
-/** Un toque en el mapa: orilla si estás en la playa (solo Castellón); si no, ríos. */
+/**
+ * Un toque en el mapa: orilla/mar si estás en la costa de Castellón; si no, ríos.
+ * Importante: un toque en el mar NO debe caer al tramo continental más cercano.
+ */
 export function consultarToqueMapa(lat: number, lng: number): ConsultaPesca {
   const provincia = getProvinciaActiva();
-  if (!provincia.continentalOnly && esFranjaCosteraCastellon(lat, lng)) {
+  if (provincia.continentalOnly) {
+    return consultarPuntoPesca(lat, lng);
+  }
+  if (provincia.id === "castellon" && (esFranjaCosteraCastellon(lat, lng) || esMarCastellon(lat, lng))) {
     return consultarCosta(lat, lng);
   }
   return consultarPuntoPesca(lat, lng);
