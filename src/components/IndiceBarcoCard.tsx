@@ -8,10 +8,12 @@ type Props = {
   indice: IndiceBarco | null;
   cargando?: boolean;
   compacto?: boolean;
+  /** true si el índice viene de la última lectura cacheada (sin red). */
+  desdeCache?: boolean;
 };
 
 /** Tarjeta del índice «Salgo en barco» (oleaje + viento). */
-export default function IndiceBarcoCard({ indice, cargando, compacto }: Props) {
+export default function IndiceBarcoCard({ indice, cargando, compacto, desdeCache }: Props) {
   if (cargando) {
     return (
       <View style={[styles.card, compacto && styles.cardCompact]}>
@@ -27,7 +29,9 @@ export default function IndiceBarcoCard({ indice, cargando, compacto }: Props) {
       style={[styles.card, compacto && styles.cardCompact, { borderColor: cat.color }]}
       accessibilityLabel={`Salgo en barco: ${indice.puntuacion}, ${cat.texto}`}
     >
-      <Text style={styles.kicker}>SALGO EN BARCO · CLIMA MARINO</Text>
+      <Text style={styles.kicker}>
+        {desdeCache ? "SALGO EN BARCO · SIN RED (ÚLTIMA LECTURA)" : "SALGO EN BARCO · CLIMA MARINO"}
+      </Text>
       <View style={styles.row}>
         <View style={[styles.badge, { backgroundColor: cat.fondo }]}>
           <Text style={[styles.score, { color: cat.color }]}>{indice.puntuacion}</Text>
@@ -54,7 +58,11 @@ export default function IndiceBarcoCard({ indice, cargando, compacto }: Props) {
             </Text>
           ))
         : null}
-      <Text style={styles.pie}>Orientativo · no autoriza a zarpar · micromareal Castellón</Text>
+      <Text style={styles.pie}>
+        {desdeCache
+          ? "Caché local · reconecta para oleaje en vivo · no autoriza a zarpar"
+          : "Orientativo · no autoriza a zarpar · micromareal Castellón"}
+      </Text>
     </View>
   );
 }

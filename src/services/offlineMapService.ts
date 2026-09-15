@@ -1,9 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getProvinciaIdActiva, getProvinciaActiva } from "../provincias/runtime";
+import rampasData from "../data/rampasEmbarcacion.json";
 
 /**
  * Paquete offline: calienta caché HTTP de teselas + marca provincia lista.
  * No es MBTiles completo (eso llegará con build nativa); sí reduce huecos en campo.
+ * En Castellón también calienta costa (regionCosta) y entorno de cada rampa.
  */
 
 export interface EstadoOfflineMapa {
@@ -60,21 +62,43 @@ function tilesForBbox(
   return out;
 }
 
+function dedupeTiles(tiles: { z: number; x: number; y: number }[]) {
+  const seen = new Set<string>();
+  return tiles.filter((t) => {
+    const k = `${t.z}/${t.x}/${t.y}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
 export async function prepararMapaOffline(
   onProgreso?: (ok: number, total: number) => void
 ): Promise<EstadoOfflineMapa> {
   const p = getProvinciaActiva();
   const { latitude, longitude, latitudeDelta } = p.regionMapa;
   const zooms = [9, 10, 11];
-  const tiles = zooms.flatMap((z) => tilesForBbox(latitude, longitude, latitudeDelta, z));
-  // dedupe
-  const seen = new Set<string>();
-  const unique = tiles.filter((t) => {
-    const k = `${t.z}/${t.x}/${t.y}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
+  let tiles = zooms.flatMap((z) => tilesForBbox(latitude, longitude, latitudeDelta, z));
+
+  // Costa Castellón: centro marítimo + entorno de cada rampa (ritual embarcación).
+  if (!p.continentalOnly && p.regionCosta) {
+    const costaDelta = 0.55;
+    tiles = tiles.concat(
+      zooms.flatMap((z) =>
+        tilesForBbox(p.regionCosta!.latitude, p.regionCosta!.longitude, costaDelta, z)
+      )
+    );
+    try {
+      const rampas = (rampasData as { rampas?: { lat: number; lng: number }[] }).rampas ?? [];
+      for (const r of rampas) {
+        tiles = tiles.concat(zooms.flatMap((z) => tilesForBbox(r.lat, r.lng, 0.2, z)));
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const unique = dedupeTiles(tiles);
 
   let ok = 0;
   for (let i = 0; i < unique.length; i++) {
@@ -93,6 +117,10 @@ export async function prepararMapaOffline(
     onProgreso?.(ok, unique.length);
   }
 
+  const costaNota =
+    !p.continentalOnly && p.regionCosta
+      ? " Incluye costa y entorno de rampas de embarcación."
+      : "";
   const estado: EstadoOfflineMapa = {
     provinciaId: p.id,
     preparadoEn: new Date().toISOString(),
@@ -100,7 +128,7 @@ export async function prepararMapaOffline(
     teselasOk: ok,
     nota:
       ok > unique.length * 0.5
-        ? "Teselas de mapa calentadas en caché. Normativa y especies ya van en la app. En campo sin red verás el último mapa cacheado + datos locales."
+        ? `Teselas de mapa calentadas en caché.${costaNota} Normativa, rampas y especies ya van en la app. En campo sin red verás el último mapa cacheado + datos locales.`
         : "Pocas teselas cacheadas (red limitada). Reintenta con Wi‑Fi. Los datos legales/especies siguen disponibles offline.",
   };
   await AsyncStorage.setItem(claveEstado(), JSON.stringify(estado));

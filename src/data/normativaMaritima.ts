@@ -15,7 +15,56 @@ export const FUENTE_EMBARCACION = {
     "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
   urlColumbretes:
     "https://www.mapa.gob.es/es/pesca/temas/proteccion-recursos-pesqueros/reservas-marinas-de-interes-pesquero/rm-islas-columbretes/",
+  /** Carta náutica comercial (Garmin). Complemento de navegación; no es oficial IHM. */
+  urlNavionics:
+    "https://www.garmin.com/es-ES/p/136701",
+  /** Instituto Hidrográfico de la Marina — cartografía oficial de consulta. */
+  urlIhm:
+    "https://www.armada.mde.es/ArmadaPortal/page/Portal/ArmadaEspannola/cienciaihm1/prefLang-es/",
 };
+
+/**
+ * Qué app usar el día de la salida. Esta app decide pesca/legal/meteo;
+ * Navionics (u otra carta) cubre navegar con batimetría y peligros.
+ */
+export const HERRAMIENTAS_COMPLEMENTARIAS_BARCO: {
+  id: string;
+  nombre: string;
+  rol: string;
+  paraQue: string;
+  url?: string;
+}[] = [
+  {
+    id: "esta-app",
+    nombre: "Pesca Castellón (esta app)",
+    rol: "Decidir si sales a pescar",
+    paraQue:
+      "¿Puedo? (norma, Columbretes, dársena) · ¿Pinta? (oleaje/viento) · checklist · aparejos · diario privado.",
+  },
+  {
+    id: "navionics",
+    nombre: "Navionics Boating (Garmin)",
+    rol: "Navegar y leer el fondo",
+    paraQue:
+      "Cartas náuticas, batimetría HD, rutas y peligros. No sustituye el patrón ni la carta oficial IHM. De pago / suscripción.",
+    url: "https://www.garmin.com/es-ES/p/136701",
+  },
+  {
+    id: "pescarec",
+    nombre: "PescaREC (MAPA)",
+    rol: "Declarar capturas cuando toque",
+    paraQue: "App oficial estatal. Esta app solo enlaza; no declara por ti.",
+    url: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
+  },
+  {
+    id: "ihm",
+    nombre: "Carta IHM (consulta)",
+    rol: "Cartografía oficial de referencia",
+    paraQue:
+      "Instituto Hidrográfico de la Marina. Consulta en tierra; no uses capturas de pantalla como única carta a bordo.",
+    url: "https://www.armada.mde.es/ArmadaPortal/page/Portal/ArmadaEspannola/cienciaihm1/prefLang-es/",
+  },
+];
 
 export const REGLAS_ORILLA_MAR = [
   "Hace falta la licencia de pesca marítima recreativa desde tierra (no vale sola la continental).",

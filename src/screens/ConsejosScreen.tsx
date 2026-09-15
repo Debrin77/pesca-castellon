@@ -24,7 +24,15 @@ function coincide(item: ConsejoItem, q: string): boolean {
   return blob.includes(q);
 }
 
-const TAGS_COSTA = new Set(["costa", "surfcasting", "eging", "cefalopodos", "mar"]);
+const TAGS_COSTA = new Set([
+  "costa",
+  "surfcasting",
+  "eging",
+  "cefalopodos",
+  "mar",
+  "barco",
+  "embarcacion",
+]);
 
 type ParamsConsejos = {
   consejoId?: string;

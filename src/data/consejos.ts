@@ -1,7 +1,7 @@
 /**
  * Consejos prácticos de pesca: nudos, anzuelos, plomos, conectores, cebos
  * y vocabulario — con fotografías reales paso a paso (sin croquis).
- * Orientado a pesca continental y de orilla en Castellón.
+ * Orientado a pesca continental, de orilla y embarcación en Castellón.
  * No sustituye la normativa ni un curso presencial de seguridad.
  */
 
@@ -704,6 +704,22 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         detalle:
           "Pesca nocturna continental prohibida salvo molinà de anguila autorizada.",
         tags: ["legal"],
+      },
+      {
+        id: "seg-herramientas-barco",
+        titulo: "El día de la salida: qué app usar",
+        resumen:
+          "Esta app decide pesca; Navionics (u otra carta) navega. No son lo mismo.",
+        detalle:
+          "«Complementar con Navionics» significa: usas Pesca Castellón para normativa, oleaje, checklist y aparejos; y una carta náutica (Navionics Boating de Garmin, plotter del barco o carta IHM) para batimetría, peligros y derrota. Esta app no es plotter ni sustituye al patrón. PescaREC es la app oficial para declarar cuando la norma lo exija.",
+        pasos: [
+          "En casa o en el puerto: abre «Salgo en barco» → ¿Puedo? + ¿Pinta? + checklist.",
+          "Antes de zarpar: abre Navionics (o el plotter) y revisa ruta, profundidad y peligros.",
+          "Si aplica declaración: ten PescaREC a mano (esta app solo enlaza).",
+          "Durante la jornada: waypoints y ruta en el mapa de esta app son privados; la carta náutica manda para navegar.",
+          "Al volver: anota capturas aquí; declara en PescaREC si corresponde.",
+        ],
+        tags: ["barco", "embarcacion", "costa", "mar", "seguridad"],
       },
     ],
   },

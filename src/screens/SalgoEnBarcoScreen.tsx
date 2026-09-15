@@ -16,11 +16,13 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { consultarEmbarcacion, todasLasRampas } from "../services/consultaEmbarcacionService";
 import type { ConsultaPesca } from "../services/consultaPescaService";
 import { calcularIndiceBarco, type IndiceBarco } from "../services/boatIndexService";
-import { CHECKLIST_EMBARCACION, FUENTE_EMBARCACION } from "../data/normativaMaritima";
+import { CHECKLIST_EMBARCACION, FUENTE_EMBARCACION, HERRAMIENTAS_COMPLEMENTARIAS_BARCO } from "../data/normativaMaritima";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { etaAPuerto, estimarProfundidadMarCastellon } from "../services/navegacionEmbarcacionService";
+import { hayConexion, guardarCacheOffline, leerCacheOffline } from "../services/offlineService";
+import { irAConsejos } from "../navigation/irATab";
 import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
 import IndiceBarcoCard from "../components/IndiceBarcoCard";
@@ -47,6 +49,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const [cargando, setCargando] = useState(false);
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
   const [indice, setIndice] = useState<IndiceBarco | null>(null);
+  const [indiceDesdeCache, setIndiceDesdeCache] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [etiqueta, setEtiqueta] = useState<string | null>(null);
   const [navTxt, setNavTxt] = useState<string | null>(null);
@@ -81,8 +84,26 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
     setCoords({ lat, lng });
     const c = consultarEmbarcacion(lat, lng);
     setConsulta(c);
-    const ind = await calcularIndiceBarco(lat, lng);
+    const online = await hayConexion();
+    let ind = await calcularIndiceBarco(lat, lng);
+    let desdeCache = false;
+    const sinMeteoViva =
+      ind.oleajeM == null && ind.periodoS == null && ind.vientoKmh == null && ind.rachasKmh == null;
+    if (!online || sinMeteoViva) {
+      const cache = await leerCacheOffline();
+      if (cache?.indiceBarco && typeof cache.indiceBarco.puntuacion === "number") {
+        ind = cache.indiceBarco as IndiceBarco;
+        desdeCache = true;
+      }
+    } else {
+      await guardarCacheOffline({
+        indiceBarco: ind,
+        etiquetaBarco: etiquetaPunto,
+        ubicacion: { lat, lng },
+      });
+    }
     setIndice(ind);
+    setIndiceDesdeCache(desdeCache);
     const prof = estimarProfundidadMarCastellon(lat, lng);
     const eta = etaAPuerto(lat, lng);
     setNavTxt([prof.etiqueta, eta?.etiqueta].filter(Boolean).join("\n"));
@@ -125,7 +146,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
         <LinearGradient colors={[...GRADIENTS.water]} style={styles.hero}>
           <Text style={styles.heroKicker}>CASTELLÓN · EMBARCACIÓN</Text>
           <Text style={styles.heroTitle}>Salgo en barco</Text>
-          <Text style={styles.heroSub}>Legal · meteo marina · checklist · PescaREC</Text>
+          <Text style={styles.heroSub}>Legal · meteo marina · checklist · carta náutica</Text>
           <PasoSalida
             pasos={["Salida", "¿Puedo?", "¿Pinta?", "Checklist"]}
             activo={paso}
@@ -189,7 +210,11 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           <View style={styles.bloque}>
             <EjeLegalMeteo eje="meteo" />
             <Text style={styles.bloqueTitulo}>3. ¿Pinta zarpar?</Text>
-            <IndiceBarcoCard indice={indice} cargando={cargando && !indice} />
+            <IndiceBarcoCard
+              indice={indice}
+              cargando={cargando && !indice}
+              desdeCache={indiceDesdeCache}
+            />
             {indice?.alertaSalida ? (
               <Text style={styles.alerta}>Con esta meteo el índice recomienda no salir. Tú decides.</Text>
             ) : null}
@@ -223,6 +248,41 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             >
               <Text style={styles.link}>Reserva Columbretes (oficial)</Text>
             </TouchableOpacity>
+
+            <View style={styles.complementoBox}>
+              <Text style={styles.bloqueTitulo}>Herramientas complementarias</Text>
+              <Text style={styles.bloqueSub}>
+                El día de la salida: esta app decide pesca; Navionics (u otra carta) navega. No
+                sustituyen el patrón ni el BOE.
+              </Text>
+              {HERRAMIENTAS_COMPLEMENTARIAS_BARCO.map((h) => (
+                <View key={h.id} style={styles.herramienta}>
+                  <Text style={styles.herramientaNombre}>{h.nombre}</Text>
+                  <Text style={styles.herramientaRol}>{h.rol}</Text>
+                  <Text style={styles.herramientaPara}>{h.paraQue}</Text>
+                  {h.url ? (
+                    <TouchableOpacity
+                      onPress={() => Linking.openURL(h.url!)}
+                      accessibilityRole="link"
+                      accessibilityLabel={`Abrir ${h.nombre}`}
+                    >
+                      <Text style={styles.linkIzq}>Abrir enlace</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              ))}
+              <TouchableOpacity
+                style={styles.linkMapa}
+                onPress={() =>
+                  irAConsejos(navigation, {
+                    consejoId: "seg-herramientas-barco",
+                    categoria: "seguridad",
+                  })
+                }
+              >
+                <Text style={styles.link}>Ver guía «El día de la salida» en Consejos</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : null}
       </ScrollView>
@@ -345,5 +405,24 @@ const styles = StyleSheet.create({
   btnSecTxt: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.waterDark },
   linkMapa: { paddingVertical: 8 },
   link: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.water, textAlign: "center" },
+  linkIzq: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.water, marginTop: 4 },
+  complementoBox: {
+    marginTop: 8,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+    gap: 10,
+  },
+  herramienta: {
+    padding: 10,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.waterLight,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 2,
+  },
+  herramientaNombre: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.textPrimary },
+  herramientaRol: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.waterDark },
+  herramientaPara: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.textSecondary, lineHeight: 17 },
   aviso: { fontFamily: FONTS.regular, fontSize: 15, color: COLORS.textPrimary, margin: 24, textAlign: "center" },
 });
