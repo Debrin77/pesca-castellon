@@ -69,6 +69,9 @@ import {
 import type { ModalidadPesca } from "../data/modalidades";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
+import { modoAMapaModo } from "../data/modoPesca";
+import SelectorModoPesca from "../components/SelectorModoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
@@ -93,6 +96,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const route = useRoute<any>();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { fijarPunto } = usePuntoConsulta();
+  const { modo: modoGlobal, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const cuencas = provincia.cuencas.length ? provincia.cuencas : cuencasProvincia();
@@ -115,13 +119,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     tracks: false,
   });
   const [localizando, setLocalizando] = useState(false);
-  const [modo, setModo] = useState<"continental" | "costa">("continental");
+  const [modo, setModo] = useState<"continental" | "costa">(modoAMapaModo(modoGlobal));
+  /** Por defecto: solo consulta (sin lluvia de capas). */
+  const [mapaSimple, setMapaSimple] = useState(true);
   const [camara, setCamara] = useState<{ latitude: number; longitude: number; zoom: number; nonce: number } | undefined>();
   const [fichaAbierta, setFichaAbierta] = useState(false);
   const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
   const [radarUrl, setRadarUrl] = useState<string | null>(null);
   const [radarFrame, setRadarFrame] = useState<FrameRadarActivo | null>(null);
-  const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
+  const [modalidad, setModalidad] = useState<ModalidadPesca>(
+    modoGlobal === "barco" ? "embarcacion" : modoGlobal === "orilla" ? "orilla_mar" : "orilla_continental"
+  );
   const [tracks, setTracks] = useState<TrackPesca[]>([]);
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
   const rutaPausada = !!(grabandoId && tracks.find((t) => t.id === grabandoId)?.pausado);
@@ -131,7 +139,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [waypoints, setWaypoints] = useState<WaypointMarino[]>([]);
   const [infoNavegacion, setInfoNavegacion] = useState<string | null>(null);
   const mar = !soloContinental && modo === "costa";
-  const modoBarco = mar && esModalidadEmbarcacionMar(modalidad);
+  const modoBarco = mar && (modoGlobal === "barco" || esModalidadEmbarcacionMar(modalidad));
+
+  // Sincronizar mapa con el modo global (Inicio / Salgo).
+  useEffect(() => {
+    const mapa = modoAMapaModo(modoGlobal);
+    setModo(mapa);
+    setModalidad(
+      modoGlobal === "barco" ? "embarcacion" : modoGlobal === "orilla" ? "orilla_mar" : "orilla_continental"
+    );
+  }, [modoGlobal]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -145,7 +162,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [mar, modoBarco, navigation, provincia.nombre]);
 
   useEffect(() => {
-    setModo("continental");
+    setModo(modoAMapaModo(modoGlobal));
     setCuencaFiltro(null);
     setBusqueda("");
     setConsulta(null);
@@ -249,9 +266,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const radarFechaPlaca = etiquetaFechaRadarPlaca(radarFrame);
 
   useEffect(() => {
-    setModalidad(mar ? "orilla_mar" : "orilla_continental");
+    setModalidad(
+      modoGlobal === "barco" ? "embarcacion" : mar ? "orilla_mar" : "orilla_continental"
+    );
     setInfoNavegacion(null);
-  }, [mar]);
+  }, [mar, modoGlobal]);
 
   useEffect(() => {
     if (!modoBarco) return;
@@ -443,15 +462,25 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
     if (siguiente === "costa") {
+      void setModoGlobal(modoGlobal === "barco" ? "barco" : "orilla");
       const costa = provincia.regionCosta ?? {
         latitude: provincia.regionMapa.latitude,
         longitude: provincia.regionMapa.longitude,
         zoom: 10,
       };
       setCamara({ latitude: costa.latitude, longitude: costa.longitude, zoom: costa.zoom, nonce: Date.now() });
-      if (marcador) setConsulta(consultarCosta(marcador.latitude, marcador.longitude));
-    } else if (marcador) {
-      setConsulta(consultarPuntoPesca(marcador.latitude, marcador.longitude));
+      if (marcador) {
+        setConsulta(
+          modoGlobal === "barco" || modalidad === "embarcacion" || modalidad === "kayak"
+            ? consultarEmbarcacion(marcador.latitude, marcador.longitude)
+            : consultarCosta(marcador.latitude, marcador.longitude)
+        );
+      }
+    } else {
+      void setModoGlobal("rio");
+      if (marcador) {
+        setConsulta(consultarPuntoPesca(marcador.latitude, marcador.longitude));
+      }
     }
   }
 
@@ -700,25 +729,59 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       {!soloContinental ? (
         <View style={[styles.modoBar, mar && styles.modoBarMar]}>
-          <TouchableOpacity
-            style={[styles.modoBtn, modo === "continental" && styles.modoBtnOnBosque]}
-            onPress={() => cambiarModo("continental")}
-            accessibilityRole="button"
-            accessibilityLabel="Ríos y embalses"
-          >
-            <Text style={[styles.modoTxt, modo === "continental" && styles.modoTxtOn]}>Ríos y embalses</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modoBtn, modo === "costa" && styles.modoBtnOnMar]}
-            onPress={() => cambiarModo("costa")}
-            accessibilityRole="button"
-            accessibilityLabel="Costa orilla"
-          >
-            <Text style={[styles.modoTxt, modo === "costa" && styles.modoTxtOn]}>Costa (orilla)</Text>
-          </TouchableOpacity>
+          <SelectorModoPesca
+            modo={modoGlobal}
+            disponibles={modosDisp}
+            compacto
+            onChange={(m) => {
+              void setModoGlobal(m);
+              setModo(m === "rio" ? "continental" : "costa");
+              setModalidad(
+                m === "barco" ? "embarcacion" : m === "orilla" ? "orilla_mar" : "orilla_continental"
+              );
+              if (m !== "rio") {
+                const costa = provincia.regionCosta ?? {
+                  latitude: provincia.regionMapa.latitude,
+                  longitude: provincia.regionMapa.longitude,
+                  zoom: 10,
+                };
+                setCamara({
+                  latitude: costa.latitude,
+                  longitude: costa.longitude,
+                  zoom: costa.zoom,
+                  nonce: Date.now(),
+                });
+              }
+            }}
+          />
         </View>
       ) : null}
 
+      <View style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
+        <TouchableOpacity
+          style={[styles.mapaModoBtn, mapaSimple && styles.mapaModoBtnOn]}
+          onPress={() => {
+            setMapaSimple(true);
+            setCapasExtra(false);
+          }}
+          accessibilityRole="button"
+          accessibilityState={{ selected: mapaSimple }}
+          accessibilityLabel="Solo consulta"
+        >
+          <Text style={[styles.mapaModoTxt, mapaSimple && styles.mapaModoTxtOn]}>Solo consulta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.mapaModoBtn, !mapaSimple && styles.mapaModoBtnOn]}
+          onPress={() => setMapaSimple(false)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: !mapaSimple }}
+          accessibilityLabel="Capas avanzadas"
+        >
+          <Text style={[styles.mapaModoTxt, !mapaSimple && styles.mapaModoTxtOn]}>Capas avanzadas</Text>
+        </TouchableOpacity>
+      </View>
+
+      {!mapaSimple ? (
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center" }}>
         {mar ? (
           <>
@@ -900,6 +963,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Text style={[styles.layerChipText, styles.layerChipTextActive]}>■ Parar</Text>
           </TouchableOpacity>
         </View>
+      ) : null}
+      ) : null}
+
+      {mapaSimple ? (
+        <Text style={styles.hintSimple}>
+          Toca el mapa para consultar. Activa «Capas avanzadas» para cotos, radar y rutas.
+        </Text>
       ) : null}
 
       <View style={[styles.mapWrap, { height: altoMapa }]}>
@@ -1277,8 +1347,36 @@ const styles = StyleSheet.create({
   cuencaChipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textPrimary },
   cuencaTxtOn: { color: "#fff" },
-  modoBar: { flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
+  modoBar: { paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
   modoBarMar: { backgroundColor: COLORS.waterLight },
+  mapaModoRow: {
+    flexDirection: "row",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+    backgroundColor: COLORS.surface,
+  },
+  mapaModoBtn: {
+    flex: 1,
+    minHeight: 40,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.background,
+  },
+  mapaModoBtnOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
+  mapaModoTxt: { ...TYPE.mapChip, fontSize: 13, color: COLORS.textPrimary, fontWeight: "700" },
+  mapaModoTxtOn: { color: "#fff" },
+  hintSimple: {
+    ...TYPE.caption,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    backgroundColor: COLORS.surface,
+  },
   modoBtn: {
     flex: 1,
     minHeight: 44,
