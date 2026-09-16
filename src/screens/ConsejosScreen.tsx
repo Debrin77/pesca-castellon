@@ -105,13 +105,13 @@ export default function ConsejosScreen() {
         <View style={styles.introCard}>
           <Text style={styles.introTitle}>Si empiezas de cero</Text>
           <Text style={styles.introTxt}>
-            Abre «Montajes por especie»: verás el orden de la línea (boya, plomo, anzuelo…) y cómo regularlo. Luego «Nudo Palomar», «Kit mínimo» y «Vocabulario» (Texas, popper, spinning…) con foto.
+            Abre «Montajes por especie»: verás el orden de la línea (boya, plomo, anzuelo…) y cómo regularlo. Luego «Caña y carrete» (qué comprar en España), «Nudo Palomar», «Kit mínimo» y «Vocabulario» (Texas, popper, spinning…) con foto.
           </Text>
         </View>
 
         <TextInput
           style={styles.search}
-          placeholder="Busca (lubina, boya, palomar, texas…)"
+          placeholder="Busca (lubina, caña, Decathlon, palomar…)"
           placeholderTextColor={COLORS.textMuted}
           value={busqueda}
           onChangeText={setBusqueda}

@@ -97,6 +97,16 @@ const consejos = read("src/data/consejos.ts");
 if (!consejos.includes("ap-guia-compra") || !consejos.includes("Guía de compra por especie")) {
   fail("consejos.ts debe incluir tip ap-guia-compra");
 }
+if (
+  !consejos.includes("ap-cana-carrete") ||
+  !consejos.includes("Caña y carrete: qué comprar en España") ||
+  !consejos.includes("¿Una sola para casi todo?")
+) {
+  fail("consejos.ts debe incluir tip ap-cana-carrete (modalidad + versátil)");
+}
+if (!consejos.includes("Decathlon") || !consejos.includes("tienda especializada")) {
+  fail("ap-cana-carrete debe citar Decathlon y tienda especializada");
+}
 
 const pkg = read("package.json");
 if (!pkg.includes("assert_recomendaciones_aparejo.mjs")) {
