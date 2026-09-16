@@ -4,6 +4,7 @@ import {
   RecomendacionAparejo,
   etiquetaArponcillo,
   restriccionesParaProvincia,
+  type AmbitoRestriccionAparejo,
   type SeveridadRestriccion,
 } from "../data/recomendacionesAparejo";
 import { COLORS, RADIUS, SHADOW } from "../theme";
@@ -11,7 +12,9 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 type Props = {
   rec: RecomendacionAparejo;
   provinciaId: string;
-  /** Costa vs río: matiza el color del encabezado y filtra restricciones de orilla */
+  /** río / orilla / embarcación — filtra «Restricciones en tu provincia» */
+  ambitoLegal?: AmbitoRestriccionAparejo;
+  /** @deprecated Preferir ambitoLegal. Si true y no hay ambitoLegal → costa. */
   mar?: boolean;
 };
 
@@ -28,13 +31,21 @@ function severidadStyle(s: SeveridadRestriccion) {
 /**
  * Tabla clara de compra: anzuelo, arponcillo, cebador, plomo según cebo y restricciones.
  */
-export default function TablaRecomendacionAparejo({ rec, provinciaId, mar }: Props) {
-  const restricciones = restriccionesParaProvincia(rec, provinciaId, mar ? "costa" : "rio");
-  const accent = mar ? COLORS.waterDark : COLORS.primaryDark;
-  const accentSoft = mar ? COLORS.waterLight : COLORS.mist;
+export default function TablaRecomendacionAparejo({ rec, provinciaId, ambitoLegal, mar }: Props) {
+  const ambito: AmbitoRestriccionAparejo = ambitoLegal ?? (mar ? "costa" : "rio");
+  const restricciones = restriccionesParaProvincia(rec, provinciaId, ambito);
+  const esMar = ambito === "costa" || ambito === "embarcacion";
+  const accent = esMar ? COLORS.waterDark : COLORS.primaryDark;
+  const accentSoft = esMar ? COLORS.waterLight : COLORS.mist;
+  const tituloRest =
+    ambito === "embarcacion"
+      ? "Restricciones · embarcación / kayak"
+      : ambito === "costa"
+        ? "Restricciones · orilla (desde tierra)"
+        : "Restricciones en tu provincia";
 
   return (
-    <View style={[styles.card, { borderColor: mar ? COLORS.water : COLORS.border }]} accessibilityRole="summary">
+    <View style={[styles.card, { borderColor: esMar ? COLORS.water : COLORS.border }]} accessibilityRole="summary">
       <Text style={[styles.title, { color: accent }]}>Guía de compra del aparejo</Text>
       <Text style={styles.resumen}>{rec.resumenCompra}</Text>
       <Text style={styles.disclaimer}>
@@ -80,7 +91,7 @@ export default function TablaRecomendacionAparejo({ rec, provinciaId, mar }: Pro
 
       {restricciones.length > 0 ? (
         <>
-          <Text style={[styles.subtitulo, { color: accent }]}>Restricciones en tu provincia</Text>
+          <Text style={[styles.subtitulo, { color: accent }]}>{tituloRest}</Text>
           {restricciones.map((r, i) => {
             const s = severidadStyle(r.severidad);
             return (
