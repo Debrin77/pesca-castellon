@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { COLORS, RADIUS } from "../theme";
 
 type Props = {
+  onCana?: () => void;
   onKit: () => void;
   onNudo: () => void;
   onSitios: () => void;
@@ -10,12 +11,17 @@ type Props = {
 };
 
 /** Atajo fijo «Aprende» para kit, nudo y sitios fáciles. */
-export default function BloqueAprende({ onKit, onNudo, onSitios, onPrimeraSalida }: Props) {
+export default function BloqueAprende({ onCana, onKit, onNudo, onSitios, onPrimeraSalida }: Props) {
   return (
     <View style={styles.wrap}>
       <Text style={styles.title}>Aprende</Text>
-      <Text style={styles.sub}>Si empiezas de cero: kit, un nudo y sitios fáciles.</Text>
+      <Text style={styles.sub}>Si empiezas de cero: caña/carrete, kit, un nudo y sitios fáciles.</Text>
       <View style={styles.row}>
+        {onCana ? (
+          <TouchableOpacity style={styles.chip} onPress={onCana} accessibilityRole="button">
+            <Text style={styles.chipTxt}>Caña y carrete</Text>
+          </TouchableOpacity>
+        ) : null}
         <TouchableOpacity style={styles.chip} onPress={onKit} accessibilityRole="button">
           <Text style={styles.chipTxt}>Kit mínimo</Text>
         </TouchableOpacity>

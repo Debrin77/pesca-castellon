@@ -953,6 +953,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         {mostrarAprende ? (
           <BloqueAprende
+            onCana={() => irAConsejos(navigation, { consejoId: "ap-cana-carrete", categoria: "aparejos" })}
             onKit={() => irAConsejos(navigation, { consejoId: "ap-kit-principiante", categoria: "aparejos" })}
             onNudo={() => irAConsejos(navigation, { consejoId: "nudo-palomar", categoria: "nudos" })}
             onSitios={() => navigation.navigate("PrimeraSalida")}

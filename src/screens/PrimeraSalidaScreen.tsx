@@ -174,9 +174,21 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
           <View style={styles.card}>
             <Text style={styles.title}>Kit mínimo + un nudo</Text>
             <Text style={styles.sub}>
-              No hace falta la tienda entera: un montaje sencillo y el nudo Palomar bastan para la
-              primera jornada.
+              No hace falta la tienda entera: caña/carrete adecuados, un montaje sencillo y el nudo
+              Palomar bastan para la primera jornada.
             </Text>
+            <TouchableOpacity
+              style={styles.opt}
+              onPress={() =>
+                navigation.navigate("Consejos", {
+                  consejoId: "ap-cana-carrete",
+                  categoria: "aparejos",
+                })
+              }
+            >
+              <Text style={styles.optTitle}>Caña y carrete</Text>
+              <Text style={styles.optSub}>Qué comprar en España según río, orilla, barco o kayak</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.opt}
               onPress={() =>
@@ -187,7 +199,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
               }
             >
               <Text style={styles.optTitle}>Kit de principiante</Text>
-              <Text style={styles.optSub}>Caña, carrete, línea y lo imprescindible</Text>
+              <Text style={styles.optSub}>Snaps, plomos, anzuelos y lo imprescindible en la caja</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.opt}

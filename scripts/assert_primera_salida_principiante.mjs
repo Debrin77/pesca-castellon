@@ -27,6 +27,7 @@ function must(rel, needles) {
 
 must("src/screens/PrimeraSalidaScreen.tsx", [
   "sitiosFacilesDe",
+  "ap-cana-carrete",
   "ap-kit-principiante",
   "nudo-palomar",
   "PescaREC",
