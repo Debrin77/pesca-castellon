@@ -782,6 +782,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       </View>
 
       {!mapaSimple ? (
+      <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center" }}>
         {mar ? (
           <>
@@ -964,6 +965,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
       ) : null}
+      </>
       ) : null}
 
       {mapaSimple ? (
