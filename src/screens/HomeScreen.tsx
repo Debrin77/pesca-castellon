@@ -33,8 +33,9 @@ import PanelCampoHoy from "../components/PanelCampoHoy";
 import RecomendacionHoyCard from "../components/RecomendacionHoyCard";
 import TerminoAyuda from "../components/TerminoAyuda";
 import type { RecomendacionHoy } from "../utils/recomendacionHoy";
-import { consultarToqueMapa } from "../services/consultaCostaService";
-import { colorSemaforo } from "../services/consultaPescaService";
+import { consultarCosta, consultarToqueMapa } from "../services/consultaCostaService";
+import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
+import { colorSemaforo, consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
   obtenerAvisosSeguridadPesca,
@@ -48,6 +49,10 @@ import {
 } from "../services/offlineService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
+import SelectorModoPesca from "../components/SelectorModoPesca";
+import TarjetaPuntoHoy from "../components/TarjetaPuntoHoy";
+import { etiquetaModoLarga } from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
@@ -98,6 +103,7 @@ export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
+  const { modo, disponibles, setModo } = useModoPesca();
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
   const tramoYRef = useRef(0);
@@ -385,7 +391,18 @@ export default function HomeScreen({ navigation }: Props) {
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
-  const consultaViva = ubicacion ? consultarToqueMapa(ubicacion.lat, ubicacion.lng) : null;
+  /** Solo veredicto legal si el usuario eligió punto (GPS/mapa/zona), no el centro de provincia. */
+  const puntoExplicito = !!(
+    punto &&
+    (punto.fuente === "gps" || punto.fuente === "mapa" || punto.fuente === "zona")
+  );
+  const consultaViva = puntoExplicito
+    ? modo === "barco"
+      ? consultarEmbarcacion(punto!.lat, punto!.lng)
+      : modo === "orilla"
+        ? consultarCosta(punto!.lat, punto!.lng)
+        : consultarPuntoPesca(punto!.lat, punto!.lng)
+    : null;
   const hoyEtiqueta = consultaViva ? etiquetaHoy(consultaViva) : null;
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const alertasClima =
@@ -529,6 +546,13 @@ export default function HomeScreen({ navigation }: Props) {
           </Text>
         ) : null}
 
+        <SelectorModoPesca
+          modo={modo}
+          disponibles={disponibles}
+          onChange={(m) => void setModo(m)}
+          sobreOscuro
+        />
+
         {cargando && !clima && !indiceHoy && !consultaViva ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
@@ -560,13 +584,14 @@ export default function HomeScreen({ navigation }: Props) {
             accessibilityLabel="Elegir punto en el mapa para el veredicto"
           >
             <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+            <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
             <Text style={styles.veredictoRapidoSub}>
-              Elige un punto para saber si puedes pescar hoy
+              Pulsa el mapa o usa GPS · {etiquetaModoLarga(modo)}
             </Text>
           </TouchableOpacity>
         ) : null}
 
-        {!consultaViva || permisoDenegado ? (
+        {!puntoExplicito ? (
           <TouchableOpacity
             style={styles.gpsChip}
             onPress={() => void usarMiUbicacion()}
@@ -578,18 +603,30 @@ export default function HomeScreen({ navigation }: Props) {
         ) : null}
 
         <PulsePress
-          onPress={() => navigation.navigate("SalgoAPescar")}
+          onPress={() => {
+            if (modo === "barco") navigation.navigate("SalgoEnBarco");
+            else navigation.navigate("SalgoAPescar");
+          }}
           style={styles.ctaSalgo}
           accessibilityRole="button"
-          accessibilityLabel="Salgo a pescar"
+          accessibilityLabel={modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
         >
-          <LinearGradient colors={[...GRADIENTS.water]} style={styles.ctaSalgoInner}>
+          <LinearGradient
+            colors={[...(modo === "barco" ? GRADIENTS.dusk : GRADIENTS.water)]}
+            style={styles.ctaSalgoInner}
+          >
             <OndaAgua intensidad={0.9} />
             <View style={styles.ctaSalgoRow}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.ctaSalgoKicker}>Preparar salida</Text>
-                <Text style={styles.ctaSalgoTitle}>Salgo a pescar</Text>
-                <Text style={styles.ctaSalgoSub}>Punto del día y qué llevar</Text>
+                <Text style={styles.ctaSalgoKicker}>Preparar salida · {etiquetaModoLarga(modo)}</Text>
+                <Text style={styles.ctaSalgoTitle}>
+                  {modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
+                </Text>
+                <Text style={styles.ctaSalgoSub}>
+                  {modo === "barco"
+                    ? "Legal · oleaje · checklist · Columbretes"
+                    : "Punto del día y qué llevar"}
+                </Text>
               </View>
               <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
                 <Text style={styles.ctaSalgoArrowTxt}>→</Text>
@@ -598,33 +635,15 @@ export default function HomeScreen({ navigation }: Props) {
           </LinearGradient>
         </PulsePress>
 
-        {!provincia.continentalOnly && provincia.id === "castellon" ? (
-          <PulsePress
-            onPress={() => navigation.navigate("SalgoEnBarco")}
-            style={[styles.ctaSalgo, { marginTop: 10 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Salgo en barco"
-          >
-            <LinearGradient colors={[...GRADIENTS.dusk]} style={styles.ctaSalgoInner}>
-              <View style={styles.ctaSalgoRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.ctaSalgoKicker}>Embarcación / kayak</Text>
-                  <Text style={styles.ctaSalgoTitle}>Salgo en barco</Text>
-                  <Text style={styles.ctaSalgoSub}>Legal · oleaje · checklist · Columbretes</Text>
-                </View>
-                <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
-                  <Text style={styles.ctaSalgoArrowTxt}>→</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </PulsePress>
-        ) : null}
-
         {consultaViva ? (
           <View style={styles.atajosPunto}>
             <TouchableOpacity
               style={styles.atajoChip}
-              onPress={() => navigation.navigate("Aparejos")}
+              onPress={() =>
+                navigation.navigate("Aparejos", {
+                  ambitoEmbarcacion: modo === "barco",
+                })
+              }
               accessibilityRole="button"
               accessibilityLabel="Ver aparejos"
             >
@@ -667,6 +686,20 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
         
         </View>
+
+        {consultaViva ? (
+          <TarjetaPuntoHoy
+            consulta={consultaViva}
+            indice={indiceHoy}
+            etiquetaPunto={etiquetaClima}
+            onPuedo={abrirVeredictoRapido}
+            onPinta={() => navigation.navigate("Previsión")}
+            onEquipo={() =>
+              navigation.navigate("Aparejos", { ambitoEmbarcacion: modo === "barco" })
+            }
+            onEspecies={() => irAEspeciesDelPunto(navigation)}
+          />
+        ) : null}
 
         <View style={styles.pulsoCard} accessibilityLabel="Pulso del día">
           <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
@@ -760,7 +793,7 @@ export default function HomeScreen({ navigation }: Props) {
                     <SiguientePasoCard
             provinciaId={provincia.id}
             checklistTextos={provincia.checklistAntesDePescar}
-            tienePunto={!!consultaViva && !!ubicacion && !permisoDenegado}
+            tienePunto={puntoExplicito && !!consultaViva}
             tieneSitios={favoritos.length > 0 || puntos.length > 0}
             invitarPrimeraSalida={mostrarAprende}
             etiquetaPunto={etiquetaClima}
@@ -786,6 +819,10 @@ export default function HomeScreen({ navigation }: Props) {
                 return;
               }
               if (accion.tipo === "salgo") {
+                if (modo === "barco") {
+                  navigation.navigate("SalgoEnBarco");
+                  return;
+                }
                 navigation.navigate("SalgoAPescar", {
                   irAChecklist: !!accion.irAChecklist,
                 });

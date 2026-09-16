@@ -19,6 +19,9 @@ import { puntoEnRegionMapa } from "../services/geoService";
 import { especiesOrillaParaSeleccion } from "../services/catalogoEspeciesService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
+import { modoAMapaModo } from "../data/modoPesca";
+import SelectorModoPesca from "../components/SelectorModoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, TYPE, FONTS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -63,6 +66,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { punto, fijarPunto } = usePuntoConsulta();
+  const { modo: modoGlobal, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
@@ -92,7 +96,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   );
 
   const [modo, setModo] = useState<ModoEspecies>(() =>
-    !soloContinental && consultaSeed?.ambito === "maritimo" ? "costa" : "continental"
+    !soloContinental && modoAMapaModo(modoGlobal) === "costa" ? "costa" : "continental"
   );
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(() => consultaSeed);
   const [marcador, setMarcador] = useState<LatLng | null>(() =>
@@ -153,6 +157,15 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     setCamara(camaraProvincia(provincia.regionMapa));
     puntoAplicadoRef.current = null;
   }, [provinciaId, provincia.regionMapa]);
+
+  // Sincronizar con modo global (Inicio).
+  useEffect(() => {
+    if (soloContinental) return;
+    const mapa = modoAMapaModo(modoGlobal);
+    setModo(mapa === "costa" ? "costa" : "continental");
+    setCatalogo(mapa === "costa" ? "mar" : "rio");
+    if (mapa === "costa") setCamara(camaraCosta(provincia));
+  }, [modoGlobal, soloContinental, provincia]);
 
   // Cámara inicial si no hay punto sembrado.
   useEffect(() => {
@@ -229,6 +242,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   function cambiarModo(siguiente: ModoEspecies, opts?: { abrirCatalogo?: boolean }) {
     if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
+    void setModoGlobal(siguiente === "costa" ? (modoGlobal === "barco" ? "barco" : "orilla") : "rio");
     setFichaAbierta(false);
     if (siguiente === "costa") {
       setCatalogo("mar");

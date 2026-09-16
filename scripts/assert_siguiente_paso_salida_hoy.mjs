@@ -42,7 +42,7 @@ if (card.includes("Termina el checklist") || card.includes("Continuar checklist"
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes("ctaSalgoTitle") || !home.includes(">Salgo a pescar<")) {
+if (!home.includes("ctaSalgoTitle") || (!home.includes(">Salgo a pescar<") && !home.includes('"Salgo a pescar"'))) {
   fail("Home debe mostrar el CTA grande «Salgo a pescar»");
 }
 if (!home.includes("<SiguientePasoCard") || !home.includes("irAChecklist")) {

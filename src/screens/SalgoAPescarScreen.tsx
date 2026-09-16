@@ -17,7 +17,10 @@ import { consultarToqueMapa } from "../services/consultaCostaService";
 import type { ConsultaPesca } from "../services/consultaPescaService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import type { ModoPescaGlobal } from "../data/modoPesca";
+import SelectorModoPesca from "../components/SelectorModoPesca";
 import {
   obtenerFavoritos,
   obtenerPuntosGuardados,
@@ -72,6 +75,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, fijarPunto } = usePuntoConsulta();
+  const { modo: modoGlobal, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
   const checklist = provincia.checklistAntesDePescar;
   const permiteCosta = !provincia.continentalOnly;
   const [paso, setPaso] = useState(0);
@@ -94,8 +98,12 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [notaSalida, setNotaSalida] = useState("");
   const [salidaRegistrada, setSalidaRegistrada] = useState(false);
   const [guardandoSalida, setGuardandoSalida] = useState(false);
-  /** Castellón: costa vs ríos/embalses. Sevilla (solo continental) queda fijo. */
-  const [medio, setMedio] = useState<MedioSalida>(permiteCosta ? "continental" : "continental");
+  /** Derivado del modo global (rio → continental, orilla → maritimo). */
+  const medio: MedioSalida =
+    modoGlobal === "orilla" ? "maritimo" : "continental";
+  const setMedio = (m: MedioSalida) => {
+    void setModoGlobal(m === "maritimo" ? "orilla" : "rio");
+  };
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);
   /** Evita relanzar «Revisa qué llevar» cuando fijarPunto actualiza `punto` y re-dispara el focus effect. */
@@ -174,7 +182,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
         });
         const c = consultarToqueMapa(args.lat, args.lng);
         if (permiteCosta) {
-          setMedio(c.ambito === "maritimo" ? "maritimo" : "continental");
+          void setModoGlobal(c.ambito === "maritimo" ? "orilla" : "rio");
         }
         const dias = await calcularIndicePesca(args.lat, args.lng, 2);
         setCoords({ lat: args.lat, lng: args.lng });
@@ -197,6 +205,10 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
+      if (modoGlobal === "barco") {
+        navigation.replace("SalgoEnBarco");
+        return;
+      }
       void obtenerFavoritos().then(setFavoritos);
       void obtenerPuntosGuardados().then(setPuntos);
       void obtenerCapturas().then(setCapturas);
@@ -246,7 +258,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       };
       // route.params?.irAChecklist: al navegar con el flag el callback se recrea y el foco lo ejecuta.
       // No incluir `punto`: su actualización tras fijarPunto no debe re-lanzar aplicarUbicacion.
-    }, [aplicarUbicacion, provincia.id, route.params?.irAChecklist, navigation])
+    }, [aplicarUbicacion, provincia.id, route.params?.irAChecklist, navigation, modoGlobal])
   );
 
   async function pedirGpsConSheet(): Promise<boolean> {
@@ -409,32 +421,31 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
             </Text>
 
             {permiteCosta ? (
-              <View style={styles.medioRow} accessibilityRole="radiogroup">
-                <TouchableOpacity
-                  style={[styles.medioBtn, medio === "continental" && styles.medioBtnOn]}
-                  onPress={() => setMedio("continental")}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected: medio === "continental" }}
-                  accessibilityLabel="Ríos y embalses"
-                >
-                  <Text style={[styles.medioBtnTxt, medio === "continental" && styles.medioBtnTxtOn]}>
-                    Ríos y embalses
-                  </Text>
-                  <Text style={styles.medioBtnSub}>Licencia continental</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.medioBtn, medio === "maritimo" && styles.medioBtnOnMar]}
-                  onPress={() => setMedio("maritimo")}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected: medio === "maritimo" }}
-                  accessibilityLabel="Costa orilla de mar"
-                >
-                  <Text style={[styles.medioBtnTxt, medio === "maritimo" && styles.medioBtnTxtOnMar]}>
-                    Costa / orilla
-                  </Text>
-                  <Text style={styles.medioBtnSub}>Licencia marítima tierra</Text>
-                </TouchableOpacity>
-              </View>
+              <SelectorModoPesca
+                modo={modoGlobal === "barco" ? "orilla" : modoGlobal}
+                disponibles={modosDisp.filter((m) => m !== "barco") as ModoPescaGlobal[]}
+                onChange={(m) => {
+                  if (m === "barco") {
+                    void setModoGlobal("barco");
+                    navigation.replace("SalgoEnBarco");
+                    return;
+                  }
+                  void setModoGlobal(m);
+                }}
+              />
+            ) : null}
+            {permiteCosta && modosDisp.includes("barco") ? (
+              <TouchableOpacity
+                style={styles.barcoLink}
+                onPress={() => {
+                  void setModoGlobal("barco");
+                  navigation.replace("SalgoEnBarco");
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ir a Salgo en barco"
+              >
+                <Text style={styles.barcoLinkTxt}>¿Vas en barco o kayak? → Salgo en barco</Text>
+              </TouchableOpacity>
             ) : null}
 
             <AvisoHorarioLegal
@@ -913,6 +924,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   medioRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  barcoLink: {
+    marginBottom: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.waterLight,
+    borderWidth: 1,
+    borderColor: COLORS.water,
+  },
+  barcoLinkTxt: { fontSize: 14, fontWeight: "800", color: COLORS.waterDark, textAlign: "center" },
   medioBtn: {
     flex: 1,
     borderWidth: 1.5,

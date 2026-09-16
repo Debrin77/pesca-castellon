@@ -17,6 +17,7 @@ import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
 import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
+import { ModoPescaProvider } from "./src/context/ModoPescaContext";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import PrimeraSalidaScreen from "./src/screens/PrimeraSalidaScreen";
 import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
@@ -288,9 +289,11 @@ export default function App() {
     <SafeAreaProvider>
       <ProvinciaProvider>
         <PuntoConsultaProvider>
-          <AccesoProvider>
-            <AppRaiz />
-          </AccesoProvider>
+          <ModoPescaProvider>
+            <AccesoProvider>
+              <AppRaiz />
+            </AccesoProvider>
+          </ModoPescaProvider>
         </PuntoConsultaProvider>
       </ProvinciaProvider>
     </SafeAreaProvider>
