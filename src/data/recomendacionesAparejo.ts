@@ -28,12 +28,14 @@ export type CebadorRec = {
   nota: string;
 };
 
+export type AmbitoRestriccionAparejo = "rio" | "costa" | "embarcacion";
+
 export type RestriccionAparejo = {
   provincias: ProvinciaId[];
   texto: string;
   severidad: SeveridadRestriccion;
-  /** Si se indica, solo mostrar en ese ámbito (río/costa). */
-  soloAmbito?: "rio" | "costa";
+  /** Si se indica, solo mostrar en ese ámbito (río / orilla / embarcación). */
+  soloAmbito?: AmbitoRestriccionAparejo;
 };
 
 export type RecomendacionAparejo = {
@@ -118,6 +120,15 @@ const COSTA_CS: RestriccionAparejo = {
   soloAmbito: "costa",
   texto:
     "Costa Castellón (Decreto 41/2013): máx. 2 cañas desde tierra, 100 m de bañistas, fuera de dársena/puerto. Irta: pesca a pie vedada. La caña desde orilla no tiene veda nocturna general (sí la submarina).",
+  severidad: "obligatorio",
+};
+
+/** Solo modalidad barco/kayak — no reutilizar el texto de orilla («desde tierra»). */
+const EMBARCACION_CS: RestriccionAparejo = {
+  provincias: ["castellon"],
+  soloAmbito: "embarcacion",
+  texto:
+    "Embarcación / kayak Castellón: la licencia «desde tierra» no cubre barco. No pesques en dársena ni Columbretes. Artes de recreo (sin redes). Declara en PescaREC si aplica. Meteo y plan de regreso mandan.",
   severidad: "obligatorio",
 };
 
@@ -912,12 +923,14 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
 
 export function recomendacionAparejo(
   especieId: string,
-  ambito?: "rio" | "costa"
+  ambito?: "rio" | "costa" | "embarcacion"
 ): RecomendacionAparejo | undefined {
   const matches = RECOMENDACIONES_APAREJO.filter((r) => r.especieId === especieId);
   if (matches.length === 0) return undefined;
   if (ambito) {
-    const exact = matches.find((r) => r.ambito === ambito);
+    // Embarcación reutiliza la ficha de costa (equipo marítimo); las restricciones se filtran aparte.
+    const ambitoFicha = ambito === "embarcacion" ? "costa" : ambito;
+    const exact = matches.find((r) => r.ambito === ambitoFicha);
     if (exact) return exact;
     const ambos = matches.find((r) => r.ambito === "ambos");
     if (ambos) return ambos;
@@ -941,13 +954,23 @@ export function etiquetaArponcillo(estado: ArponcilloEstado): string {
 export function restriccionesParaProvincia(
   rec: RecomendacionAparejo,
   provinciaId: string,
-  ambito?: "rio" | "costa"
+  ambito?: AmbitoRestriccionAparejo
 ): RestriccionAparejo[] {
-  return rec.restricciones.filter((r) => {
+  const base = rec.restricciones.filter((r) => {
     if (!(r.provincias.includes("*") || r.provincias.includes(provinciaId as ProvinciaId))) {
       return false;
     }
     if (r.soloAmbito && ambito && r.soloAmbito !== ambito) return false;
     return true;
   });
+  // Fichas de costa solo llevan COSTA_CS (orilla). En Barco inyectamos reglas de embarcación.
+  if (
+    ambito === "embarcacion" &&
+    provinciaId === "castellon" &&
+    (rec.ambito === "costa" || rec.ambito === "ambos") &&
+    !base.some((r) => r.soloAmbito === "embarcacion")
+  ) {
+    return [...base, EMBARCACION_CS];
+  }
+  return base;
 }

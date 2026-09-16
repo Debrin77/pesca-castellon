@@ -121,7 +121,10 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const talla = sp ? tallaDestacada(sp) : null;
   const mar = (ambito === "costa" || ambito === "barco") && !soloContinental;
   const guiaCompra = sp
-    ? recomendacionAparejo(sp.id, ambito === "costa" || ambito === "barco" ? "costa" : "rio")
+    ? recomendacionAparejo(
+        sp.id,
+        ambito === "barco" ? "embarcacion" : ambito === "costa" ? "costa" : "rio"
+      )
     : undefined;
   const terminosFicha = useMemo(() => {
     if (!sp) return [];
@@ -333,7 +336,13 @@ export default function AparejosScreen({ route, navigation }: Props) {
             ) : null}
 
             {guiaCompra ? (
-              <TablaRecomendacionAparejo rec={guiaCompra} provinciaId={provincia.id} mar={mar} />
+              <TablaRecomendacionAparejo
+                rec={guiaCompra}
+                provinciaId={provincia.id}
+                ambitoLegal={
+                  ambito === "barco" ? "embarcacion" : ambito === "costa" ? "costa" : "rio"
+                }
+              />
             ) : null}
 
             {montajesParaEspecie(sp.id, optsMontaje).length > 0 ? (
