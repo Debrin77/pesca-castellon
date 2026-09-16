@@ -5,6 +5,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { spawnSync } from "child_process";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 let fallos = 0;
@@ -36,6 +37,9 @@ for (const needle of [
   "Decreto 41/2013",
   "soloAmbito",
   "ambito: \"costa\"",
+  "EMBARCACION_CS",
+  'soloAmbito: "embarcacion"',
+  "la licencia «desde tierra» no cubre barco",
 ]) {
   if (!data.includes(needle)) fail(`recomendacionesAparejo.ts falta «${needle}»`);
 }
@@ -60,15 +64,26 @@ for (const needle of [
   "Guía de compra del aparejo",
   "Plomo según lo que va en el anzuelo",
   "Lista corta de tienda",
-  "Restricciones en tu provincia",
+  "Restricciones",
+  "ambitoLegal",
+  "embarcacion",
   "etiquetaArponcillo",
   "restriccionesParaProvincia",
 ]) {
   if (!tabla.includes(needle)) fail(`TablaRecomendacionAparejo falta «${needle}»`);
 }
+if (tabla.includes('"Restricciones en tu provincia"') && !tabla.includes("embarcación")) {
+  fail("TablaRecomendacionAparejo debe distinguir título orilla vs embarcación");
+}
 
 const aparejos = read("src/screens/AparejosScreen.tsx");
-for (const needle of ["recomendacionAparejo", "TablaRecomendacionAparejo", "guiaCompra"]) {
+for (const needle of [
+  "recomendacionAparejo",
+  "TablaRecomendacionAparejo",
+  "guiaCompra",
+  'ambitoLegal={',
+  '"embarcacion"',
+]) {
   if (!aparejos.includes(needle)) fail(`AparejosScreen falta «${needle}»`);
 }
 if (!aparejos.includes("guía de compra") && !aparejos.includes("Guía de compra")) {
@@ -86,6 +101,35 @@ if (!consejos.includes("ap-guia-compra") || !consejos.includes("Guía de compra 
 const pkg = read("package.json");
 if (!pkg.includes("assert_recomendaciones_aparejo.mjs")) {
   fail("package.json assert debe incluir assert_recomendaciones_aparejo.mjs");
+}
+
+// Runtime: en embarcación no debe salir «desde tierra» / 2 cañas de orilla.
+const runtime = `
+import { recomendacionAparejo, restriccionesParaProvincia } from './src/data/recomendacionesAparejo.ts';
+const rec = recomendacionAparejo('lubina', 'embarcacion');
+if (!rec) throw new Error('sin ficha lubina embarcacion');
+const costa = restriccionesParaProvincia(rec, 'castellon', 'costa');
+const barco = restriccionesParaProvincia(rec, 'castellon', 'embarcacion');
+if (!costa.some((r) => r.texto.includes('desde tierra'))) throw new Error('costa debe tener orilla');
+if (barco.some((r) => r.texto.includes('máx. 2 cañas desde tierra'))) {
+  throw new Error('barco no debe mostrar 2 cañas desde tierra');
+}
+if (!barco.some((r) => r.texto.includes('no cubre barco') || r.soloAmbito === 'embarcacion')) {
+  throw new Error('barco debe mostrar reglas de embarcación');
+}
+console.log('RUNTIME_OK', barco.map((r) => r.texto.slice(0, 60)).join(' | '));
+`;
+const run = spawnSync("npx", ["--yes", "tsx", "-e", runtime], {
+  cwd: root,
+  encoding: "utf8",
+  timeout: 60_000,
+});
+if (run.status !== 0) {
+  fail(`runtime embarcacion≠orilla: ${(run.stderr || run.stdout || "").slice(0, 500)}`);
+} else if (!(run.stdout || "").includes("RUNTIME_OK")) {
+  fail("runtime sin RUNTIME_OK");
+} else {
+  console.log("OK", (run.stdout || "").trim().split("\n").pop());
 }
 
 if (fallos) {
