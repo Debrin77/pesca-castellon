@@ -137,12 +137,23 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       .slice(0, 12);
   }, [provincia.zones, medio]);
 
+  /** Tras avanzar, bajar el scroll cuando el bloque nuevo ya tiene tamaño medido. */
+  const scrollAlFinalPendiente = useRef(false);
+  const irAlPaso = useCallback((n: number) => {
+    setPaso(n);
+    // Sin esto, «Continuar → clima» / «Qué llevar» parecen muertos: el bloque
+    // nuevo se pinta debajo de una card larga y el viewport no se mueve.
+    scrollAlFinalPendiente.current = true;
+  }, []);
   const irAlChecklistUi = useCallback(() => {
-    setPaso(2);
-    // El checklist va al final del scroll (normativa + clima quedan arriba).
-    setTimeout(() => {
+    irAlPaso(2);
+  }, [irAlPaso]);
+  const onScrollContentSizeChange = useCallback(() => {
+    if (!scrollAlFinalPendiente.current) return;
+    scrollAlFinalPendiente.current = false;
+    requestAnimationFrame(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
-    }, 80);
+    });
   }, []);
 
   const aplicarUbicacion = useCallback(
@@ -399,6 +410,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
       ref={scrollRef}
       style={styles.container}
       contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+      onContentSizeChange={onScrollContentSizeChange}
     >
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.hero}>
         <OndaAgua intensidad={1} />
@@ -722,9 +734,16 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
               <TouchableOpacity style={styles.btnGhost} onPress={cambiarUbicacion}>
                 <Text style={styles.btnGhostTxt}>Cambiar ubicación</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btn} onPress={() => setPaso(1)}>
-                <Text style={styles.btnTxt}>Continuar → clima</Text>
-              </TouchableOpacity>
+              {paso < 1 ? (
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={() => irAlPaso(1)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Continuar al clima"
+                >
+                  <Text style={styles.btnTxt}>Continuar → clima</Text>
+                </TouchableOpacity>
+              ) : null}
             </View>
           </ListaAnimada>
 
@@ -771,9 +790,16 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 >
                   <Text style={styles.btnGhostTxt}>Ver previsión completa</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => setPaso(2)}>
-                  <Text style={styles.btnTxt}>Qué llevar →</Text>
-                </TouchableOpacity>
+                {paso < 2 ? (
+                  <TouchableOpacity
+                    style={styles.btn}
+                    onPress={() => irAlPaso(2)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Continuar a qué llevar"
+                  >
+                    <Text style={styles.btnTxt}>Qué llevar →</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </ListaAnimada>
           )}
