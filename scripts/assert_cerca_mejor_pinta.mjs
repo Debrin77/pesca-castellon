@@ -59,6 +59,16 @@ else ok("mapa integra bloque");
 if (!mapa.includes("onAbrir={(fila) => evaluarPunto")) fail("mapa sin onAbrir→evaluarPunto");
 else ok("abrir fila reaplica consulta");
 
+const utilLegal = read("src/utils/cercaMejorPinta.ts");
+if (!utilLegal.includes("esPescableHoy")) fail("falta filtro esPescableHoy");
+else ok("filtra no pescables");
+if (!utilLegal.includes('"VP"')) fail("falta excluir VP vedado");
+else ok("excluye VP");
+if (!utilLegal.includes("reserva_trucha")) fail("falta excluir reserva_trucha");
+else ok("excluye reserva");
+if (!utilLegal.includes("pasaFiltroLegal")) fail("falta pasaFiltroLegal");
+else ok("pasaFiltroLegal");
+
 // El bloque va DESPUÉS de ConsultaPescaCard (veredicto primero).
 const idxCard = mapa.indexOf("<ConsultaPescaCard");
 const idxCerca = mapa.indexOf("<CercaMejorPintaBlock");

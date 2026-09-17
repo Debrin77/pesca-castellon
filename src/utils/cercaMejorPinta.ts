@@ -1,6 +1,7 @@
 /**
  * Candidatos cercanos al toque del mapa, ordenados por índice de pesca (o barco).
  * Best-effort: no bloquea el veredicto legal; si no hay datos, null.
+ * Nunca recomienda vedados / reservas / sitios donde hoy no se puede.
  */
 import type { ModoPescaGlobal } from "../data/modoPesca";
 import { sitiosFacilesDe } from "../data/sitiosFaciles";
@@ -11,9 +12,17 @@ import {
   CATEGORIA_BARCO_INFO,
   type IndiceBarco,
 } from "../services/boatIndexService";
-import { todasLasRampas } from "../services/consultaEmbarcacionService";
-import { todasLasPlayas } from "../services/consultaCostaService";
-import { todosLosTramos } from "../services/consultaPescaService";
+import {
+  consultarEmbarcacion,
+  todasLasRampas,
+} from "../services/consultaEmbarcacionService";
+import { consultarCosta, todasLasPlayas } from "../services/consultaCostaService";
+import {
+  consultarPorTramo,
+  consultarPuntoPesca,
+  todosLosTramos,
+  type ConsultaPesca,
+} from "../services/consultaPescaService";
 import {
   calcularIndicePesca,
   CATEGORIA_INFO,
@@ -68,7 +77,41 @@ function radioDe(modo: ModoPescaGlobal): number {
   return RADIO_KM[modo];
 }
 
-/** Pool sync (catálogo + puntos). Waypoints marinos se añaden aparte (async). */
+/** Cotos sí (con permiso); vedados / reservas / HOY NO / fuera de catálogo no. */
+function esPescableHoy(c: ConsultaPesca): boolean {
+  if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") return false;
+  if (c.veredicto === "fuera_catalogo") return false;
+  if (c.veredicto === "coto") return true;
+  return c.sePuedePescarHoy;
+}
+
+function pasaFiltroLegal(
+  modo: ModoPescaGlobal,
+  origen: OrigenCandidatoCerca,
+  lat: number,
+  lng: number,
+  tramoId?: string
+): boolean {
+  try {
+    if (origen === "tramo") {
+      const t = todosLosTramos().find((x) => x.id === tramoId);
+      if (!t) return false;
+      if (t.aprovechamiento === "VP" || t.aprovechamiento === "ZRTC") return false;
+      return esPescableHoy(consultarPorTramo(t));
+    }
+    if (origen === "playa") return esPescableHoy(consultarCosta(lat, lng));
+    if (origen === "rampa" || origen === "waypoint") {
+      return esPescableHoy(consultarEmbarcacion(lat, lng));
+    }
+    if (modo === "rio") return esPescableHoy(consultarPuntoPesca(lat, lng));
+    if (modo === "orilla") return esPescableHoy(consultarCosta(lat, lng));
+    return esPescableHoy(consultarEmbarcacion(lat, lng));
+  } catch {
+    return false;
+  }
+}
+
+/** Pool sync (catálogo). Waypoints / puntos se añaden aparte (async). */
 export function listarCandidatosCercaSync(opts: {
   lat: number;
   lng: number;
@@ -86,19 +129,21 @@ export function listarCandidatosCercaSync(opts: {
     nombre: string,
     lat: number,
     lng: number,
-    origen: OrigenCandidatoCerca
+    origen: OrigenCandidatoCerca,
+    tramoId?: string
   ) {
     const key = claveCoord(lat, lng);
     if (vistos.has(key)) return;
     const d = distanciaKm(opts.lat, opts.lng, lat, lng);
     if (d < EXCLUIR_KM || d > radio) return;
+    if (!pasaFiltroLegal(opts.modo, origen, lat, lng, tramoId)) return;
     vistos.add(key);
     out.push({ id, nombre, lat, lng, distanciaKm: d, origen });
   }
 
   if (opts.modo === "rio") {
     for (const t of todosLosTramos()) {
-      push(`tramo:${t.id}`, t.nombre, t.lat, t.lng, "tramo");
+      push(`tramo:${t.id}`, t.nombre, t.lat, t.lng, "tramo", t.id);
     }
     for (const s of sitiosFacilesDe(provincia.id as ProvinciaId)) {
       if (s.ambito !== "continental") continue;
@@ -140,6 +185,7 @@ async function candidatosConPersonales(opts: {
       if (vistos.has(key)) continue;
       const d = distanciaKm(opts.lat, opts.lng, p.lat, p.lng);
       if (d < EXCLUIR_KM || d > radio) continue;
+      if (!pasaFiltroLegal(opts.modo, "punto", p.lat, p.lng)) continue;
       vistos.add(key);
       extra.push({
         id: `pto:${p.id}`,
@@ -162,6 +208,7 @@ async function candidatosConPersonales(opts: {
         if (vistos.has(key)) continue;
         const d = distanciaKm(opts.lat, opts.lng, w.lat, w.lng);
         if (d < EXCLUIR_KM || d > radio) continue;
+        if (!pasaFiltroLegal(opts.modo, "waypoint", w.lat, w.lng)) continue;
         vistos.add(key);
         extra.push({
           id: `wp:${w.id}`,
