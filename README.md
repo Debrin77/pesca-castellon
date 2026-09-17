@@ -20,8 +20,9 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 
 ### Entrada y privacidad
 - **Presentación estilo App Store** al entrar (pantallas a pantalla completa con
-  virtudes de la app). Se cierra con la **✕** arriba a la derecha o al final
-  con “Empezar a pescar”. Se puede volver a ver desde **Ajustes**.
+  virtudes claras: ¿Puedo?, ¿Pinta?, **Río · Orilla · Barco**, privacidad, PIN y
+  «Salgo a pescar»). Marca + eslogan, mockups vivos y CTA “Empezar a pescar”.
+  Se cierra con la **✕** arriba a la derecha. Se puede volver a ver desde **Ajustes**.
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico
   a pantalla completa al abrir o al volver de segundo plano.
 - **Biometría** (Face ID / huella) opcional una vez activo el PIN.
