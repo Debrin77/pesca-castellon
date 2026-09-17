@@ -48,9 +48,16 @@ must("src/screens/OnboardingScreen.tsx", [
   "Hoy pinta",
   "Solo en este móvil",
   "Salgo a pescar",
+  "Sal al agua con criterio",
+  "Río · Orilla · Barco",
+  "Oficial / orientativo",
+  "Desliza para ver",
   'id: "legal"',
   'id: "pinta"',
   'id: "intima"',
+  'id: "modos"',
+  "MockModos",
+  "Solunar",
 ]);
 
 must("src/components/MapaIgnPresentacion.tsx", [
@@ -90,6 +97,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
+  "presentacion_virtudes_v2",
 ]);
 
 must("README.md", [
@@ -99,6 +107,7 @@ must("README.md", [
   "Castellón",
   "Sevilla",
   "personal",
+  "Río · Orilla · Barco",
 ]);
 
 const pkg = read("package.json");

@@ -24,11 +24,11 @@ import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
 
 const { width: W, height: H } = Dimensions.get("window");
 /** Marco tipo captura App Store: domina el alto de la pantalla. */
-const PHONE_W = Math.min(W * 0.88, 372);
-const PHONE_H = Math.min(H * 0.58, 580);
+const PHONE_W = Math.min(W * 0.86, 360);
+const PHONE_H = Math.min(H * 0.52, 540);
 const nativo = Platform.OS !== "web";
 
-type SlideId = "intima" | "pin" | "legal" | "pinta" | "diario" | "campo";
+type SlideId = "legal" | "pinta" | "modos" | "intima" | "pin" | "campo";
 
 type Slide = {
   id: SlideId;
@@ -48,6 +48,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const nombreProv = provincia.nombre;
+  const esCosta = !provincia.continentalOnly;
   const [page, setPage] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
   const enter = useRef(new Animated.Value(1)).current;
@@ -64,23 +65,35 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           : provincia.tieneIcv
             ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — confirma el cartel."
             : `Verde, rojo o ámbar. En ${nombreProv} es orientativo: confirma siempre en la fuente oficial.`,
-        accent: ["#176a7c", "#114e5c", "#0b3540"],
+        accent: ["#1a7588", "#125968", "#0c3d48"],
         tonoOnda: "agua",
       },
       {
         id: "pinta",
         eyebrow: "La norma autoriza · el tiempo orienta",
         titulo: "Hoy pinta",
-        texto: "Índice 0–100 con clima, presión y luna. «¿Pinta?» no autoriza: solo ayuda a elegir hora.",
-        accent: ["#1f6f88", "#155566", "#0d3c48"],
+        texto:
+          "Índice 0–100 con aire, agua, presión, solunar y franjas. «¿Pinta?» no autoriza: solo ayuda a elegir hora.",
+        accent: ["#1f7a94", "#166278", "#0e4456"],
+        tonoOnda: "agua",
+      },
+      {
+        id: "modos",
+        eyebrow: esCosta ? "Un gesto · toda la app" : "Tu ámbito de pesca",
+        titulo: esCosta ? "Río · Orilla · Barco" : "Ríos y embalses",
+        texto: esCosta
+          ? "Elige cómo vas a pescar y se alinean mapa, especies, aparejos y el ritual de salida — también kayak o barco."
+          : `En ${nombreProv}: mapa de tramos, especies continentales, montajes y «Salgo a pescar» paso a paso.`,
+        accent: ["#1a5f78", "#134a5c", "#0c3340"],
         tonoOnda: "agua",
       },
       {
         id: "intima",
         eyebrow: "Sin feed · sin nube obligatoria",
         titulo: "Personal e íntima",
-        texto: "Sitios y notas en tu móvil. Compartir es opcional — nunca el motivo.",
-        accent: ["#1c5c42", "#12382c", "#0a2218"],
+        texto:
+          "Sitios, capturas y notas en tu móvil. Exporta GPX si quieres — compartir es opcional, nunca el motivo.",
+        accent: ["#1c6346", "#134033", "#0a261c"],
         tonoOnda: "claro",
       },
       {
@@ -88,27 +101,20 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         eyebrow: "Cerrada para los demás",
         titulo: "PIN + biometría",
         texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, solo tú entras.",
-        accent: ["#142e24", "#0d1f18", "#07140f"],
-        tonoOnda: "claro",
-      },
-      {
-        id: "diario",
-        eyebrow: "Memoria de campo",
-        titulo: "Tu diario local",
-        texto: "Foto, especie, GPS y cupo. Exporta GPX a Maps, a un amigo… o a nadie.",
-        accent: ["#18523c", "#12382c", "#0c241c"],
+        accent: ["#153528", "#0e241c", "#081612"],
         tonoOnda: "claro",
       },
       {
         id: "campo",
         eyebrow: "De la duda a la orilla",
-        titulo: "Salgo en 5 pasos",
-        texto: "Ritual corto para tu primera salida: sitio → norma → clima → montaje → qué llevar.",
-        accent: ["#24382e", "#17261f", "#0e1713"],
+        titulo: "Salgo a pescar",
+        texto:
+          "Ritual corto para tu primera salida: sitio → ¿Puedo? → ¿Pinta? → montaje → qué llevar. Consejos con fotos cuando haga falta.",
+        accent: ["#234036", "#172c25", "#0f1c18"],
         tonoOnda: "claro",
       },
     ],
-    [provincia.continentalOnly, provincia.tieneIcv, nombreProv]
+    [provincia.continentalOnly, provincia.tieneIcv, nombreProv, esCosta]
   );
 
   useEffect(() => {
@@ -154,19 +160,29 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   const topPad = Math.max(insets.top, Platform.OS === "web" ? 16 : 12);
   const slide = slides[page];
-  const phoneLift = floatY.interpolate({ inputRange: [0, 1], outputRange: [0, -12] });
+  const phoneLift = floatY.interpolate({ inputRange: [0, 1], outputRange: [0, -10] });
   const phoneScale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] });
   const phoneOpacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] });
   const textOpacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
   const textY = enter.interpolate({ inputRange: [0, 1], outputRange: [14, 0] });
+  const esUltima = page === slides.length - 1;
 
   return (
     <View style={styles.root}>
       <LinearGradient colors={[...slide.accent]} style={StyleSheet.absoluteFill} />
-      <OndaAgua intensidad={0.65} tono={slide.tonoOnda} />
+      <OndaAgua intensidad={0.7} tono={slide.tonoOnda} />
       <LinearGradient
-        colors={["rgba(0,0,0,0.28)", "transparent", "rgba(0,0,0,0.35)"]}
-        locations={[0, 0.35, 1]}
+        colors={["rgba(0,0,0,0.22)", "transparent", "rgba(0,0,0,0.42)"]}
+        locations={[0, 0.32, 1]}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
+      {/* Luz suave tipo orilla al amanecer */}
+      <LinearGradient
+        colors={["rgba(255,236,200,0.14)", "transparent", "transparent"]}
+        locations={[0, 0.28, 1]}
+        start={{ x: 0.15, y: 0 }}
+        end={{ x: 0.85, y: 0.55 }}
         style={StyleSheet.absoluteFill}
         pointerEvents="none"
       />
@@ -181,9 +197,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <Text style={styles.closeTxt}>✕</Text>
       </TouchableOpacity>
 
-      <Animated.Text style={[styles.brand, { marginTop: topPad + 36, opacity: textOpacity }]}>
-        {provincia.nombreApp ?? "Pesca"}
-      </Animated.Text>
+      <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
+        <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
+        <Text style={styles.brandTag}>Sal al agua con criterio</Text>
+      </Animated.View>
 
       <ScrollView
         ref={scrollRef}
@@ -203,7 +220,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
                 transform: [{ translateY: idx === page ? textY : 0 }],
                 alignItems: "center",
                 width: "100%",
-                paddingHorizontal: 8,
+                paddingHorizontal: 10,
               }}
             >
               <Text style={styles.eyebrow}>{s.eyebrow}</Text>
@@ -226,7 +243,12 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
               <View style={styles.phone}>
                 <View style={styles.phoneNotch} />
                 <View style={styles.phoneScreen}>
-                  <MockUI id={s.id} nombreProv={nombreProv} activo={idx === page} />
+                  <MockUI
+                    id={s.id}
+                    nombreProv={nombreProv}
+                    esCosta={esCosta}
+                    activo={idx === page}
+                  />
                 </View>
                 <View style={styles.phoneHome} />
               </View>
@@ -237,15 +259,17 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+        {!esUltima ? (
+          <Text style={styles.hintSwipe}>Desliza para ver las virtudes →</Text>
+        ) : (
+          <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
+        )}
+
         <View style={styles.dots}>
           {slides.map((s, i) => (
             <View key={s.id} style={[styles.dot, i === page && styles.dotOn]} />
           ))}
         </View>
-
-        {page === slides.length - 1 ? (
-          <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
-        ) : null}
 
         <PulsePress
           style={styles.cta}
@@ -276,18 +300,20 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 function MockUI({
   id,
   nombreProv,
+  esCosta,
   activo,
 }: {
   id: SlideId;
   nombreProv: string;
+  esCosta: boolean;
   activo: boolean;
 }) {
   if (id === "intima") return <MockIntima nombreProv={nombreProv} activo={activo} />;
   if (id === "pin") return <MockPin activo={activo} />;
   if (id === "legal") return <MockLegal nombreProv={nombreProv} activo={activo} />;
   if (id === "pinta") return <MockPinta nombreProv={nombreProv} activo={activo} />;
-  if (id === "diario") return <MockDiario activo={activo} />;
-  return <MockCampo activo={activo} />;
+  if (id === "modos") return <MockModos nombreProv={nombreProv} esCosta={esCosta} activo={activo} />;
+  return <MockCampo activo={activo} esCosta={esCosta} />;
 }
 
 function useReveal(activo: boolean) {
@@ -338,6 +364,9 @@ function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolea
             </View>
           </View>
         ))}
+        <View style={m.gpxMini}>
+          <Text style={m.gpxMiniTxt}>Exportar GPX · cuando tú quieras</Text>
+        </View>
       </Animated.View>
     </View>
   );
@@ -398,7 +427,10 @@ function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean
             <Text style={[m.chipTxt, { color: COLORS.warning }]}>SIN TRAMO ≠ veda</Text>
           </View>
           <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
-            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Mira el cartel</Text>
+            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Oficial / orientativo</Text>
+          </View>
+          <View style={[m.chip, { backgroundColor: COLORS.waterLight }]}>
+            <Text style={[m.chipTxt, { color: COLORS.waterDark }]}>Mira el cartel</Text>
           </View>
         </View>
       </Animated.View>
@@ -427,7 +459,7 @@ function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv?: strin
       <Text style={m.navSub}>
         {nombreProv ? `${nombreProv} · ¿Pinta? · no autoriza` : "¿Pinta? · no autoriza"}
       </Text>
-      <Animated.View style={{ opacity: v, transform: [{ scale: ring }], marginTop: 14, alignItems: "center" }}>
+      <Animated.View style={{ opacity: v, transform: [{ scale: ring }], marginTop: 10, alignItems: "center" }}>
         <View style={m.gaugeOuter}>
           <View style={m.gauge}>
             <Text style={m.gaugeNum}>78</Text>
@@ -437,9 +469,9 @@ function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv?: strin
       </Animated.View>
       <View style={m.meteoRow}>
         {[
-          { k: "Presión", v: "↓ bajando" },
-          { k: "Viento", v: "12 km/h" },
-          { k: "Luna", v: "Creciente" },
+          { k: "Aire", v: "18 °C" },
+          { k: "Agua", v: "16 °C" },
+          { k: "Solunar", v: "Mayor" },
         ].map((x) => (
           <View key={x.k} style={m.meteoCard}>
             <Text style={m.meteoK}>{x.k}</Text>
@@ -448,49 +480,85 @@ function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv?: strin
         ))}
       </View>
       <View style={m.windowBar}>
-        <Text style={m.windowTxt}>Mejor ventana 07:00–10:00</Text>
+        <Text style={m.windowTxt}>Mejor franja 07:00–10:00</Text>
       </View>
       <Text style={m.pintaDisclaimer}>La norma manda · esto solo orienta</Text>
     </LinearGradient>
   );
 }
 
-function MockDiario({ activo }: { activo: boolean }) {
+function MockModos({
+  nombreProv,
+  esCosta,
+  activo,
+}: {
+  nombreProv: string;
+  esCosta: boolean;
+  activo: boolean;
+}) {
   const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
+  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+  const modos = esCosta
+    ? [
+        { id: "rio", label: "Río", on: false },
+        { id: "orilla", label: "Orilla", on: false },
+        { id: "barco", label: "Barco", on: true },
+      ]
+    : [{ id: "rio", label: "Ríos y embalses", on: true }];
+
   return (
-    <View style={[m.fill, { backgroundColor: "#f4f7f5" }]}>
-      <View style={m.diarioHeader}>
-        <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Capturas</Text>
-        <Text style={[m.navSub, { color: COLORS.textSecondary }]}>Diario local · GPX opcional</Text>
-      </View>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], padding: 10, gap: 10 }}>
-        <View style={m.catchCard}>
-          <LinearGradient colors={["#1a6f8a", "#0e4456"]} style={m.catchPhoto}>
-            <View style={m.catchPhotoInner}>
-              <Text style={m.catchPhotoLabel}>foto</Text>
-              <Text style={m.catchPhotoSpecies}>Black bass</Text>
+    <LinearGradient colors={["#f4f8f6", "#e4eef2"]} style={m.fill}>
+      <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>¿Cómo vas a pescar?</Text>
+      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>
+        {nombreProv}
+        {esCosta ? " · mapa + ritual alineados" : " · continental"}
+      </Text>
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 14, paddingHorizontal: 12 }}>
+        <View style={m.modoRow}>
+          {modos.map((x) => (
+            <View key={x.id} style={[m.modoChip, x.on && (x.id === "rio" ? m.modoChipOnRio : m.modoChipOnMar)]}>
+              <Text style={[m.modoChipTxt, x.on && m.modoChipTxtOn]}>{x.label}</Text>
             </View>
-          </LinearGradient>
-          <View style={{ flex: 1, padding: 11, justifyContent: "center" }}>
-            <Text style={m.catchTitle}>Black bass</Text>
-            <Text style={m.catchMeta}>42 cm · hoy · GPS fijado</Text>
-            <View style={m.cupoBar}>
-              <View style={[m.cupoFill, { width: "40%" }]} />
+          ))}
+        </View>
+        {esCosta ? (
+          <View style={m.barcoCard}>
+            <Text style={m.barcoTitle}>Salgo en barco</Text>
+            <Text style={m.barcoSub}>Rampa → ¿Puedo? → ¿Pinta? → checklist</Text>
+            <View style={m.barcoTags}>
+              {["Rampas", "Ruta GPS", "Columbretes"].map((t) => (
+                <View key={t} style={m.barcoTag}>
+                  <Text style={m.barcoTagTxt}>{t}</Text>
+                </View>
+              ))}
             </View>
-            <Text style={m.cupoTxt}>Cupo 2 / 5 ud</Text>
           </View>
+        ) : (
+          <View style={m.barcoCard}>
+            <Text style={m.barcoTitle}>Tramos y embalses</Text>
+            <Text style={m.barcoSub}>Semáforo + SAIH + montaje por especie</Text>
+            <View style={m.barcoTags}>
+              {["Mapa", "Especies", "Consejos"].map((t) => (
+                <View key={t} style={m.barcoTag}>
+                  <Text style={m.barcoTagTxt}>{t}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+        <View style={m.alineadoBox}>
+          <Text style={m.alineadoTxt}>
+            {esCosta
+              ? "Un modo fija especies, aparejos y salida"
+              : "Todo el flujo apunta a tu primera salida"}
+          </Text>
         </View>
-        <View style={m.gpxBtn}>
-          <Text style={m.gpxTxt}>Exportar GPX · esta provincia</Text>
-        </View>
-        <Text style={m.hintMuted}>Sin feed público. Tú eliges con quién compartes.</Text>
       </Animated.View>
-    </View>
+    </LinearGradient>
   );
 }
 
-function MockCampo({ activo }: { activo: boolean }) {
+function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
   const v = useReveal(activo);
   const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
   const steps = [
@@ -502,7 +570,9 @@ function MockCampo({ activo }: { activo: boolean }) {
   return (
     <LinearGradient colors={["#f7faf7", "#e6efe8"]} style={m.fill}>
       <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Salgo a pescar</Text>
-      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>Tu primera salida · paso a paso</Text>
+      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>
+        Tu primera salida · paso a paso{esCosta ? " · o en barco" : ""}
+      </Text>
       <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 12, gap: 7 }}>
         {steps.map((s, i) => (
           <View key={s.n} style={[m.stepRow, s.done && m.stepDone]}>
@@ -523,6 +593,7 @@ function MockCampo({ activo }: { activo: boolean }) {
             </View>
           ))}
         </View>
+        <Text style={m.montajeHint}>Consejos con fotos · guía de caña y carrete</Text>
       </View>
     </LinearGradient>
   );
@@ -544,65 +615,77 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.42)",
   },
   closeTxt: { color: "#fff", fontSize: 17, fontWeight: "700", marginTop: -1 },
+  brandBlock: {
+    alignItems: "center",
+    zIndex: 1,
+    paddingHorizontal: 16,
+  },
   brand: {
     textAlign: "center",
     color: "#fff",
     fontFamily: FONTS.display,
-    letterSpacing: -0.4,
-    fontSize: 22,
-    lineHeight: 26,
-    zIndex: 1,
+    letterSpacing: -0.5,
+    fontSize: 26,
+    lineHeight: 30,
     textShadowColor: "rgba(0,0,0,0.35)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 6,
+  },
+  brandTag: {
+    marginTop: 4,
+    color: "rgba(255,248,235,0.88)",
+    fontFamily: FONTS.displayItalic,
+    fontStyle: "italic",
+    fontSize: 14,
+    letterSpacing: 0.2,
   },
   pager: { flex: 1, zIndex: 1 },
   slide: {
     paddingHorizontal: SPACING.sm,
     alignItems: "center",
-    paddingTop: 2,
+    paddingTop: 4,
   },
   eyebrow: {
-    color: "rgba(255,255,255,0.8)",
-    fontSize: 14,
+    color: "rgba(255,255,255,0.82)",
+    fontSize: 13.5,
     fontFamily: FONTS.displayItalic,
     fontStyle: "italic",
     letterSpacing: 0.15,
-    marginBottom: 2,
+    marginBottom: 3,
     textAlign: "center",
   },
   titulo: {
     color: "#fff",
-    fontSize: 32,
+    fontSize: 30,
     fontFamily: FONTS.display,
     textAlign: "center",
     letterSpacing: -0.6,
     marginBottom: 6,
-    lineHeight: 36,
+    lineHeight: 34,
     textShadowColor: "rgba(0,0,0,0.25)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   texto: {
     color: "rgba(245,250,247,0.96)",
-    fontSize: 15.5,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 21,
     textAlign: "center",
     fontFamily: FONTS.regular,
-    maxWidth: 348,
-    marginBottom: 10,
-    minHeight: 44,
+    maxWidth: 340,
+    marginBottom: 8,
+    minHeight: 42,
     paddingHorizontal: 4,
   },
   phoneWrap: { alignItems: "center", justifyContent: "center" },
   phone: {
     width: PHONE_W,
     height: PHONE_H,
-    borderRadius: 42,
+    borderRadius: 40,
     backgroundColor: "#050d0a",
-    padding: 9,
+    padding: 8,
     borderWidth: 2.5,
-    borderColor: "rgba(255,255,255,0.3)",
+    borderColor: "rgba(255,255,255,0.32)",
     shadowColor: "#000",
     shadowOpacity: 0.48,
     shadowRadius: 26,
@@ -612,45 +695,58 @@ const styles = StyleSheet.create({
   },
   phoneGlow: {
     position: "absolute",
-    bottom: -20,
-    width: PHONE_W * 0.7,
-    height: 30,
+    bottom: -18,
+    width: PHONE_W * 0.72,
+    height: 28,
     borderRadius: 40,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.28)",
     zIndex: 1,
   },
   phoneNotch: {
     alignSelf: "center",
-    width: 92,
-    height: 10,
+    width: 88,
+    height: 9,
     borderRadius: 6,
     backgroundColor: "rgba(255,255,255,0.14)",
-    marginBottom: 7,
+    marginBottom: 6,
   },
   phoneScreen: {
     flex: 1,
-    borderRadius: 30,
+    borderRadius: 28,
     overflow: "hidden",
     backgroundColor: COLORS.mist,
   },
   phoneHome: {
     alignSelf: "center",
-    width: 74,
+    width: 70,
     height: 4,
     borderRadius: 2,
     backgroundColor: "rgba(255,255,255,0.22)",
-    marginTop: 7,
+    marginTop: 6,
   },
   footer: { paddingHorizontal: 24, zIndex: 1 },
-  dots: { flexDirection: "row", justifyContent: "center", gap: 8, marginBottom: 12 },
+  hintSwipe: {
+    textAlign: "center",
+    color: "rgba(255,255,255,0.72)",
+    fontFamily: FONTS.semibold,
+    fontSize: 12.5,
+    marginBottom: 10,
+    letterSpacing: 0.15,
+  },
+  dots: { flexDirection: "row", justifyContent: "center", gap: 7, marginBottom: 12 },
   dot: {
-    width: 8,
-    height: 8,
+    width: 7,
+    height: 7,
     borderRadius: 4,
     backgroundColor: "rgba(255,255,255,0.32)",
   },
-  dotOn: { backgroundColor: "#fff", width: 26 },
-  cta: { borderRadius: RADIUS.md, overflow: "hidden" },
+  dotOn: { backgroundColor: "#fff", width: 24 },
+  cta: {
+    borderRadius: RADIUS.md,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.55)",
+  },
   ctaGrad: {
     paddingVertical: 15,
     paddingHorizontal: 18,
@@ -668,7 +764,7 @@ const styles = StyleSheet.create({
   ctaArrow: { fontSize: 16, color: COLORS.primaryDark, fontFamily: FONTS.extrabold },
   tipCierre: {
     textAlign: "center",
-    color: "rgba(255,255,255,0.82)",
+    color: "rgba(255,255,255,0.88)",
     fontFamily: FONTS.semibold,
     fontSize: 13,
     marginBottom: 10,
@@ -742,6 +838,20 @@ const m = StyleSheet.create({
     color: COLORS.primaryDark,
     textTransform: "uppercase",
   },
+  gpxMini: {
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 8,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#c5dde6",
+  },
+  gpxMiniTxt: {
+    color: COLORS.waterDark,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 12,
+  },
   pinDots: { flexDirection: "row", gap: 14, marginBottom: 16 },
   pinDot: {
     width: 14,
@@ -807,9 +917,9 @@ const m = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.25)",
   },
   gauge: {
-    width: 132,
-    height: 132,
-    borderRadius: 66,
+    width: 118,
+    height: 118,
+    borderRadius: 59,
     borderWidth: 8,
     borderColor: "rgba(255,255,255,0.38)",
     backgroundColor: "rgba(255,255,255,0.12)",
@@ -818,7 +928,7 @@ const m = StyleSheet.create({
   },
   gaugeNum: {
     color: "#fff",
-    fontSize: 46,
+    fontSize: 42,
     fontFamily: FONTS.display,
     letterSpacing: -1,
   },
@@ -826,9 +936,9 @@ const m = StyleSheet.create({
     color: "rgba(255,255,255,0.88)",
     fontFamily: FONTS.bold,
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: 13,
   },
-  meteoRow: { flexDirection: "row", gap: 6, marginTop: 16, paddingHorizontal: 10 },
+  meteoRow: { flexDirection: "row", gap: 6, marginTop: 12, paddingHorizontal: 10 },
   meteoCard: {
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.14)",
@@ -846,7 +956,7 @@ const m = StyleSheet.create({
     marginTop: 2,
   },
   windowBar: {
-    marginTop: 12,
+    marginTop: 10,
     backgroundColor: "rgba(255,255,255,0.18)",
     borderRadius: RADIUS.pill,
     paddingHorizontal: 14,
@@ -854,69 +964,85 @@ const m = StyleSheet.create({
   },
   windowTxt: { color: "#fff", fontFamily: FONTS.bold, fontWeight: "700", fontSize: 12 },
   pintaDisclaimer: {
-    marginTop: 10,
+    marginTop: 8,
     color: "rgba(255,255,255,0.7)",
     fontFamily: FONTS.semibold,
     fontSize: 11,
     textAlign: "center",
     paddingHorizontal: 16,
   },
-  diarioHeader: { paddingHorizontal: 12, paddingTop: 10 },
-  catchCard: {
-    flexDirection: "row",
+  modoRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
+  modoChip: {
+    flexGrow: 1,
+    minWidth: "28%",
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
-    overflow: "hidden",
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+  },
+  modoChipOnRio: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  modoChipOnMar: {
+    backgroundColor: COLORS.water,
+    borderColor: COLORS.water,
+  },
+  modoChipTxt: {
+    fontFamily: FONTS.extrabold,
+    fontWeight: "800",
+    fontSize: 13,
+    color: COLORS.textPrimary,
+  },
+  modoChipTxtOn: { color: "#fff" },
+  barcoCard: {
+    backgroundColor: "#fff",
+    borderRadius: RADIUS.md,
+    padding: 14,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  catchPhoto: { width: 92, alignItems: "center", justifyContent: "center" },
-  catchPhotoInner: { alignItems: "center", gap: 4 },
-  catchPhotoLabel: {
-    color: "rgba(255,255,255,0.65)",
-    fontSize: 10,
-    fontFamily: FONTS.semibold,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-  },
-  catchPhotoSpecies: {
-    color: "#fff",
-    fontFamily: FONTS.display,
-    fontSize: 14,
-  },
-  catchTitle: {
+  barcoTitle: {
     fontFamily: FONTS.display,
     fontSize: 17,
     color: COLORS.primaryDark,
     letterSpacing: -0.3,
   },
-  catchMeta: {
+  barcoSub: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
     color: COLORS.textSecondary,
-    marginTop: 2,
+    marginTop: 4,
   },
-  cupoBar: {
-    height: 6,
-    backgroundColor: COLORS.primaryLight,
-    borderRadius: 3,
-    marginTop: 8,
-    overflow: "hidden",
+  barcoTags: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10 },
+  barcoTag: {
+    backgroundColor: COLORS.waterLight,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  cupoFill: { height: 6, backgroundColor: COLORS.water, borderRadius: 3 },
-  cupoTxt: { fontSize: 11, color: COLORS.textMuted, fontFamily: FONTS.semibold, marginTop: 4 },
-  gpxBtn: {
-    backgroundColor: COLORS.primary,
-    borderRadius: RADIUS.md,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  gpxTxt: { color: "#fff", fontFamily: FONTS.extrabold, fontWeight: "800", fontSize: 13 },
-  hintMuted: {
-    textAlign: "center",
-    color: COLORS.textMuted,
+  barcoTagTxt: {
+    color: COLORS.waterDark,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
     fontSize: 11,
-    fontFamily: FONTS.semibold,
+  },
+  alineadoBox: {
+    marginTop: 10,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  alineadoTxt: {
+    textAlign: "center",
+    color: COLORS.primaryDark,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 12,
   },
   stepRow: {
     flexDirection: "row",
@@ -957,7 +1083,7 @@ const m = StyleSheet.create({
     textTransform: "uppercase",
   },
   montajePreview: {
-    marginTop: 12,
+    marginTop: 10,
     marginHorizontal: 10,
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
@@ -982,6 +1108,12 @@ const m = StyleSheet.create({
     color: COLORS.waterDark,
     fontFamily: FONTS.bold,
     fontWeight: "700",
+    fontSize: 11,
+  },
+  montajeHint: {
+    marginTop: 8,
+    color: COLORS.textMuted,
+    fontFamily: FONTS.semibold,
     fontSize: 11,
   },
 });
