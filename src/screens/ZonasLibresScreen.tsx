@@ -22,6 +22,7 @@ import {
   resolverPickUbicacion,
 } from "../services/ubicacionPendiente";
 import ConsultaPescaCard from "../components/ConsultaPescaCard";
+import CercaMejorPintaBlock from "../components/CercaMejorPintaBlock";
 import VentanaConsulta from "../components/VentanaConsulta";
 import BotonMiPosicion from "../components/BotonMiPosicion";
 import CapaPoligonosIcv from "../components/CapaPoligonosIcv";
@@ -1255,6 +1256,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 navigation.navigate("Consejos", { consejoId, categoria: "montajes" });
               }}
             />
+            {marcador ? (
+              <CercaMejorPintaBlock
+                lat={marcador.latitude}
+                lng={marcador.longitude}
+                modo={modoGlobal}
+                onAbrir={(fila) => evaluarPunto(fila.lat, fila.lng)}
+              />
+            ) : null}
             {infoNavegacion ? (
               <View style={styles.navInfoBox}>
                 <Text style={styles.navInfoTitulo}>{modoBarco ? "Navegación ligera" : "Info"}</Text>
