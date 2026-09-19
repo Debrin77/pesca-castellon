@@ -27,10 +27,13 @@ for (const token of [
   "pulpo_peso",
   "cangrejo_caparazon",
   "criterioMedicionDe",
-  "dorada",
   "Longitud total",
+  "1967/2006",
 ]) {
   if (!criterio.includes(token)) fail(`criterioMedicion.ts debe incluir ${token}`);
+}
+if (/dorada:\s*PEZ_HORQUILLA/.test(criterio)) {
+  fail("Dorada debe medirse en longitud total (Anexo IV), no horquilla");
 }
 
 const diagrama = read("src/components/DiagramaMedicion.tsx");
@@ -52,14 +55,17 @@ if (diagrama.includes("function Silueta") || /pezCuerpo|pulpoCabeza|cangrejoCap/
 }
 
 const fotoMed = read("src/components/FotoConMedicion.tsx");
-for (const token of ["FotoConMedicion", "proyectarCover", "OverlayLinea", "mín."]) {
+for (const token of ["FotoConMedicion", "proyectarContain", "OverlayLinea", "mín.", 'resizeMode="contain"']) {
   if (!fotoMed.includes(token)) fail(`FotoConMedicion.tsx debe incluir ${token}`);
 }
 
 const anclas = read("src/data/anclasMedicionFoto.ts");
-for (const id of ["lubina", "dorada", "pulpo", "sargo", "llisa", "jurel"]) {
+for (const id of ["lubina", "dorada", "pulpo", "sargo", "llisa", "jurel", "mojarra", "salmonete"]) {
   if (!anclas.includes(`${id}:`)) fail(`Falta ancla calibrada para ${id}`);
 }
+if (!anclas.includes("proyectarContain")) fail("anclasMedicionFoto debe proyectar con contain");
+if (!anclas.includes("1967/2006")) fail("anclasMedicionFoto debe citar Reg. 1967/2006");
+if (anclas.includes("caballa:")) fail("caballa: foto no apta para overlay; no debe tener ancla");
 
 const tarjeta = read("src/components/TarjetaEspecie.tsx");
 if (!tarjeta.includes("DiagramaMedicion") || !tarjeta.includes("criterioMedicionDe")) {

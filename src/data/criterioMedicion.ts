@@ -1,7 +1,14 @@
 /**
  * Criterio gráfico de medición de talla/peso mínimo por especie.
- * Patrones reutilizables (pez óseo, horquilla, cefalópodo, crustáceo…).
- * Orientativo: prevalece el texto oficial / cartel del tramo.
+ *
+ * Norma de referencia (mar / Mediterráneo):
+ * - RD 560/1995 art. 2 → Reg. (CEE) 3094/86 y Reg. (CE) 1967/2006 Anexo IV:
+ *   «la talla de cualquier pez se medirá… desde la punta del hocico hasta el
+ *   extremo de la aleta caudal» (longitud total).
+ * - Mundopesquero / guías recreativas ES: misma regla (hocico → extremo cola).
+ * - Horquilla / tenedor NO es el criterio legal general (salvo pez espada LJFL, etc.).
+ *
+ * Orientativo: prevalece cartel del tramo / BOE vigente.
  */
 
 export type PatronMedicion =
@@ -14,13 +21,9 @@ export type PatronMedicion =
 
 export type CriterioMedicion = {
   patron: PatronMedicion;
-  /** Etiqueta corta del extremo A (izquierda / cabeza). */
   desde: string;
-  /** Etiqueta corta del extremo B (derecha / cola). */
   hasta: string;
-  /** Frase completa para el pie. */
   detalle: string;
-  /** Unidad que acompaña el diagrama. */
   unidad: "cm" | "kg";
 };
 
@@ -29,16 +32,17 @@ const PEZ_TOTAL: CriterioMedicion = {
   desde: "Punta del hocico",
   hasta: "Extremo de la cola",
   detalle:
-    "Longitud total: boca cerrada, de la punta del hocico al extremo de la aleta caudal (lóbulo más largo), sin comprimir la cola.",
+    "Longitud total (norma UE/RD 560): boca cerrada, de la punta del hocico al extremo de la aleta caudal (lóbulo más largo), pez extendido sin forzar la cola.",
   unidad: "cm",
 };
 
+/** Solo para especies que la norma mida a la horquilla (p. ej. pez espada LJFL). */
 const PEZ_HORQUILLA: CriterioMedicion = {
   patron: "pez_horquilla",
   desde: "Punta del hocico",
   hasta: "Horquilla cola",
   detalle:
-    "De la punta del hocico a la horquilla de la cola (tenedor: donde se separan los dos lóbulos), no al extremo de los filamentos.",
+    "Longitud a la horquilla: de la punta del hocico al centro de la horquilla caudal (donde se separan los lóbulos).",
   unidad: "cm",
 };
 
@@ -75,15 +79,15 @@ const CANGREJO: CriterioMedicion = {
   unidad: "cm",
 };
 
-/** Overrides explícitos por id (cuando la nota o la norma difieren del patrón por defecto). */
+/** Overrides por id. Dorada y espáridos = longitud total (Anexo IV), no horquilla. */
 const POR_ID: Record<string, CriterioMedicion> = {
-  dorada: PEZ_HORQUILLA,
   anguila: ANGUILA,
   sepia: CEFALOPODO_MANTO,
   calamar: CEFALOPODO_MANTO,
   pulpo: PULPO_PESO,
   cangrejo_americano: CANGREJO,
   cangrejo_azul: CANGREJO,
+  // pez_espada usaría PEZ_HORQUILLA / LJFL si se añade al catálogo
 };
 
 function patronPorForma(id?: string | null, nombre?: string | null): CriterioMedicion {
@@ -92,13 +96,13 @@ function patronPorForma(id?: string | null, nombre?: string | null): CriterioMed
   if (k.includes("sepia") || k.includes("jibia") || k.includes("calamar")) return CEFALOPODO_MANTO;
   if (k.includes("cangrejo")) return CANGREJO;
   if (k.includes("anguila")) return ANGUILA;
-  if (/tenedor|horquilla/i.test(k)) return PEZ_HORQUILLA;
+  // Pez espada / billfish: LJFL (mandíbula inferior → horquilla)
+  if (k.includes("espada") || k.includes("xiphias") || k.includes("marlin")) return PEZ_HORQUILLA;
   return PEZ_TOTAL;
 }
 
 /**
  * Devuelve el criterio gráfico si la especie tiene talla/peso mínimo medible.
- * No aplica a sin muerte, invasoras sin umbral, ni especies solo orientativas.
  */
 export function criterioMedicionDe(sp: {
   id?: string;
@@ -126,11 +130,7 @@ export function criterioMedicionDe(sp: {
   if (!unidad) return null;
 
   const base = (sp.id && POR_ID[sp.id]) || patronPorForma(sp.id, sp.nombre);
-  // Si la nota pide horquilla/tenedor, forzar ese patrón en peces.
-  if (unidad === "cm" && base.patron.startsWith("pez") && /tenedor|horquilla/i.test(fuente)) {
-    return { ...PEZ_HORQUILLA, unidad };
-  }
-  // Peso mínimo → pulpo_peso si es cefalópodo; si no, mantener patrón pero unidad kg.
+
   if (unidad === "kg") {
     if (base.patron === "pulpo_peso" || /pulpo/i.test(`${sp.id} ${sp.nombre}`)) return PULPO_PESO;
     return { ...base, unidad: "kg", detalle: `Peso mínimo del ejemplar entero. ${base.detalle}` };
