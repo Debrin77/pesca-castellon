@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import {
   CriterioMedicion,
   PatronMedicion,
@@ -7,16 +7,14 @@ import {
 } from "../data/criterioMedicion";
 import { COLORS, RADIUS } from "../theme";
 
+/** Diagrama técnico NOAA (dominio público): SL / FL / TL. En UE/RD 560 se usa TL. */
+const DIAGRAMA_LONGITUD_NOAA = require("../../assets/medicion/longitud_total_noaa.jpg");
+
 type Props = {
   criterio: CriterioMedicion;
   /** Valor numérico opcional (p. ej. "23") para anclar el mínimo en el diagrama. */
   valorMinimo?: string | null;
   compact?: boolean;
-  /**
-   * Solo texto de detalle (la cota A→B ya va sobre la foto).
-   * Evita duplicar flechas debajo de la imagen.
-   */
-  soloLeyenda?: boolean;
 };
 
 /** Punta de flecha (triángulo) apuntando a izquierda o derecha. */
@@ -26,8 +24,7 @@ function Flecha({ direccion }: { direccion: "izq" | "der" }) {
 }
 
 /**
- * Esquema técnico: dos extremos A/B unidos por flechas de cota.
- * Sin siluetas ni fotos: solo geometría de medición (estilo normativa).
+ * Esquema de cota A→B para patrones sin diagrama anatómico (peso, manto, caparazón).
  */
 function CotaConFlechas({
   criterio,
@@ -51,7 +48,6 @@ function CotaConFlechas({
 
   return (
     <View style={styles.cotaBox} accessibilityElementsHidden>
-      {/* Etiquetas superiores A / B */}
       <View style={styles.marcadoresFila}>
         <View style={styles.marcadorCol}>
           <View style={[styles.chipExtremo, styles.chipA]}>
@@ -67,7 +63,6 @@ function CotaConFlechas({
         </View>
       </View>
 
-      {/* Línea de cota con flechas */}
       <View style={styles.cotaFila}>
         <Flecha direccion="izq" />
         <View style={styles.cotaLinea}>
@@ -79,7 +74,6 @@ function CotaConFlechas({
         <Flecha direccion="der" />
       </View>
 
-      {/* Leyenda A → B */}
       <View style={styles.leyendaFila}>
         <Text style={styles.leyendaA} numberOfLines={2}>
           {criterio.desde}
@@ -95,25 +89,18 @@ function CotaConFlechas({
   );
 }
 
-/**
- * Diagrama profesional de medición: flechas A→B (sin siluetas cutres).
- * Con `soloLeyenda`, solo el texto normativo (la cota va en la foto).
- */
-export default function DiagramaMedicion({ criterio, valorMinimo, compact, soloLeyenda }: Props) {
-  const a11y = `Cómo medir: de ${criterio.desde} a ${criterio.hasta}. ${criterio.detalle}`;
+function usaDiagramaTecnico(patron: PatronMedicion): boolean {
+  return patron === "pez_total" || patron === "pez_horquilla" || patron === "anguila";
+}
 
-  if (soloLeyenda) {
-    return (
-      <View
-        style={[styles.card, styles.cardLeyenda, compact && styles.cardCompact]}
-        accessibilityRole="summary"
-        accessibilityLabel={a11y}
-      >
-        <Text style={styles.kicker}>Cómo medir</Text>
-        <Text style={styles.detalle}>{criterio.detalle}</Text>
-      </View>
-    );
-  }
+/**
+ * Cómo medir: diagrama técnico oficial (NOAA Fish Length) para peces,
+ * o cota A→B para manto / peso / caparazón.
+ */
+export default function DiagramaMedicion({ criterio, valorMinimo, compact }: Props) {
+  const a11y = `Cómo medir: de ${criterio.desde} a ${criterio.hasta}. ${criterio.detalle}`;
+  const conDiagrama = usaDiagramaTecnico(criterio.patron);
+  const esHorquilla = criterio.patron === "pez_horquilla";
 
   return (
     <View
@@ -126,14 +113,39 @@ export default function DiagramaMedicion({ criterio, valorMinimo, compact, soloL
         <Text style={styles.patronTag}>{etiquetaPatron(criterio.patron)}</Text>
       </View>
 
-      <CotaConFlechas criterio={criterio} valorMinimo={valorMinimo} />
+      {conDiagrama ? (
+        <View style={styles.diagramaBox}>
+          <Image
+            source={DIAGRAMA_LONGITUD_NOAA}
+            style={styles.diagramaImg}
+            resizeMode="contain"
+            accessibilityLabel="Diagrama de longitudes de pez: estándar, horquilla y total"
+          />
+          <View style={styles.destacadoTl}>
+            <Text style={styles.destacadoTlTxt}>
+              {esHorquilla
+                ? "En esta especie: longitud a la horquilla (FL)"
+                : "En UE / RD 560: longitud total (TL) · hocico → extremo de la cola"}
+            </Text>
+          </View>
+          {valorMinimo != null && valorMinimo !== "" ? (
+            <Text style={styles.minimoLine}>
+              Mínimo legal: {valorMinimo} {criterio.unidad}
+            </Text>
+          ) : null}
+          <Text style={styles.fuente}>
+            Diagrama: NOAA Fisheries (dominio público) · Fish Length
+          </Text>
+        </View>
+      ) : (
+        <CotaConFlechas criterio={criterio} valorMinimo={valorMinimo} />
+      )}
 
       <Text style={styles.detalle}>{criterio.detalle}</Text>
     </View>
   );
 }
 
-// Referencia tipada para asserts / tree-shaking consciente del patrón.
 export type { PatronMedicion };
 
 const ARROW = 9;
@@ -155,10 +167,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
     marginTop: 12,
   },
-  cardLeyenda: {
-    paddingVertical: 10,
-    backgroundColor: COLORS.mist,
-  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -179,6 +187,50 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     flexShrink: 1,
     textAlign: "right",
+  },
+  diagramaBox: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.sm,
+    backgroundColor: "#f7f9fb",
+    paddingTop: 8,
+    paddingBottom: 10,
+    paddingHorizontal: 8,
+    marginBottom: 10,
+    overflow: "hidden",
+  },
+  diagramaImg: {
+    width: "100%",
+    height: 168,
+    alignSelf: "center",
+  },
+  destacadoTl: {
+    marginTop: 8,
+    backgroundColor: COLORS.primary,
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  destacadoTlTxt: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "800",
+    lineHeight: 16,
+    textAlign: "center",
+  },
+  minimoLine: {
+    marginTop: 8,
+    fontSize: 13,
+    fontWeight: "700",
+    color: COLORS.waterDark,
+    textAlign: "center",
+  },
+  fuente: {
+    marginTop: 6,
+    fontSize: 10,
+    color: COLORS.textSecondary,
+    fontWeight: "500",
+    textAlign: "center",
   },
   cotaBox: {
     borderWidth: 1,
@@ -270,7 +322,6 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.2,
   },
-  /** Marca vertical en el extremo B para longitud a la horquilla. */
   marcaHorquilla: {
     position: "absolute",
     right: 0,
