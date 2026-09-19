@@ -4,6 +4,7 @@
  */
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -76,6 +77,17 @@ const dir = path.join(root, "assets/medicion/especies");
 for (const id of [...idsOrilla, ...idsMar, ...idsContinental]) {
   const jpg = path.join(dir, `${id}.jpg`);
   if (!fs.existsSync(jpg)) fail(`Falta asset ${id}.jpg`);
+}
+
+// Cada especie debe tener una placa inédita (sin reutilizar el mismo archivo).
+const hashes = new Map();
+for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".jpg"))) {
+  const buf = fs.readFileSync(path.join(dir, f));
+  const h = crypto.createHash("md5").update(buf).digest("hex");
+  if (hashes.has(h)) {
+    fail(`Placas duplicadas (mismo contenido): ${hashes.get(h)} y ${f}`);
+  }
+  hashes.set(h, f);
 }
 
 if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {
