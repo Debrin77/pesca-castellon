@@ -19,7 +19,11 @@ import MejorHoraPesca from "../components/MejorHoraPesca";
 import GraficoEspecie from "../components/GraficoEspecie";
 import { FilaAparejo } from "../components/IconoAparejo";
 import { tallaDestacada } from "../components/TarjetaEspecie";
+import DiagramaMedicion from "../components/DiagramaMedicion";
+import FotoConMedicion from "../components/FotoConMedicion";
 import { fotoEspecie } from "../data/especiesMedia";
+import { criterioMedicionDe } from "../data/criterioMedicion";
+import { hayAnclaMedicionFoto } from "../data/anclasMedicionFoto";
 import { consejoIdMontajeEspecie, montajesParaEspecie } from "../data/montajesEspecie";
 import { recomendacionAparejo } from "../data/recomendacionesAparejo";
 import TablaRecomendacionAparejo from "../components/TablaRecomendacionAparejo";
@@ -119,6 +123,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
         ? (aparejosOrilla.porId as Record<string, Equipo>)[sp?.id]
         : sp?.equipo;
   const talla = sp ? tallaDestacada(sp) : null;
+  const medicion = sp ? criterioMedicionDe(sp) : null;
+  const fotoConFlechas = !!(foto && medicion && sp && hayAnclaMedicionFoto(sp.id));
   const mar = (ambito === "costa" || ambito === "barco") && !soloContinental;
   const guiaCompra = sp
     ? recomendacionAparejo(
@@ -246,6 +252,26 @@ export default function AparejosScreen({ route, navigation }: Props) {
                 <Text style={styles.headerBadge}>ESPECIE INVASORA · NO DEVOLVER</Text>
               )}
             </LinearGradient>
+
+            {fotoConFlechas && medicion ? (
+              <FotoConMedicion
+                source={foto!}
+                especieId={sp.id}
+                criterio={medicion}
+                valorMinimo={talla && talla.unidad === medicion.unidad ? talla.valor : null}
+                accessibilityLabel={`Foto de ${sp.nombre} con puntos de medición`}
+                height={188}
+              />
+            ) : null}
+
+            {medicion ? (
+              <DiagramaMedicion
+                compact
+                soloLeyenda={fotoConFlechas}
+                criterio={medicion}
+                valorMinimo={talla && talla.unidad === medicion.unidad ? talla.valor : null}
+              />
+            ) : null}
 
             {talla ? <Text style={styles.stat}>{talla.pie}</Text> : null}
             {ambito === "rio" && sp.cupo ? <Text style={styles.stat}>Cupo: {sp.cupo}</Text> : null}

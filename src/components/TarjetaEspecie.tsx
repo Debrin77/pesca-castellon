@@ -4,8 +4,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import ListaAnimada from "./ListaAnimada";
 import MejorHoraPesca from "./MejorHoraPesca";
 import GraficoEspecie from "./GraficoEspecie";
+import DiagramaMedicion from "./DiagramaMedicion";
+import FotoConMedicion from "./FotoConMedicion";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { fotoEspecie } from "../data/especiesMedia";
+import { criterioMedicionDe } from "../data/criterioMedicion";
+import { hayAnclaMedicionFoto } from "../data/anclasMedicionFoto";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: string } {
@@ -49,9 +53,11 @@ export default function TarjetaEspecie({
   ambito?: "continental" | "maritimo";
 }) {
   const talla = tallaDestacada(sp);
+  const medicion = criterioMedicionDe(sp);
   const invasora = sp.invasora || sp.id === "cangrejo_azul";
   const cara = caraDeEspecie(sp);
   const foto = fotoEspecie(sp.id);
+  const fotoConFlechas = !!(foto && medicion && hayAnclaMedicionFoto(sp.id));
 
   return (
     <ListaAnimada key={sp.id} index={index} replayKey={sp.id}>
@@ -65,7 +71,15 @@ export default function TarjetaEspecie({
             </Text>
           </View>
         </LinearGradient>
-        {foto ? (
+        {fotoConFlechas ? (
+          <FotoConMedicion
+            source={foto!}
+            especieId={sp.id}
+            criterio={medicion!}
+            valorMinimo={talla.unidad === medicion!.unidad ? talla.valor : null}
+            accessibilityLabel={`Foto de ${sp.nombre} con puntos de medición`}
+          />
+        ) : foto ? (
           <Image source={foto} style={styles.fotoReal} accessibilityLabel={`Foto de ${sp.nombre}`} />
         ) : null}
         <View style={styles.hero}>
@@ -81,6 +95,13 @@ export default function TarjetaEspecie({
             </Text>
           </View>
         </View>
+        {medicion ? (
+          <DiagramaMedicion
+            criterio={medicion}
+            valorMinimo={talla.unidad === medicion.unidad ? talla.valor : null}
+            soloLeyenda={fotoConFlechas}
+          />
+        ) : null}
         <Text style={styles.cardTitle}>
           {sp.nombre} {invasora ? <Text style={styles.badgeInvasora}>INVASORA</Text> : null}
         </Text>
