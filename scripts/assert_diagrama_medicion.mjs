@@ -43,6 +43,7 @@ for (const token of [
   "etiquetaPatron",
   "chipA",
   "chipB",
+  "soloLeyenda",
 ]) {
   if (!diagrama.includes(token)) fail(`DiagramaMedicion.tsx debe incluir ${token}`);
 }
@@ -50,14 +51,30 @@ if (diagrama.includes("function Silueta") || /pezCuerpo|pulpoCabeza|cangrejoCap/
   fail("DiagramaMedicion no debe usar siluetas cutres; solo flechas de cota A→B");
 }
 
+const fotoMed = read("src/components/FotoConMedicion.tsx");
+for (const token of ["FotoConMedicion", "proyectarCover", "OverlayLinea", "mín."]) {
+  if (!fotoMed.includes(token)) fail(`FotoConMedicion.tsx debe incluir ${token}`);
+}
+
+const anclas = read("src/data/anclasMedicionFoto.ts");
+for (const id of ["lubina", "dorada", "pulpo", "sargo", "llisa", "jurel"]) {
+  if (!anclas.includes(`${id}:`)) fail(`Falta ancla calibrada para ${id}`);
+}
+
 const tarjeta = read("src/components/TarjetaEspecie.tsx");
 if (!tarjeta.includes("DiagramaMedicion") || !tarjeta.includes("criterioMedicionDe")) {
   fail("TarjetaEspecie debe renderizar DiagramaMedicion cuando hay talla medible");
+}
+if (!tarjeta.includes("FotoConMedicion") || !tarjeta.includes("hayAnclaMedicionFoto")) {
+  fail("TarjetaEspecie debe anclar flechas A→B sobre la foto cuando hay ancla");
 }
 
 const aparejos = read("src/screens/AparejosScreen.tsx");
 if (!aparejos.includes("DiagramaMedicion") || !aparejos.includes("criterioMedicionDe")) {
   fail("AparejosScreen debe mostrar DiagramaMedicion en la ficha de especie");
+}
+if (!aparejos.includes("FotoConMedicion")) {
+  fail("AparejosScreen debe mostrar FotoConMedicion con flechas sobre la foto");
 }
 
 // Cobertura: especies con tallaCm/tallaKg deben resolver criterio

@@ -12,6 +12,11 @@ type Props = {
   /** Valor numérico opcional (p. ej. "23") para anclar el mínimo en el diagrama. */
   valorMinimo?: string | null;
   compact?: boolean;
+  /**
+   * Solo texto de detalle (la cota A→B ya va sobre la foto).
+   * Evita duplicar flechas debajo de la imagen.
+   */
+  soloLeyenda?: boolean;
 };
 
 /** Punta de flecha (triángulo) apuntando a izquierda o derecha. */
@@ -92,9 +97,23 @@ function CotaConFlechas({
 
 /**
  * Diagrama profesional de medición: flechas A→B (sin siluetas cutres).
+ * Con `soloLeyenda`, solo el texto normativo (la cota va en la foto).
  */
-export default function DiagramaMedicion({ criterio, valorMinimo, compact }: Props) {
+export default function DiagramaMedicion({ criterio, valorMinimo, compact, soloLeyenda }: Props) {
   const a11y = `Cómo medir: de ${criterio.desde} a ${criterio.hasta}. ${criterio.detalle}`;
+
+  if (soloLeyenda) {
+    return (
+      <View
+        style={[styles.card, styles.cardLeyenda, compact && styles.cardCompact]}
+        accessibilityRole="summary"
+        accessibilityLabel={a11y}
+      >
+        <Text style={styles.kicker}>Cómo medir</Text>
+        <Text style={styles.detalle}>{criterio.detalle}</Text>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -135,6 +154,10 @@ const styles = StyleSheet.create({
   cardCompact: {
     marginHorizontal: 0,
     marginTop: 12,
+  },
+  cardLeyenda: {
+    paddingVertical: 10,
+    backgroundColor: COLORS.mist,
   },
   headerRow: {
     flexDirection: "row",
