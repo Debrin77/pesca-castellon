@@ -58,7 +58,19 @@ for (const id of ["lubina", "dorada", "llisa", "salema", "caballa", "sargo", "pu
 }
 
 const dir = path.join(root, "assets/medicion/especies");
-for (const id of ["lubina", "dorada", "llisa", "salema", "caballa", "sargo", "mojarra", "jurel", "salmonete", "boga", "pulpo"]) {
+for (const id of [
+  "lubina",
+  "dorada",
+  "llisa",
+  "salema",
+  "caballa",
+  "sargo",
+  "mojarra",
+  "jurel",
+  "salmonete",
+  "boga",
+  "pulpo",
+]) {
   const jpg = path.join(dir, `${id}.jpg`);
   if (!fs.existsSync(jpg)) fail(`Falta asset ${id}.jpg`);
 }
@@ -66,22 +78,45 @@ for (const id of ["lubina", "dorada", "llisa", "salema", "caballa", "sargo", "mo
 if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {
   fail("FotoConMedicion.tsx debe eliminarse");
 }
+if (fs.existsSync(path.join(root, "src/data/anclasMedicionFoto.ts"))) {
+  fail("anclasMedicionFoto.ts debe eliminarse");
+}
 
 const tarjeta = read("src/components/TarjetaEspecie.tsx");
+if (!tarjeta.includes("DiagramaMedicion") || !tarjeta.includes("criterioMedicionDe")) {
+  fail("TarjetaEspecie debe renderizar DiagramaMedicion cuando hay talla medible");
+}
 if (!tarjeta.includes("especieId={sp.id}")) fail("TarjetaEspecie debe pasar especieId");
+if (tarjeta.includes("FotoConMedicion") || tarjeta.includes("hayAnclaMedicionFoto")) {
+  fail("TarjetaEspecie no debe usar overlays A/B sobre la foto");
+}
+
 const aparejos = read("src/screens/AparejosScreen.tsx");
+if (!aparejos.includes("DiagramaMedicion") || !aparejos.includes("criterioMedicionDe")) {
+  fail("AparejosScreen debe mostrar DiagramaMedicion en la ficha de especie");
+}
 if (!aparejos.includes("especieId={sp?.id}")) fail("AparejosScreen debe pasar especieId");
+if (aparejos.includes("FotoConMedicion") || aparejos.includes("hayAnclaMedicionFoto")) {
+  fail("AparejosScreen no debe usar overlays A/B sobre la foto");
+}
 
 const pkg = JSON.parse(read("package.json"));
 if (!pkg.dependencies?.["react-native-svg"]) fail("Falta react-native-svg");
 
 const orilla = JSON.parse(read("src/data/especiesOrilla.json"));
 const conTalla = (orilla.pescablesOrilla || []).filter(
-  (sp) => (sp.tallaCm != null && Number.isFinite(sp.tallaCm)) || (sp.tallaKg != null && Number.isFinite(sp.tallaKg))
+  (sp) =>
+    (sp.tallaCm != null && Number.isFinite(sp.tallaCm)) ||
+    (sp.tallaKg != null && Number.isFinite(sp.tallaKg))
 );
 if (conTalla.length < 8) fail(`Se esperan ≥8 pescables orilla con talla (hay ${conTalla.length})`);
 
+const species = JSON.parse(read("src/data/species.json"));
+const continentalConTalla = species.filter((sp) => sp.tallaCm != null && Number.isFinite(sp.tallaCm));
+if (continentalConTalla.length < 1) fail("Debe haber al menos una especie continental con tallaCm");
+
 console.log("OK assert_diagrama_medicion:", {
   orillaConTalla: conTalla.length,
-  placasEspecie: fs.readdirSync(dir).length,
+  continentalConTalla: continentalConTalla.map((s) => s.id),
+  placasEspecie: fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).length,
 });
