@@ -111,7 +111,6 @@ function OverlayLinea({
 }
 
 function OverlayPeso({
-  ancla,
   boxW,
   boxH,
   badge,
@@ -121,26 +120,14 @@ function OverlayPeso({
   boxH: number;
   badge: string;
 }) {
-  const A = proyectarCover(ancla.a, ancla.w, ancla.h, boxW, boxH);
-  const B = proyectarCover(ancla.b, ancla.w, ancla.h, boxW, boxH);
-  const cx = (A.x + B.x) / 2;
-  const cy = (A.y + B.y) / 2;
+  // Peso: un badge claro sobre el ejemplar (sin cota de longitud engañosa).
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <View style={[styles.chip, styles.chipA, { left: A.x - CHIP / 2, top: A.y - CHIP / 2 }]}>
-        <Text style={styles.chipTxt}>A</Text>
-      </View>
-      <View style={[styles.chip, styles.chipB, { left: B.x - CHIP / 2, top: B.y - CHIP / 2 }]}>
-        <Text style={styles.chipTxt}>B</Text>
-      </View>
-      <View
-        style={[
-          styles.badge,
-          styles.badgePeso,
-          { left: Math.min(boxW - 120, Math.max(8, cx - 56)), top: Math.max(8, cy - 40) },
-        ]}
-      >
+      <View style={[styles.badge, styles.badgePeso, { left: Math.max(12, boxW / 2 - 70), top: Math.max(16, boxH * 0.12) }]}>
         <Text style={styles.badgeTxt}>{badge}</Text>
+      </View>
+      <View style={[styles.pesoHint, { left: 12, right: 12, bottom: 12 }]}>
+        <Text style={styles.pesoHintTxt}>Pesa el ejemplar entero · no mires solo el tamaño</Text>
       </View>
     </View>
   );
@@ -194,9 +181,19 @@ export default function FotoConMedicion({
       </View>
       <View style={styles.pie}>
         <Text style={styles.pieTxt} numberOfLines={2}>
-          <Text style={styles.pieStrong}>A</Text> {criterio.desde}
-          {"  →  "}
-          <Text style={styles.pieStrong}>B</Text> {criterio.hasta}
+          {modo === "peso" ? (
+            <>
+              <Text style={styles.pieStrong}>Peso entero</Text>
+              {" · "}
+              {criterio.desde} → {criterio.hasta}
+            </>
+          ) : (
+            <>
+              <Text style={styles.pieStrong}>A</Text> {criterio.desde}
+              {"  →  "}
+              <Text style={styles.pieStrong}>B</Text> {criterio.hasta}
+            </>
+          )}
         </Text>
       </View>
     </View>
@@ -265,6 +262,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "800",
     letterSpacing: 0.2,
+  },
+  pesoHint: {
+    position: "absolute",
+    backgroundColor: "rgba(12, 44, 32, 0.82)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    zIndex: 4,
+  },
+  pesoHintTxt: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "700",
+    textAlign: "center",
   },
   flecha: {
     position: "absolute",
