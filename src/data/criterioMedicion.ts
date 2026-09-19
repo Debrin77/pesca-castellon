@@ -36,9 +36,9 @@ const PEZ_TOTAL: CriterioMedicion = {
 const PEZ_HORQUILLA: CriterioMedicion = {
   patron: "pez_horquilla",
   desde: "Punta del hocico",
-  hasta: "Horquilla (tenedor)",
+  hasta: "Horquilla cola",
   detalle:
-    "De la punta del hocico a la horquilla de la cola (donde se separan los dos lóbulos), no al extremo de los filamentos.",
+    "De la punta del hocico a la horquilla de la cola (tenedor: donde se separan los dos lóbulos), no al extremo de los filamentos.",
   unidad: "cm",
 };
 
@@ -62,7 +62,7 @@ const CEFALOPODO_MANTO: CriterioMedicion = {
 const PULPO_PESO: CriterioMedicion = {
   patron: "pulpo_peso",
   desde: "Ejemplar entero",
-  hasta: "Pesa en balanza",
+  hasta: "En báscula",
   detalle: "Peso mínimo del ejemplar entero (escurrido). No basta con el tamaño a ojo: usa báscula.",
   unidad: "kg",
 };

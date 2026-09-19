@@ -72,17 +72,17 @@ function Silueta({ patron }: { patron: PatronMedicion }) {
     );
   }
 
-  // pez_total / pez_horquilla
+  // pez_total / pez_horquilla — formas sólidas (fiables en web; sin triángulos CSS)
   return (
-    <View style={[styles.silCaja, styles.pezFila]} accessibilityElementsHidden>
+    <View style={[styles.silCaja, styles.pezFila]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <View style={styles.pezHocicoDot} />
       <View style={[styles.pezCuerpo, { backgroundColor: cuerpo, borderColor: borde }]}>
         <View style={[styles.pezVientre, { backgroundColor: vientre }]} />
         <View style={styles.pezOjo} />
       </View>
       <View style={styles.pezColaWrap}>
-        <View style={[styles.pezColaLobo, { borderLeftColor: borde, transform: [{ rotate: "-18deg" }] }]} />
-        <View style={[styles.pezColaLobo, { borderLeftColor: borde, transform: [{ rotate: "18deg" }], marginTop: -10 }]} />
+        <View style={[styles.pezColaSolid, { backgroundColor: borde, transform: [{ rotate: "-22deg" }] }]} />
+        <View style={[styles.pezColaSolid, { backgroundColor: borde, transform: [{ rotate: "22deg" }], marginTop: -6 }]} />
         {patron === "pez_horquilla" ? <View style={styles.horquillaMark} /> : null}
       </View>
     </View>
@@ -246,28 +246,25 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.textPrimary,
   },
   pezColaWrap: {
-    width: 28,
+    width: 26,
     height: 36,
-    marginLeft: -2,
-    alignItems: "flex-start",
+    marginLeft: -4,
+    alignItems: "center",
     justifyContent: "center",
   },
-  pezColaLobo: {
-    width: 0,
-    height: 0,
-    borderTopWidth: 10,
-    borderBottomWidth: 10,
-    borderLeftWidth: 22,
-    borderTopColor: "transparent",
-    borderBottomColor: "transparent",
+  pezColaSolid: {
+    width: 18,
+    height: 10,
+    borderRadius: 2,
   },
   horquillaMark: {
     position: "absolute",
-    left: 0,
+    left: 2,
     width: 3,
-    height: 30,
+    height: 32,
     backgroundColor: COLORS.gold,
     borderRadius: 1,
+    zIndex: 2,
   },
   anguilaCuerpo: {
     width: 160,
@@ -372,7 +369,7 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     lineHeight: 14,
     flexShrink: 1,
-    maxWidth: 120,
+    flex: 1,
   },
   extremoLabelRight: {
     textAlign: "right",
