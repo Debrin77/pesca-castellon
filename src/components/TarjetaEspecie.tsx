@@ -4,8 +4,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import ListaAnimada from "./ListaAnimada";
 import MejorHoraPesca from "./MejorHoraPesca";
 import GraficoEspecie from "./GraficoEspecie";
+import DiagramaMedicion from "./DiagramaMedicion";
 import { caraDeEspecie } from "../data/carasVisuales";
 import { fotoEspecie } from "../data/especiesMedia";
+import { criterioMedicionDe } from "../data/criterioMedicion";
 import { COLORS, RADIUS, SHADOW } from "../theme";
 
 export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: string } {
@@ -49,6 +51,7 @@ export default function TarjetaEspecie({
   ambito?: "continental" | "maritimo";
 }) {
   const talla = tallaDestacada(sp);
+  const medicion = criterioMedicionDe(sp);
   const invasora = sp.invasora || sp.id === "cangrejo_azul";
   const cara = caraDeEspecie(sp);
   const foto = fotoEspecie(sp.id);
@@ -81,6 +84,12 @@ export default function TarjetaEspecie({
             </Text>
           </View>
         </View>
+        {medicion ? (
+          <DiagramaMedicion
+            criterio={medicion}
+            valorMinimo={talla.unidad === medicion.unidad ? talla.valor : null}
+          />
+        ) : null}
         <Text style={styles.cardTitle}>
           {sp.nombre} {invasora ? <Text style={styles.badgeInvasora}>INVASORA</Text> : null}
         </Text>
