@@ -80,7 +80,6 @@ for (const id of [...idsOrilla, ...idsMar, ...idsContinental]) {
 }
 
 // Cada especie debe tener una placa inédita (sin reutilizar el mismo archivo).
-import crypto from "crypto";
 const hashes = new Map();
 for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".jpg"))) {
   const buf = fs.readFileSync(path.join(dir, f));
