@@ -37,31 +37,35 @@ if (/dorada:\s*PEZ_HORQUILLA/.test(criterio)) {
 }
 
 const diagrama = read("src/components/DiagramaMedicion.tsx");
-for (const token of [
-  "Cómo medir",
-  "criterio.desde",
-  "criterio.hasta",
-  "longitud_total_noaa",
-  "NOAA",
-  "longitud total (TL)",
-  "etiquetaPatron",
-  "CotaConFlechas",
-]) {
+for (const token of ["Cómo medir", "PlacaMedicionEspecie", "especieId", "etiquetaPatron"]) {
   if (!diagrama.includes(token)) fail(`DiagramaMedicion.tsx debe incluir ${token}`);
 }
 if (diagrama.includes("soloLeyenda")) {
   fail("DiagramaMedicion ya no usa soloLeyenda (flechas sobre foto retiradas)");
 }
-if (diagrama.includes("function Silueta") || /pezCuerpo|pulpoCabeza|cangrejoCap/.test(diagrama)) {
-  fail("DiagramaMedicion no debe usar siluetas cutres");
+if (diagrama.includes("longitud_total_noaa") || diagrama.includes("NOAA")) {
+  fail("DiagramaMedicion debe usar placas por especie en español, no el diagrama NOAA genérico");
 }
 
-const assetNoaa = path.join(root, "assets/medicion/longitud_total_noaa.jpg");
-if (!fs.existsSync(assetNoaa)) {
-  fail("Falta assets/medicion/longitud_total_noaa.jpg (diagrama técnico NOAA)");
+const placa = read("src/components/PlacaMedicionEspecie.tsx");
+for (const token of [
+  "react-native-svg",
+  "Longitud total",
+  "Hocico",
+  "Extremo cola",
+  "morfoDe",
+  "lubina",
+  "dorada",
+  "caballa",
+  "llisa",
+  "salema",
+  "pulpo",
+  "Norma UE / RD 560",
+]) {
+  if (!placa.includes(token)) fail(`PlacaMedicionEspecie.tsx debe incluir ${token}`);
 }
 
-// No overlays A/B sobre fotos de especie (poco fiables en fotos reales).
+// No overlays A/B sobre fotos de especie
 if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {
   fail("FotoConMedicion.tsx debe eliminarse: no hay flechas sobre fotos de especie");
 }
@@ -73,6 +77,9 @@ const tarjeta = read("src/components/TarjetaEspecie.tsx");
 if (!tarjeta.includes("DiagramaMedicion") || !tarjeta.includes("criterioMedicionDe")) {
   fail("TarjetaEspecie debe renderizar DiagramaMedicion cuando hay talla medible");
 }
+if (!tarjeta.includes("especieId={sp.id}")) {
+  fail("TarjetaEspecie debe pasar especieId a DiagramaMedicion");
+}
 if (tarjeta.includes("FotoConMedicion") || tarjeta.includes("hayAnclaMedicionFoto")) {
   fail("TarjetaEspecie no debe usar overlays A/B sobre la foto");
 }
@@ -81,11 +88,18 @@ const aparejos = read("src/screens/AparejosScreen.tsx");
 if (!aparejos.includes("DiagramaMedicion") || !aparejos.includes("criterioMedicionDe")) {
   fail("AparejosScreen debe mostrar DiagramaMedicion en la ficha de especie");
 }
+if (!aparejos.includes("especieId={sp?.id}")) {
+  fail("AparejosScreen debe pasar especieId a DiagramaMedicion");
+}
 if (aparejos.includes("FotoConMedicion") || aparejos.includes("hayAnclaMedicionFoto")) {
   fail("AparejosScreen no debe usar overlays A/B sobre la foto");
 }
 
-// Cobertura: especies con tallaCm/tallaKg deben resolver criterio
+const pkg = JSON.parse(read("package.json"));
+if (!pkg.dependencies?.["react-native-svg"]) {
+  fail("package.json debe incluir react-native-svg para las placas de medición");
+}
+
 const orilla = JSON.parse(read("src/data/especiesOrilla.json"));
 const conTalla = (orilla.pescablesOrilla || []).filter(
   (sp) => (sp.tallaCm != null && Number.isFinite(sp.tallaCm)) || (sp.tallaKg != null && Number.isFinite(sp.tallaKg))
@@ -99,6 +113,5 @@ if (continentalConTalla.length < 1) fail("Debe haber al menos una especie contin
 console.log("OK assert_diagrama_medicion:", {
   orillaConTalla: conTalla.length,
   continentalConTalla: continentalConTalla.map((s) => s.id),
-  patrones: ["pez_total", "pez_horquilla", "cefalopodo_manto", "pulpo_peso", "cangrejo_caparazon"],
-  diagrama: "NOAA Fish Length (TL destacado)",
+  placas: "SVG por morfología/especie · etiquetas en español · cm/kg",
 });
