@@ -2,9 +2,10 @@
  * Candidatos cercanos al toque del mapa, ordenados por índice de pesca (o barco).
  * Best-effort: no bloquea el veredicto legal; si no hay datos, null.
  * Nunca recomienda vedados / reservas / sitios donde hoy no se puede.
+ * Mismo comportamiento en todas las provincias (radio amplio + k-NN).
  */
 import type { ModoPescaGlobal } from "../data/modoPesca";
-import { sitiosFacilesDe } from "../data/sitiosFaciles";
+import { sitiosFacilesDe, type SitioFacil } from "../data/sitiosFaciles";
 import { getProvinciaActiva } from "../provincias/runtime";
 import type { ProvinciaId } from "../provincias/types";
 import {
@@ -22,6 +23,7 @@ import {
   consultarPuntoPesca,
   todosLosTramos,
   type ConsultaPesca,
+  type TramoOficial,
 } from "../services/consultaPescaService";
 import {
   calcularIndicePesca,
@@ -57,10 +59,16 @@ export type FilaCercaMejorPinta = CandidatoCerca & {
   alerta: boolean;
 };
 
+/**
+ * Radio de búsqueda por modo.
+ * Castellón es denso (~2 km NN); Sevilla/Córdoba/Cuenca son dispersos
+ * (embalses aislados a 20–45 km). Un tope único amplio evita pools vacíos
+ * sin cambiar el ranking (siempre puntuamos los más cercanos).
+ */
 const RADIO_KM: Record<ModoPescaGlobal, number> = {
-  rio: 15,
-  orilla: 12,
-  barco: 18,
+  rio: 55,
+  orilla: 25,
+  barco: 30,
 };
 
 /** Cuántos más cercanos puntuamos (red); luego nos quedamos con top 3. */
@@ -75,6 +83,57 @@ function claveCoord(lat: number, lng: number): string {
 
 function radioDe(modo: ModoPescaGlobal): number {
   return RADIO_KM[modo];
+}
+
+/** Prefijo de id de tramo en catálogos provinciales (sev-/cor-/cue-). */
+function prefijoTramoProvincia(id: ProvinciaId): string | null {
+  if (id === "sevilla") return "sev";
+  if (id === "cordoba") return "cor";
+  if (id === "cuenca") return "cue";
+  return null;
+}
+
+function esVedadoOReserva(t: TramoOficial): boolean {
+  return t.aprovechamiento === "VP" || t.aprovechamiento === "ZRTC";
+}
+
+/**
+ * Resuelve un sitio fácil curado a su tramo oficial.
+ * Prefiere ZPL/ZPC sobre refugios VP cuando el slug coincide con varios ids
+ * (p. ej. Navallana: refugio + vaso libre).
+ */
+export function resolverTramoDeSitioFacil(sitio: SitioFacil): TramoOficial | null {
+  const zoneId = sitio.zoneId;
+  if (!zoneId) return null;
+  const provincia = getProvinciaActiva();
+  const prefix = prefijoTramoProvincia(provincia.id as ProvinciaId);
+  const tramos = todosLosTramos();
+
+  const hits = tramos.filter((t) => {
+    if (t.id === zoneId) return true;
+    if (t.fichaId != null && String(t.fichaId) === zoneId) return true;
+    if (prefix && t.id === `${prefix}-${zoneId}`) return true;
+    if (t.id.endsWith(`-${zoneId}`)) return true;
+    // slug contenido (p. ej. cor-refugio_embalse_… y cor-embalse_…)
+    if (zoneId.length >= 8 && t.id.includes(zoneId)) return true;
+    return false;
+  });
+
+  if (hits.length === 0) return null;
+  hits.sort((a, b) => {
+    const va = esVedadoOReserva(a) ? 1 : 0;
+    const vb = esVedadoOReserva(b) ? 1 : 0;
+    if (va !== vb) return va - vb;
+    // Prefer exact / prefixed id over partial includes.
+    const score = (t: TramoOficial) => {
+      if (t.id === zoneId) return 0;
+      if (prefix && t.id === `${prefix}-${zoneId}`) return 1;
+      if (t.id.endsWith(`-${zoneId}`)) return 2;
+      return 3;
+    };
+    return score(a) - score(b);
+  });
+  return hits[0] ?? null;
 }
 
 /** Cotos sí (con permiso); vedados / reservas / HOY NO / fuera de catálogo no. */
@@ -96,8 +155,15 @@ function pasaFiltroLegal(
     if (origen === "tramo") {
       const t = todosLosTramos().find((x) => x.id === tramoId);
       if (!t) return false;
-      if (t.aprovechamiento === "VP" || t.aprovechamiento === "ZRTC") return false;
+      if (esVedadoOReserva(t)) return false;
       return esPescableHoy(consultarPorTramo(t));
+    }
+    if (origen === "facil" && tramoId) {
+      const t = todosLosTramos().find((x) => x.id === tramoId);
+      if (t) {
+        if (esVedadoOReserva(t)) return false;
+        return esPescableHoy(consultarPorTramo(t));
+      }
     }
     if (origen === "playa") return esPescableHoy(consultarCosta(lat, lng));
     if (origen === "rampa" || origen === "waypoint") {
@@ -147,7 +213,13 @@ export function listarCandidatosCercaSync(opts: {
     }
     for (const s of sitiosFacilesDe(provincia.id as ProvinciaId)) {
       if (s.ambito !== "continental") continue;
-      push(`facil:${s.id}`, s.nombre, s.lat, s.lng, "facil");
+      const tramo = resolverTramoDeSitioFacil(s);
+      // Si hay tramo, usamos su centroide (más fiable) y filtro por tramo.
+      if (tramo) {
+        push(`facil:${s.id}`, s.nombre, tramo.lat, tramo.lng, "facil", tramo.id);
+      } else {
+        push(`facil:${s.id}`, s.nombre, s.lat, s.lng, "facil");
+      }
     }
   } else if (opts.modo === "orilla") {
     for (const p of todasLasPlayas()) {
