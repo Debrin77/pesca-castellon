@@ -14,82 +14,17 @@ type Props = {
   compact?: boolean;
 };
 
-function Silueta({ patron }: { patron: PatronMedicion }) {
-  const cuerpo = COLORS.water;
-  const borde = COLORS.waterDark;
-  const vientre = COLORS.waterLight;
-
-  if (patron === "pulpo_peso") {
-    return (
-      <View style={styles.silCaja} accessibilityElementsHidden>
-        <View style={[styles.pulpoCabeza, { backgroundColor: cuerpo, borderColor: borde }]} />
-        <View style={styles.pulpoBrazos}>
-          {[0, 1, 2, 3, 4].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.pulpoBrazo,
-                { backgroundColor: i % 2 ? vientre : cuerpo, transform: [{ rotate: `${(i - 2) * 7}deg` }] },
-              ]}
-            />
-          ))}
-        </View>
-      </View>
-    );
-  }
-
-  if (patron === "cefalopodo_manto") {
-    return (
-      <View style={styles.silCaja} accessibilityElementsHidden>
-        <View style={[styles.manto, { backgroundColor: cuerpo, borderColor: borde }]} />
-        <View style={[styles.mantoAleta, { backgroundColor: vientre }]} />
-        <View style={styles.mantoTent}>
-          {[0, 1, 2].map((i) => (
-            <View key={i} style={[styles.mantoTentItem, { backgroundColor: borde }]} />
-          ))}
-        </View>
-      </View>
-    );
-  }
-
-  if (patron === "cangrejo_caparazon") {
-    return (
-      <View style={styles.silCaja} accessibilityElementsHidden>
-        <View style={styles.cangrejoFila}>
-          <View style={[styles.cangrejoPinza, { backgroundColor: borde, transform: [{ rotate: "-20deg" }] }]} />
-          <View style={[styles.cangrejoCap, { backgroundColor: cuerpo, borderColor: borde }]} />
-          <View style={[styles.cangrejoPinza, { backgroundColor: borde, transform: [{ rotate: "20deg" }] }]} />
-        </View>
-      </View>
-    );
-  }
-
-  if (patron === "anguila") {
-    return (
-      <View style={styles.silCaja} accessibilityElementsHidden>
-        <View style={[styles.anguilaCuerpo, { backgroundColor: cuerpo, borderColor: borde }]} />
-      </View>
-    );
-  }
-
-  // pez_total / pez_horquilla — formas sólidas (fiables en web; sin triángulos CSS)
-  return (
-    <View style={[styles.silCaja, styles.pezFila]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-      <View style={styles.pezHocicoDot} />
-      <View style={[styles.pezCuerpo, { backgroundColor: cuerpo, borderColor: borde }]}>
-        <View style={[styles.pezVientre, { backgroundColor: vientre }]} />
-        <View style={styles.pezOjo} />
-      </View>
-      <View style={styles.pezColaWrap}>
-        <View style={[styles.pezColaSolid, { backgroundColor: borde, transform: [{ rotate: "-22deg" }] }]} />
-        <View style={[styles.pezColaSolid, { backgroundColor: borde, transform: [{ rotate: "22deg" }], marginTop: -6 }]} />
-        {patron === "pez_horquilla" ? <View style={styles.horquillaMark} /> : null}
-      </View>
-    </View>
-  );
+/** Punta de flecha (triángulo) apuntando a izquierda o derecha. */
+function Flecha({ direccion }: { direccion: "izq" | "der" }) {
+  const punta = direccion === "izq" ? styles.flechaIzq : styles.flechaDer;
+  return <View style={punta} />;
 }
 
-function BarraMedicion({
+/**
+ * Esquema técnico: dos extremos A/B unidos por flechas de cota.
+ * Sin siluetas ni fotos: solo geometría de medición (estilo normativa).
+ */
+function CotaConFlechas({
   criterio,
   valorMinimo,
 }: {
@@ -97,46 +32,69 @@ function BarraMedicion({
   valorMinimo?: string | null;
 }) {
   const esPeso = criterio.patron === "pulpo_peso" || criterio.unidad === "kg";
+  const esAncho = criterio.patron === "cangrejo_caparazon";
+  const esHorquilla = criterio.patron === "pez_horquilla";
+
+  const badge =
+    valorMinimo != null && valorMinimo !== ""
+      ? `mín. ${valorMinimo} ${criterio.unidad}`
+      : esPeso
+        ? "peso"
+        : esAncho
+          ? "anchura"
+          : "longitud";
+
   return (
-    <View style={styles.barraWrap}>
-      <View style={styles.extremos}>
-        <View style={styles.extremo}>
-          <View style={styles.puntoA} />
-          <Text style={styles.extremoLabel} numberOfLines={2}>
-            {criterio.desde}
-          </Text>
+    <View style={styles.cotaBox} accessibilityElementsHidden>
+      {/* Etiquetas superiores A / B */}
+      <View style={styles.marcadoresFila}>
+        <View style={styles.marcadorCol}>
+          <View style={[styles.chipExtremo, styles.chipA]}>
+            <Text style={styles.chipExtremoTxt}>A</Text>
+          </View>
+          <View style={styles.guiaVertical} />
         </View>
-        <View style={styles.extremoRight}>
-          <View style={styles.puntoB} />
-          <Text style={[styles.extremoLabel, styles.extremoLabelRight]} numberOfLines={2}>
-            {criterio.hasta}
-          </Text>
+        <View style={styles.marcadorColEnd}>
+          <View style={[styles.chipExtremo, styles.chipB]}>
+            <Text style={styles.chipExtremoTxt}>B</Text>
+          </View>
+          <View style={styles.guiaVertical} />
         </View>
       </View>
-      <View style={styles.lineaFila}>
-        <View style={styles.tick} />
-        <View style={styles.linea}>
-          {valorMinimo ? (
-            <View style={styles.badgeMin}>
-              <Text style={styles.badgeMinTxt}>
-                mín. {valorMinimo} {criterio.unidad}
-              </Text>
-            </View>
-          ) : (
-            <Text style={styles.flechaTxt}>{esPeso ? "peso" : "medida"}</Text>
-          )}
+
+      {/* Línea de cota con flechas */}
+      <View style={styles.cotaFila}>
+        <Flecha direccion="izq" />
+        <View style={styles.cotaLinea}>
+          <View style={styles.badgeMin}>
+            <Text style={styles.badgeMinTxt}>{badge}</Text>
+          </View>
+          {esHorquilla ? <View style={styles.marcaHorquilla} /> : null}
         </View>
-        <View style={styles.tick} />
+        <Flecha direccion="der" />
+      </View>
+
+      {/* Leyenda A → B */}
+      <View style={styles.leyendaFila}>
+        <Text style={styles.leyendaA} numberOfLines={2}>
+          {criterio.desde}
+        </Text>
+        <Text style={styles.leyendaFlecha} accessibilityElementsHidden>
+          →
+        </Text>
+        <Text style={styles.leyendaB} numberOfLines={2}>
+          {criterio.hasta}
+        </Text>
       </View>
     </View>
   );
 }
 
 /**
- * Diagrama A→B: de dónde a dónde se mide el ejemplar para la talla/peso mínimo.
+ * Diagrama profesional de medición: flechas A→B (sin siluetas cutres).
  */
 export default function DiagramaMedicion({ criterio, valorMinimo, compact }: Props) {
-  const a11y = `Cómo medir: ${criterio.desde} hasta ${criterio.hasta}. ${criterio.detalle}`;
+  const a11y = `Cómo medir: de ${criterio.desde} a ${criterio.hasta}. ${criterio.detalle}`;
 
   return (
     <View
@@ -148,25 +106,31 @@ export default function DiagramaMedicion({ criterio, valorMinimo, compact }: Pro
         <Text style={styles.kicker}>Cómo medir</Text>
         <Text style={styles.patronTag}>{etiquetaPatron(criterio.patron)}</Text>
       </View>
-      <View style={styles.visual}>
-        <Silueta patron={criterio.patron} />
-        <BarraMedicion criterio={criterio} valorMinimo={valorMinimo} />
-      </View>
+
+      <CotaConFlechas criterio={criterio} valorMinimo={valorMinimo} />
+
       <Text style={styles.detalle}>{criterio.detalle}</Text>
     </View>
   );
 }
+
+// Referencia tipada para asserts / tree-shaking consciente del patrón.
+export type { PatronMedicion };
+
+const ARROW = 9;
+const LINE = COLORS.waterDark;
 
 const styles = StyleSheet.create({
   card: {
     marginTop: 10,
     marginHorizontal: 16,
     marginBottom: 4,
-    backgroundColor: COLORS.waterLight,
+    backgroundColor: COLORS.surface,
     borderRadius: RADIUS.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
   cardCompact: {
     marginHorizontal: 0,
@@ -176,240 +140,149 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 12,
     gap: 8,
   },
   kicker: {
     fontSize: 11,
     fontWeight: "800",
     color: COLORS.waterDark,
-    letterSpacing: 0.7,
+    letterSpacing: 0.8,
     textTransform: "uppercase",
   },
   patronTag: {
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: "600",
     color: COLORS.textSecondary,
     flexShrink: 1,
     textAlign: "right",
   },
-  visual: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.sm,
+  cotaBox: {
     borderWidth: 1,
     borderColor: COLORS.border,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    marginBottom: 8,
+    borderRadius: RADIUS.sm,
+    backgroundColor: COLORS.mist,
+    paddingTop: 10,
+    paddingBottom: 12,
+    paddingHorizontal: 12,
+    marginBottom: 10,
   },
-  silCaja: {
-    height: 56,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  pezFila: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 0,
-  },
-  pezHocicoDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.primary,
-    marginRight: 2,
-    zIndex: 2,
-  },
-  pezCuerpo: {
-    width: 110,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 2,
-    overflow: "hidden",
-  },
-  pezVientre: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: "40%",
-  },
-  pezOjo: {
-    position: "absolute",
-    left: 14,
-    top: 10,
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: COLORS.textPrimary,
-  },
-  pezColaWrap: {
-    width: 26,
-    height: 36,
-    marginLeft: -4,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pezColaSolid: {
-    width: 18,
-    height: 10,
-    borderRadius: 2,
-  },
-  horquillaMark: {
-    position: "absolute",
-    left: 2,
-    width: 3,
-    height: 32,
-    backgroundColor: COLORS.gold,
-    borderRadius: 1,
-    zIndex: 2,
-  },
-  anguilaCuerpo: {
-    width: 160,
-    height: 18,
-    borderRadius: 10,
-    borderWidth: 2,
-    transform: [{ rotate: "-4deg" }],
-  },
-  manto: {
-    width: 90,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-  },
-  mantoAleta: {
-    position: "absolute",
-    width: 70,
-    height: 14,
-    borderRadius: 8,
-    top: 28,
-  },
-  mantoTent: {
-    flexDirection: "row",
-    gap: 4,
-    marginTop: 4,
-  },
-  mantoTentItem: {
-    width: 5,
-    height: 14,
-    borderRadius: 2,
-  },
-  pulpoCabeza: {
-    width: 44,
-    height: 34,
-    borderRadius: 22,
-    borderWidth: 2,
-  },
-  pulpoBrazos: {
-    flexDirection: "row",
-    gap: 5,
-    marginTop: 2,
-  },
-  pulpoBrazo: {
-    width: 7,
-    height: 22,
-    borderRadius: 4,
-  },
-  cangrejoFila: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  cangrejoCap: {
-    width: 72,
-    height: 36,
-    borderRadius: 10,
-    borderWidth: 2,
-  },
-  cangrejoPinza: {
-    width: 14,
-    height: 20,
-    borderRadius: 4,
-  },
-  barraWrap: {
-    paddingHorizontal: 4,
-  },
-  extremos: {
+  marcadoresFila: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: 2,
   },
-  extremo: {
-    flex: 1,
-    flexDirection: "row",
+  marcadorCol: {
     alignItems: "flex-start",
-    gap: 6,
+    width: 36,
   },
-  extremoRight: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-    gap: 6,
+  marcadorColEnd: {
+    alignItems: "flex-end",
+    width: 36,
   },
-  puntoA: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLORS.primary,
-    marginTop: 2,
-  },
-  puntoB: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLORS.waterDark,
-    marginTop: 2,
-  },
-  extremoLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-    lineHeight: 14,
-    flexShrink: 1,
-    flex: 1,
-  },
-  extremoLabelRight: {
-    textAlign: "right",
-  },
-  lineaFila: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  tick: {
-    width: 2,
-    height: 12,
-    backgroundColor: COLORS.waterDark,
-    borderRadius: 1,
-  },
-  linea: {
-    flex: 1,
-    height: 2,
-    backgroundColor: COLORS.waterDark,
-    marginHorizontal: 0,
+  chipExtremo: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
   },
-  flechaTxt: {
-    fontSize: 12,
-    color: COLORS.waterDark,
-    backgroundColor: COLORS.surface,
-    paddingHorizontal: 6,
-    marginTop: -1,
-  },
-  badgeMin: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginTop: -8,
-  },
-  badgeMinTxt: {
+  chipA: { backgroundColor: COLORS.primary },
+  chipB: { backgroundColor: COLORS.waterDark },
+  chipExtremoTxt: {
     color: "#fff",
     fontSize: 11,
     fontWeight: "800",
+    letterSpacing: 0.2,
+  },
+  guiaVertical: {
+    width: 1,
+    height: 10,
+    backgroundColor: LINE,
+    marginTop: 2,
+    alignSelf: "center",
+    opacity: 0.55,
+  },
+  cotaFila: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 28,
+  },
+  flechaIzq: {
+    width: 0,
+    height: 0,
+    borderTopWidth: ARROW,
+    borderBottomWidth: ARROW,
+    borderRightWidth: ARROW + 2,
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    borderRightColor: LINE,
+  },
+  flechaDer: {
+    width: 0,
+    height: 0,
+    borderTopWidth: ARROW,
+    borderBottomWidth: ARROW,
+    borderLeftWidth: ARROW + 2,
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    borderLeftColor: LINE,
+  },
+  cotaLinea: {
+    flex: 1,
+    height: 2,
+    backgroundColor: LINE,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeMin: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 4,
+  },
+  badgeMinTxt: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 0.2,
+  },
+  /** Marca vertical en el extremo B para longitud a la horquilla. */
+  marcaHorquilla: {
+    position: "absolute",
+    right: 0,
+    width: 2,
+    height: 16,
+    backgroundColor: COLORS.gold,
+    borderRadius: 1,
+    top: -7,
+  },
+  leyendaFila: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: 12,
+    gap: 8,
+  },
+  leyendaA: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.textPrimary,
+    lineHeight: 16,
+  },
+  leyendaFlecha: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.waterDark,
+    marginTop: 0,
+  },
+  leyendaB: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.textPrimary,
+    lineHeight: 16,
+    textAlign: "right",
   },
   detalle: {
     fontSize: 12,

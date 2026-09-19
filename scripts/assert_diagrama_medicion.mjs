@@ -34,8 +34,20 @@ for (const token of [
 }
 
 const diagrama = read("src/components/DiagramaMedicion.tsx");
-for (const token of ["Cómo medir", "criterio.desde", "criterio.hasta", "Silueta", "etiquetaPatron"]) {
+for (const token of [
+  "Cómo medir",
+  "criterio.desde",
+  "criterio.hasta",
+  "Flecha",
+  "CotaConFlechas",
+  "etiquetaPatron",
+  "chipA",
+  "chipB",
+]) {
   if (!diagrama.includes(token)) fail(`DiagramaMedicion.tsx debe incluir ${token}`);
+}
+if (diagrama.includes("function Silueta") || /pezCuerpo|pulpoCabeza|cangrejoCap/.test(diagrama)) {
+  fail("DiagramaMedicion no debe usar siluetas cutres; solo flechas de cota A→B");
 }
 
 const tarjeta = read("src/components/TarjetaEspecie.tsx");
