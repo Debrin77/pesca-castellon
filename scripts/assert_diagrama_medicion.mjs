@@ -41,46 +41,48 @@ for (const token of [
   "Cómo medir",
   "criterio.desde",
   "criterio.hasta",
-  "Flecha",
-  "CotaConFlechas",
+  "longitud_total_noaa",
+  "NOAA",
+  "longitud total (TL)",
   "etiquetaPatron",
-  "chipA",
-  "chipB",
-  "soloLeyenda",
+  "CotaConFlechas",
 ]) {
   if (!diagrama.includes(token)) fail(`DiagramaMedicion.tsx debe incluir ${token}`);
 }
+if (diagrama.includes("soloLeyenda")) {
+  fail("DiagramaMedicion ya no usa soloLeyenda (flechas sobre foto retiradas)");
+}
 if (diagrama.includes("function Silueta") || /pezCuerpo|pulpoCabeza|cangrejoCap/.test(diagrama)) {
-  fail("DiagramaMedicion no debe usar siluetas cutres; solo flechas de cota A→B");
+  fail("DiagramaMedicion no debe usar siluetas cutres");
 }
 
-const fotoMed = read("src/components/FotoConMedicion.tsx");
-for (const token of ["FotoConMedicion", "proyectarContain", "OverlayLinea", "mín.", 'resizeMode="contain"']) {
-  if (!fotoMed.includes(token)) fail(`FotoConMedicion.tsx debe incluir ${token}`);
+const assetNoaa = path.join(root, "assets/medicion/longitud_total_noaa.jpg");
+if (!fs.existsSync(assetNoaa)) {
+  fail("Falta assets/medicion/longitud_total_noaa.jpg (diagrama técnico NOAA)");
 }
 
-const anclas = read("src/data/anclasMedicionFoto.ts");
-for (const id of ["lubina", "dorada", "pulpo", "sargo", "llisa", "jurel", "mojarra", "salmonete"]) {
-  if (!anclas.includes(`${id}:`)) fail(`Falta ancla calibrada para ${id}`);
+// No overlays A/B sobre fotos de especie (poco fiables en fotos reales).
+if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {
+  fail("FotoConMedicion.tsx debe eliminarse: no hay flechas sobre fotos de especie");
 }
-if (!anclas.includes("proyectarContain")) fail("anclasMedicionFoto debe proyectar con contain");
-if (!anclas.includes("1967/2006")) fail("anclasMedicionFoto debe citar Reg. 1967/2006");
-if (anclas.includes("caballa:")) fail("caballa: foto no apta para overlay; no debe tener ancla");
+if (fs.existsSync(path.join(root, "src/data/anclasMedicionFoto.ts"))) {
+  fail("anclasMedicionFoto.ts debe eliminarse: no hay anclas sobre fotos");
+}
 
 const tarjeta = read("src/components/TarjetaEspecie.tsx");
 if (!tarjeta.includes("DiagramaMedicion") || !tarjeta.includes("criterioMedicionDe")) {
   fail("TarjetaEspecie debe renderizar DiagramaMedicion cuando hay talla medible");
 }
-if (!tarjeta.includes("FotoConMedicion") || !tarjeta.includes("hayAnclaMedicionFoto")) {
-  fail("TarjetaEspecie debe anclar flechas A→B sobre la foto cuando hay ancla");
+if (tarjeta.includes("FotoConMedicion") || tarjeta.includes("hayAnclaMedicionFoto")) {
+  fail("TarjetaEspecie no debe usar overlays A/B sobre la foto");
 }
 
 const aparejos = read("src/screens/AparejosScreen.tsx");
 if (!aparejos.includes("DiagramaMedicion") || !aparejos.includes("criterioMedicionDe")) {
   fail("AparejosScreen debe mostrar DiagramaMedicion en la ficha de especie");
 }
-if (!aparejos.includes("FotoConMedicion")) {
-  fail("AparejosScreen debe mostrar FotoConMedicion con flechas sobre la foto");
+if (aparejos.includes("FotoConMedicion") || aparejos.includes("hayAnclaMedicionFoto")) {
+  fail("AparejosScreen no debe usar overlays A/B sobre la foto");
 }
 
 // Cobertura: especies con tallaCm/tallaKg deben resolver criterio
@@ -98,4 +100,5 @@ console.log("OK assert_diagrama_medicion:", {
   orillaConTalla: conTalla.length,
   continentalConTalla: continentalConTalla.map((s) => s.id),
   patrones: ["pez_total", "pez_horquilla", "cefalopodo_manto", "pulpo_peso", "cangrejo_caparazon"],
+  diagrama: "NOAA Fish Length (TL destacado)",
 });
