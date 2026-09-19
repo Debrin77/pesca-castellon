@@ -255,6 +255,8 @@ export default function AparejosScreen({ route, navigation }: Props) {
                 compact
                 criterio={medicion}
                 valorMinimo={talla && talla.unidad === medicion.unidad ? talla.valor : null}
+                especieId={sp?.id}
+                nombre={sp?.nombre}
               />
             ) : null}
 

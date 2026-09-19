@@ -88,6 +88,8 @@ export default function TarjetaEspecie({
           <DiagramaMedicion
             criterio={medicion}
             valorMinimo={talla.unidad === medicion.unidad ? talla.valor : null}
+            especieId={sp.id}
+            nombre={sp.nombre}
           />
         ) : null}
         <Text style={styles.cardTitle}>
