@@ -10,7 +10,7 @@ import {
 import type { CriterioMedicion } from "../data/criterioMedicion";
 import {
   anclaMedicionFoto,
-  proyectarCover,
+  proyectarContain,
   type AnclaMedicionFoto,
 } from "../data/anclasMedicionFoto";
 import { COLORS } from "../theme";
@@ -38,8 +38,8 @@ function OverlayLinea({
   boxH: number;
   badge: string;
 }) {
-  const A = proyectarCover(ancla.a, ancla.w, ancla.h, boxW, boxH);
-  const B = proyectarCover(ancla.b, ancla.w, ancla.h, boxW, boxH);
+  const A = proyectarContain(ancla.a, ancla.w, ancla.h, boxW, boxH);
+  const B = proyectarContain(ancla.b, ancla.w, ancla.h, boxW, boxH);
   const dx = B.x - A.x;
   const dy = B.y - A.y;
   const len = Math.max(1, Math.sqrt(dx * dx + dy * dy));
@@ -92,18 +92,15 @@ function OverlayLinea({
         ]}
       />
 
-      {/* Chips A / B encima de los puntos */}
-      <View style={[styles.chip, styles.chipA, { left: A.x - CHIP / 2, top: A.y - CHIP - 6 }]}>
+      {/* Chips A / B centrados en el punto anatómico */}
+      <View style={[styles.chip, styles.chipA, { left: A.x - CHIP / 2, top: A.y - CHIP / 2 }]}>
         <Text style={styles.chipTxt}>A</Text>
       </View>
-      <View style={[styles.chip, styles.chipB, { left: B.x - CHIP / 2, top: B.y - CHIP - 6 }]}>
+      <View style={[styles.chip, styles.chipB, { left: B.x - CHIP / 2, top: B.y - CHIP / 2 }]}>
         <Text style={styles.chipTxt}>B</Text>
       </View>
 
-      <View style={[styles.guia, { left: A.x - 0.5, top: A.y - 8, height: 8 }]} />
-      <View style={[styles.guia, { left: B.x - 0.5, top: B.y - 8, height: 8 }]} />
-
-      <View style={[styles.badge, { left: Math.min(boxW - 110, Math.max(8, midX - 48)), top: Math.min(boxH - 32, midY + 12) }]}>
+      <View style={[styles.badge, { left: Math.min(boxW - 110, Math.max(8, midX - 48)), top: Math.min(boxH - 32, midY + 14) }]}>
         <Text style={styles.badgeTxt}>{badge}</Text>
       </View>
     </View>
@@ -144,7 +141,7 @@ export default function FotoConMedicion({
   accessibilityLabel,
   height = 200,
 }: Props) {
-  const ancla = anclaMedicionFoto(especieId, criterio.patron);
+  const ancla = anclaMedicionFoto(especieId);
   const [box, setBox] = useState({ w: 0, h: height });
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -167,10 +164,9 @@ export default function FotoConMedicion({
         <Image
           source={source}
           style={styles.foto}
-          resizeMode="cover"
+          resizeMode="contain"
           accessibilityLabel={accessibilityLabel}
         />
-        <View style={styles.vignette} pointerEvents="none" />
         {ancla && box.w > 0 ? (
           modo === "peso" ? (
             <OverlayPeso ancla={ancla} boxW={box.w} boxH={box.h} badge={badge} />
@@ -207,16 +203,12 @@ const styles = StyleSheet.create({
   marco: {
     width: "100%",
     overflow: "hidden",
-    backgroundColor: COLORS.mist,
+    backgroundColor: "#0c2c20",
   },
   foto: {
     ...StyleSheet.absoluteFillObject,
     width: "100%",
     height: "100%",
-  },
-  vignette: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.05)",
   },
   chip: {
     position: "absolute",

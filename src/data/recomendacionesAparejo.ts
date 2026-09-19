@@ -618,7 +618,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     anzueloTipo: "Simple o circle de mar",
     anzueloTalla: "#1–#2/0 (gusano) · #2–#1 (tita/muergo)",
     arponcillo: "recomendado_sin",
-    arponcilloNota: "Sin arponcillo facilita liberar por debajo de talla (20 cm tenedor–cola).",
+    arponcilloNota: "Sin arponcillo facilita liberar por debajo de talla (20 cm hocico–cola, longitud total).",
     cebador: {
       recomendado: false,
       tipos: "—",
