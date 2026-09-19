@@ -102,7 +102,10 @@ function patronPorForma(id?: string | null, nombre?: string | null): CriterioMed
 }
 
 /**
- * Devuelve el criterio gráfico si la especie tiene talla/peso mínimo medible.
+ * Devuelve el criterio gráfico de medición.
+ * - Con talla/peso numérico (o parseado del texto oficial): incluye unidad.
+ * - Sin mínimo numérico: igual se muestra la placa (cómo medir) en orilla / mar / continental.
+ * - null solo si no aplica medir (protegidas / no pescables geométricos).
  */
 export function criterioMedicionDe(sp: {
   id?: string;
@@ -115,27 +118,30 @@ export function criterioMedicionDe(sp: {
 } | null | undefined): CriterioMedicion | null {
   if (!sp) return null;
 
+  const k = `${sp.id ?? ""} ${sp.nombre ?? ""}`.toLowerCase();
+  // Fauna protegida / no medible como talla de retención
+  if (/nacra|tortuga|caballito|d[aá]til|mero_peque|columbretes/.test(k)) return null;
+
   const fuente = `${sp.tallaOficial ?? ""} ${sp.tallaNota ?? ""}`;
-  if (/sin muerte|prohibid|no se retiene|no devolver|invasora/i.test(fuente) && sp.tallaCm == null && sp.tallaKg == null) {
-    return null;
-  }
+  const matchTalla = fuente.match(/(\d+(?:[.,]\d+)?)\s*(cm|kg)/i);
 
   let unidad: "cm" | "kg" | null = null;
   if (sp.tallaCm != null && Number.isFinite(sp.tallaCm)) unidad = "cm";
   else if (sp.tallaKg != null && Number.isFinite(sp.tallaKg)) unidad = "kg";
-  else {
-    const m = fuente.match(/(\d+(?:[.,]\d+)?)\s*(cm|kg)/i);
-    if (m) unidad = m[2].toLowerCase() as "cm" | "kg";
-  }
-  if (!unidad) return null;
+  else if (matchTalla) unidad = matchTalla[2].toLowerCase() as "cm" | "kg";
 
   const base = (sp.id && POR_ID[sp.id]) || patronPorForma(sp.id, sp.nombre);
+  const resuelto: CriterioMedicion = { ...base, unidad: unidad ?? base.unidad };
 
-  if (unidad === "kg") {
-    if (base.patron === "pulpo_peso" || /pulpo/i.test(`${sp.id} ${sp.nombre}`)) return PULPO_PESO;
-    return { ...base, unidad: "kg", detalle: `Peso mínimo del ejemplar entero. ${base.detalle}` };
+  if (resuelto.unidad === "kg") {
+    if (base.patron === "pulpo_peso" || /pulpo/i.test(k)) return PULPO_PESO;
+    return {
+      ...resuelto,
+      unidad: "kg",
+      detalle: `Peso mínimo del ejemplar entero. ${base.detalle}`,
+    };
   }
-  return { ...base, unidad };
+  return resuelto;
 }
 
 export function etiquetaPatron(patron: PatronMedicion): string {

@@ -53,24 +53,27 @@ for (const token of ["diagramaMedicionEspecie", "Longitud total", "Norma UE / RD
 }
 
 const catalog = read("src/data/diagramasMedicionEspecie.ts");
-for (const id of ["lubina", "dorada", "llisa", "salema", "caballa", "sargo", "pulpo"]) {
+const idsOrilla = ["lubina", "dorada", "llisa", "salema", "caballa", "sargo", "pulpo"];
+const idsMar = ["pagel", "denton", "sepia", "calamar", "corvina", "palometon", "anjova", "espeton"];
+const idsContinental = [
+  "trucha_comun",
+  "trucha_arcoiris",
+  "black_bass",
+  "lucio",
+  "carpa",
+  "barbo",
+  "tenca",
+  "siluro",
+  "mugilidos",
+  "llobarro",
+  "cangrejo_americano",
+];
+for (const id of [...idsOrilla, ...idsMar, ...idsContinental]) {
   if (!catalog.includes(`${id}:`)) fail(`Falta diagrama de medición para ${id}`);
 }
 
 const dir = path.join(root, "assets/medicion/especies");
-for (const id of [
-  "lubina",
-  "dorada",
-  "llisa",
-  "salema",
-  "caballa",
-  "sargo",
-  "mojarra",
-  "jurel",
-  "salmonete",
-  "boga",
-  "pulpo",
-]) {
+for (const id of [...idsOrilla, ...idsMar, ...idsContinental]) {
   const jpg = path.join(dir, `${id}.jpg`);
   if (!fs.existsSync(jpg)) fail(`Falta asset ${id}.jpg`);
 }
@@ -115,8 +118,19 @@ const species = JSON.parse(read("src/data/species.json"));
 const continentalConTalla = species.filter((sp) => sp.tallaCm != null && Number.isFinite(sp.tallaCm));
 if (continentalConTalla.length < 1) fail("Debe haber al menos una especie continental con tallaCm");
 
+const barco = JSON.parse(read("src/data/especiesEmbarcacion.json"));
+const barcoConTalla = (barco.pescables || []).filter((sp) => sp.tallaCm != null && Number.isFinite(sp.tallaCm));
+if (barcoConTalla.length < 4) fail(`Se esperan ≥4 pescables barco con talla (hay ${barcoConTalla.length})`);
+for (const sp of barcoConTalla) {
+  if (!fs.existsSync(path.join(dir, `${sp.id}.jpg`)) && !catalog.includes(`${sp.id}:`)) {
+    fail(`Barco ${sp.id} con talla sin placa`);
+  }
+}
+
 console.log("OK assert_diagrama_medicion:", {
   orillaConTalla: conTalla.length,
+  barcoConTalla: barcoConTalla.map((s) => s.id),
   continentalConTalla: continentalConTalla.map((s) => s.id),
   placasEspecie: fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).length,
+  cobertura: "orilla + mar/barco + continental",
 });
