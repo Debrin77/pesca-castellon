@@ -30,14 +30,14 @@ export type AnclaMedicionFoto = {
  */
 const ANCLAS: Record<string, AnclaMedicionFoto> = {
   // ——— Cabeza a la derecha ———
-  lubina: { w: 747, h: 560, a: { x: 0.84, y: 0.52 }, b: { x: 0.05, y: 0.39 } },
-  llobarro: { w: 747, h: 560, a: { x: 0.84, y: 0.52 }, b: { x: 0.05, y: 0.39 } },
+  lubina: { w: 747, h: 560, a: { x: 0.905, y: 0.545 }, b: { x: 0.04, y: 0.38 } },
+  llobarro: { w: 747, h: 560, a: { x: 0.905, y: 0.545 }, b: { x: 0.04, y: 0.38 } },
   mojarra: { w: 900, h: 600, a: { x: 0.955, y: 0.5 }, b: { x: 0.12, y: 0.5 } },
   salmonete: { w: 900, h: 506, a: { x: 0.93, y: 0.48 }, b: { x: 0.11, y: 0.5 } },
 
   // ——— Cabeza a la izquierda ———
   dorada: { w: 640, h: 480, a: { x: 0.075, y: 0.5 }, b: { x: 0.985, y: 0.44 } },
-  sargo: { w: 640, h: 480, a: { x: 0.22, y: 0.48 }, b: { x: 0.89, y: 0.5 } },
+  sargo: { w: 640, h: 480, a: { x: 0.20, y: 0.48 }, b: { x: 0.93, y: 0.48 } },
   llisa: { w: 640, h: 480, a: { x: 0.04, y: 0.47 }, b: { x: 0.96, y: 0.5 } },
   mugilidos: { w: 640, h: 480, a: { x: 0.04, y: 0.47 }, b: { x: 0.96, y: 0.5 } },
   jurel: { w: 900, h: 600, a: { x: 0.065, y: 0.48 }, b: { x: 0.97, y: 0.49 } },

@@ -92,18 +92,15 @@ function OverlayLinea({
         ]}
       />
 
-      {/* Chips A / B encima de los puntos */}
-      <View style={[styles.chip, styles.chipA, { left: A.x - CHIP / 2, top: A.y - CHIP - 6 }]}>
+      {/* Chips A / B centrados en el punto anatómico */}
+      <View style={[styles.chip, styles.chipA, { left: A.x - CHIP / 2, top: A.y - CHIP / 2 }]}>
         <Text style={styles.chipTxt}>A</Text>
       </View>
-      <View style={[styles.chip, styles.chipB, { left: B.x - CHIP / 2, top: B.y - CHIP - 6 }]}>
+      <View style={[styles.chip, styles.chipB, { left: B.x - CHIP / 2, top: B.y - CHIP / 2 }]}>
         <Text style={styles.chipTxt}>B</Text>
       </View>
 
-      <View style={[styles.guia, { left: A.x - 0.5, top: A.y - 8, height: 8 }]} />
-      <View style={[styles.guia, { left: B.x - 0.5, top: B.y - 8, height: 8 }]} />
-
-      <View style={[styles.badge, { left: Math.min(boxW - 110, Math.max(8, midX - 48)), top: Math.min(boxH - 32, midY + 12) }]}>
+      <View style={[styles.badge, { left: Math.min(boxW - 110, Math.max(8, midX - 48)), top: Math.min(boxH - 32, midY + 14) }]}>
         <Text style={styles.badgeTxt}>{badge}</Text>
       </View>
     </View>
