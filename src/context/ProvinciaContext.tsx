@@ -17,6 +17,10 @@ interface ProvinciaContextValue {
   provincia: ProvinciaConfig | null;
   provinciaId: ProvinciaId | null;
   provincias: ProvinciaConfig[];
+  /** True si la provincia se restauró del almacenamiento al arrancar (sesión que continúa). */
+  restauradaAlArrancar: boolean;
+  /** True si el selector se muestra porque el usuario quiere cambiar, no por primer uso. */
+  selectorEsCambio: boolean;
   elegirProvincia: (id: ProvinciaId) => Promise<void>;
   cambiarProvincia: () => Promise<void>;
 }
@@ -26,6 +30,8 @@ const ProvinciaContext = createContext<ProvinciaContextValue | null>(null);
 export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   const [listo, setListo] = useState(false);
   const [provinciaId, setProvinciaId] = useState<ProvinciaId | null>(null);
+  const [restauradaAlArrancar, setRestauradaAlArrancar] = useState(false);
+  const [selectorEsCambio, setSelectorEsCambio] = useState(false);
 
   useEffect(() => {
     let vivo = true;
@@ -36,6 +42,8 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
         if (esProvinciaId(raw)) {
           setProvinciaActiva(raw);
           setProvinciaId(raw);
+          setRestauradaAlArrancar(true);
+          setSelectorEsCambio(false);
         }
       } finally {
         if (vivo) setListo(true);
@@ -49,12 +57,16 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   const elegirProvincia = useCallback(async (id: ProvinciaId) => {
     setProvinciaActiva(id);
     setProvinciaId(id);
+    setRestauradaAlArrancar(false);
+    setSelectorEsCambio(false);
     await AsyncStorage.setItem(CLAVE_PROVINCIA, id);
   }, []);
 
   const cambiarProvincia = useCallback(async () => {
     setProvinciaId(null);
     clearProvinciaActiva();
+    setRestauradaAlArrancar(false);
+    setSelectorEsCambio(true);
     await AsyncStorage.removeItem(CLAVE_PROVINCIA);
   }, []);
 
@@ -69,10 +81,20 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
       provincia,
       provinciaId,
       provincias: LISTA_PROVINCIAS,
+      restauradaAlArrancar,
+      selectorEsCambio,
       elegirProvincia,
       cambiarProvincia,
     }),
-    [listo, provincia, provinciaId, elegirProvincia, cambiarProvincia]
+    [
+      listo,
+      provincia,
+      provinciaId,
+      restauradaAlArrancar,
+      selectorEsCambio,
+      elegirProvincia,
+      cambiarProvincia,
+    ]
   );
 
   return <ProvinciaContext.Provider value={value}>{children}</ProvinciaContext.Provider>;

@@ -93,8 +93,9 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
           {desdeAjustes ? "Cambiar provincia" : "¿Dónde vas a pescar?"}
         </Text>
         <Text style={styles.sub}>
-          Elige tu zona. Cargamos mapa, especies y normas de ese territorio. Puedes cambiarla luego
-          en Ajustes.
+          {desdeAjustes
+            ? "El mapa y las normas cambiarán. Tus capturas, puntos y rutas de cada provincia se mantienen; no se borran al cambiar."
+            : "Elige tu zona. Cargamos mapa, especies y normas de ese territorio. Puedes cambiarla luego en Ajustes."}
         </Text>
 
         {provincias.map((p) => {
