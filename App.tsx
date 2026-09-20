@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Text, TextInput } from "react-native";
 import { NavigationContainer, DefaultTheme, NavigationContainerRef } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -37,7 +37,16 @@ import ConsejosScreen from "./src/screens/ConsejosScreen";
 import AjustesScreen from "./src/screens/AjustesScreen";
 import SalgoAPescarScreen from "./src/screens/SalgoAPescarScreen";
 import SalgoEnBarcoScreen from "./src/screens/SalgoEnBarcoScreen";
-import { COLORS } from "./src/theme";
+import { COLORS, MAX_FONT_SIZE_MULTIPLIER } from "./src/theme";
+
+// Accesibilidad: respeta el tamaño del sistema sin romper layouts de campo.
+const textDefaults = Text as typeof Text & { defaultProps?: Record<string, unknown> };
+const inputDefaults = TextInput as typeof TextInput & { defaultProps?: Record<string, unknown> };
+textDefaults.defaultProps = { ...(textDefaults.defaultProps ?? {}), maxFontSizeMultiplier: MAX_FONT_SIZE_MULTIPLIER };
+inputDefaults.defaultProps = {
+  ...(inputDefaults.defaultProps ?? {}),
+  maxFontSizeMultiplier: MAX_FONT_SIZE_MULTIPLIER,
+};
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
