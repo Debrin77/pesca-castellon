@@ -28,7 +28,7 @@ const PHONE_W = Math.min(W * 0.86, 360);
 const PHONE_H = Math.min(H * 0.52, 540);
 const nativo = Platform.OS !== "web";
 
-type SlideId = "legal" | "pinta" | "modos" | "intima" | "pin" | "campo";
+type SlideId = "legal" | "pinta" | "modos" | "medir" | "intima" | "pin" | "campo";
 
 type Slide = {
   id: SlideId;
@@ -85,6 +85,15 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           ? "Elige cómo vas a pescar y se alinean mapa, especies, aparejos y el ritual de salida — también kayak o barco."
           : `En ${nombreProv}: mapa de tramos, especies continentales, montajes y «Salgo a pescar» paso a paso.`,
         accent: ["#1a5f78", "#134a5c", "#0c3340"],
+        tonoOnda: "agua",
+      },
+      {
+        id: "medir",
+        eyebrow: "Particularidad · ficha de especie",
+        titulo: "Cómo medir · placa propia",
+        texto:
+          "Cada especie tiene su gráfico: longitud total, manto o peso. Sin reutilizar siluetas ni confundir lubina con corvina.",
+        accent: ["#1b6a5a", "#134a42", "#0c2e2a"],
         tonoOnda: "agua",
       },
       {
@@ -313,6 +322,7 @@ function MockUI({
   if (id === "legal") return <MockLegal nombreProv={nombreProv} activo={activo} />;
   if (id === "pinta") return <MockPinta nombreProv={nombreProv} activo={activo} />;
   if (id === "modos") return <MockModos nombreProv={nombreProv} esCosta={esCosta} activo={activo} />;
+  if (id === "medir") return <MockMedir activo={activo} />;
   return <MockCampo activo={activo} esCosta={esCosta} />;
 }
 
@@ -553,6 +563,49 @@ function MockModos({
               : "Todo el flujo apunta a tu primera salida"}
           </Text>
         </View>
+      </Animated.View>
+    </LinearGradient>
+  );
+}
+
+function MockMedir({ activo }: { activo: boolean }) {
+  const v = useReveal(activo);
+  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+  const fichas = [
+    { nombre: "Lubina", cota: "Longitud total · hocico → cola", patron: "cm" },
+    { nombre: "Corvina", cota: "Placa propia · no reutiliza lubina", patron: "cm" },
+    { nombre: "Pulpo", cota: "Peso del ejemplar entero", patron: "kg" },
+    { nombre: "Sepia", cota: "Longitud del manto", patron: "cm" },
+  ];
+  return (
+    <LinearGradient colors={["#f4faf8", "#e2efea"]} style={m.fill}>
+      <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Ficha · especie</Text>
+      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>Cómo medir · gráfica única</Text>
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 10, gap: 7, paddingHorizontal: 10 }}>
+        <View style={m.medirHero}>
+          <Text style={m.medirHeroKicker}>Particularidad</Text>
+          <Text style={m.medirHeroTitle}>Una placa por especie</Text>
+          <View style={m.medirCota}>
+            <Text style={m.medirCotaLbl}>Hocico</Text>
+            <View style={m.medirCotaLine} />
+            <Text style={m.medirCotaMid}>Longitud total</Text>
+            <View style={m.medirCotaLine} />
+            <Text style={m.medirCotaLbl}>Cola</Text>
+          </View>
+          <Text style={m.medirHeroPie}>Norma UE / RD 560 · sin siluetas repetidas</Text>
+        </View>
+        {fichas.map((f) => (
+          <View key={f.nombre} style={m.medirRow}>
+            <View style={m.medirDot} />
+            <View style={{ flex: 1 }}>
+              <Text style={m.medirNombre}>{f.nombre}</Text>
+              <Text style={m.medirCotaTxt}>{f.cota}</Text>
+            </View>
+            <View style={m.medirBadge}>
+              <Text style={m.medirBadgeTxt}>{f.patron}</Text>
+            </View>
+          </View>
+        ))}
       </Animated.View>
     </LinearGradient>
   );
@@ -1115,5 +1168,100 @@ const m = StyleSheet.create({
     color: COLORS.textMuted,
     fontFamily: FONTS.semibold,
     fontSize: 11,
+  },
+  medirHero: {
+    backgroundColor: "#fff",
+    borderRadius: RADIUS.md,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: 2,
+  },
+  medirHeroKicker: {
+    fontSize: 10,
+    fontFamily: FONTS.extrabold,
+    fontWeight: "800",
+    color: COLORS.water,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  medirHeroTitle: {
+    marginTop: 2,
+    fontFamily: FONTS.display,
+    fontSize: 18,
+    color: COLORS.primaryDark,
+    letterSpacing: -0.3,
+  },
+  medirCota: {
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  medirCotaLbl: {
+    fontSize: 10,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    color: COLORS.textSecondary,
+  },
+  medirCotaMid: {
+    fontSize: 11,
+    fontFamily: FONTS.extrabold,
+    fontWeight: "800",
+    color: COLORS.primary,
+  },
+  medirCotaLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: COLORS.primary,
+    borderRadius: 1,
+  },
+  medirHeroPie: {
+    marginTop: 8,
+    fontSize: 11,
+    fontFamily: FONTS.semibold,
+    color: COLORS.textMuted,
+  },
+  medirRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: RADIUS.md,
+    paddingVertical: 9,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 8,
+  },
+  medirDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.water,
+  },
+  medirNombre: {
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 13,
+    color: COLORS.textPrimary,
+  },
+  medirCotaTxt: {
+    marginTop: 1,
+    fontFamily: FONTS.semibold,
+    fontSize: 11,
+    color: COLORS.textSecondary,
+  },
+  medirBadge: {
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  medirBadgeTxt: {
+    fontSize: 10,
+    fontFamily: FONTS.extrabold,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+    textTransform: "uppercase",
   },
 });
