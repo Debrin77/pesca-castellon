@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProvincia } from "../context/ProvinciaContext";
 import type { ProvinciaId } from "../provincias";
-import { COLORS, FONTS, RADIUS, SHADOW, SPACING } from "../theme";
+import { COLORS, FONTS, RADIUS, SHADOW, SPACING, TYPE } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -152,26 +152,24 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   brand: {
+    ...TYPE.displayHero,
     color: COLORS.gold,
-    fontSize: 42,
-    fontWeight: "800",
-    fontFamily: FONTS.extrabold,
-    letterSpacing: 1,
-    marginBottom: 4,
+    fontSize: 40,
+    lineHeight: 46,
+    letterSpacing: 0.6,
+    marginBottom: 6,
   },
   titulo: {
+    ...TYPE.displayTitle,
     color: "#fff",
     fontSize: 26,
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
+    lineHeight: 32,
     marginBottom: 10,
   },
   sub: {
-    color: "rgba(255,255,255,0.88)",
-    fontSize: 16,
-    fontFamily: FONTS.regular,
+    ...TYPE.body,
+    color: "rgba(255,255,255,0.9)",
     marginBottom: 28,
-    lineHeight: 22,
   },
   card: {
     backgroundColor: "rgba(255,255,255,0.96)",
@@ -182,26 +180,22 @@ const styles = StyleSheet.create({
   },
   cardTop: { marginBottom: 8 },
   cardKicker: {
+    ...TYPE.overline,
     color: COLORS.primary,
-    fontSize: 12,
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
     marginBottom: 2,
   },
   cardNombre: {
+    ...TYPE.displayTitle,
     color: COLORS.textPrimary,
     fontSize: 24,
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
+    lineHeight: 30,
   },
   cardDetalle: {
+    ...TYPE.body,
     color: COLORS.textSecondary,
     fontSize: 15,
-    fontFamily: FONTS.regular,
+    lineHeight: 22,
     marginBottom: 12,
-    lineHeight: 21,
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
   chip: {
@@ -211,29 +205,25 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
   },
   chipTxt: {
-    color: COLORS.primaryDark,
+    ...TYPE.caption,
     fontSize: 12,
-    fontWeight: "600",
-    fontFamily: FONTS.semibold,
+    lineHeight: 16,
+    color: COLORS.primaryDark,
   },
   cta: {
+    ...TYPE.bodyStrong,
     color: COLORS.primary,
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
-    fontSize: 16,
   },
   masInfo: { marginTop: 12 },
   masInfoTxt: {
+    ...TYPE.caption,
     color: COLORS.textMuted,
-    fontSize: 12.5,
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
   },
   tecnico: {
+    ...TYPE.caption,
     marginTop: 6,
-    fontSize: 12.5,
-    lineHeight: 18,
     color: COLORS.textSecondary,
     fontFamily: FONTS.regular,
+    fontWeight: "400",
   },
 });

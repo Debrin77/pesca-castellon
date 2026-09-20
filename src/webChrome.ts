@@ -33,8 +33,8 @@ export function aplicarEstilosWeb() {
       font-family: "Source Sans 3", system-ui, sans-serif;
     }
     .leaflet-popup-content {
-      font-size: 13px;
-      line-height: 1.35;
+      font-size: 14px;
+      line-height: 1.4;
     }
     * { -webkit-tap-highlight-color: transparent; }
     #root input, #root textarea, #root button {

@@ -5,6 +5,9 @@
  * Contraste WCAG 2.1 AA (≥4.5:1 texto normal) sobre fondos claros/oscuros
  * de la app. Los acentos usados como color de texto van oscurecidos a
  * propósito; `gold` queda para rellenos/pines y `goldText` para tipografía.
+ *
+ * Tipografía: Source Sans 3 (UI) + Fraunces (display ≥ ~22).
+ * Escala pensada para Android al sol y tamaño de sistema acotado.
  */
 export const COLORS = {
   primary: "#164a36",
@@ -97,6 +100,12 @@ export const SHADOW_SOFT = {
 
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
+/**
+ * Tope de escalado del sistema (accesibilidad Android/iOS).
+ * Respeta Dynamic Type / fontScale sin romper layouts de campo.
+ */
+export const MAX_FONT_SIZE_MULTIPLIER = 1.3;
+
 /** Source Sans 3 (cuerpo) + Fraunces (titulares / presentación). */
 export const FONTS = {
   regular: "SourceSans3_400Regular",
@@ -111,82 +120,91 @@ export const FONTS = {
 
 /**
  * Escala tipográfica de producto (pesca de campo).
- * Fraunces = veredicto / marca / títulos de sheet.
+ * Fraunces = veredicto / marca / títulos de sheet (≥ ~22).
  * Source Sans = UI, chips de mapa, cuerpo y meta.
+ * Cuerpo 16 / caption 14 / overline 12 → legible al sol y WCAG-friendly.
  */
 export const TYPE = {
   displayHero: {
     fontFamily: FONTS.display,
     fontSize: 28,
     lineHeight: 34,
-    letterSpacing: -0.4,
+    letterSpacing: -0.35,
     fontWeight: "700" as const,
   },
   displayTitle: {
     fontFamily: FONTS.display,
     fontSize: 22,
     lineHeight: 28,
-    letterSpacing: -0.3,
+    letterSpacing: -0.25,
     fontWeight: "700" as const,
   },
   displaySheet: {
     fontFamily: FONTS.display,
-    fontSize: 20,
-    lineHeight: 26,
-    letterSpacing: -0.35,
+    fontSize: 22,
+    lineHeight: 28,
+    letterSpacing: -0.3,
     fontWeight: "700" as const,
   },
-  /** Veredicto legal grande (HOY SÍ / HOY NO). */
+  /** Veredicto legal grande (HOY SÍ / HOY NO) — cartelería de campo. */
   displayVerdict: {
     fontFamily: FONTS.display,
     fontSize: 34,
-    lineHeight: 38,
-    letterSpacing: 0.4,
+    lineHeight: 40,
+    letterSpacing: 0.8,
     fontWeight: "700" as const,
   },
   title: {
     fontFamily: FONTS.bold,
     fontSize: 17,
-    lineHeight: 22,
-    letterSpacing: -0.2,
+    lineHeight: 23,
+    letterSpacing: -0.15,
     fontWeight: "700" as const,
   },
   body: {
     fontFamily: FONTS.regular,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
     fontWeight: "400" as const,
   },
   bodyStrong: {
     fontFamily: FONTS.semibold,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
     fontWeight: "600" as const,
   },
   caption: {
     fontFamily: FONTS.semibold,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "600" as const,
+  },
+  /** Meta / fecha: no compite con marca ni veredicto. */
+  meta: {
+    fontFamily: FONTS.semibold,
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0.15,
     fontWeight: "600" as const,
   },
   overline: {
-    fontFamily: FONTS.extrabold,
-    fontSize: 11,
-    lineHeight: 14,
-    letterSpacing: 0.7,
+    fontFamily: FONTS.bold,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.6,
     textTransform: "uppercase" as const,
-    fontWeight: "800" as const,
+    fontWeight: "700" as const,
   },
   mapChip: {
     fontFamily: FONTS.bold,
-    fontSize: 13,
-    lineHeight: 16,
+    fontSize: 14,
+    lineHeight: 18,
     fontWeight: "700" as const,
   },
   mapLegend: {
     fontFamily: FONTS.semibold,
-    fontSize: 11.5,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 16,
     letterSpacing: 0.15,
     fontWeight: "600" as const,
   },
