@@ -22,6 +22,7 @@ import {
   setBiometriaActiva,
 } from "../services/accesoService";
 import { reiniciarPresentacionVirtudes } from "../services/offlineService";
+import { confirmarCambiarProvincia } from "../utils/confirmarCambiarProvincia";
 import { COLORS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
 import PanelOfflineMapa from "../components/PanelOfflineMapa";
 import PescaRecBanner from "../components/PescaRecBanner";
@@ -158,13 +159,16 @@ export default function AjustesScreen() {
           <View style={{ flex: 1, paddingRight: 12 }}>
             <Text style={styles.rowTitle}>{provincia.nombre}</Text>
             <Text style={styles.rowSub}>
-              El mapa, los sitios y las capturas guardados son por provincia.
+              El mapa, los sitios y las capturas guardados son por provincia. Al
+              cambiar, no se borra el cuaderno de la anterior.
             </Text>
           </View>
         </View>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => cambiarProvincia()}
+          onPress={() =>
+            confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
+          }
           accessibilityRole="button"
           accessibilityLabel="Cambiar provincia"
         >

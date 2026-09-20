@@ -233,7 +233,7 @@ function AppNavegacion({ provinciaKey }: { provinciaKey: string }) {
 }
 
 function AppRaiz() {
-  const { listo, provinciaId } = useProvincia();
+  const { listo, provinciaId, selectorEsCambio } = useProvincia();
   const [listoOnboarding, setListoOnboarding] = useState(false);
   const [mostrarOnboarding, setMostrarOnboarding] = useState(false);
 
@@ -251,7 +251,7 @@ function AppRaiz() {
   if (!provinciaId) {
     return (
       <View style={styles.root}>
-        <SelectorProvinciaScreen />
+        <SelectorProvinciaScreen desdeAjustes={selectorEsCambio} />
         <PantallaBloqueo />
       </View>
     );
