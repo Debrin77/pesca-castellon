@@ -21,6 +21,7 @@ import { COLORS, FONTS, RADIUS, SEMAFORO, SPACING } from "../theme";
 import OndaAgua from "../components/OndaAgua";
 import PulsePress from "../components/PulsePress";
 import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
+import LogoMarca from "../components/LogoMarca";
 
 const { width: W, height: H } = Dimensions.get("window");
 /** Marco tipo captura App Store: domina el alto de la pantalla. */
@@ -207,6 +208,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </TouchableOpacity>
 
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
+        <LogoMarca size={64} accessibilityLabel="Logo Pesca" />
         <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
         <Text style={styles.brandTag}>Sal al agua con criterio</Text>
       </Animated.View>
@@ -680,6 +682,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     fontSize: 26,
     lineHeight: 30,
+    marginTop: 10,
     textShadowColor: "rgba(0,0,0,0.35)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 6,

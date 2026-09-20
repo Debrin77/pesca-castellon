@@ -38,6 +38,7 @@ import AjustesScreen from "./src/screens/AjustesScreen";
 import SalgoAPescarScreen from "./src/screens/SalgoAPescarScreen";
 import SalgoEnBarcoScreen from "./src/screens/SalgoEnBarcoScreen";
 import { COLORS } from "./src/theme";
+import LogoMarca from "./src/components/LogoMarca";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -245,7 +246,11 @@ function AppRaiz() {
   }, []);
 
   if (!listo || !listoOnboarding) {
-    return <View style={[styles.root, { backgroundColor: COLORS.primaryDark }]} />;
+    return (
+      <View style={[styles.root, styles.boot]}>
+        <LogoMarca size={128} animar accessibilityLabel="Pesca" />
+      </View>
+    );
   }
 
   if (!provinciaId) {
@@ -282,7 +287,11 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return <View style={[styles.root, { backgroundColor: COLORS.primaryDark }]} />;
+    return (
+      <View style={[styles.root, styles.boot]}>
+        <LogoMarca size={128} animar accessibilityLabel="Pesca" />
+      </View>
+    );
   }
 
   return (
@@ -302,4 +311,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  boot: {
+    backgroundColor: COLORS.primaryDark,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

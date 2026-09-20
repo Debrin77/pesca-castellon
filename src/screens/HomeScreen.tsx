@@ -67,6 +67,7 @@ import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
 import SiguientePasoCard from "../components/SiguientePasoCard";
 import type { SiguientePasoAccion } from "../components/SiguientePasoCard";
+import { LogoMarcaEstatico } from "../components/LogoMarca";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -575,8 +576,13 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <AtmosferaMeteo codigo={clima?.codigoTiempo ?? 2} />
         <OndaAgua intensidad={0.85} />
-        <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
-        <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
+        <View style={styles.brandRow}>
+          <LogoMarcaEstatico size={44} style={styles.brandMark} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
+            <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
+          </View>
+        </View>
         {actualizando ? (
           <Text style={styles.actualizandoTxt} accessibilityLabel="Actualizando clima e índice">
             Actualizando…
@@ -1241,16 +1247,25 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: RADIUS.xl,
     overflow: "hidden",
   },
-  brandPulse: { ...TYPE.displayHero, color: "#fff", marginBottom: 2, zIndex: 1 },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    zIndex: 1,
+    marginBottom: 2,
+  },
+  brandMark: {
+    shadowOpacity: 0.35,
+  },
+  brandPulse: { ...TYPE.displayHero, color: "#fff", marginBottom: 2, fontSize: 24, lineHeight: 28 },
   dateText: {
-    fontSize: 15,
+    fontSize: 14,
     color: "rgba(255,255,255,0.92)",
     textTransform: "capitalize",
-    marginBottom: 4,
+    marginBottom: 0,
     fontWeight: "600",
     fontFamily: FONTS.semibold,
     letterSpacing: 0.2,
-    zIndex: 1,
   },
   actualizandoTxt: {
     color: "rgba(255,255,255,0.85)",
