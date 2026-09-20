@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProvincia } from "../context/ProvinciaContext";
 import type { ProvinciaId } from "../provincias";
 import { COLORS, FONTS, RADIUS, SHADOW, SPACING } from "../theme";
+import LogoMarca from "../components/LogoMarca";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -88,7 +89,11 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.brand}>Pesca</Text>
+        <View style={styles.marcaBlock}>
+          <LogoMarca size={108} animar accessibilityLabel="Logo Pesca" />
+          <Text style={styles.brand}>Pesca</Text>
+          <Text style={styles.eslogan}>Tu cuaderno de orilla · con criterio</Text>
+        </View>
         <Text style={styles.titulo}>
           {desdeAjustes ? "Cambiar provincia" : "¿Dónde vas a pescar?"}
         </Text>
@@ -151,13 +156,25 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
   },
+  marcaBlock: {
+    alignItems: "center",
+    marginBottom: 22,
+  },
   brand: {
     color: COLORS.gold,
-    fontSize: 42,
+    fontSize: 36,
     fontWeight: "800",
     fontFamily: FONTS.extrabold,
     letterSpacing: 1,
+    marginTop: 14,
     marginBottom: 4,
+  },
+  eslogan: {
+    color: "rgba(255,255,255,0.82)",
+    fontSize: 14,
+    fontFamily: FONTS.semibold,
+    fontWeight: "600",
+    textAlign: "center",
   },
   titulo: {
     color: "#fff",

@@ -5,8 +5,11 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/brand/icon.png",
     "splash": {
-      "backgroundColor": "#2e7d32"
+      "image": "./assets/brand/splash-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0c2c20"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,6 +24,10 @@
     },
     "android": {
       "package": "com.tuusuario.pescacastellon",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/adaptive-icon.png",
+        "backgroundColor": "#0c2c20"
+      },
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
@@ -34,10 +41,11 @@
     "web": {
       "bundler": "metro",
       "output": "single",
+      "favicon": "./assets/brand/favicon.png",
       "name": "Pesca Castellón",
       "shortName": "Pesca CS",
-      "themeColor": "#1b5e3f",
-      "backgroundColor": "#f4f7f5",
+      "themeColor": "#0c2c20",
+      "backgroundColor": "#eef2ee",
       "lang": "es"
     },
     "experiments": {
@@ -53,7 +61,8 @@
       [
         "expo-notifications",
         {
-          "color": "#1b5e3f"
+          "color": "#0c2c20",
+          "icon": "./assets/brand/icon.png"
         }
       ],
       "expo-secure-store",
@@ -61,7 +70,7 @@
       [
         "expo-image-picker",
         {
-          photosPermission: "Para adjuntar una foto a tus capturas en el diario."
+          "photosPermission": "Para adjuntar una foto a tus capturas en el diario."
         }
       ]
     ]

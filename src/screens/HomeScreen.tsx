@@ -67,6 +67,7 @@ import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
 import SiguientePasoCard from "../components/SiguientePasoCard";
 import type { SiguientePasoAccion } from "../components/SiguientePasoCard";
+import { LogoMarcaEstatico } from "../components/LogoMarca";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -575,8 +576,10 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <AtmosferaMeteo codigo={clima?.codigoTiempo ?? 2} />
         <OndaAgua intensidad={0.85} />
-        <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
-        <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
+        <View style={styles.brandRow} accessibilityLabel={provincia.nombreApp}>
+          <LogoMarcaEstatico size={88} style={styles.brandMark} />
+          <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
+        </View>
         {actualizando ? (
           <Text style={styles.actualizandoTxt} accessibilityLabel="Actualizando clima e índice">
             Actualizando…
@@ -1241,16 +1244,24 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: RADIUS.xl,
     overflow: "hidden",
   },
-  brandPulse: { ...TYPE.displayHero, color: "#fff", marginBottom: 2, zIndex: 1 },
+  brandRow: {
+    alignItems: "center",
+    zIndex: 1,
+    marginBottom: 6,
+  },
+  brandMark: {
+    shadowOpacity: 0.4,
+    marginBottom: 8,
+  },
   dateText: {
-    fontSize: 15,
+    fontSize: 14,
     color: "rgba(255,255,255,0.92)",
     textTransform: "capitalize",
-    marginBottom: 4,
+    marginBottom: 0,
     fontWeight: "600",
     fontFamily: FONTS.semibold,
     letterSpacing: 0.2,
-    zIndex: 1,
+    textAlign: "center",
   },
   actualizandoTxt: {
     color: "rgba(255,255,255,0.85)",

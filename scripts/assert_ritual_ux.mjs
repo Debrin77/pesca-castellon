@@ -21,8 +21,8 @@ const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"
 const tabs = fs.readFileSync(path.join(root, "src/components/BarraTabsScroll.tsx"), "utf8");
 
 // Hero: pulso (índice protagonista) + marca + veredicto rápido del punto
-if (!home.includes("brandPulse") || !home.includes("pulsoRow") || !home.includes("pulsoIndice")) {
-  fail("HomeScreen sin hero Pulso del día (brandPulse / pulsoRow)");
+if (!home.includes("brandMark") || !home.includes("pulsoRow") || !home.includes("pulsoIndice")) {
+  fail("HomeScreen sin hero (brandMark / pulsoRow)");
 }
 if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido")) {
   fail("HomeScreen sin veredicto rápido en el hero (gesto Inicio → detalle)");

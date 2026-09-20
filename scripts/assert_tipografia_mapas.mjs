@@ -69,8 +69,8 @@ if (!consejos.includes("TYPE.displayHero") || !consejos.includes("TYPE.displayTi
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes("TYPE.displayHero") && !home.includes("FONTS.display")) {
-  fail("Home debe usar display tipografico en marca");
+if (!home.includes("LogoMarcaEstatico") && !home.includes("TYPE.displayHero") && !home.includes("FONTS.display")) {
+  fail("Home debe usar logo de marca o display tipografico");
 }
 
 const geo = read("src/services/geojsonHit.ts");
