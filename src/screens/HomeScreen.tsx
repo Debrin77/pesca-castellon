@@ -52,7 +52,7 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
 import SelectorModoPesca from "../components/SelectorModoPesca";
 import TarjetaPuntoHoy from "../components/TarjetaPuntoHoy";
-import { etiquetaModoLarga } from "../data/modoPesca";
+import { etiquetaModoLarga, etiquetaModo } from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
@@ -61,6 +61,7 @@ import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import { certezaDeConsulta } from "../data/certezaConsulta";
+import { confirmarCambiarProvincia } from "../utils/confirmarCambiarProvincia";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
@@ -101,7 +102,7 @@ function aplicarCache(cache: CacheOffline, setters: {
 }
 
 export default function HomeScreen({ navigation }: Props) {
-  const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
+  const { provincia: provinciaCtx, cambiarProvincia, restauradaAlArrancar } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
   const { modo, disponibles, setModo } = useModoPesca();
@@ -132,6 +133,8 @@ export default function HomeScreen({ navigation }: Props) {
   const [antesAbierto, setAntesAbierto] = useState(false);
   /** Bloque «Aprende» solo si aún no completó la primera salida (menos ruido). */
   const [mostrarAprende, setMostrarAprende] = useState(false);
+  /** Aviso «Sigues en…» solo al reanudar sesión; se puede cerrar en esta sesión. */
+  const [avisoSesionVisible, setAvisoSesionVisible] = useState(restauradaAlArrancar);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -722,20 +725,61 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
 
-        <View style={styles.provinciaRow}>
-          <Text style={styles.provinciaLbl}>
-            Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
-          </Text>
-          <TouchableOpacity
-            onPress={() => cambiarProvincia()}
-            accessibilityRole="button"
-            accessibilityLabel="Cambiar provincia"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        {avisoSesionVisible ? (
+          <View
+            style={styles.sesionBanner}
+            accessibilityRole="summary"
+            accessibilityLabel={`Sigues en ${provincia.nombre}, modo ${etiquetaModo(modo)}`}
           >
-            <Text style={styles.provinciaCambio}>Cambiar</Text>
-          </TouchableOpacity>
-        
-        </View>
+            <View style={{ flex: 1, paddingRight: 8 }}>
+              <Text style={styles.sesionKicker}>Sesión anterior</Text>
+              <Text style={styles.sesionTitulo}>
+                Sigues en {provincia.nombre} · {etiquetaModo(modo)}
+              </Text>
+              <Text style={styles.sesionSub}>
+                Capturas y rutas se mantienen. Cambia solo si pescas en otra provincia.
+              </Text>
+            </View>
+            <View style={styles.sesionAcciones}>
+              <TouchableOpacity
+                onPress={() =>
+                  confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
+                }
+                accessibilityRole="button"
+                accessibilityLabel="Cambiar provincia"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.sesionCambiar}>Cambiar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setAvisoSesionVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar aviso de sesión"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.sesionCerrar}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.provinciaRow}>
+            <Text style={styles.provinciaLbl}>
+              Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
+              {" · "}
+              <Text style={styles.provinciaNombre}>{etiquetaModo(modo)}</Text>
+            </Text>
+            <TouchableOpacity
+              onPress={() =>
+                confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
+              }
+              accessibilityRole="button"
+              accessibilityLabel="Cambiar provincia"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.provinciaCambio}>Cambiar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {consultaViva ? (
           <TarjetaPuntoHoy
@@ -1575,6 +1619,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: COLORS.textSecondary,
+    flex: 1,
+    paddingRight: 8,
   },
   provinciaNombre: {
     fontWeight: "800",
@@ -1584,6 +1630,54 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "800",
     color: COLORS.water,
+  },
+  sesionBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: SPACING.sm,
+    marginTop: SPACING.sm,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  sesionKicker: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: COLORS.primary,
+    marginBottom: 2,
+  },
+  sesionTitulo: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+  },
+  sesionSub: {
+    fontSize: 12.5,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+    marginTop: 4,
+    lineHeight: 17,
+  },
+  sesionAcciones: {
+    alignItems: "flex-end",
+    gap: 10,
+    paddingTop: 2,
+  },
+  sesionCambiar: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.water,
+  },
+  sesionCerrar: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: COLORS.textMuted,
+    paddingHorizontal: 4,
   },
   ctaSalgo: {
     marginTop: 12,
