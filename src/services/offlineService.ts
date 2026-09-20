@@ -5,7 +5,7 @@ import { getProvinciaIdActiva } from "../provincias/runtime";
 const CLAVE_CACHE_LEGACY = "@pesca_castellon/cache_offline_v1";
 const CLAVE_ONBOARDING = "@pesca_castellon/onboarding_visto";
 /** Presentación estilo App Store (virtudes). Versionada para poder mostrarla de nuevo tras rediseños. */
-const CLAVE_PRESENTACION_VIRTUDES = "@pesca_castellon/presentacion_virtudes_v2";
+const CLAVE_PRESENTACION_VIRTUDES = "@pesca_castellon/presentacion_virtudes_v3";
 
 function claveCache(): string {
   return `@pesca_app/${getProvinciaIdActiva()}/cache_offline_v1`;

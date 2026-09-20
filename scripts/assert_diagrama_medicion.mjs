@@ -90,6 +90,53 @@ for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".jpg"))) {
   hashes.set(h, f);
 }
 
+/** Parejas que históricamente se reutilizaban o confundían; deben verse distintas. */
+const paresCriticos = [
+  ["anjova", "corvina"],
+  ["alburno", "cacho"],
+  ["lubina", "llobarro"],
+  ["llisa", "mabra"],
+  ["llisa", "mugilidos"],
+  ["sargo", "mojarra"],
+];
+function ahashBits(buf) {
+  // Promedio 16×16 sobre luminancia aproximada del JPEG (suficiente anti-copia).
+  // Usamos hash de bloques del buffer para no depender de decoders nativos.
+  const n = 256;
+  const samples = new Array(n).fill(0);
+  for (let i = 0; i < buf.length; i++) samples[i % n] += buf[i];
+  const avg = samples.reduce((a, b) => a + b, 0) / n;
+  return samples.map((v) => (v >= avg ? "1" : "0")).join("");
+}
+function hamming(a, b) {
+  let d = 0;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++;
+  return d;
+}
+for (const [a, b] of paresCriticos) {
+  const pa = path.join(dir, `${a}.jpg`);
+  const pb = path.join(dir, `${b}.jpg`);
+  if (!fs.existsSync(pa) || !fs.existsSync(pb)) continue;
+  const ha = ahashBits(fs.readFileSync(pa));
+  const hb = ahashBits(fs.readFileSync(pb));
+  const d = hamming(ha, hb);
+  if (d < 12) {
+    fail(`Placas demasiado parecidas (${a} ~ ${b}, distancia ${d} < 12): regenerar siluetas distintas`);
+  }
+}
+
+// Fotos de especies: no reutilizar el mismo JPG entre ids distintos (salvo alias llobarro→lubina en código).
+const fotosDir = path.join(root, "assets/especies");
+const fotoHashes = new Map();
+for (const f of fs.readdirSync(fotosDir).filter((x) => x.endsWith(".jpg"))) {
+  const buf = fs.readFileSync(path.join(fotosDir, f));
+  const h = crypto.createHash("md5").update(buf).digest("hex");
+  if (fotoHashes.has(h)) {
+    fail(`Fotos de especies duplicadas (mismo contenido): ${fotoHashes.get(h)} y ${f}`);
+  }
+  fotoHashes.set(h, f);
+}
+
 if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {
   fail("FotoConMedicion.tsx debe eliminarse");
 }

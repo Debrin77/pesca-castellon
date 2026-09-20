@@ -56,7 +56,12 @@ must("src/screens/OnboardingScreen.tsx", [
   'id: "pinta"',
   'id: "intima"',
   'id: "modos"',
+  'id: "medir"',
   "MockModos",
+  "MockMedir",
+  "Cómo medir · placa propia",
+  "Particularidad · ficha de especie",
+  "Una placa por especie",
   "Solunar",
 ]);
 
@@ -97,7 +102,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v2",
+  "presentacion_virtudes_v3",
 ]);
 
 must("README.md", [

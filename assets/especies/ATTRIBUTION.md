@@ -67,3 +67,9 @@ Translation by User:Theklan
 - `palometon.jpg` — File:Leccia Amia 26 kg .jpg — CC BY-SA 4.0 — Mariella Rubegni
 - `espeton.jpg` — File:Bicudas (Sphyraena viridensis), Cabo de Palos, España, 2022-07-15, DD 09.jpg — CC BY-SA 4.0 — Diego Delso
 - `mabra.jpg` — File:Chelon ramada Italy.jpg — CC BY 4.0 — etrusko25
+
+## Auditoría 2026-09 (correspondencia especie ↔ foto)
+- `barbo.jpg` — File:Barbus graellsii 03 by-dpc.jpg — CC BY 3.0 — David Perez (sustituye foto sin barbillas)
+- `barbo_gitano.jpg` — File:Barbo gitano (Barbus sclateri).jpg — CC BY-SA 4.0 — Javier Vázquez Rodríguez (reconfirmado)
+- `mugilidos.jpg` — File:Muble (Chelon labrosus), Parque natural de la Arrábida, Portugal, 2021-09-10, DD 48.jpg — CC BY-SA 4.0 — Diego Delso (antes duplicaba `llisa.jpg`)
+- `herrera.jpg` — File:Peces herrera (Lithognathus mormyrus), Madeira, Portugal, 2019-05-30, DD 01.jpg — CC BY-SA 4.0 — Diego Delso
