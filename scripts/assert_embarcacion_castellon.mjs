@@ -136,11 +136,11 @@ if (!/tabsHueco\s*=\s*1\d{2}\s*\+/.test(ritual)) {
   fail("SalgoEnBarco: tabsHueco debe reservar ~100px + safe area para BarraTabsScroll");
 }
 const iVolverPaso3 = ritual.indexOf("← Volver a normativa");
-const iSiguienteChecklist = ritual.indexOf("Siguiente · checklist");
-if (iVolverPaso3 < 0 || iSiguienteChecklist < 0 || iVolverPaso3 > iSiguienteChecklist) {
-  fail("SalgoEnBarco: en el punto 3, «Siguiente · checklist» debe ir debajo de «Volver» (más bajo)");
+const iSiguienteQueLlevar = ritual.indexOf("Siguiente · qué llevar");
+if (iVolverPaso3 < 0 || iSiguienteQueLlevar < 0 || iVolverPaso3 > iSiguienteQueLlevar) {
+  fail("SalgoEnBarco: en el punto 3, «Siguiente · qué llevar» debe ir debajo de «Volver» (más bajo)");
 }
-if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · checklist")) {
+if (!ritual.includes("Siguiente · meteo marina") || !ritual.includes("Siguiente · qué llevar")) {
   fail("SalgoEnBarco: faltan botones Siguiente de cada paso");
 }
 if (!ritual.includes("Herramientas complementarias") || !ritual.includes("HERRAMIENTAS_COMPLEMENTARIAS_BARCO")) {

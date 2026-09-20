@@ -6,6 +6,8 @@ import type { IndicePescaDia } from "../services/fishingIndexService";
 import { CATEGORIA_INFO } from "../services/fishingIndexService";
 import { etiquetaHoy } from "./SemaforoVeredicto";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
+import { certezaDeConsulta } from "../data/certezaConsulta";
+import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, RADIUS, SHADOW, TYPE } from "../theme";
 
 type Props = {
@@ -33,6 +35,7 @@ export default function TarjetaPuntoHoy({
 }: Props) {
   const hoy = etiquetaHoy(consulta);
   const colorLegal = colorSemaforo(consulta);
+  const certeza = certezaDeConsulta(consulta, { provinciaId: getProvinciaActiva().id });
   const cat = indice ? CATEGORIA_INFO[indice.categoria] : null;
 
   return (
@@ -44,7 +47,7 @@ export default function TarjetaPuntoHoy({
 
       <Fila
         orden="1"
-        kicker={EJE_LEGAL.tituloCorto}
+        kicker={`${EJE_LEGAL.tituloCorto} · ${certeza.sello}`}
         titulo={hoy.texto}
         sub={hoy.sub}
         accent={colorLegal}

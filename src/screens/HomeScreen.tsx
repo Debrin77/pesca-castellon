@@ -60,6 +60,7 @@ import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
+import { certezaDeConsulta } from "../data/certezaConsulta";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
@@ -133,7 +134,31 @@ export default function HomeScreen({ navigation }: Props) {
   const [mostrarAprende, setMostrarAprende] = useState(false);
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: provincia.nombreApp });
+    navigation.setOptions({
+      title: provincia.nombreApp,
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("License")}
+            accessibilityRole="button"
+            accessibilityLabel="Licencia de pesca"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+          >
+            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Licencia</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Ajustes")}
+            accessibilityRole="button"
+            accessibilityLabel="Ajustes"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+          >
+            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Ajustes</Text>
+          </TouchableOpacity>
+        </View>
+      ),
+    });
   }, [navigation, provincia.nombreApp]);
 
   const coordsFavorito = useCallback(
@@ -404,6 +429,15 @@ export default function HomeScreen({ navigation }: Props) {
         : consultarPuntoPesca(punto!.lat, punto!.lng)
     : null;
   const hoyEtiqueta = consultaViva ? etiquetaHoy(consultaViva) : null;
+  const certezaHero = consultaViva
+    ? certezaDeConsulta(consultaViva, { provinciaId: provincia.id })
+    : null;
+  const heroNoOficial = !!(certezaHero && certezaHero.nivel !== "oficial");
+  /** Punto continental con modo mar / barco (o viceversa): no confundir con veda. */
+  const puntoNoEncajaModo =
+    !!consultaViva &&
+    consultaViva.veredicto === "fuera_catalogo" &&
+    modo !== "rio";
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const alertasClima =
     clima
@@ -557,20 +591,35 @@ export default function HomeScreen({ navigation }: Props) {
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
 
-        {consultaViva && hoyEtiqueta ? (
+        {consultaViva && hoyEtiqueta && certezaHero ? (
           <TouchableOpacity
-            style={[styles.veredictoRapido, { backgroundColor: colorSemaforo(consultaViva) }]}
+            style={[
+              styles.veredictoRapido,
+              { backgroundColor: colorSemaforo(consultaViva) },
+              heroNoOficial && styles.veredictoRapidoAprox,
+            ]}
             onPress={abrirVeredictoRapido}
             activeOpacity={0.88}
             accessibilityRole="button"
-            accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. Abrir detalle`}
+            accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. ${certezaHero.a11y}. Abrir detalle`}
           >
             <View style={styles.veredictoRapidoTxt}>
-              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+              <View style={styles.veredictoRapidoSelloRow}>
+                <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+                <Text
+                  style={[
+                    styles.veredictoRapidoSello,
+                    heroNoOficial ? styles.veredictoRapidoSelloAprox : styles.veredictoRapidoSelloOficial,
+                  ]}
+                >
+                  {certezaHero.sello}
+                </Text>
+              </View>
               <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
-              <Text style={styles.veredictoRapidoSub} numberOfLines={1}>
-                {hoyEtiqueta.sub}
-                {consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}
+              <Text style={styles.veredictoRapidoSub} numberOfLines={puntoNoEncajaModo ? 2 : 1}>
+                {puntoNoEncajaModo
+                  ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
+                  : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
               </Text>
             </View>
             <Text style={styles.veredictoRapidoChevron}>›</Text>
@@ -624,7 +673,7 @@ export default function HomeScreen({ navigation }: Props) {
                 </Text>
                 <Text style={styles.ctaSalgoSub}>
                   {modo === "barco"
-                    ? "Legal · oleaje · checklist · Columbretes"
+                    ? "Legal · oleaje · qué llevar · Columbretes"
                     : "Punto del día y qué llevar"}
                 </Text>
               </View>
@@ -642,6 +691,7 @@ export default function HomeScreen({ navigation }: Props) {
               onPress={() =>
                 navigation.navigate("Aparejos", {
                   ambitoEmbarcacion: modo === "barco",
+                  ambitoModo: modo,
                 })
               }
               accessibilityRole="button"
@@ -695,7 +745,10 @@ export default function HomeScreen({ navigation }: Props) {
             onPuedo={abrirVeredictoRapido}
             onPinta={() => navigation.navigate("Previsión")}
             onEquipo={() =>
-              navigation.navigate("Aparejos", { ambitoEmbarcacion: modo === "barco" })
+              navigation.navigate("Aparejos", {
+                ambitoEmbarcacion: modo === "barco",
+                ambitoModo: modo,
+              })
             }
             onEspecies={() => irAEspeciesDelPunto(navigation)}
           />
@@ -1331,6 +1384,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.28)",
   },
+  veredictoRapidoAprox: {
+    borderWidth: 2,
+    borderColor: COLORS.warning,
+    borderStyle: "dashed",
+  },
   veredictoRapidoVacio: {
     marginTop: 14,
     borderRadius: RADIUS.md,
@@ -1341,6 +1399,29 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.28)",
   },
   veredictoRapidoTxt: { flex: 1 },
+  veredictoRapidoSelloRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  veredictoRapidoSello: {
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 0.6,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  veredictoRapidoSelloOficial: {
+    color: "#fff",
+    backgroundColor: "rgba(0,0,0,0.28)",
+  },
+  veredictoRapidoSelloAprox: {
+    color: "#fff",
+    backgroundColor: COLORS.warning,
+  },
   veredictoRapidoAviso: {
     color: "rgba(255,255,255,0.85)",
     fontSize: 11,
@@ -1353,6 +1434,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.7,
     textTransform: "uppercase",
+    flexShrink: 1,
   },
   veredictoRapidoTitulo: {
     color: "#fff",
