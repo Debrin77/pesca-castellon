@@ -534,7 +534,7 @@ function MockModos({
         {esCosta ? (
           <View style={m.barcoCard}>
             <Text style={m.barcoTitle}>Salgo en barco</Text>
-            <Text style={m.barcoSub}>Rampa → ¿Puedo? → ¿Pinta? → checklist</Text>
+            <Text style={m.barcoSub}>Rampa → ¿Puedo? → ¿Pinta? → qué llevar</Text>
             <View style={m.barcoTags}>
               {["Rampas", "Ruta GPS", "Columbretes"].map((t) => (
                 <View key={t} style={m.barcoTag}>

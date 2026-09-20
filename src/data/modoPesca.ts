@@ -39,6 +39,13 @@ export function modoAMapaModo(modo: ModoPescaGlobal): "continental" | "costa" {
   return modo === "rio" ? "continental" : "costa";
 }
 
+/** Aparejos usa costa (no «orilla») como ámbito de catálogo. */
+export function modoAAparejoAmbito(modo: ModoPescaGlobal): "rio" | "costa" | "barco" {
+  if (modo === "orilla") return "costa";
+  if (modo === "barco") return "barco";
+  return "rio";
+}
+
 export function modoEsMar(modo: ModoPescaGlobal): boolean {
   return modo === "orilla" || modo === "barco";
 }

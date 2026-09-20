@@ -152,9 +152,9 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
         <LinearGradient colors={[...GRADIENTS.water]} style={styles.hero}>
           <Text style={styles.heroKicker}>CASTELLÓN · EMBARCACIÓN</Text>
           <Text style={styles.heroTitle}>Salgo en barco</Text>
-          <Text style={styles.heroSub}>Legal · meteo marina · checklist · carta náutica</Text>
+          <Text style={styles.heroSub}>Legal · meteo marina · qué llevar · carta náutica</Text>
           <PasoSalida
-            pasos={["Salida", "¿Puedo?", "¿Pinta?", "Checklist"]}
+            pasos={["Salida", "¿Puedo?", "¿Pinta?", "Qué llevar"]}
             activo={paso}
             sobreOscuro
           />
@@ -337,9 +337,9 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             style={styles.btnSec}
             onPress={() => irAlPaso(3)}
             accessibilityRole="button"
-            accessibilityLabel="Siguiente paso: checklist"
+            accessibilityLabel="Siguiente paso: qué llevar"
           >
-            <Text style={styles.btnSecTxt}>Siguiente · checklist</Text>
+            <Text style={styles.btnSecTxt}>Siguiente · qué llevar</Text>
           </TouchableOpacity>
         </View>
       ) : null}

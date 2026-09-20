@@ -180,18 +180,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ y: 0, animated: true });
     });
-    void (async () => {
-      try {
-        await anadirUbicacionCapturaGps();
-      } catch {
-        /* GPS opcional */
-      }
-      try {
-        await tomarFotoCamara();
-      } catch {
-        /* cámara opcional */
-      }
-    })();
+    // GPS y cámara solo bajo gesto del usuario (botones del formulario),
+    // no al abrir captura rápida desde Inicio.
   }, [route.params, navigation]);
 
 

@@ -13,6 +13,7 @@ import {
   TramoOficial,
 } from "../services/consultaPescaService";
 import { consultarToqueMapa, consultarCosta, avisoSitiosCosta, todasLasPlayas, todosLosPuertos, todosLosVedadosCosta, centroZona, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
+import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
@@ -176,10 +177,13 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   /** Aplica un punto ya elegido (Salgo a pescar / Mapa / Inicio) sin volver a pedirlo. */
   const aplicarPuntoCompartido = useCallback(
     (lat: number, lng: number, opts?: { abrirFicha?: boolean }) => {
-      const r = consultarToqueMapa(lat, lng);
+      const r =
+        !soloContinental && modoGlobal === "barco"
+          ? consultarEmbarcacion(lat, lng)
+          : consultarToqueMapa(lat, lng);
       setConsulta(r);
       setMarcador({ latitude: lat, longitude: lng });
-      if (!soloContinental && r.ambito === "maritimo") {
+      if (!soloContinental && (modoGlobal === "barco" || r.ambito === "maritimo")) {
         setModo("costa");
         setCatalogo("mar");
       } else {
@@ -191,9 +195,9 @@ export default function EspeciesScreen({ navigation, route }: Props) {
       if (opts?.abrirFicha !== false) {
         setFichaAbierta(true);
       }
-      puntoAplicadoRef.current = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+      puntoAplicadoRef.current = `${lat.toFixed(5)},${lng.toFixed(5)}:${modoGlobal}`;
     },
-    [soloContinental]
+    [soloContinental, modoGlobal]
   );
 
   // Hidratar siempre que haya punto compartido (no depender solo del foco / params entre tabs).
@@ -204,10 +208,10 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     if (!puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)) {
       return;
     }
-    const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+    const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}:${modoGlobal}`;
     if (puntoAplicadoRef.current === clave) return;
     aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
-  }, [punto, provincia.regionMapa, aplicarPuntoCompartido]);
+  }, [punto, provincia.regionMapa, aplicarPuntoCompartido, modoGlobal]);
 
   // Al entrar en Especies con punto ya elegido → lista de especies (tab o botón).
   useFocusEffect(
@@ -223,7 +227,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
         puntoEnRegionMapa(punto.lat, punto.lng, provincia.regionMapa)
       ) {
-        const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}`;
+        const clave = `${punto.lat.toFixed(5)},${punto.lng.toFixed(5)}:${modoGlobal}`;
         if (puntoAplicadoRef.current !== clave) {
           aplicarPuntoCompartido(punto.lat, punto.lng, { abrirFicha: true });
         } else {
@@ -236,7 +240,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         setCatalogoAbierto(false);
         setFichaAbierta(true);
       }
-    }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido])
+    }, [punto, provincia.regionMapa, route?.params?.abrirConsulta, navigation, aplicarPuntoCompartido, modoGlobal])
   );
 
   function cambiarModo(siguiente: ModoEspecies, opts?: { abrirCatalogo?: boolean }) {

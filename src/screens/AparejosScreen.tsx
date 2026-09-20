@@ -6,7 +6,9 @@ import aparejosOrilla from "../data/aparejosOrilla.json";
 import aparejosEmbarcacion from "../data/aparejosEmbarcacion.json";
 import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
+import { esModoPescaGlobal, modoAAparejoAmbito } from "../data/modoPesca";
 import {
   especiesOrillaParaSeleccion,
   especiesEmbarcacionUsuales,
@@ -29,7 +31,7 @@ import TerminoAyuda from "../components/TerminoAyuda";
 import { terminosEnTexto } from "../data/glosario";
 
 interface Props {
-  route?: { params?: { especieId?: string } };
+  route?: { params?: { especieId?: string; ambitoEmbarcacion?: boolean; ambitoModo?: string } };
   navigation?: any;
 }
 
@@ -44,6 +46,7 @@ type Equipo = {
 export default function AparejosScreen({ route, navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
+  const { modo: modoGlobal, setModo: setModoGlobal } = useModoPesca();
   const soloContinental = provincia.continentalOnly;
   const optsMontaje = useMemo(
     () => ({ provinciaId: provincia.id, soloContinental }),
@@ -55,13 +58,24 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const costaLista = useMemo(() => especiesOrillaParaSeleccion(), []);
   const barcoLista = useMemo(() => especiesEmbarcacionUsuales(), []);
   const costaIds = useMemo(() => idsOrillaConocidos(), []);
-  const [ambito, setAmbito] = useState<"rio" | "costa" | "barco">("rio");
+  const [ambito, setAmbito] = useState<"rio" | "costa" | "barco">(() =>
+    soloContinental ? "rio" : modoAAparejoAmbito(modoGlobal)
+  );
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
 
   useEffect(() => {
-    setAmbito("rio");
-    setSeleccionada(speciesCatalog[0]?.id ?? null);
-  }, [provincia.id]);
+    const desdeGlobal = soloContinental ? "rio" : modoAAparejoAmbito(modoGlobal);
+    setAmbito(desdeGlobal);
+    setSeleccionada(
+      desdeGlobal === "barco"
+        ? barcoLista[0]?.id ?? null
+        : desdeGlobal === "costa"
+          ? costaLista[0]?.id ?? null
+          : speciesCatalog[0]?.id ?? null
+    );
+    // speciesCatalog / listas se resuelven al cambiar provincia o modo.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provincia.id, modoGlobal, soloContinental]);
 
   useEffect(() => {
     if (soloContinental && (ambito === "costa" || ambito === "barco")) {
@@ -83,8 +97,22 @@ export default function AparejosScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     const id = route?.params?.especieId;
-    const forzarBarco = !!(route?.params as { ambitoEmbarcacion?: boolean } | undefined)?.ambitoEmbarcacion;
-    if (!id && !forzarBarco) return;
+    const params = route?.params as
+      | { ambitoEmbarcacion?: boolean; ambitoModo?: string }
+      | undefined;
+    const forzarBarco = !!params?.ambitoEmbarcacion;
+    const modoParam = params?.ambitoModo;
+    if (!id && !forzarBarco && !modoParam) return;
+    if (modoParam && esModoPescaGlobal(modoParam) && !soloContinental) {
+      const a = modoAAparejoAmbito(modoParam);
+      setAmbito(a);
+      setSeleccionada(
+        id ||
+          (a === "barco" ? barcoLista[0]?.id : a === "costa" ? costaLista[0]?.id : speciesCatalog[0]?.id) ||
+          null
+      );
+      return;
+    }
     if (forzarBarco && !soloContinental) {
       setAmbito("barco");
       setSeleccionada(id || barcoLista[0]?.id || null);
@@ -98,7 +126,16 @@ export default function AparejosScreen({ route, navigation }: Props) {
       setAmbito("rio");
       setSeleccionada(id);
     }
-  }, [route?.params?.especieId, (route?.params as any)?.ambitoEmbarcacion, costaIds, soloContinental, barcoLista]);
+  }, [
+    route?.params?.especieId,
+    route?.params?.ambitoEmbarcacion,
+    route?.params?.ambitoModo,
+    costaIds,
+    soloContinental,
+    barcoLista,
+    costaLista,
+    speciesCatalog,
+  ]);
 
   const listaBase =
     ambito === "barco" && !soloContinental
@@ -150,6 +187,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             style={[styles.modoBtn, ambito === "rio" && styles.modoBtnOnBosque]}
             onPress={() => {
               setAmbito("rio");
+              void setModoGlobal("rio");
               setSeleccionada(speciesCatalog[0]?.id ?? null);
             }}
           >
@@ -159,6 +197,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             style={[styles.modoBtn, ambito === "costa" && styles.modoBtnOnMar]}
             onPress={() => {
               setAmbito("costa");
+              void setModoGlobal("orilla");
               setSeleccionada(costaLista[0]?.id ?? null);
             }}
           >
@@ -169,6 +208,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
               style={[styles.modoBtn, ambito === "barco" && styles.modoBtnOnMar]}
               onPress={() => {
                 setAmbito("barco");
+                void setModoGlobal("barco");
                 setSeleccionada(barcoLista[0]?.id ?? null);
               }}
             >
