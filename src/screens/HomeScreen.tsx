@@ -576,12 +576,9 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <AtmosferaMeteo codigo={clima?.codigoTiempo ?? 2} />
         <OndaAgua intensidad={0.85} />
-        <View style={styles.brandRow}>
-          <LogoMarcaEstatico size={44} style={styles.brandMark} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.brandPulse}>{provincia.nombreApp}</Text>
-            <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
-          </View>
+        <View style={styles.brandRow} accessibilityLabel={provincia.nombreApp}>
+          <LogoMarcaEstatico size={88} style={styles.brandMark} />
+          <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
         </View>
         {actualizando ? (
           <Text style={styles.actualizandoTxt} accessibilityLabel="Actualizando clima e índice">
@@ -1248,16 +1245,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   brandRow: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: 12,
     zIndex: 1,
-    marginBottom: 2,
+    marginBottom: 6,
   },
   brandMark: {
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.4,
+    marginBottom: 8,
   },
-  brandPulse: { ...TYPE.displayHero, color: "#fff", marginBottom: 2, fontSize: 24, lineHeight: 28 },
   dateText: {
     fontSize: 14,
     color: "rgba(255,255,255,0.92)",
@@ -1266,6 +1261,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: FONTS.semibold,
     letterSpacing: 0.2,
+    textAlign: "center",
   },
   actualizandoTxt: {
     color: "rgba(255,255,255,0.85)",

@@ -22,14 +22,19 @@ const ir = read("src/navigation/irATab.ts");
 const consejos = read("src/screens/ConsejosScreen.tsx");
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");
 
-if (!home.includes("FONTS.display") && !home.includes("TYPE.displayHero")) fail("Home debe usar Fraunces en el hero");
-if (!home.includes("brandPulse") || !home.includes("veredictoRapido") || !home.includes("ctaSalgoTitle")) {
-  fail("Home hero debe tener marca + veredicto + CTA Salgo");
+if (!home.includes("LogoMarcaEstatico") && !home.includes("FONTS.display") && !home.includes("TYPE.displayHero")) {
+  fail("Home debe usar logo de marca o Fraunces en el hero");
 }
-const iBrand = home.indexOf("brandPulse");
+if (!home.includes("brandMark") || !home.includes("veredictoRapido") || !home.includes("ctaSalgoTitle")) {
+  fail("Home hero debe tener marca (logo) + veredicto + CTA Salgo");
+}
+const iBrand = home.indexOf("brandMark");
 const iVer = home.indexOf("veredictoRapido");
 const iCta = home.indexOf("ctaSalgoTitle");
 if (!(iBrand < iVer && iVer < iCta)) fail("Orden hero: marca → veredicto → CTA");
+if (home.includes("styles.brandPulse") && /brandPulse\}>\{provincia\.nombreApp/.test(home)) {
+  fail("Home no debe mostrar el texto del nombre de app en el hero (solo logo)");
+}
 if (!home.includes("atajosPunto") || !home.includes("irAConsejos")) {
   fail("Con punto elegido, Inicio debe mostrar atajos Aparejos/Consejos");
 }

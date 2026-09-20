@@ -56,7 +56,17 @@ if (!onb.includes("LogoMarca")) fail("Onboarding debe mostrar logo de marca");
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
 if (!home.includes("LogoMarcaEstatico") || !home.includes("brandRow")) {
-  fail("Inicio debe llevar marca pequeña junto al nombre");
+  fail("Inicio debe llevar marca (logo) como hero, sin texto del nombre");
+}
+if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
+  // Allow accessibilityLabel; forbid visible Text with nombreApp in hero brand
+  const heroSlice = home.slice(
+    home.indexOf("<AtmosferaMeteo"),
+    home.indexOf("veredictoRapido") > 0 ? home.indexOf("veredictoRapido") : home.length
+  );
+  if (heroSlice.includes("{provincia.nombreApp}") && heroSlice.includes("</Text>")) {
+    fail("Hero de Inicio no debe renderizar el texto del nombre de app");
+  }
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");
