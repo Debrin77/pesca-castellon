@@ -52,7 +52,7 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
 import SelectorModoPesca from "../components/SelectorModoPesca";
 import TarjetaPuntoHoy from "../components/TarjetaPuntoHoy";
-import { etiquetaModoLarga, etiquetaModo } from "../data/modoPesca";
+import { etiquetaModoLarga, etiquetaModo, textoPedirModo } from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
@@ -106,7 +106,7 @@ export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia, restauradaAlArrancar } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
-  const { modo, modoElegido, disponibles, setModo } = useModoPesca();
+  const { modo, modoElegido, listo: modoListo, disponibles, setModo } = useModoPesca();
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
   const tramoYRef = useRef(0);
@@ -425,13 +425,18 @@ export default function HomeScreen({ navigation }: Props) {
     punto &&
     (punto.fuente === "gps" || punto.fuente === "mapa" || punto.fuente === "zona")
   );
-  const consultaViva = puntoExplicito
-    ? modo === "barco"
-      ? consultarEmbarcacion(punto!.lat, punto!.lng)
-      : modo === "orilla"
-        ? consultarCosta(punto!.lat, punto!.lng)
-        : consultarPuntoPesca(punto!.lat, punto!.lng)
-    : null;
+  /**
+   * Consulta legal solo con modalidad confirmada: si aún no eligió río/orilla/barco,
+   * no usar el fallback técnico (río) — evita veredictos/duplicados incorrectos.
+   */
+  const consultaViva =
+    modoListo && modoElegido && puntoExplicito
+      ? modo === "barco"
+        ? consultarEmbarcacion(punto!.lat, punto!.lng)
+        : modo === "orilla"
+          ? consultarCosta(punto!.lat, punto!.lng)
+          : consultarPuntoPesca(punto!.lat, punto!.lng)
+      : null;
   const hoyEtiqueta = consultaViva ? etiquetaHoy(consultaViva) : null;
   const certezaHero = consultaViva
     ? certezaDeConsulta(consultaViva, { provinciaId: provincia.id })
@@ -623,16 +628,28 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
               <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
               <Text style={styles.veredictoRapidoSub} numberOfLines={puntoNoEncajaModo ? 2 : 1}>
-                {!modoElegido
-                  ? "Elige río, orilla o barco arriba"
-                  : puntoNoEncajaModo
-                    ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
-                    : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
+                {puntoNoEncajaModo
+                  ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
+                  : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
               </Text>
             </View>
             <Text style={styles.veredictoRapidoChevron}>›</Text>
           </TouchableOpacity>
-        ) : !cargando ? (
+        ) : modoListo && !modoElegido ? (
+          <View
+            style={styles.veredictoRapidoVacio}
+            accessibilityRole="summary"
+            accessibilityLabel={textoPedirModo(disponibles)}
+          >
+            <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+            <Text style={styles.veredictoRapidoTitulo}>{textoPedirModo(disponibles)}</Text>
+            <Text style={styles.veredictoRapidoSub}>
+              {puntoExplicito
+                ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
+                : "Así alineamos mapa, especies, aparejos y el pulso del día"}
+            </Text>
+          </View>
+        ) : !cargando && modoListo ? (
           <TouchableOpacity
             style={styles.veredictoRapidoVacio}
             onPress={() => navigation.navigate("Mapa")}
@@ -643,9 +660,7 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
             <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
             <Text style={styles.veredictoRapidoSub}>
-              {modoElegido
-                ? `Pulsa el mapa o usa GPS · ${etiquetaModoLarga(modo)}`
-                : "Primero elige río, orilla o barco"}
+              Pulsa el mapa o usa GPS · {etiquetaModoLarga(modo)}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -693,7 +708,7 @@ export default function HomeScreen({ navigation }: Props) {
                 </Text>
                 <Text style={styles.ctaSalgoSub}>
                   {!modoElegido
-                    ? "Elige modalidad arriba o sigue desde aquí"
+                    ? `${textoPedirModo(disponibles)} o sigue desde aquí`
                     : modo === "barco"
                       ? "Legal · oleaje · qué llevar · Columbretes"
                       : "Punto del día y qué llevar"}
@@ -706,7 +721,7 @@ export default function HomeScreen({ navigation }: Props) {
           </LinearGradient>
         </PulsePress>
 
-        {consultaViva ? (
+        {modoElegido && consultaViva ? (
           <View style={styles.atajosPunto}>
             <TouchableOpacity
               style={styles.atajoChip}
@@ -764,7 +779,7 @@ export default function HomeScreen({ navigation }: Props) {
               <Text style={styles.sesionSub}>
                 {modoElegido
                   ? "Capturas y rutas se mantienen. Cambia solo si pescas en otra provincia."
-                  : "Elige río, orilla o barco arriba para ver el pulso y tu punto."}
+                  : `${textoPedirModo(disponibles)} arriba para ver el pulso y tu punto.`}
               </Text>
             </View>
             <View style={styles.sesionAcciones}>

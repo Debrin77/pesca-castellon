@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import type { ModoPescaGlobal } from "../data/modoPesca";
-import { etiquetaModo, subtituloModo } from "../data/modoPesca";
+import { etiquetaModo, subtituloModo, textoPedirModo } from "../data/modoPesca";
 import { COLORS, RADIUS, TYPE } from "../theme";
 
 type Props = {
@@ -70,7 +70,7 @@ export default function SelectorModoPesca({
         <Text style={[styles.sub, sobreOscuro && styles.subOscuro]} numberOfLines={2}>
           {elegido
             ? subtituloModo(modo)
-            : "Elige río, orilla o barco para ver el pulso y tu punto de hoy"}
+            : `${textoPedirModo(disponibles)} para ver el pulso y tu punto de hoy`}
         </Text>
       ) : null}
     </View>
