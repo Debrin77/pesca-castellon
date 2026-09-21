@@ -60,6 +60,14 @@ export function modoPorDefecto(provincia: ProvinciaConModo): ModoPescaGlobal {
   return modosDisponibles(provincia)[0] ?? "rio";
 }
 
+/** Texto de ayuda cuando aún no hay modalidad elegida. */
+export function textoPedirModo(disponibles: ModoPescaGlobal[]): string {
+  const noms = disponibles.map((m) => etiquetaModo(m).toLowerCase());
+  if (noms.length <= 1) return "Elige cómo vas a pescar";
+  if (noms.length === 2) return `Elige ${noms[0]} o ${noms[1]}`;
+  return `Elige ${noms.slice(0, -1).join(", ")} o ${noms[noms.length - 1]}`;
+}
+
 export function esModoPescaGlobal(v: unknown): v is ModoPescaGlobal {
   return v === "rio" || v === "orilla" || v === "barco";
 }
