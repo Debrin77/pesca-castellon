@@ -27,6 +27,11 @@ interface ModoPescaContextValue {
    * No se restaura desde almacenamiento: al abrir la app hay que elegir de nuevo.
    */
   modoElegido: boolean;
+  /**
+   * Última modalidad guardada (si la hubo). Sirve para el chip «¿Seguir en…?»
+   * sin marcar el selector ni desbloquear el veredicto.
+   */
+  modoRecordado: ModoPescaGlobal | null;
   disponibles: ModoPescaGlobal[];
   setModo: (modo: ModoPescaGlobal) => Promise<void>;
 }
@@ -38,6 +43,7 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
   const [listo, setListo] = useState(false);
   const [modo, setModoState] = useState<ModoPescaGlobal>("rio");
   const [modoElegido, setModoElegido] = useState(false);
+  const [modoRecordado, setModoRecordado] = useState<ModoPescaGlobal | null>(null);
 
   const disponibles = useMemo(
     () => (provincia ? modosDisponibles(provincia) : (["rio"] as ModoPescaGlobal[])),
@@ -48,12 +54,13 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
     let vivo = true;
     setListo(false);
     setModoElegido(false);
+    setModoRecordado(null);
     (async () => {
       if (!provinciaId || !provincia) {
         if (vivo) {
           setModoState("rio");
-          // Sin provincia aún (selector): no hay UI de punto/pulso de Inicio.
           setModoElegido(false);
+          setModoRecordado(null);
           setListo(true);
         }
         return;
@@ -62,16 +69,18 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
       const unica = opts.length <= 1;
       try {
         const raw = await AsyncStorage.getItem(claveModo(provinciaId));
-        const recordado =
-          esModoPescaGlobal(raw) && opts.includes(raw) ? raw : modoPorDefecto(provincia);
+        const guardado =
+          esModoPescaGlobal(raw) && opts.includes(raw) ? raw : null;
         if (vivo) {
-          setModoState(recordado);
+          setModoState(guardado ?? modoPorDefecto(provincia));
+          setModoRecordado(unica ? null : guardado);
           // Varias modalidades: exigir pulsación en esta sesión (no basta el valor guardado).
           setModoElegido(unica);
         }
       } catch {
         if (vivo) {
           setModoState(modoPorDefecto(provincia));
+          setModoRecordado(null);
           setModoElegido(unica);
         }
       } finally {
@@ -90,14 +99,15 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
       const ok = opts.includes(siguiente) ? siguiente : modoPorDefecto(provincia);
       setModoState(ok);
       setModoElegido(true);
+      setModoRecordado(ok);
       await AsyncStorage.setItem(claveModo(provinciaId), ok);
     },
     [provinciaId, provincia]
   );
 
   const value = useMemo(
-    () => ({ listo, modo, modoElegido, disponibles, setModo }),
-    [listo, modo, modoElegido, disponibles, setModo]
+    () => ({ listo, modo, modoElegido, modoRecordado, disponibles, setModo }),
+    [listo, modo, modoElegido, modoRecordado, disponibles, setModo]
   );
 
   return <ModoPescaContext.Provider value={value}>{children}</ModoPescaContext.Provider>;
