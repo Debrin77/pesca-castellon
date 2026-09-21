@@ -106,7 +106,7 @@ export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia, restauradaAlArrancar } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
-  const { modo, disponibles, setModo } = useModoPesca();
+  const { modo, modoElegido, disponibles, setModo } = useModoPesca();
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
   const tramoYRef = useRef(0);
@@ -587,7 +587,7 @@ export default function HomeScreen({ navigation }: Props) {
         ) : null}
 
         <SelectorModoPesca
-          modo={modo}
+          modo={modoElegido ? modo : null}
           disponibles={disponibles}
           onChange={(m) => void setModo(m)}
           sobreOscuro
@@ -623,9 +623,11 @@ export default function HomeScreen({ navigation }: Props) {
               </View>
               <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
               <Text style={styles.veredictoRapidoSub} numberOfLines={puntoNoEncajaModo ? 2 : 1}>
-                {puntoNoEncajaModo
-                  ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
-                  : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
+                {!modoElegido
+                  ? "Elige río, orilla o barco arriba"
+                  : puntoNoEncajaModo
+                    ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
+                    : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
               </Text>
             </View>
             <Text style={styles.veredictoRapidoChevron}>›</Text>
@@ -641,7 +643,9 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
             <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
             <Text style={styles.veredictoRapidoSub}>
-              Pulsa el mapa o usa GPS · {etiquetaModoLarga(modo)}
+              {modoElegido
+                ? `Pulsa el mapa o usa GPS · ${etiquetaModoLarga(modo)}`
+                : "Primero elige río, orilla o barco"}
             </Text>
           </TouchableOpacity>
         ) : null}
@@ -664,23 +668,35 @@ export default function HomeScreen({ navigation }: Props) {
           }}
           style={styles.ctaSalgo}
           accessibilityRole="button"
-          accessibilityLabel={modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
+          accessibilityLabel={
+            !modoElegido
+              ? "Salgo a pescar"
+              : modo === "barco"
+                ? "Salgo en barco"
+                : "Salgo a pescar"
+          }
         >
           <LinearGradient
-            colors={[...(modo === "barco" ? GRADIENTS.dusk : GRADIENTS.water)]}
+            colors={[...(modoElegido && modo === "barco" ? GRADIENTS.dusk : GRADIENTS.water)]}
             style={styles.ctaSalgoInner}
           >
             <OndaAgua intensidad={0.9} />
             <View style={styles.ctaSalgoRow}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.ctaSalgoKicker}>Preparar salida · {etiquetaModoLarga(modo)}</Text>
+                <Text style={styles.ctaSalgoKicker}>
+                  {modoElegido
+                    ? `Preparar salida · ${etiquetaModoLarga(modo)}`
+                    : "Preparar salida"}
+                </Text>
                 <Text style={styles.ctaSalgoTitle}>
-                  {modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
+                  {modoElegido && modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
                 </Text>
                 <Text style={styles.ctaSalgoSub}>
-                  {modo === "barco"
-                    ? "Legal · oleaje · qué llevar · Columbretes"
-                    : "Punto del día y qué llevar"}
+                  {!modoElegido
+                    ? "Elige modalidad arriba o sigue desde aquí"
+                    : modo === "barco"
+                      ? "Legal · oleaje · qué llevar · Columbretes"
+                      : "Punto del día y qué llevar"}
                 </Text>
               </View>
               <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
@@ -732,15 +748,23 @@ export default function HomeScreen({ navigation }: Props) {
           <View
             style={styles.sesionBanner}
             accessibilityRole="summary"
-            accessibilityLabel={`Sigues en ${provincia.nombre}, modo ${etiquetaModo(modo)}`}
+            accessibilityLabel={
+              modoElegido
+                ? `Sigues en ${provincia.nombre}, modo ${etiquetaModo(modo)}`
+                : `Sigues en ${provincia.nombre}. Elige cómo vas a pescar`
+            }
           >
             <View style={{ flex: 1, paddingRight: 8 }}>
               <Text style={styles.sesionKicker}>Sesión anterior</Text>
               <Text style={styles.sesionTitulo}>
-                Sigues en {provincia.nombre} · {etiquetaModo(modo)}
+                {modoElegido
+                  ? `Sigues en ${provincia.nombre} · ${etiquetaModo(modo)}`
+                  : `Sigues en ${provincia.nombre}`}
               </Text>
               <Text style={styles.sesionSub}>
-                Capturas y rutas se mantienen. Cambia solo si pescas en otra provincia.
+                {modoElegido
+                  ? "Capturas y rutas se mantienen. Cambia solo si pescas en otra provincia."
+                  : "Elige río, orilla o barco arriba para ver el pulso y tu punto."}
               </Text>
             </View>
             <View style={styles.sesionAcciones}>
@@ -768,8 +792,12 @@ export default function HomeScreen({ navigation }: Props) {
           <View style={styles.provinciaRow}>
             <Text style={styles.provinciaLbl}>
               Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
-              {" · "}
-              <Text style={styles.provinciaNombre}>{etiquetaModo(modo)}</Text>
+              {modoElegido ? (
+                <>
+                  {" · "}
+                  <Text style={styles.provinciaNombre}>{etiquetaModo(modo)}</Text>
+                </>
+              ) : null}
             </Text>
             <TouchableOpacity
               onPress={() =>
@@ -784,7 +812,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
-        {consultaViva ? (
+        {modoElegido && consultaViva ? (
           <TarjetaPuntoHoy
             consulta={consultaViva}
             indice={indiceHoy}
@@ -801,93 +829,95 @@ export default function HomeScreen({ navigation }: Props) {
           />
         ) : null}
 
-        <View style={styles.pulsoCard} accessibilityLabel="Pulso del día">
-          <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
-          <Text style={styles.pulsoCardSub}>Orientativo · el permiso está arriba en el veredicto</Text>
-          {indiceHoy && catInfo ? (
-            <View style={styles.pulsoRow}>
-              <View
-                style={[
-                  styles.pulsoIndice,
-                  { backgroundColor: catInfo.fondo, borderColor: catInfo.color },
-                ]}
-                accessibilityLabel={`Condiciones ${indiceHoy.puntuacion} de 100, ${catInfo.texto}`}
-              >
-                <Text style={[styles.pulsoIndexLabel, { color: catInfo.color }]}>
-                  {EJE_METEO.indexLabel}
-                </Text>
-                <View style={[styles.pulsoScoreBadge, { backgroundColor: catInfo.color }]}>
-                  <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
-                </View>
-                <View style={[styles.indexCatPill, { backgroundColor: "rgba(255,255,255,0.72)" }]}>
-                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
-                    {catInfo.icono} {catInfo.texto}
-                    <Text style={[styles.indexMoon, { color: catInfo.color }]}>
-                      {" "}
-                      · {indiceHoy.iconoLuna}
-                    </Text>
-                  </Text>
-                </View>
-                {indiceHoy.mejorFranjaInicio && indiceHoy.mejorFranjaFin ? (
-                  <Text style={[styles.pulsoFranja, { color: catInfo.color }]} numberOfLines={1}>
-                    Mejor franja ~ {indiceHoy.mejorFranjaInicio}–{indiceHoy.mejorFranjaFin}
-                  </Text>
-                ) : null}
-              </View>
-              <View style={styles.pulsoClimaCard}>
-                {tiempo && clima ? (
-                  <>
-                    <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
-                    <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
-                    <Text style={styles.pulsoWeatherDesc} numberOfLines={2}>
-                      {tiempo.texto}
-                    </Text>
-                  </>
-                ) : (
-                  <Text style={styles.pulsoFallback}>Sin clima</Text>
-                )}
-              </View>
-            </View>
-          ) : clima && tiempo ? (
-            <View style={styles.pulsoRow}>
-              <View style={styles.pulsoIndice}>
-                <Text style={styles.pulsoFallback}>Sin índice aún</Text>
-              </View>
-              <View style={styles.pulsoClimaCard}>
-                <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
-                <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
-              </View>
-            </View>
-          ) : (
-            <Text style={styles.pulsoFallback}>
-              Activa la ubicación o toca un tramo en el mapa
-            </Text>
-          )}
-          {clima ? (
-            <Text style={styles.pulsoMeta} numberOfLines={1}>
-              Viento {Math.round(clima.velocidadVientoKmh)} km/h
-              {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
-              {clima.precipitacionMm != null && clima.precipitacionMm > 0
-                ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
-                : ""}
-            </Text>
-          ) : null}
-          {alertasClima.length > 0 ? (
-            <View style={styles.alertRow}>
-              {alertasClima.slice(0, 1).map((alerta, idx) => (
+        {modoElegido ? (
+          <View style={styles.pulsoCard} accessibilityLabel="Pulso del día">
+            <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
+            <Text style={styles.pulsoCardSub}>Orientativo · el permiso está arriba en el veredicto</Text>
+            {indiceHoy && catInfo ? (
+              <View style={styles.pulsoRow}>
                 <View
-                  key={idx}
-                  style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
+                  style={[
+                    styles.pulsoIndice,
+                    { backgroundColor: catInfo.fondo, borderColor: catInfo.color },
+                  ]}
+                  accessibilityLabel={`Condiciones ${indiceHoy.puntuacion} de 100, ${catInfo.texto}`}
                 >
-                  <Text style={styles.weatherAlertText}>
-                    {alerta.icono} {alerta.texto}
-                    {alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
+                  <Text style={[styles.pulsoIndexLabel, { color: catInfo.color }]}>
+                    {EJE_METEO.indexLabel}
                   </Text>
+                  <View style={[styles.pulsoScoreBadge, { backgroundColor: catInfo.color }]}>
+                    <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
+                  </View>
+                  <View style={[styles.indexCatPill, { backgroundColor: "rgba(255,255,255,0.72)" }]}>
+                    <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
+                      {catInfo.icono} {catInfo.texto}
+                      <Text style={[styles.indexMoon, { color: catInfo.color }]}>
+                        {" "}
+                        · {indiceHoy.iconoLuna}
+                      </Text>
+                    </Text>
+                  </View>
+                  {indiceHoy.mejorFranjaInicio && indiceHoy.mejorFranjaFin ? (
+                    <Text style={[styles.pulsoFranja, { color: catInfo.color }]} numberOfLines={1}>
+                      Mejor franja ~ {indiceHoy.mejorFranjaInicio}–{indiceHoy.mejorFranjaFin}
+                    </Text>
+                  ) : null}
                 </View>
-              ))}
-            </View>
-          ) : null}
-        </View>
+                <View style={styles.pulsoClimaCard}>
+                  {tiempo && clima ? (
+                    <>
+                      <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
+                      <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
+                      <Text style={styles.pulsoWeatherDesc} numberOfLines={2}>
+                        {tiempo.texto}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text style={styles.pulsoFallback}>Sin clima</Text>
+                  )}
+                </View>
+              </View>
+            ) : clima && tiempo ? (
+              <View style={styles.pulsoRow}>
+                <View style={styles.pulsoIndice}>
+                  <Text style={styles.pulsoFallback}>Sin índice aún</Text>
+                </View>
+                <View style={styles.pulsoClimaCard}>
+                  <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
+                  <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.pulsoFallback}>
+                Activa la ubicación o toca un tramo en el mapa
+              </Text>
+            )}
+            {clima ? (
+              <Text style={styles.pulsoMeta} numberOfLines={1}>
+                Viento {Math.round(clima.velocidadVientoKmh)} km/h
+                {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
+                {clima.precipitacionMm != null && clima.precipitacionMm > 0
+                  ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
+                  : ""}
+              </Text>
+            ) : null}
+            {alertasClima.length > 0 ? (
+              <View style={styles.alertRow}>
+                {alertasClima.slice(0, 1).map((alerta, idx) => (
+                  <View
+                    key={idx}
+                    style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
+                  >
+                    <Text style={styles.weatherAlertText}>
+                      {alerta.icono} {alerta.texto}
+                      {alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+          </View>
+        ) : null}
 
         <View>
                     <SiguientePasoCard
