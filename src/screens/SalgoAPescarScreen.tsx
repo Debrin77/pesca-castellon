@@ -75,7 +75,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { punto, fijarPunto } = usePuntoConsulta();
-  const { modo: modoGlobal, modoElegido, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
+  const { modo: modoGlobal, modoElegido, modoRecordado, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
   const checklist = provincia.checklistAntesDePescar;
   const permiteCosta = !provincia.continentalOnly;
   const [paso, setPaso] = useState(0);
@@ -430,6 +430,11 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       : modoGlobal
                 }
                 disponibles={modosDisp.filter((m) => m !== "barco") as ModoPescaGlobal[]}
+                modoRecordado={
+                  !modoElegido && modoRecordado && modoRecordado !== "barco"
+                    ? modoRecordado
+                    : null
+                }
                 onChange={(m) => {
                   if (m === "barco") {
                     void setModoGlobal("barco");
