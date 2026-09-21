@@ -97,7 +97,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const route = useRoute<any>();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { fijarPunto } = usePuntoConsulta();
-  const { modo: modoGlobal, modoElegido, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
+  const { modo: modoGlobal, modoElegido, modoRecordado, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const cuencas = provincia.cuencas.length ? provincia.cuencas : cuencasProvincia();
@@ -733,6 +733,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           <SelectorModoPesca
             modo={modoElegido ? modoGlobal : null}
             disponibles={modosDisp}
+            modoRecordado={!modoElegido ? modoRecordado : null}
             compacto
             onChange={(m) => {
               void setModoGlobal(m);

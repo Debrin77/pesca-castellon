@@ -38,7 +38,7 @@ const app = read("App.tsx");
 if (!app.includes("ModoPescaProvider")) fail("App sin ModoPescaProvider");
 
 const ctx = read("src/context/ModoPescaContext.tsx");
-for (const n of ["modoElegido", "claveModo", "setModo", "setModoElegido(unica)"]) {
+for (const n of ["modoElegido", "modoRecordado", "claveModo", "setModo", "setModoElegido(unica)"]) {
   if (!ctx.includes(n)) fail(`ModoPescaContext sin ${n}`);
 }
 // Al arrancar con varias modalidades no basta el valor guardado: hay que pulsar.
@@ -53,6 +53,9 @@ if (!selector.includes("ModoPescaGlobal | null")) {
 if (!selector.includes("textoPedirModo")) {
   fail("Selector debe pedir elección según modalidades disponibles");
 }
+if (!selector.includes("¿Seguir en") || !selector.includes("modoRecordado")) {
+  fail("Selector debe ofrecer chip ¿Seguir en…? con la última modalidad");
+}
 
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
@@ -62,19 +65,25 @@ for (const n of [
   "Pulsa el mapa o usa GPS",
   "useModoPesca",
   "modoElegido",
+  "modoRecordado",
   "modoListo",
   "textoPedirModo",
+  "pulsoCard",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
-if (!home.includes("modoElegido && consultaViva") && !home.includes("modoElegido && consultaViva ?")) {
+if (!home.includes("modoElegido && consultaViva")) {
   fail("Home debe mostrar «Tu punto de hoy» solo tras elegir modalidad");
 }
-if (!home.includes("{modoElegido ? (")) {
-  fail("Home debe mostrar «Pulso del día» solo tras elegir modalidad");
+// Pulso visible sin modalidad (clima); el gate legal sigue en consultaViva / tarjeta.
+if (home.includes("{modoElegido ? (\n          <View style={styles.pulsoCard}")) {
+  fail("Pulso del día debe verse también sin modalidad elegida");
 }
 if (!home.includes("modoElegido ? modo : null")) {
   fail("Home selector debe pasar null si aún no hay modalidad");
+}
+if (!home.includes("modoRecordado={!modoElegido ? modoRecordado : null}")) {
+  fail("Home debe pasar modoRecordado al selector para ¿Seguir en…?");
 }
 // No consultar con fallback río antes de elegir modalidad
 if (!home.includes("modoListo && modoElegido && puntoExplicito")) {
@@ -90,7 +99,7 @@ if (home.includes("Embarcación / kayak</Text>") && home.includes("Salgo a pesca
 if (!home.includes('modo === "barco"')) fail("Home debe ramificar CTA según modo barco");
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
-for (const n of ["mapaSimple", "Solo consulta", "Capas avanzadas", "SelectorModoPesca", "modoGlobal", "modoElegido"]) {
+for (const n of ["mapaSimple", "Solo consulta", "Capas avanzadas", "SelectorModoPesca", "modoGlobal", "modoElegido", "modoRecordado"]) {
   if (!mapa.includes(n)) fail(`ZonasLibresScreen sin ${n}`);
 }
 if (!mapa.includes("if (!modoElegido) return")) {
