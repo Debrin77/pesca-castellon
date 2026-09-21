@@ -19,11 +19,12 @@ const claveModo = (provinciaId: string) => `@pesca_app/${provinciaId}/modo_pesca
 
 interface ModoPescaContextValue {
   listo: boolean;
-  /** Modo activo (fallback técnico si aún no hay elección explícita). */
+  /** Modo activo (fallback técnico si aún no hay elección en esta sesión). */
   modo: ModoPescaGlobal;
   /**
-   * True cuando el usuario ya eligió Río/Orilla/Barco, o la provincia
-   * solo tiene una modalidad (p. ej. continentalOnly → río).
+   * True solo tras pulsar Río/Orilla/Barco en esta sesión, o si la provincia
+   * tiene una sola modalidad (continentalOnly → río).
+   * No se restaura desde almacenamiento: al abrir la app hay que elegir de nuevo.
    */
   modoElegido: boolean;
   disponibles: ModoPescaGlobal[];
@@ -51,7 +52,8 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
       if (!provinciaId || !provincia) {
         if (vivo) {
           setModoState("rio");
-          setModoElegido(true);
+          // Sin provincia aún (selector): no hay UI de punto/pulso de Inicio.
+          setModoElegido(false);
           setListo(true);
         }
         return;
@@ -60,22 +62,12 @@ export function ModoPescaProvider({ children }: { children: React.ReactNode }) {
       const unica = opts.length <= 1;
       try {
         const raw = await AsyncStorage.getItem(claveModo(provinciaId));
-        if (esModoPescaGlobal(raw) && opts.includes(raw)) {
-          if (vivo) {
-            setModoState(raw);
-            setModoElegido(true);
-          }
-        } else if (unica) {
-          if (vivo) {
-            setModoState(modoPorDefecto(provincia));
-            setModoElegido(true);
-          }
-        } else {
-          // Varias modalidades y aún no hay elección: no asumir río/orilla.
-          if (vivo) {
-            setModoState(modoPorDefecto(provincia));
-            setModoElegido(false);
-          }
+        const recordado =
+          esModoPescaGlobal(raw) && opts.includes(raw) ? raw : modoPorDefecto(provincia);
+        if (vivo) {
+          setModoState(recordado);
+          // Varias modalidades: exigir pulsación en esta sesión (no basta el valor guardado).
+          setModoElegido(unica);
         }
       } catch {
         if (vivo) {
