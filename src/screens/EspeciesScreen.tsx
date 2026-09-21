@@ -22,7 +22,6 @@ import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
 import { modoAMapaModo } from "../data/modoPesca";
-import SelectorModoPesca from "../components/SelectorModoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, TYPE, FONTS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -67,7 +66,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { punto, fijarPunto } = usePuntoConsulta();
-  const { modo: modoGlobal, disponibles: modosDisp, setModo: setModoGlobal } = useModoPesca();
+  const { modo: modoGlobal, modoElegido, setModo: setModoGlobal } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
@@ -159,14 +158,15 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     puntoAplicadoRef.current = null;
   }, [provinciaId, provincia.regionMapa]);
 
-  // Sincronizar con modo global (Inicio).
+  // Sincronizar con modo global (Inicio) solo tras elección explícita.
   useEffect(() => {
     if (soloContinental) return;
+    if (!modoElegido) return;
     const mapa = modoAMapaModo(modoGlobal);
     setModo(mapa === "costa" ? "costa" : "continental");
     setCatalogo(mapa === "costa" ? "mar" : "rio");
     if (mapa === "costa") setCamara(camaraCosta(provincia));
-  }, [modoGlobal, soloContinental, provincia]);
+  }, [modoGlobal, modoElegido, soloContinental, provincia]);
 
   // Cámara inicial si no hay punto sembrado.
   useEffect(() => {

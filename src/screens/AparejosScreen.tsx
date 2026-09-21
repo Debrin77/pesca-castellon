@@ -46,7 +46,7 @@ type Equipo = {
 export default function AparejosScreen({ route, navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const { modo: modoGlobal, setModo: setModoGlobal } = useModoPesca();
+  const { modo: modoGlobal, modoElegido, setModo: setModoGlobal } = useModoPesca();
   const soloContinental = provincia.continentalOnly;
   const optsMontaje = useMemo(
     () => ({ provinciaId: provincia.id, soloContinental }),
@@ -59,11 +59,12 @@ export default function AparejosScreen({ route, navigation }: Props) {
   const barcoLista = useMemo(() => especiesEmbarcacionUsuales(), []);
   const costaIds = useMemo(() => idsOrillaConocidos(), []);
   const [ambito, setAmbito] = useState<"rio" | "costa" | "barco">(() =>
-    soloContinental ? "rio" : modoAAparejoAmbito(modoGlobal)
+    soloContinental || modoElegido ? (soloContinental ? "rio" : modoAAparejoAmbito(modoGlobal)) : "rio"
   );
   const [seleccionada, setSeleccionada] = useState<string | null>(speciesCatalog[0]?.id ?? null);
 
   useEffect(() => {
+    if (!soloContinental && !modoElegido) return;
     const desdeGlobal = soloContinental ? "rio" : modoAAparejoAmbito(modoGlobal);
     setAmbito(desdeGlobal);
     setSeleccionada(
@@ -75,7 +76,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
     );
     // speciesCatalog / listas se resuelven al cambiar provincia o modo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provincia.id, modoGlobal, soloContinental]);
+  }, [provincia.id, modoGlobal, modoElegido, soloContinental]);
 
   useEffect(() => {
     if (soloContinental && (ambito === "costa" || ambito === "barco")) {

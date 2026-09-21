@@ -142,14 +142,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const mar = !soloContinental && modo === "costa";
   const modoBarco = mar && (modoGlobal === "barco" || esModalidadEmbarcacionMar(modalidad));
 
-  // Sincronizar mapa con el modo global (Inicio / Salgo).
+  // Sincronizar mapa con el modo global (Inicio / Salgo) solo si ya hay elección.
   useEffect(() => {
+    if (!modoElegido) return;
     const mapa = modoAMapaModo(modoGlobal);
     setModo(mapa);
     setModalidad(
       modoGlobal === "barco" ? "embarcacion" : modoGlobal === "orilla" ? "orilla_mar" : "orilla_continental"
     );
-  }, [modoGlobal]);
+  }, [modoGlobal, modoElegido]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -163,7 +164,6 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, [mar, modoBarco, navigation, provincia.nombre]);
 
   useEffect(() => {
-    setModo(modoAMapaModo(modoGlobal));
     setCuencaFiltro(null);
     setBusqueda("");
     setConsulta(null);
