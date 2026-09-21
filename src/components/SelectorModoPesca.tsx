@@ -5,7 +5,8 @@ import { etiquetaModo, subtituloModo } from "../data/modoPesca";
 import { COLORS, RADIUS, TYPE } from "../theme";
 
 type Props = {
-  modo: ModoPescaGlobal;
+  /** Null / no elegido: ninguna pestaña marcada hasta que el usuario pulse. */
+  modo: ModoPescaGlobal | null;
   disponibles: ModoPescaGlobal[];
   onChange: (modo: ModoPescaGlobal) => void;
   /** Variante sobre hero oscuro */
@@ -25,6 +26,8 @@ export default function SelectorModoPesca({
 }: Props) {
   if (disponibles.length <= 1) return null;
 
+  const elegido = modo != null;
+
   return (
     <View
       style={[styles.wrap, sobreOscuro && styles.wrapOscuro, compacto && styles.wrapCompacto]}
@@ -35,7 +38,7 @@ export default function SelectorModoPesca({
       ) : null}
       <View style={styles.row}>
         {disponibles.map((m) => {
-          const on = m === modo;
+          const on = elegido && m === modo;
           const mar = m === "orilla" || m === "barco";
           return (
             <TouchableOpacity
@@ -65,7 +68,9 @@ export default function SelectorModoPesca({
       </View>
       {!compacto ? (
         <Text style={[styles.sub, sobreOscuro && styles.subOscuro]} numberOfLines={2}>
-          {subtituloModo(modo)}
+          {elegido
+            ? subtituloModo(modo)
+            : "Elige río, orilla o barco para ver el pulso y tu punto de hoy"}
         </Text>
       ) : null}
     </View>

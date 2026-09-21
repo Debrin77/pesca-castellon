@@ -37,6 +37,19 @@ for (const n of ['"rio"', '"orilla"', '"barco"', "modosDisponibles", "modoAMapaM
 const app = read("App.tsx");
 if (!app.includes("ModoPescaProvider")) fail("App sin ModoPescaProvider");
 
+const ctx = read("src/context/ModoPescaContext.tsx");
+for (const n of ["modoElegido", "claveModo", "setModo"]) {
+  if (!ctx.includes(n)) fail(`ModoPescaContext sin ${n}`);
+}
+
+const selector = read("src/components/SelectorModoPesca.tsx");
+if (!selector.includes("modo: ModoPescaGlobal | null") && !selector.includes("ModoPescaGlobal | null")) {
+  fail("SelectorModoPesca debe aceptar modo null hasta elegir");
+}
+if (!selector.includes("Elige río, orilla o barco")) {
+  fail("Selector debe pedir elección cuando no hay modo");
+}
+
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
   "SelectorModoPesca",
@@ -44,8 +57,18 @@ for (const n of [
   "puntoExplicito",
   "Pulsa el mapa o usa GPS",
   "useModoPesca",
+  "modoElegido",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+}
+if (!home.includes("modoElegido && consultaViva")) {
+  fail("Home debe mostrar «Tu punto de hoy» solo tras elegir modalidad");
+}
+if (!home.includes("{modoElegido ? (")) {
+  fail("Home debe mostrar «Pulso del día» solo tras elegir modalidad");
+}
+if (!home.includes("modoElegido ? modo : null")) {
+  fail("Home selector debe pasar null si aún no hay modalidad");
 }
 // Un solo CTA principal (no gemelo Salgo en barco fijo en hero)
 if (home.includes("Embarcación / kayak</Text>") && home.includes("Salgo a pescar</Text>") && home.includes("Salgo en barco</Text>") && !home.includes("modo === \"barco\"")) {
