@@ -38,8 +38,12 @@ const app = read("App.tsx");
 if (!app.includes("ModoPescaProvider")) fail("App sin ModoPescaProvider");
 
 const ctx = read("src/context/ModoPescaContext.tsx");
-for (const n of ["modoElegido", "claveModo", "setModo"]) {
+for (const n of ["modoElegido", "claveModo", "setModo", "setModoElegido(unica)"]) {
   if (!ctx.includes(n)) fail(`ModoPescaContext sin ${n}`);
+}
+// Al arrancar con varias modalidades no basta el valor guardado: hay que pulsar.
+if (/opts\.includes\(raw\)[\s\S]{0,200}setModoElegido\(true\)/.test(ctx)) {
+  fail("modoElegido no debe activarse solo por AsyncStorage en multi-modalidad");
 }
 
 const selector = read("src/components/SelectorModoPesca.tsx");
