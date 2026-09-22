@@ -18,6 +18,12 @@ import {
 interface PuntoConsultaContextValue {
   listo: boolean;
   punto: PuntoConsulta | null;
+  /**
+   * True solo tras elegir punto en esta sesión (mapa / GPS / zona / recomendación)
+   * o al confirmar el guardado con «Usar último».
+   * Un punto restaurado de AsyncStorage NO desbloquea el veredicto de Inicio.
+   */
+  puntoElegido: boolean;
   /** Guarda el punto consultado en el mapa (previsión/avisos locales lo usan). */
   fijarPunto: (args: {
     lat: number;
@@ -26,6 +32,8 @@ interface PuntoConsultaContextValue {
     etiqueta?: string;
     poblacion?: string;
   }) => Promise<void>;
+  /** Confirma el punto ya guardado (sesión anterior) sin cambiar coords. */
+  confirmarPuntoGuardado: () => void;
   /** Vuelve a GPS / centro (borra el override del mapa). */
   limpiarPunto: () => Promise<void>;
 }
@@ -36,14 +44,17 @@ export function PuntoConsultaProvider({ children }: { children: React.ReactNode 
   const { provinciaId } = useProvincia();
   const [listo, setListo] = useState(false);
   const [punto, setPunto] = useState<PuntoConsulta | null>(null);
+  const [puntoElegido, setPuntoElegido] = useState(false);
 
   useEffect(() => {
     let vivo = true;
     setListo(false);
+    setPuntoElegido(false);
     (async () => {
       if (!provinciaId) {
         if (vivo) {
           setPunto(null);
+          setPuntoElegido(false);
           setListo(true);
         }
         return;
@@ -51,6 +62,8 @@ export function PuntoConsultaProvider({ children }: { children: React.ReactNode 
       const p = await leerPuntoConsulta(provinciaId);
       if (vivo) {
         setPunto(p);
+        // Restaurar coords para clima/previsión, pero no el veredicto legal.
+        setPuntoElegido(false);
         setListo(true);
       }
     })();
@@ -77,19 +90,34 @@ export function PuntoConsultaProvider({ children }: { children: React.ReactNode 
         provinciaId,
       });
       setPunto(full);
+      setPuntoElegido(true);
     },
     [provinciaId]
   );
+
+  const confirmarPuntoGuardado = useCallback(() => {
+    if (!punto) return;
+    if (punto.fuente === "centro") return;
+    setPuntoElegido(true);
+  }, [punto]);
 
   const limpiarPunto = useCallback(async () => {
     if (!provinciaId) return;
     await borrarPuntoConsulta(provinciaId);
     setPunto(null);
+    setPuntoElegido(false);
   }, [provinciaId]);
 
   const value = useMemo(
-    () => ({ listo, punto, fijarPunto, limpiarPunto }),
-    [listo, punto, fijarPunto, limpiarPunto]
+    () => ({
+      listo,
+      punto,
+      puntoElegido,
+      fijarPunto,
+      confirmarPuntoGuardado,
+      limpiarPunto,
+    }),
+    [listo, punto, puntoElegido, fijarPunto, confirmarPuntoGuardado, limpiarPunto]
   );
 
   return <PuntoConsultaContext.Provider value={value}>{children}</PuntoConsultaContext.Provider>;

@@ -62,7 +62,7 @@ for (const n of [
   "SelectorModoPesca",
   "TarjetaPuntoHoy",
   "puntoExplicito",
-  "Pulsa el mapa o usa GPS",
+  "Pulsa el mapa, GPS o una recomendación",
   "useModoPesca",
   "modoElegido",
   "modoRecordado",
@@ -88,6 +88,9 @@ if (!home.includes("modoRecordado={!modoElegido ? modoRecordado : null}")) {
 // No consultar con fallback río antes de elegir modalidad
 if (!home.includes("modoListo && modoElegido && puntoExplicito")) {
   fail("consultaViva debe exigir modalidad elegida (no fallback río)");
+}
+if (!home.includes("puntoElegido")) {
+  fail("Home debe exigir puntoElegido de esta sesión (no restaurar veredicto)");
 }
 if (!home.includes("modoListo && !modoElegido")) {
   fail("Hero debe pedir modalidad antes del veredicto vacío de punto");
