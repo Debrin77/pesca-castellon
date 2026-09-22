@@ -96,6 +96,7 @@ export default function TarjetaEspecie({
           {sp.nombre} {invasora ? <Text style={styles.badgeInvasora}>INVASORA</Text> : null}
         </Text>
         <Text style={styles.cardNote}>{sp.nombreCientifico}</Text>
+        {extra}
         {sp.cupo ? <Text style={styles.cardStatus}>Cupo: {sp.cupo}</Text> : null}
         {sp.notas ? <Text style={styles.cardText}>{sp.notas}</Text> : null}
         {sp.noConfundirCon ? <Text style={styles.cardText}>No lo confundas con: {sp.noConfundirCon}</Text> : null}
@@ -109,7 +110,6 @@ export default function TarjetaEspecie({
             </Text>
           </Text>
         )}
-        {extra}
         {sp.normativaEspecial || sp.normativaResumen ? (
           <View style={[styles.avisoLegalBox, /PROHIB|siluro/i.test(sp.normativaEspecial || "") && styles.avisoFuerte]}>
             <Text style={styles.normativaKicker}>Normativa</Text>

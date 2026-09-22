@@ -30,6 +30,8 @@ type Props = {
   modosPregunta?: ModoPescaGlobal[];
   ancla: { lat: number; lng: number };
   onAbrir: (sitio: SitioEspecieHoy) => void;
+  /** Si true, carga el ranking al montar (p. ej. búsqueda acotada en catálogo). */
+  autoAbrir?: boolean;
   /** Cuando el usuario elige modalidad en la pregunta. */
   onModoElegido?: (modo: ModoPescaGlobal) => void;
 };
@@ -39,6 +41,7 @@ const ORDINALES = ["1ª", "2ª", "3ª"];
 /**
  * En ficha de especie: carga bajo demanda el top 3 de sitios hoy
  * (presencia + pulso). Evita martillar la API de clima en catálogos largos.
+ * Con autoAbrir (p. ej. tras buscar «barbo») abre ya sin un toque extra.
  * En costa con orilla+barco, pregunta la modalidad antes de rankear.
  */
 export default function TopSitiosEspecie({
@@ -48,11 +51,12 @@ export default function TopSitiosEspecie({
   modosPregunta,
   ancla,
   onAbrir,
+  autoAbrir = false,
   onModoElegido,
 }: Props) {
   const opciones =
     modosPregunta && modosPregunta.length > 1 ? modosPregunta : null;
-  const [abierto, setAbierto] = useState(false);
+  const [abierto, setAbierto] = useState(autoAbrir);
   const [modoElegidoLocal, setModoElegidoLocal] = useState<ModoPescaGlobal | null>(
     opciones ? null : modo
   );
@@ -60,6 +64,10 @@ export default function TopSitiosEspecie({
   const [pack, setPack] = useState<PackSitiosEspecie | null>(null);
 
   const modoActivo = modoElegidoLocal ?? modo;
+
+  useEffect(() => {
+    if (autoAbrir) setAbierto(true);
+  }, [autoAbrir, especieId]);
 
   useEffect(() => {
     if (!abierto) return;
@@ -98,11 +106,11 @@ export default function TopSitiosEspecie({
         accessibilityRole="button"
         accessibilityLabel={`Ver 3 sitios hoy para ${nombreEspecie}`}
       >
-        <Text style={styles.ctaTxt}>3 sitios hoy · {nombreEspecie} ›</Text>
+        <Text style={styles.ctaTxt}>¿Dónde hoy? · 3 sitios · {nombreEspecie} ›</Text>
         <Text style={styles.ctaSub}>
           {opciones
-            ? "Elige orilla o barco · catálogo y pulso del día"
-            : "Según catálogo y pulso del día"}
+            ? "Elige orilla o barco · 3 sitios hoy según catálogo y pulso"
+            : "3 sitios hoy según catálogo y pulso del día"}
         </Text>
       </TouchableOpacity>
     );

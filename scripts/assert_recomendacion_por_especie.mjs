@@ -37,6 +37,7 @@ for (const n of [
   "elegirTopSitiosPorEspecie",
   "Sitios hoy",
   "onAbrir",
+  "autoAbrir",
   "ORDINALES",
   "modosPregunta",
   "StyleSheet.create",
@@ -51,6 +52,11 @@ for (const n of [
   "abrirSitioEspecie",
   "anclaSitios",
   "extra={bloqueSitiosEspecie",
+  "busquedaCatalogo",
+  "autoSitiosRio",
+  "autoAbrir",
+  'navigate("License")',
+  'navigate("Aparejos")',
 ]) {
   if (!esp.includes(n)) fail(`EspeciesScreen sin ${n}`);
 }

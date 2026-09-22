@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions, TextInput } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -111,6 +111,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const [catalogo, setCatalogo] = useState<"rio" | "mar" | "no" | "tallas">(() =>
     !soloContinental && consultaSeed?.ambito === "maritimo" ? "mar" : "rio"
   );
+  const [busquedaCatalogo, setBusquedaCatalogo] = useState("");
   const [camara, setCamara] = useState<
     { latitude: number; longitude: number; zoom: number; nonce: number } | undefined
   >(() =>
@@ -134,6 +135,28 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         ? `Especies · Costa · ${provincia.nombre}`
         : `Especies · Ríos · ${provincia.nombre}`,
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Aparejos")}
+            accessibilityRole="button"
+            accessibilityLabel="Aparejos"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+          >
+            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Aparejos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("License")}
+            accessibilityRole="button"
+            accessibilityLabel="Licencia de pesca"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+          >
+            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Licencia</Text>
+          </TouchableOpacity>
+        </View>
+      ),
     });
   }, [costa, mar, navigation, provincia.nombre]);
 
@@ -424,7 +447,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     });
   }
 
-  function bloqueSitiosEspecie(sp: { id: string; nombre: string }, ambito: "continental" | "maritimo") {
+  function bloqueSitiosEspecie(
+    sp: { id: string; nombre: string },
+    ambito: "continental" | "maritimo",
+    autoAbrir = false
+  ) {
     const modoBase = modoSitiosParaAmbito(ambito);
     const modosCosta = disponibles.filter((m) => m === "orilla" || m === "barco");
     const modosPregunta =
@@ -437,10 +464,32 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         modosPregunta={modosPregunta}
         ancla={anclaSitios}
         onAbrir={abrirSitioEspecie}
+        autoAbrir={autoAbrir}
         onModoElegido={(m) => void setModoGlobal(m)}
       />
     );
   }
+
+  const qCatalogo = busquedaCatalogo.trim().toLowerCase();
+  function coincideEspecie(sp: { id?: string; nombre?: string; nombreCientifico?: string }): boolean {
+    if (!qCatalogo) return true;
+    const blob = `${sp.id ?? ""} ${sp.nombre ?? ""} ${sp.nombreCientifico ?? ""}`.toLowerCase();
+    return blob.includes(qCatalogo);
+  }
+  const especiesRioFiltradas = useMemo(
+    () => speciesCatalog.filter((sp: any) => coincideEspecie(sp)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [speciesCatalog, qCatalogo]
+  );
+  const especiesOrillaFiltradas = useMemo(
+    () => orillaSeleccion.filter((sp: any) => coincideEspecie(sp)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [orillaSeleccion, qCatalogo]
+  );
+  /** Con búsqueda acotada (≤3) abrimos sitios al instante. */
+  const autoSitiosRio = qCatalogo.length >= 2 && especiesRioFiltradas.length > 0 && especiesRioFiltradas.length <= 3;
+  const autoSitiosOrilla =
+    qCatalogo.length >= 2 && especiesOrillaFiltradas.length > 0 && especiesOrillaFiltradas.length <= 3;
 
   const especiesConsulta =
     consulta?.ambito === "maritimo"
@@ -740,7 +789,10 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             ? `Catálogo orilla · ${provincia.nombre}`
             : `Catálogo ríos · ${provincia.nombre}`
         }
-        onCerrar={() => setCatalogoAbierto(false)}
+        onCerrar={() => {
+          setCatalogoAbierto(false);
+          setBusquedaCatalogo("");
+        }}
         acento={catalogo === "rio" ? "bosque" : "mar"}
       >
         <Text style={styles.catalogoIntro}>
@@ -748,6 +800,23 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             ? `Las especies más usuales desde orilla en ${provincia.nombre}. Tallas legales del Mediterráneo.`
             : `Especies de pesca continental en ${provincia.nombre}: ríos, embalses y tramos. Cada provincia tiene su propio listado y normativa.`}
         </Text>
+        {(catalogo === "rio" || catalogo === "mar") && (
+          <TextInput
+            style={styles.busquedaCatalogo}
+            value={busquedaCatalogo}
+            onChangeText={setBusquedaCatalogo}
+            placeholder={
+              catalogo === "mar"
+                ? "Busca especie (lubina, dorada…)"
+                : "Busca especie (barbo, carpa, bass…)"
+            }
+            placeholderTextColor={COLORS.textMuted}
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+            accessibilityLabel="Buscar especie en el catálogo"
+          />
+        )}
         <View style={styles.modoBarCatalogo}>
           <TouchableOpacity
             style={[styles.modoBtn, catalogo === "rio" && styles.modoBtnOnBosque]}
@@ -789,16 +858,20 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           ) : null}
         </View>
         {catalogo === "rio" &&
-          speciesCatalog.map((sp: any, i: number) => (
-            <TarjetaEspecie
-              key={sp.id}
-              sp={sp}
-              index={i}
-              enVeda={estaEnVeda(sp.id)}
-              onAparejos={() => irAparejos(sp.id)}
-              onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
-              extra={bloqueSitiosEspecie(sp, "continental")}
-            />
+          (especiesRioFiltradas.length === 0 ? (
+            <Text style={styles.catalogoVacio}>Ninguna especie coincide con «{busquedaCatalogo.trim()}».</Text>
+          ) : (
+            especiesRioFiltradas.map((sp: any, i: number) => (
+              <TarjetaEspecie
+                key={sp.id}
+                sp={sp}
+                index={i}
+                enVeda={estaEnVeda(sp.id)}
+                onAparejos={() => irAparejos(sp.id)}
+                onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
+                extra={bloqueSitiosEspecie(sp, "continental", autoSitiosRio)}
+              />
+            ))
           ))}
         {!soloContinental && catalogo === "mar" && (
           <>
@@ -806,17 +879,21 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             <Text style={[styles.cardText, { marginBottom: 8 }]}>
               Las 15 especies más usuales desde orilla en Castellón (más invasoras). El resto queda en Tallas.
             </Text>
-            {orillaSeleccion.map((sp: any, i: number) => (
-              <TarjetaEspecie
-                key={sp.id}
-                sp={sp}
-                index={i}
-                ambito="maritimo"
-                onAparejos={() => irAparejos(sp.id)}
-                onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
-                extra={bloqueSitiosEspecie(sp, "maritimo")}
-              />
-            ))}
+            {especiesOrillaFiltradas.length === 0 ? (
+              <Text style={styles.catalogoVacio}>Ninguna especie coincide con «{busquedaCatalogo.trim()}».</Text>
+            ) : (
+              especiesOrillaFiltradas.map((sp: any, i: number) => (
+                <TarjetaEspecie
+                  key={sp.id}
+                  sp={sp}
+                  index={i}
+                  ambito="maritimo"
+                  onAparejos={() => irAparejos(sp.id)}
+                  onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
+                  extra={bloqueSitiosEspecie(sp, "maritimo", autoSitiosOrilla)}
+                />
+              ))
+            )}
           </>
         )}
         {!soloContinental && catalogo === "tallas" && <ListaTallasMinimas onEspecie={irAparejos} />}
@@ -839,6 +916,30 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
   },
   modoBarMar: { backgroundColor: COLORS.waterLight },
+  catalogoIntro: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+    marginBottom: 10,
+  },
+  busquedaCatalogo: {
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: COLORS.textPrimary,
+    marginBottom: 12,
+  },
+  catalogoVacio: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    textAlign: "center",
+    marginVertical: 20,
+    lineHeight: 20,
+  },
   modoBarCatalogo: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 14 },
   modoBtn: {
     flex: 1,
@@ -930,11 +1031,5 @@ const styles = StyleSheet.create({
   pieBtnGhostMarTxt: { color: COLORS.waterDark, fontWeight: "800", fontSize: 15 },
   lead: { fontSize: 16, fontWeight: "700", color: COLORS.waterDark, marginBottom: 12, lineHeight: 22 },
   emptyText: { fontSize: 14, color: COLORS.textMuted, textAlign: "center", marginTop: 16, lineHeight: 20 },
-  catalogoIntro: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12,
-  },
   cardText: { fontSize: 15, color: COLORS.textSecondary, marginTop: 6, lineHeight: 22 },
 });

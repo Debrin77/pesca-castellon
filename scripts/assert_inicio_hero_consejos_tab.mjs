@@ -38,6 +38,9 @@ if (home.includes("styles.brandPulse") && /brandPulse\}>\{provincia\.nombreApp/.
 if (!home.includes("atajosPunto") || !home.includes("irAConsejos")) {
   fail("Con punto elegido, Inicio debe mostrar atajos Aparejos/Consejos");
 }
+if (!home.includes("herramientasKicker") || !home.includes('navigate("License")') || !home.includes('navigate("Aparejos"')) {
+  fail("Inicio debe exponer herramientas Aparejos/Licencia sin depender del punto");
+}
 if (!home.includes("pulsoCard") || !home.includes("pulsoRow")) {
   fail("Pulso meteo debe quedar bajo el hero (pulsoCard) manteniendo pulsoRow");
 }
