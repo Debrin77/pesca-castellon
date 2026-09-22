@@ -42,8 +42,16 @@ for (const n of ["mark.png", "animar", "LogoMarcaEstatico"]) {
 }
 
 const appTsx = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
-if (!appTsx.includes("LogoMarca") || !appTsx.includes("styles.boot")) {
-  fail("App boot debe mostrar LogoMarca");
+if (!appTsx.includes("PantallaLogoApertura") || !appTsx.includes("LOGO_APERTURA_MS")) {
+  fail("App debe mostrar PantallaLogoApertura con duración mínima al abrir");
+}
+if (!appTsx.includes("aperturaT0")) {
+  fail("App debe cronometrar la apertura desde el arranque");
+}
+
+const splash = fs.readFileSync(path.join(root, "src/components/PantallaLogoApertura.tsx"), "utf8");
+for (const n of ["LOGO_APERTURA_MS", "LogoMarca", "OndaAgua", "pantalla completa", "listoParaSalir"]) {
+  if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");

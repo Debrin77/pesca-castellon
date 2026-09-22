@@ -14,6 +14,7 @@ import {
 import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
+import PantallaLogoApertura, { LOGO_APERTURA_MS } from "./src/components/PantallaLogoApertura";
 import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
 import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
@@ -38,7 +39,6 @@ import AjustesScreen from "./src/screens/AjustesScreen";
 import SalgoAPescarScreen from "./src/screens/SalgoAPescarScreen";
 import SalgoEnBarcoScreen from "./src/screens/SalgoEnBarcoScreen";
 import { COLORS } from "./src/theme";
-import LogoMarca from "./src/components/LogoMarca";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -153,7 +153,6 @@ function CapturasStackScreen() {
   );
 }
 
-
 function ConsejosStackScreen() {
   return (
     <ConsejosStack.Navigator screenOptions={stackScreenOptions}>
@@ -233,10 +232,12 @@ function AppNavegacion({ provinciaKey }: { provinciaKey: string }) {
   );
 }
 
-function AppRaiz() {
+function AppRaiz({ aperturaT0 }: { aperturaT0: number }) {
   const { listo, provinciaId, selectorEsCambio } = useProvincia();
   const [listoOnboarding, setListoOnboarding] = useState(false);
   const [mostrarOnboarding, setMostrarOnboarding] = useState(false);
+  const [splashVisible, setSplashVisible] = useState(true);
+  const [listoParaSalirSplash, setListoParaSalirSplash] = useState(false);
 
   useEffect(() => {
     presentacionVirtudesVista().then((visto) => {
@@ -245,11 +246,29 @@ function AppRaiz() {
     });
   }, []);
 
-  if (!listo || !listoOnboarding) {
+  const backendOk = listo && listoOnboarding;
+
+  useEffect(() => {
+    if (!backendOk) return;
+    const elapsed = Date.now() - aperturaT0;
+    const wait = Math.max(0, LOGO_APERTURA_MS - elapsed);
+    const t = setTimeout(() => setListoParaSalirSplash(true), wait);
+    return () => clearTimeout(t);
+  }, [backendOk, aperturaT0]);
+
+  // Red de seguridad si el fade no dispara onFin.
+  useEffect(() => {
+    if (!listoParaSalirSplash) return;
+    const t = setTimeout(() => setSplashVisible(false), 700);
+    return () => clearTimeout(t);
+  }, [listoParaSalirSplash]);
+
+  if (splashVisible) {
     return (
-      <View style={[styles.root, styles.boot]}>
-        <LogoMarca size={128} animar accessibilityLabel="Pesca" />
-      </View>
+      <PantallaLogoApertura
+        listoParaSalir={listoParaSalirSplash}
+        onFin={() => setSplashVisible(false)}
+      />
     );
   }
 
@@ -276,6 +295,7 @@ function AppRaiz() {
 }
 
 export default function App() {
+  const aperturaT0 = useRef(Date.now()).current;
   const [fontsLoaded] = useFonts({
     SourceSans3_400Regular,
     SourceSans3_600SemiBold,
@@ -287,11 +307,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return (
-      <View style={[styles.root, styles.boot]}>
-        <LogoMarca size={128} animar accessibilityLabel="Pesca" />
-      </View>
-    );
+    return <PantallaLogoApertura />;
   }
 
   return (
@@ -300,7 +316,7 @@ export default function App() {
         <PuntoConsultaProvider>
           <ModoPescaProvider>
             <AccesoProvider>
-              <AppRaiz />
+              <AppRaiz aperturaT0={aperturaT0} />
             </AccesoProvider>
           </ModoPescaProvider>
         </PuntoConsultaProvider>
@@ -311,9 +327,4 @@ export default function App() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  boot: {
-    backgroundColor: COLORS.primaryDark,
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });
