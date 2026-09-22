@@ -50,6 +50,10 @@ for (const n of [
 ]) {
   if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
 }
+const durMatch = splash.match(/LOGO_APERTURA_MS\s*=\s*(\d+)/);
+if (!durMatch || Number(durMatch[1]) < 4000) {
+  fail("LOGO_APERTURA_MS debe durar ≥4s para poder leer el wordmark");
+}
 
 const logo = fs.readFileSync(path.join(root, "src/components/LogoMarca.tsx"), "utf8");
 for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes"]) {
