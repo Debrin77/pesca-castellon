@@ -1,0 +1,57 @@
+{
+  "_meta": "Hábitat orientativo (guías/foros/campo). Nivel del Mar de Castilla muy variable (trasvase).",
+  "embalse_de_buendia": {
+    "tags": ["brazo", "vegetacion", "canal", "limo", "estiaje", "cobertura"],
+    "profundidad": "variable",
+    "nota": "Mar de Castilla: brazos con vegetación (bass), canal del Guadiela (lucio/lucioperca), limo para carpa. Nivel muy variable.",
+    "fuente": "haypesca.es · iberpesca · foros"
+  },
+  "embalse_de_alarcon": {
+    "tags": ["roca", "canal", "brazo", "agua_clara", "estiaje"],
+    "profundidad": "profunda",
+    "nota": "Júcar embalsado: más roca/canal y profundidades; nivel y claridad variables.",
+    "fuente": "Notas CLM · Júcar"
+  },
+  "embalse_de_contreras": {
+    "tags": ["roca", "orilla_escarpada", "agua_clara", "canal"],
+    "profundidad": "profunda",
+    "nota": "Encajonado y profundo; orillas abruptas y canal. Mejor embarcado en muchos tramos.",
+    "fuente": "Notas CLM"
+  },
+  "embalse_de_bolarque": {
+    "tags": ["canal", "presa", "roca"],
+    "profundidad": "profunda",
+    "nota": "Tramo estrecho y profundo del sistema Tajo; depredadores en canal/presa.",
+    "fuente": "hechosdehoy · Mar de Castilla"
+  },
+  "embalse_de_la_toba": {
+    "tags": ["agua_clara", "grava", "corriente", "poza"],
+    "profundidad": "media",
+    "nota": "Cabecera más limpia: grava/pozas; trucha/ciprínidos según tramo.",
+    "fuente": "Notas CLM"
+  },
+  "laguna_de_una": {
+    "tags": ["vegetacion", "juncos", "limo", "orilla_suave"],
+    "profundidad": "somera",
+    "nota": "Laguna somera con vegetación y juncos; hábitat de orilla suave.",
+    "fuente": "Notas CLM"
+  },
+  "rio_jucar_valdecabras": {
+    "tags": ["corriente", "poza", "grava", "agua_clara"],
+    "profundidad": "somera",
+    "nota": "Júcar alto: pozas y grava; agua más clara que el embalse.",
+    "fuente": "Notas CLM"
+  },
+  "rio_jucar_capital": {
+    "tags": ["urbano", "remanso", "grava", "escollera"],
+    "profundidad": "somera",
+    "nota": "Tramo capital: remansos y escolleras; presión urbana.",
+    "fuente": "Notas CLM"
+  },
+  "rio_cabriel_cristinas": {
+    "tags": ["corriente", "poza", "grava", "agua_clara", "roca"],
+    "profundidad": "variable",
+    "nota": "Cabriel: corriente, pozas y grava/roca; truchero/ciprinícola según tramo.",
+    "fuente": "Notas CLM"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "_meta": "Hábitat orientativo (guías/foros/campo). No sustituye cartografía ni normativa. Bandas de profundidad aproximadas.",
+  "embalse_de_jarrama": {
+    "tags": ["troncos", "cobertura", "vegetacion", "orilla_suave", "presa", "cola"],
+    "profundidad": "variable",
+    "nota": "Orilla presa con árboles hundidos y vegetación; playas en margen sevillana. Muy estructural para bass (kayak/pato ayuda).",
+    "fuente": "ParaisosParaPescar / notas de campo"
+  },
+  "embalse_de_alcala_del_rio": {
+    "tags": ["limo", "cola", "remanso", "canal", "urbano"],
+    "profundidad": "media",
+    "nota": "Cola lenta del Guadalquivir: fondos fangosos, meandros y cambios de profundidad. Muy ciprinícola (carpa/carpín).",
+    "fuente": "guiadepesca.es · Guadalquivir"
+  },
+  "embalse_de_gergal": {
+    "tags": ["brazo", "cola", "limo", "orilla_suave", "cobertura"],
+    "profundidad": "variable",
+    "nota": "Brazos y colas con orilla suave; ciprínidos en limo y bass buscando cobertura en márgenes.",
+    "fuente": "Notas de campo Sevilla"
+  },
+  "embalse_del_pintado": {
+    "tags": ["brazo", "vegetacion", "cobertura", "limo", "estiaje"],
+    "profundidad": "variable",
+    "nota": "Sierra Norte: brazos remotos y limo central. Nivel variable; prioriza colas y vegetación de orilla.",
+    "fuente": "haypesca.es · Sierra Norte"
+  },
+  "embalse_de_torre_del_aguila": {
+    "tags": ["limo", "estiaje", "orilla_suave", "brazo", "cobertura"],
+    "profundidad": "variable",
+    "nota": "Embalse irregular de campiña: limo y orillas abiertas; bass y carpa según nivel. Revisa avisos (p. ej. mejillón cebra / navegación).",
+    "fuente": "cursospesca.com · CHG"
+  },
+  "embalse_de_cala": {
+    "tags": ["roca", "orilla_escarpada", "agua_clara", "presa", "cobertura"],
+    "profundidad": "profunda",
+    "nota": "Sierra: orillas más abruptas y agua más clara; estructura de presa y puntas para bass.",
+    "fuente": "Notas de campo Sevilla"
+  },
+  "embalse_de_jose_toran": {
+    "tags": ["brazo", "limo", "vegetacion", "cola", "estiaje"],
+    "profundidad": "media",
+    "nota": "Brazos limosos con vegetación de orilla; bueno a ciprínidos y bass en colas.",
+    "fuente": "Notas de campo Sevilla"
+  },
+  "embalse_del_retortillo": {
+    "tags": ["vegetacion", "cobertura", "limo", "brazo", "estiaje"],
+    "profundidad": "variable",
+    "nota": "Ribera con cobertura y limo; nivel y presión variables según temporada.",
+    "fuente": "Notas de campo Andalucía"
+  },
+  "tramos_de_la_barqueta_paseo_de_la_o_y_chapina_en": {
+    "tags": ["urbano", "remanso", "limo", "escollera", "canal"],
+    "profundidad": "media",
+    "nota": "Guadalquivir urbano: escolleras, remansos y limo. Carpa/siluro/alburno; mira carteles y corriente.",
+    "fuente": "guiadepesca.es · Guadalquivir urbano"
+  }
+}

@@ -121,6 +121,11 @@ export default function TopSitiosEspecie({
             <Text style={styles.motivo} numberOfLines={1}>
               {fila.motivo}
             </Text>
+            {fila.habitatResumen ? (
+              <Text style={styles.habitat} numberOfLines={2}>
+                {fila.habitatResumen}
+              </Text>
+            ) : null}
           </View>
           <Text style={[styles.chevron, { color: fila.color }]}>›</Text>
         </TouchableOpacity>
@@ -223,6 +228,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.textMuted,
     marginTop: 2,
+  },
+  habitat: {
+    fontSize: 11,
+    color: COLORS.waterDark,
+    marginTop: 3,
+    lineHeight: 15,
+    fontWeight: "600",
   },
   chevron: { fontSize: 22, fontWeight: "300" },
 });

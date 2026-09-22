@@ -4,6 +4,7 @@
  * devolvemos nota honesta + rampas por índice de salida (no predice picada).
  */
 import type { ModoPescaGlobal } from "../data/modoPesca";
+import { boostHabitatEspecie, resumenHabitat } from "../data/habitat";
 import { getProvinciaActiva } from "../provincias/runtime";
 import {
   calcularIndiceBarco,
@@ -20,6 +21,7 @@ import {
   CATEGORIA_INFO,
 } from "../services/fishingIndexService";
 import { distanciaKm } from "../services/geoService";
+import { habitatDeCandidatoId, habitatDePlaya, habitatDeZona } from "../services/habitatService";
 
 export type SitioEspecieHoy = {
   id: string;
@@ -36,6 +38,8 @@ export type SitioEspecieHoy = {
   zoneId?: string;
   origen: "zona" | "tramo" | "playa" | "rampa";
   motivo: string;
+  /** Resumen corto de hábitat (tags/profundidad) si hay enriquecimiento. */
+  habitatResumen?: string;
 };
 
 export type PackSitiosEspecie = {
@@ -76,9 +80,16 @@ function pescableHoy(veredicto: string, sePuede: boolean): boolean {
 
 function boostTipo(especieId: string, tipo?: string): number {
   if (!tipo) return 0;
+  const normalizado =
+    tipo === "embalse"
+      ? "embalse"
+      : tipo.startsWith("rio") || tipo === "mixto"
+        ? "rio"
+        : null;
+  if (!normalizado) return 0;
   const prefs = PREF_TIPO[especieId];
   if (!prefs) return 0;
-  return prefs.includes(tipo as "embalse" | "rio") ? 4 : 0;
+  return prefs.includes(normalizado) ? 4 : 0;
 }
 
 type Candidato = {
@@ -89,6 +100,7 @@ type Candidato = {
   origen: SitioEspecieHoy["origen"];
   zoneId?: string;
   tipo?: string;
+  playaId?: string;
 };
 
 function dedupe(cands: Candidato[]): Candidato[] {
@@ -163,6 +175,7 @@ function candidatosOrilla(especieId: string): Candidato[] {
       lat: p.lat,
       lng: p.lng,
       origen: "playa",
+      playaId: p.id,
     });
   }
   return dedupe(out);
@@ -188,8 +201,17 @@ async function puntuarPesca(
     const dia = dias[0];
     if (!dia) return null;
     const cat = CATEGORIA_INFO[dia.categoria];
-    const bonus = boostTipo(especieId, c.tipo);
-    const puntuacion = Math.min(100, dia.puntuacion + bonus);
+    const bonusTipo = boostTipo(especieId, c.tipo);
+    const habitat =
+      (c.zoneId ? habitatDeZona(c.zoneId) : null) ||
+      (c.playaId ? habitatDePlaya(c.playaId) : null) ||
+      habitatDeCandidatoId(c.id);
+    const bonusHabitat = boostHabitatEspecie(especieId, habitat);
+    const puntuacion = Math.min(100, dia.puntuacion + bonusTipo + bonusHabitat);
+    const partesMotivo: string[] = [cat.texto];
+    if (bonusHabitat) partesMotivo.push(`hábitat +${bonusHabitat}`);
+    else if (bonusTipo) partesMotivo.push(`tipo +${bonusTipo}`);
+    else partesMotivo.push("pulso del día");
     return {
       id: c.id,
       nombre: c.nombre,
@@ -203,9 +225,8 @@ async function puntuarPesca(
       distanciaKm: distanciaKm(ancla.lat, ancla.lng, c.lat, c.lng),
       zoneId: c.zoneId,
       origen: c.origen,
-      motivo: bonus
-        ? `${cat.texto} · hábitat habitual (+${bonus})`
-        : `${cat.texto} · pulso del día`,
+      motivo: partesMotivo.join(" · "),
+      habitatResumen: resumenHabitat(habitat) ?? undefined,
     };
   } catch {
     return null;
@@ -289,12 +310,18 @@ export async function elegirTopSitiosPorEspecie(opts: {
   }
 
   const ordenados = crudos
-    .map((c) => ({
-      ...c,
-      d: distanciaKm(ancla.lat, ancla.lng, c.lat, c.lng),
-      pref: boostTipo(especieId, c.tipo),
-    }))
-    // Preferir hábitat habitual y cercanía antes de gastar llamadas de meteo.
+    .map((c) => {
+      const habitat =
+        (c.zoneId ? habitatDeZona(c.zoneId) : null) ||
+        (c.playaId ? habitatDePlaya(c.playaId) : null) ||
+        habitatDeCandidatoId(c.id);
+      return {
+        ...c,
+        d: distanciaKm(ancla.lat, ancla.lng, c.lat, c.lng),
+        pref: boostTipo(especieId, c.tipo) + boostHabitatEspecie(especieId, habitat),
+      };
+    })
+    // Preferir hábitat afin + cercanía antes de gastar llamadas de meteo.
     .sort((a, b) => b.pref - a.pref || a.d - b.d)
     .slice(0, MAX_A_PUNTUAR);
 
