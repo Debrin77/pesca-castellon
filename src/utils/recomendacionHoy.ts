@@ -298,6 +298,87 @@ export async function elegirRecomendacionesHoyPack(opts: {
   return { destacada, porModo };
 }
 
+/**
+ * Top N zonas del mismo modo (p. ej. continental → solo río).
+ * Mezcla catálogo cercano + favoritos/puntos del usuario, como el pack
+ * multi-modalidad pero con varias filas del mismo tipo de pesca.
+ */
+export async function elegirTopZonasHoy(opts: {
+  modo: ModoPescaGlobal;
+  favoritos: FavoritoZona[];
+  puntos: PuntoGuardado[];
+  actual?: { lat: number; lng: number; nombre: string } | null;
+  coordsFavorito: (zonaId: string) => { lat: number; lng: number } | null;
+  ancla: { lat: number; lng: number };
+  topN?: number;
+}): Promise<RecomendacionHoyPack> {
+  const topN = opts.topN ?? 3;
+  const vistos = new Set<string>();
+  const filas: RecomendacionModoHoy[] = [];
+
+  function clave(lat: number, lng: number): string {
+    return `${lat.toFixed(3)},${lng.toFixed(3)}`;
+  }
+
+  function push(fila: RecomendacionModoHoy) {
+    const key = clave(fila.candidato.lat, fila.candidato.lng);
+    if (vistos.has(key)) return;
+    vistos.add(key);
+    filas.push(fila);
+  }
+
+  try {
+    const catalogo = await rankearCercaMejorPinta({
+      lat: opts.ancla.lat,
+      lng: opts.ancla.lng,
+      modo: opts.modo,
+      topN,
+    });
+    for (const top of catalogo ?? []) {
+      push({
+        modo: opts.modo,
+        candidato: {
+          id: top.id,
+          nombre: top.nombre,
+          lat: top.lat,
+          lng: top.lng,
+          tipo: "catalogo",
+          zoneId: top.id.startsWith("tramo:") ? top.id.slice("tramo:".length) : undefined,
+        },
+        puntuacion: top.puntuacion,
+        etiqueta: top.etiqueta,
+        color: top.color,
+        fondo: top.fondo,
+        motivo: `${etiquetaModo(opts.modo)} · ${top.etiqueta} (${top.puntuacion}) · ${top.nombre}`,
+      });
+    }
+  } catch {
+    // Catálogo opcional: seguimos con sitios del usuario.
+  }
+
+  const propios = recolectarCandidatosUsuario({
+    favoritos: opts.favoritos,
+    puntos: opts.puntos,
+    actual: opts.actual,
+    coordsFavorito: opts.coordsFavorito,
+    modo: opts.modo,
+    max: Math.max(topN, 5),
+  });
+  const puntuados = await Promise.all(propios.map((c) => puntuarCandidato(opts.modo, c)));
+  for (const r of puntuados) {
+    if (r) push(r);
+  }
+
+  filas.sort((a, b) => b.puntuacion - a.puntuacion);
+  const porModo = filas.slice(0, topN);
+
+  let destacada: RecomendacionModoHoy | null = null;
+  for (const r of porModo) {
+    if (!destacada || r.puntuacion > destacada.puntuacion) destacada = r;
+  }
+  return { destacada, porModo };
+}
+
 /** Elige el sitio con mejor índice entre favoritos, puntos y el punto actual. */
 export async function elegirRecomendacionHoy(opts: {
   favoritos: FavoritoZona[];

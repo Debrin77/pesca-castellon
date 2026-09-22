@@ -1,5 +1,7 @@
 /**
- * Assert: «Hoy te conviene» muestra la mejor de cada modalidad (río / orilla / barco).
+ * Assert: «Hoy te conviene» —
+ * · varias modalidades → mejor de cada una (río / orilla / barco)
+ * · continental (un modo) → top 3 zonas del mismo tipo
  */
 import fs from "fs";
 import path from "path";
@@ -18,6 +20,7 @@ function read(r) {
 const util = read("src/utils/recomendacionHoy.ts");
 for (const n of [
   "elegirRecomendacionesHoyPack",
+  "elegirTopZonasHoy",
   "RecomendacionModoHoy",
   "RecomendacionHoyPack",
   "rankearCercaMejorPinta",
@@ -26,6 +29,7 @@ for (const n of [
   "anclaCosta",
   "mejorDeModo",
   "mejorDesdeCatalogo",
+  "topN",
 ]) {
   if (!util.includes(n)) fail(`recomendacionHoy sin ${n}`);
 }
@@ -34,18 +38,25 @@ const card = read("src/components/RecomendacionHoyCard.tsx");
 for (const n of [
   "Hoy te conviene",
   "elegirRecomendacionesHoyPack",
+  "elegirTopZonasHoy",
   "modosLista",
   "Mejor de cada modalidad hoy",
+  "Mejores zonas hoy",
   "porModo",
   "modos.length",
   "anclaCosta",
   "badgeMejor",
+  "topN: 3",
 ]) {
   if (!card.includes(n)) fail(`RecomendacionHoyCard sin ${n}`);
 }
 // No debe quedar el hero de una sola modalidad como única recomendación visible.
 if (card.includes("modoDestacadoSuave") || card.includes("destacadaHit")) {
   fail("RecomendacionHoyCard no debe priorizar un único hero; todas las modalidades al mismo nivel");
+}
+// Continental: no volver a la tarjeta clásica de un solo sitio.
+if (card.includes("elegirRecomendacionHoy")) {
+  fail("RecomendacionHoyCard no debe usar elegirRecomendacionHoy; continental usa top 3");
 }
 
 const home = read("src/screens/HomeScreen.tsx");
