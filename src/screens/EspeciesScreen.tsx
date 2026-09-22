@@ -31,12 +31,15 @@ import CapaVedadosCosta from "../components/CapaVedadosCosta";
 import SitiosOrientativos from "../components/SitiosOrientativos";
 import VentanaConsulta from "../components/VentanaConsulta";
 import TarjetaEspecie from "../components/TarjetaEspecie";
+import TopSitiosEspecie from "../components/TopSitiosEspecie";
 import SemaforoVeredicto from "../components/SemaforoVeredicto";
 import LeyendaMapa from "../components/LeyendaMapa";
 import ListaTallasMinimas from "../components/ListaTallasMinimas";
 import { sitiosDeTramo } from "../services/sitiosComunidad";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { consumirAbrirConsultaEspecies } from "../services/especiesPendiente";
+import type { SitioEspecieHoy } from "../utils/recomendacionPorEspecie";
+import type { ModoPescaGlobal } from "../data/modoPesca";
 
 type LatLng = { latitude: number; longitude: number };
 type ModoEspecies = "continental" | "costa";
@@ -376,6 +379,63 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     irAConsejos(navigation, { consejoId, categoria: "montajes" });
   }
 
+  /** Ancla para ranking por especie: punto elegido o centro de provincia. */
+  const anclaSitios = useMemo(() => {
+    if (punto && (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps")) {
+      return { lat: punto.lat, lng: punto.lng };
+    }
+    return {
+      lat: provincia.regionMapa.latitude,
+      lng: provincia.regionMapa.longitude,
+    };
+  }, [punto?.lat, punto?.lng, punto?.fuente, provincia.regionMapa.latitude, provincia.regionMapa.longitude]);
+
+  function modoSitiosParaAmbito(ambito: "continental" | "maritimo"): ModoPescaGlobal {
+    if (ambito === "continental") return "rio";
+    if (modoElegido && modoGlobal === "barco") return "barco";
+    return "orilla";
+  }
+
+  function abrirSitioEspecie(sitio: SitioEspecieHoy) {
+    setFichaAbierta(false);
+    setCatalogoAbierto(false);
+    const zonas = provincia.zones as { id: string }[];
+    const zonaConocida =
+      !!sitio.zoneId && zonas.some((z) => z.id === sitio.zoneId);
+    void fijarPunto({
+      lat: sitio.lat,
+      lng: sitio.lng,
+      fuente: zonaConocida || sitio.origen === "zona" ? "zona" : "mapa",
+      etiqueta: sitio.nombre,
+    });
+    if (zonaConocida) {
+      navigation.navigate("ZoneDetail", { zoneId: sitio.zoneId! });
+      return;
+    }
+    navigation.navigate("Mapa", {
+      screen: "ZonasLibresMain",
+      params: {
+        centrarEn: {
+          lat: sitio.lat,
+          lng: sitio.lng,
+          nombre: sitio.nombre,
+        },
+      },
+    });
+  }
+
+  function bloqueSitiosEspecie(sp: { id: string; nombre: string }, ambito: "continental" | "maritimo") {
+    return (
+      <TopSitiosEspecie
+        especieId={sp.id}
+        nombreEspecie={sp.nombre}
+        modo={modoSitiosParaAmbito(ambito)}
+        ancla={anclaSitios}
+        onAbrir={abrirSitioEspecie}
+      />
+    );
+  }
+
   const especiesConsulta =
     consulta?.ambito === "maritimo"
       ? (consulta.especiesIds ?? []).map((id) =>
@@ -640,6 +700,10 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                   enVeda={consulta.ambito === "maritimo" ? undefined : estaEnVeda(sp.id)}
                   onAparejos={() => irAparejos(sp.id)}
                   onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
+                  extra={bloqueSitiosEspecie(
+                    sp,
+                    consulta.ambito === "maritimo" ? "maritimo" : "continental"
+                  )}
                 />
               ))
             )}
@@ -727,6 +791,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
               enVeda={estaEnVeda(sp.id)}
               onAparejos={() => irAparejos(sp.id)}
               onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
+              extra={bloqueSitiosEspecie(sp, "continental")}
             />
           ))}
         {!soloContinental && catalogo === "mar" && (
@@ -743,6 +808,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
                 ambito="maritimo"
                 onAparejos={() => irAparejos(sp.id)}
                 onMontaje={consejoIdMontajeEspecie(sp.id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) ? () => irMontaje(sp.id) : undefined}
+                extra={bloqueSitiosEspecie(sp, "maritimo")}
               />
             ))}
           </>
