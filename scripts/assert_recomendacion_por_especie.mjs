@@ -39,6 +39,7 @@ for (const n of [
   "onAbrir",
   "autoAbrir",
   "ORDINALES",
+  "modosPregunta",
   "StyleSheet.create",
 ]) {
   if (!ui.includes(n)) fail(`TopSitiosEspecie sin ${n}`);

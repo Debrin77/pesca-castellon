@@ -31,6 +31,7 @@ import PulsePress from "../components/PulsePress";
 import ListaAnimada from "../components/ListaAnimada";
 import PanelCampoHoy from "../components/PanelCampoHoy";
 import RecomendacionHoyCard from "../components/RecomendacionHoyCard";
+import QuieroPescarBlock from "../components/QuieroPescarBlock";
 import TerminoAyuda from "../components/TerminoAyuda";
 import { consultarCosta, consultarToqueMapa } from "../services/consultaCostaService";
 import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
@@ -61,6 +62,7 @@ import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
 import { certezaDeConsulta } from "../data/certezaConsulta";
 import { confirmarCambiarProvincia } from "../utils/confirmarCambiarProvincia";
+import type { SitioEspecieHoy } from "../utils/recomendacionPorEspecie";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import OndaAgua from "../components/OndaAgua";
@@ -1142,6 +1144,47 @@ export default function HomeScreen({ navigation }: Props) {
         </View>
 
         <ListaAnimada index={2}>
+          <QuieroPescarBlock
+            disponibles={disponibles}
+            especiesRio={(provincia.species as { id: string; nombre: string; icono?: string; nombreCientifico?: string; invasora?: boolean }[]) ?? []}
+            ancla={{
+              lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
+              lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
+            }}
+            anclaCosta={
+              provincia.regionCosta
+                ? { lat: provincia.regionCosta.latitude, lng: provincia.regionCosta.longitude }
+                : null
+            }
+            modoActual={modoElegido ? modo : null}
+            onElegirModo={(m) => void setModo(m)}
+            onAbrirSitio={(sitio: SitioEspecieHoy, modoSitio) => {
+              void setModo(modoSitio);
+              const zonas = provincia.zones as { id: string }[];
+              const zonaConocida =
+                !!sitio.zoneId && zonas.some((z) => z.id === sitio.zoneId);
+              void fijarPunto({
+                lat: sitio.lat,
+                lng: sitio.lng,
+                fuente: zonaConocida || sitio.origen === "zona" ? "zona" : "mapa",
+                etiqueta: sitio.nombre,
+              });
+              if (zonaConocida) {
+                navigation.navigate("ZoneDetail", { zoneId: sitio.zoneId! });
+                return;
+              }
+              navigation.navigate("Mapa", {
+                screen: "ZonasLibresMain",
+                params: {
+                  centrarEn: {
+                    lat: sitio.lat,
+                    lng: sitio.lng,
+                    nombre: sitio.nombre,
+                  },
+                },
+              });
+            }}
+          />
           <RecomendacionHoyCard
             favoritos={favoritos}
             puntos={puntos}
