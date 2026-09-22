@@ -32,7 +32,6 @@ import ListaAnimada from "../components/ListaAnimada";
 import PanelCampoHoy from "../components/PanelCampoHoy";
 import RecomendacionHoyCard from "../components/RecomendacionHoyCard";
 import TerminoAyuda from "../components/TerminoAyuda";
-import type { RecomendacionHoy } from "../utils/recomendacionHoy";
 import { consultarCosta, consultarToqueMapa } from "../services/consultaCostaService";
 import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
 import { colorSemaforo, consultarPuntoPesca } from "../services/consultaPescaService";
@@ -1079,8 +1078,15 @@ export default function HomeScreen({ navigation }: Props) {
                 : null
             }
             coordsFavorito={coordsFavorito}
+            modos={disponibles}
+            ancla={{
+              lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
+              lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
+            }}
             onExplorarMapa={() => navigation.navigate("Mapa")}
-            onAbrir={(r: RecomendacionHoy) => {
+            onAbrir={(r) => {
+              const modoRec = "modo" in r ? r.modo : null;
+              if (modoRec) void setModo(modoRec);
               if (r.candidato.zoneId) {
                 navigation.navigate("ZoneDetail", { zoneId: r.candidato.zoneId });
                 return;
