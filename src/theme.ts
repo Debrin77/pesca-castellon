@@ -98,8 +98,8 @@ export const SHADOW_SOFT = {
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 /**
- * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Literata (marca / cuaderno).
- * Literata evoca cuaderno de campo y lectura larga: tipografía del sector pesca.
+ * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Bitter (marca / cuaderno).
+ * Bitter: slab serif de campo y outdoor, tipografía del sector pesca.
  */
 export const FONTS = {
   regular: "SourceSans3_400Regular",
@@ -111,13 +111,13 @@ export const FONTS = {
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
   /** Wordmark «Cuaderno de pesca» (splash / puerta). */
-  brand: "Literata_700Bold",
-  brandSemi: "Literata_600SemiBold",
+  brand: "Bitter_700Bold",
+  brandSemi: "Bitter_600SemiBold",
 };
 
 /**
  * Escala tipográfica de producto (pesca de campo).
- * Literata = wordmark de marca (cuaderno).
+ * Bitter = wordmark de marca (cuaderno).
  * Fraunces = veredicto / títulos de sheet.
  * Source Sans = UI, chips de mapa, cuerpo y meta.
  */
@@ -125,9 +125,9 @@ export const TYPE = {
   /** Wordmark splash / puerta. */
   brandMark: {
     fontFamily: FONTS.brand,
-    fontSize: 34,
-    lineHeight: 40,
-    letterSpacing: 0.2,
+    fontSize: 36,
+    lineHeight: 42,
+    letterSpacing: 0.15,
     fontWeight: "700" as const,
   },
   displayHero: {

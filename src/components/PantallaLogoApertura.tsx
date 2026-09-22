@@ -33,9 +33,12 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // Logo protagonista: casi a pantalla completa, con margen para tipografía.
-  const usableH = Math.max(320, height - insets.top - insets.bottom);
-  const logoSize = Math.min(width * 0.92, usableH * 0.72, Math.min(width, height) * 0.88);
+  // Texto abajo: el logo puede ocupar casi todo el alto útil.
+  const padTop = Math.max(insets.top, 8);
+  const padBottom = Math.max(insets.bottom, 16);
+  const textoBudget = 96;
+  const usableH = Math.max(280, height - padTop - padBottom - textoBudget);
+  const logoSize = Math.min(width * 0.98, usableH);
 
   useEffect(() => {
     if (!listoParaSalir || finLanzado.current) return;
@@ -61,17 +64,19 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
           styles.centro,
           {
             opacity,
-            paddingTop: Math.max(insets.top, 12),
-            paddingBottom: Math.max(insets.bottom, 20),
+            paddingTop: padTop,
+            paddingBottom: padBottom,
           },
         ]}
       >
-        <LogoMarca
-          size={logoSize}
-          animar
-          hiRes
-          accessibilityLabel="Logo Cuaderno de pesca"
-        />
+        <View style={styles.logoStage}>
+          <LogoMarca
+            size={logoSize}
+            animar
+            hiRes
+            accessibilityLabel="Logo Cuaderno de pesca"
+          />
+        </View>
         <View style={styles.textoBlock}>
           <Text style={styles.marca} accessibilityRole="header">
             Cuaderno de pesca
@@ -87,29 +92,32 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: COLORS.primaryDark,
-    alignItems: "center",
-    justifyContent: "center",
   },
   centro: {
     flex: 1,
     width: "100%",
     alignItems: "center",
+    justifyContent: "space-between",
+  },
+  logoStage: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 16,
-    gap: 20,
   },
   textoBlock: {
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 12,
-    maxWidth: 420,
+    gap: 6,
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+    maxWidth: 440,
   },
-  /** Literata: tipografía de cuaderno / lectura de campo, sector pesca. */
+  /** Bitter: slab serif de campo / outdoor, sector pesca. */
   marca: {
     fontFamily: FONTS.brand,
-    fontSize: 34,
-    lineHeight: 40,
-    letterSpacing: 0.2,
+    fontSize: 36,
+    lineHeight: 42,
+    letterSpacing: 0.15,
     color: "#f4f7f2",
     textAlign: "center",
     fontWeight: "700",

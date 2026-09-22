@@ -57,8 +57,8 @@ for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes"]
 }
 
 const theme = fs.readFileSync(path.join(root, "src/theme.ts"), "utf8");
-if (!theme.includes("Literata_700Bold") || !theme.includes("brand:")) {
-  fail("theme debe definir FONTS.brand con Literata (cuaderno de pesca)");
+if (!theme.includes("Bitter_700Bold") || !theme.includes("brand:")) {
+  fail("theme debe definir FONTS.brand con Bitter (cuaderno de pesca)");
 }
 
 const appFonts = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
@@ -68,13 +68,13 @@ if (!appFonts.includes("PantallaLogoApertura") || !appFonts.includes("LOGO_APERT
 if (!appFonts.includes("aperturaT0")) {
   fail("App debe cronometrar la apertura desde el arranque");
 }
-if (!appFonts.includes("Literata_700Bold")) {
-  fail("App debe cargar Literata para el wordmark de apertura");
+if (!appFonts.includes("Bitter_700Bold")) {
+  fail("App debe cargar Bitter para el wordmark de apertura");
 }
 
 const web = fs.readFileSync(path.join(root, "src/webChrome.ts"), "utf8");
-if (!web.includes("Literata")) {
-  fail("webChrome debe cargar Literata en web");
+if (!web.includes("Bitter")) {
+  fail("webChrome debe cargar Bitter en web");
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");

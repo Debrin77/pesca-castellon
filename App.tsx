@@ -11,7 +11,7 @@ import {
   Fraunces_600SemiBold_Italic,
   Fraunces_700Bold,
 } from "@expo-google-fonts/fraunces";
-import { Literata_600SemiBold, Literata_700Bold } from "@expo-google-fonts/literata";
+import { Bitter_600SemiBold, Bitter_700Bold } from "@expo-google-fonts/bitter";
 import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
@@ -305,8 +305,8 @@ export default function App() {
     Fraunces_600SemiBold,
     Fraunces_600SemiBold_Italic,
     Fraunces_700Bold,
-    Literata_600SemiBold,
-    Literata_700Bold,
+    Bitter_600SemiBold,
+    Bitter_700Bold,
   });
 
   if (!fontsLoaded) {
