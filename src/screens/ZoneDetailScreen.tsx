@@ -18,7 +18,7 @@ import { accesoDeZona } from "../data/accesosZonas";
 import { abrirEnMaps } from "../utils/abrirEnMaps";
 import TerminoAyuda from "../components/TerminoAyuda";
 import { habitatDeZona } from "../services/habitatService";
-import { ETIQUETA_PROFUNDIDAD, ETIQUETA_TAG } from "../data/habitat";
+import ProfundidadHabitatHoy from "../components/ProfundidadHabitatHoy";
 
 interface Props {
   route: { params: { zoneId: string } };
@@ -98,28 +98,21 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
       </View>
       <Text style={styles.desc}>{zone.descripcion}</Text>
 
-      {habitat ? (
-        <View style={styles.habitatBox} accessibilityRole="summary">
-          <Text style={styles.habitatKicker}>Hábitat del sitio</Text>
-          {habitat.profundidad ? (
-            <Text style={styles.habitatProf}>
-              {ETIQUETA_PROFUNDIDAD[habitat.profundidad]}
-            </Text>
-          ) : null}
-          <View style={styles.habitatChips}>
-            {habitat.tags.map((t) => (
-              <Text key={t} style={styles.habitatChip}>
-                {ETIQUETA_TAG[t]}
-              </Text>
-            ))}
-          </View>
-          <Text style={styles.habitatNota}>{habitat.nota}</Text>
-          {habitat.fuente ? (
-            <Text style={styles.habitatFuente}>Orientativo · {habitat.fuente}</Text>
-          ) : (
-            <Text style={styles.habitatFuente}>Orientativo · no sustituye el cartel del tramo</Text>
-          )}
-        </View>
+      {habitat || (provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId)) ? (
+        <ProfundidadHabitatHoy
+          hidro={hidro}
+          habitat={habitat}
+          cargandoHidro={
+            !!(provincia.tieneSaih && (zone.saihNombre || zone.saihFichaId) && cargando)
+          }
+          pieOficial={
+            zone.saihFuente === "chg"
+              ? "Fuente en vivo: SAIH Confederación Hidrográfica del Guadalquivir"
+              : zone.saihFuente === "chj" || zone.saihFichaId
+                ? "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"
+                : null
+          }
+        />
       ) : null}
 
       {Array.isArray(zone.avisos) && zone.avisos.length > 0 ? (
@@ -187,8 +180,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
           <TerminoAyuda id="saih" />
           <Text style={styles.cardTitle}>
             {zone.saihFuente === "chg"
-              ? "Estado del embalse (SAIH Guadalquivir)"
-              : "Estado del embalse (SAIH Júcar)"}
+              ? "Detalle SAIH Guadalquivir"
+              : "Detalle SAIH Júcar"}
           </Text>
         </View>
         {cargando ? (
@@ -216,25 +209,16 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
                 <Text style={styles.gaugeLabel}>{hidro.porcentajeLleno.toFixed(1)}% de capacidad</Text>
               </View>
             )}
-            {hidro.volumenEmbalsadoHm3 !== null && hidro.volumenMaximoHm3 !== null && (
-              <Text style={styles.cardText}>
-                {hidro.volumenEmbalsadoHm3.toFixed(2)} hm³ de {hidro.volumenMaximoHm3.toFixed(2)} hm³ (NMN)
-              </Text>
-            )}
-            {hidro.cotaM !== null && <Text style={styles.cardText}>Cota: {hidro.cotaM.toFixed(2)} m</Text>}
             {hidro.caudalRecibido !== null && (
               <Text style={styles.cardText}>Caudal recibido: {hidro.caudalRecibido} m³/s</Text>
             )}
             {hidro.caudalSalida !== null && (
               <Text style={styles.cardText}>Caudal de salida: {hidro.caudalSalida} m³/s</Text>
             )}
-            {hidro.fechaDato && <Text style={styles.cardNote}>Dato del {hidro.fechaDato}</Text>}
             <Text style={styles.cardNote}>
               {hidro.fuente === "simulado"
-                ? "No se pudo consultar el SAIH ahora mismo — dato de ejemplo. En web puede fallar por CORS; reintenta o abre la ficha oficial."
-                : hidro.fuente === "saih_chg"
-                  ? "Fuente en vivo: SAIH Confederación Hidrográfica del Guadalquivir"
-                  : "Fuente en vivo: SAIH Confederación Hidrográfica del Júcar"}
+                ? "No se pudo consultar el SAIH ahora — dato de ejemplo. En web puede fallar por CORS."
+                : "La lectura de pesca (oficial + hábitat) está arriba. Aquí el detalle de la estación."}
             </Text>
             {hidro.urlFicha && (
               <Text style={styles.linkText} onPress={() => Linking.openURL(hidro.urlFicha!)}>
@@ -331,50 +315,6 @@ const styles = StyleSheet.create({
   accesoDetalle: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 20, marginTop: 2 },
   accesoMaps: { marginTop: 4, fontSize: 13, fontWeight: '700', color: COLORS.water },
   accesoAviso: { fontSize: 12, color: COLORS.textMuted, marginTop: 4, fontStyle: 'italic' },
-
-  habitatBox: {
-    marginTop: 12,
-    marginBottom: 4,
-    backgroundColor: COLORS.mist,
-    borderRadius: RADIUS.md,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  habitatKicker: {
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    color: COLORS.textSecondary,
-    marginBottom: 6,
-  },
-  habitatProf: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: COLORS.waterDark,
-    marginBottom: 8,
-  },
-  habitatChips: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 8 },
-  habitatChip: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: COLORS.primaryDark,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: RADIUS.pill,
-    overflow: "hidden",
-  },
-  habitatNota: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 20 },
-  habitatFuente: {
-    fontSize: 11,
-    color: COLORS.textMuted,
-    marginTop: 8,
-    fontStyle: "italic",
-  },
 
   container: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
