@@ -82,8 +82,11 @@ if (home.includes("{modoElegido ? (\n          <View style={styles.pulsoCard}"))
 if (!home.includes("modoElegido ? modo : null")) {
   fail("Home selector debe pasar null si aún no hay modalidad");
 }
-if (!home.includes("modoRecordado={!modoElegido ? modoRecordado : null}")) {
-  fail("Home debe pasar modoRecordado al selector para ¿Seguir en…?");
+if (!home.includes("modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}")) {
+  fail("Home debe pasar modoRecordado al selector (salvo Continuar unificado)");
+}
+if (!home.includes("continuarSesion") || !home.includes("reanudarSesion") || !home.includes("Continuar ·")) {
+  fail("Home debe ofrecer Continuar (modo + último punto) en un toque");
 }
 // No consultar con fallback río antes de elegir modalidad
 if (!home.includes("modoListo && modoElegido && puntoExplicito")) {

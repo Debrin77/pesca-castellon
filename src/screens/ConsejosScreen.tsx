@@ -39,7 +39,7 @@ type ParamsConsejos = {
   categoria?: CategoriaConsejo | "todas";
 };
 
-export default function ConsejosScreen() {
+export default function ConsejosScreen({ navigation }: { navigation?: any }) {
   const route = useRoute<any>();
   const scrollRef = useRef<ScrollView>(null);
   useScrollToTop(scrollRef);
@@ -102,6 +102,25 @@ export default function ConsejosScreen() {
       </LinearGradient>
 
       <View style={styles.body}>
+        <View style={styles.atajosRow} accessibilityRole="summary">
+          <TouchableOpacity
+            style={styles.atajoChip}
+            onPress={() => navigation?.navigate?.("Aparejos")}
+            accessibilityRole="button"
+            accessibilityLabel="Abrir aparejos"
+          >
+            <Text style={styles.atajoChipTxt}>Aparejos ›</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.atajoChip}
+            onPress={() => navigation?.navigate?.("License")}
+            accessibilityRole="button"
+            accessibilityLabel="Licencia de pesca"
+          >
+            <Text style={styles.atajoChipTxt}>Licencia ›</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.introCard}>
           <Text style={styles.introTitle}>Si empiezas de cero</Text>
           <Text style={styles.introTxt}>
@@ -215,6 +234,28 @@ const styles = StyleSheet.create({
   heroTitle: { ...TYPE.displayHero, color: "#fff", marginTop: 4 },
   heroSub: { color: "#eef7f1", marginTop: 8, fontSize: 14, lineHeight: 20 },
   body: { padding: SPACING.md },
+  atajosRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 12,
+  },
+  atajoChip: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    ...SHADOW_SOFT,
+  },
+  atajoChipTxt: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+  },
   introCard: {
     backgroundColor: COLORS.primaryLight,
     borderRadius: RADIUS.md,

@@ -446,6 +446,23 @@ export default function HomeScreen({ navigation }: Props) {
     puntoAnterior?.poblacion ||
     (puntoAnterior ? etiquetaFuente(puntoAnterior.fuente) : null);
   /**
+   * Un solo gesto reanuda modalidad + punto de la sesión anterior
+   * (evita dos toques ¿Seguir en…? + Último).
+   */
+  const continuarSesion =
+    !modoElegido &&
+    !!modoRecordado &&
+    disponibles.includes(modoRecordado) &&
+    !!puntoAnterior &&
+    !!etiquetaPuntoAnterior
+      ? { modo: modoRecordado, etiqueta: etiquetaPuntoAnterior }
+      : null;
+  async function reanudarSesion() {
+    if (!continuarSesion) return;
+    await setModo(continuarSesion.modo);
+    confirmarPuntoGuardado();
+  }
+  /**
    * Consulta legal solo con modalidad confirmada: si aún no eligió río/orilla/barco,
    * no usar el fallback técnico (río) — evita veredictos/duplicados incorrectos.
    */
@@ -614,7 +631,8 @@ export default function HomeScreen({ navigation }: Props) {
         <SelectorModoPesca
           modo={modoElegido ? modo : null}
           disponibles={disponibles}
-          modoRecordado={!modoElegido ? modoRecordado : null}
+          /* Si hay Continuar (modo+punto), el chip ¿Seguir en…? sobra. */
+          modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}
           onChange={(m) => void setModo(m)}
           sobreOscuro
         />
@@ -666,11 +684,26 @@ export default function HomeScreen({ navigation }: Props) {
               <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
               <Text style={styles.veredictoRapidoTitulo}>{textoPedirModo(disponibles)}</Text>
               <Text style={styles.veredictoRapidoSub}>
-                {puntoExplicito || puntoAnterior
-                  ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
-                  : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
+                {continuarSesion
+                  ? "Un toque recupera modalidad y punto de la última salida"
+                  : puntoExplicito || puntoAnterior
+                    ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
+                    : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
               </Text>
             </View>
+            {continuarSesion ? (
+              <TouchableOpacity
+                style={styles.continuarSesionChip}
+                onPress={() => void reanudarSesion()}
+                accessibilityRole="button"
+                accessibilityLabel={`Continuar en ${etiquetaModo(continuarSesion.modo)} · ${continuarSesion.etiqueta}`}
+              >
+                <Text style={styles.continuarSesionTxt} numberOfLines={2}>
+                  Continuar · {etiquetaModo(continuarSesion.modo)} · {continuarSesion.etiqueta}
+                </Text>
+                <Text style={styles.continuarSesionCta}>Sí ›</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         ) : !cargando && modoListo ? (
           <View style={styles.veredictoRapidoBloque}>
@@ -1311,7 +1344,37 @@ export default function HomeScreen({ navigation }: Props) {
           <PanelCampoHoy navigation={navigation} />
         </ListaAnimada>
 
+        <Text style={styles.herramientasKicker}>Herramientas</Text>
         <View style={styles.linksRow}>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() =>
+              navigation.navigate("Aparejos", {
+                ambitoEmbarcacion: modoElegido && modo === "barco",
+                ambitoModo: modoElegido ? modo : undefined,
+              })
+            }
+            accessibilityRole="button"
+            accessibilityLabel="Aparejos y montajes"
+          >
+            <Text style={styles.linkChipTxt}>Aparejos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => navigation.navigate("License")}
+            accessibilityRole="button"
+            accessibilityLabel="Licencia de pesca"
+          >
+            <Text style={styles.linkChipTxt}>Licencia</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkChip}
+            onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
+            accessibilityRole="button"
+            accessibilityLabel="Consejos: montajes por especie, nudos y aparejos"
+          >
+            <Text style={styles.linkChipTxt}>Montajes</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkChip}
             onPress={() =>
@@ -1324,22 +1387,6 @@ export default function HomeScreen({ navigation }: Props) {
             accessibilityLabel="Captura rápida"
           >
             <Text style={styles.linkChipTxt}>+ Captura</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.linkChip}
-            onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
-            accessibilityRole="button"
-            accessibilityLabel="Consejos: montajes por especie, nudos y aparejos"
-          >
-            <Text style={styles.linkChipTxt}>Montajes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.linkChip}
-            onPress={() => navigation.navigate("Ajustes")}
-            accessibilityRole="button"
-            accessibilityLabel="Ajustes"
-          >
-            <Text style={styles.linkChipTxt}>Ajustes</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -1591,6 +1638,32 @@ const styles = StyleSheet.create({
   ultimoPuntoCta: {
     fontSize: 13,
     fontWeight: "800",
+    color: "#fff",
+  },
+  continuarSesionChip: {
+    marginTop: 10,
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(255,255,255,0.22)",
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.55)",
+  },
+  continuarSesionTxt: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#fff",
+    lineHeight: 18,
+  },
+  continuarSesionCta: {
+    fontSize: 15,
+    fontWeight: "900",
     color: "#fff",
   },
   veredictoRapidoTxt: { flex: 1 },
@@ -1984,14 +2057,22 @@ const styles = StyleSheet.create({
   mapaCtaTitle: { fontSize: 14, fontWeight: "700", color: COLORS.textPrimary },
   mapaCtaSub: { fontSize: 11.5, color: COLORS.textSecondary, marginTop: 2 },
   chevron: { fontSize: 22, color: COLORS.textMuted },
+  herramientasKicker: {
+    ...TYPE.overline,
+    color: COLORS.textMuted,
+    marginTop: SPACING.sm,
+    marginBottom: 6,
+  },
   linksRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
-    marginTop: SPACING.sm,
     marginBottom: SPACING.md,
   },
   linkChip: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: "22%",
+    minWidth: 72,
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.sm,
     borderWidth: 1,

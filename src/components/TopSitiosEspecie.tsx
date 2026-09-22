@@ -21,6 +21,8 @@ type Props = {
   modo: ModoPescaGlobal;
   ancla: { lat: number; lng: number };
   onAbrir: (sitio: SitioEspecieHoy) => void;
+  /** Si true, carga el ranking al montar (p. ej. búsqueda acotada en catálogo). */
+  autoAbrir?: boolean;
 };
 
 const ORDINALES = ["1ª", "2ª", "3ª"];
@@ -28,6 +30,7 @@ const ORDINALES = ["1ª", "2ª", "3ª"];
 /**
  * En ficha de especie: carga bajo demanda el top 3 de sitios hoy
  * (presencia + pulso). Evita martillar la API de clima en catálogos largos.
+ * Con autoAbrir (p. ej. tras buscar «barbo») abre ya sin un toque extra.
  */
 export default function TopSitiosEspecie({
   especieId,
@@ -35,10 +38,15 @@ export default function TopSitiosEspecie({
   modo,
   ancla,
   onAbrir,
+  autoAbrir = false,
 }: Props) {
-  const [abierto, setAbierto] = useState(false);
+  const [abierto, setAbierto] = useState(autoAbrir);
   const [cargando, setCargando] = useState(false);
   const [pack, setPack] = useState<PackSitiosEspecie | null>(null);
+
+  useEffect(() => {
+    if (autoAbrir) setAbierto(true);
+  }, [autoAbrir, especieId]);
 
   useEffect(() => {
     if (!abierto) return;
@@ -64,8 +72,8 @@ export default function TopSitiosEspecie({
         accessibilityRole="button"
         accessibilityLabel={`Ver 3 sitios hoy para ${nombreEspecie}`}
       >
-        <Text style={styles.ctaTxt}>3 sitios hoy · {nombreEspecie} ›</Text>
-        <Text style={styles.ctaSub}>Según catálogo y pulso del día</Text>
+        <Text style={styles.ctaTxt}>¿Dónde hoy? · 3 sitios · {nombreEspecie} ›</Text>
+        <Text style={styles.ctaSub}>3 sitios hoy según catálogo y pulso del día</Text>
       </TouchableOpacity>
     );
   }
