@@ -128,3 +128,101 @@ export default function TopSitiosEspecie({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  cta: {
+    marginTop: 10,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.mist,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  ctaTxt: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: COLORS.waterDark,
+  },
+  ctaSub: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  box: {
+    marginTop: 10,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.mist,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 8,
+  },
+  kicker: {
+    ...TYPE.overline,
+    color: COLORS.textSecondary,
+  },
+  sub: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginBottom: 4,
+  },
+  aviso: {
+    fontSize: 12,
+    color: COLORS.warning,
+    fontWeight: "600",
+    marginBottom: 4,
+    lineHeight: 16,
+  },
+  vacio: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    lineHeight: 18,
+  },
+  cargandoTxt: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  fila: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  ord: {
+    minWidth: 36,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+  ordTxt: { color: "#fff", fontWeight: "800", fontSize: 12 },
+  filaTxt: { flex: 1, minWidth: 0 },
+  nombre: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: COLORS.textPrimary,
+    lineHeight: 18,
+  },
+  meta: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
+  motivo: {
+    fontSize: 11,
+    color: COLORS.textMuted,
+    marginTop: 2,
+  },
+  chevron: { fontSize: 22, fontWeight: "300" },
+});
