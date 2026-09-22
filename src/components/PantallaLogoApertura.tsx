@@ -15,7 +15,7 @@ import OndaAgua from "./OndaAgua";
 import { COLORS, FONTS, GRADIENTS } from "../theme";
 
 /** Duración mínima a pantalla completa en cada apertura (ms). */
-export const LOGO_APERTURA_MS = 2200;
+export const LOGO_APERTURA_MS = 4200;
 
 type Props = {
   /** Si true, el logo ya puede empezar a desvanecerse (listo backend). */
