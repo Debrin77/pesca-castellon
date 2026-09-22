@@ -104,7 +104,13 @@ function aplicarCache(cache: CacheOffline, setters: {
 export default function HomeScreen({ navigation }: Props) {
   const { provincia: provinciaCtx, cambiarProvincia, restauradaAlArrancar } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
-  const { punto, listo: puntoListo, fijarPunto } = usePuntoConsulta();
+  const {
+    punto,
+    listo: puntoListo,
+    puntoElegido,
+    fijarPunto,
+    confirmarPuntoGuardado,
+  } = usePuntoConsulta();
   const { modo, modoElegido, modoRecordado, listo: modoListo, disponibles, setModo } = useModoPesca();
   const scrollRef = useRef<ScrollView>(null);
   const heroHRef = useRef(0);
@@ -419,11 +425,26 @@ export default function HomeScreen({ navigation }: Props) {
 
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
-  /** Solo veredicto legal si el usuario eligió punto (GPS/mapa/zona), no el centro de provincia. */
+  /**
+   * Solo veredicto legal si eligió punto en esta sesión (GPS/mapa/zona/recomendación).
+   * Un punto restaurado de la sesión anterior no desbloquea «¿Puedo?» ni «Tu punto de hoy».
+   */
   const puntoExplicito = !!(
     punto &&
+    puntoElegido &&
     (punto.fuente === "gps" || punto.fuente === "mapa" || punto.fuente === "zona")
   );
+  /** Punto guardado de antes, aún no confirmado en esta sesión. */
+  const puntoAnterior =
+    !puntoElegido &&
+    !!punto &&
+    (punto.fuente === "gps" || punto.fuente === "mapa" || punto.fuente === "zona")
+      ? punto
+      : null;
+  const etiquetaPuntoAnterior =
+    puntoAnterior?.etiqueta ||
+    puntoAnterior?.poblacion ||
+    (puntoAnterior ? etiquetaFuente(puntoAnterior.fuente) : null);
   /**
    * Consulta legal solo con modalidad confirmada: si aún no eligió río/orilla/barco,
    * no usar el fallback técnico (río) — evita veredictos/duplicados incorrectos.
@@ -636,33 +657,52 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.veredictoRapidoChevron}>›</Text>
           </TouchableOpacity>
         ) : modoListo && !modoElegido ? (
-          <View
-            style={styles.veredictoRapidoVacio}
-            accessibilityRole="summary"
-            accessibilityLabel={textoPedirModo(disponibles)}
-          >
-            <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-            <Text style={styles.veredictoRapidoTitulo}>{textoPedirModo(disponibles)}</Text>
-            <Text style={styles.veredictoRapidoSub}>
-              {puntoExplicito
-                ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
-                : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
-            </Text>
+          <View style={styles.veredictoRapidoBloque}>
+            <View
+              style={styles.veredictoRapidoVacio}
+              accessibilityRole="summary"
+              accessibilityLabel={textoPedirModo(disponibles)}
+            >
+              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+              <Text style={styles.veredictoRapidoTitulo}>{textoPedirModo(disponibles)}</Text>
+              <Text style={styles.veredictoRapidoSub}>
+                {puntoExplicito || puntoAnterior
+                  ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
+                  : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
+              </Text>
+            </View>
           </View>
         ) : !cargando && modoListo ? (
-          <TouchableOpacity
-            style={styles.veredictoRapidoVacio}
-            onPress={() => navigation.navigate("Mapa")}
-            activeOpacity={0.88}
-            accessibilityRole="button"
-            accessibilityLabel="Elegir punto en el mapa para el veredicto"
-          >
-            <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-            <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
-            <Text style={styles.veredictoRapidoSub}>
-              Pulsa el mapa o usa GPS · {etiquetaModoLarga(modo)}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.veredictoRapidoBloque}>
+            <TouchableOpacity
+              style={styles.veredictoRapidoVacio}
+              onPress={() => navigation.navigate("Mapa")}
+              activeOpacity={0.88}
+              accessibilityRole="button"
+              accessibilityLabel="Elegir punto en el mapa para el veredicto"
+            >
+              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
+              <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
+              <Text style={styles.veredictoRapidoSub}>
+                {puntoAnterior
+                  ? "Mapa, GPS o una recomendación · o reutiliza el último"
+                  : `Pulsa el mapa, GPS o una recomendación · ${etiquetaModoLarga(modo)}`}
+              </Text>
+            </TouchableOpacity>
+            {puntoAnterior && etiquetaPuntoAnterior ? (
+              <TouchableOpacity
+                style={styles.ultimoPuntoChip}
+                onPress={() => confirmarPuntoGuardado()}
+                accessibilityRole="button"
+                accessibilityLabel={`Usar último punto: ${etiquetaPuntoAnterior}`}
+              >
+                <Text style={styles.ultimoPuntoTxt} numberOfLines={1}>
+                  Último · {etiquetaPuntoAnterior}
+                </Text>
+                <Text style={styles.ultimoPuntoCta}>Usar ›</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         ) : null}
 
         {!puntoExplicito ? (
@@ -1092,6 +1132,14 @@ export default function HomeScreen({ navigation }: Props) {
             onAbrir={(r) => {
               const modoRec = "modo" in r ? r.modo : null;
               if (modoRec) void setModo(modoRec);
+              const fuente =
+                r.candidato.tipo === "favorito" || r.candidato.zoneId ? "zona" : "mapa";
+              void fijarPunto({
+                lat: r.candidato.lat,
+                lng: r.candidato.lng,
+                fuente,
+                etiqueta: r.candidato.nombre,
+              });
               if (r.candidato.zoneId) {
                 navigation.navigate("ZoneDetail", { zoneId: r.candidato.zoneId });
                 return;
@@ -1503,14 +1551,41 @@ const styles = StyleSheet.create({
     borderColor: COLORS.warning,
     borderStyle: "dashed",
   },
-  veredictoRapidoVacio: {
+  veredictoRapidoBloque: {
     marginTop: 14,
+  },
+  veredictoRapidoVacio: {
     borderRadius: RADIUS.md,
     paddingVertical: 12,
     paddingHorizontal: 14,
     backgroundColor: "rgba(255,255,255,0.14)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.28)",
+  },
+  ultimoPuntoChip: {
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    alignSelf: "flex-start",
+    maxWidth: "100%",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: RADIUS.pill,
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.32)",
+  },
+  ultimoPuntoTxt: {
+    flexShrink: 1,
+    fontSize: 13,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.92)",
+  },
+  ultimoPuntoCta: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#fff",
   },
   veredictoRapidoTxt: { flex: 1 },
   veredictoRapidoSelloRow: {
