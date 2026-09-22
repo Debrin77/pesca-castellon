@@ -1,43 +1,50 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, StyleSheet, View, ViewStyle } from "react-native";
 
-const LOGO = require("../../assets/brand/mark.png");
+const LOGO_MARK = require("../../assets/brand/mark.png");
+/** Alta resolución (1024) para splash / puerta a tamaño pantalla. */
+const LOGO_HI = require("../../assets/brand/logo.png");
 
 type Props = {
   /** Diámetro en px. */
   size?: number;
   /** Entrada suave (splash / puerta). */
   animar?: boolean;
+  /** Usa logo.png nitido cuando el tamaño es grande (pantalla completa). */
+  hiRes?: boolean;
   style?: ViewStyle;
   accessibilityLabel?: string;
 };
 
 /**
  * Marca del parche bordado: pez al atardecer.
- * Usar grande en puerta/splash; pequeño en Inicio (no compite con el veredicto).
+ * Usar grande (hiRes) en puerta/splash; pequeño en Inicio (no compite con el veredicto).
  */
 export default function LogoMarca({
   size = 72,
   animar = false,
+  hiRes = false,
   style,
   accessibilityLabel = "Pesca · marca",
 }: Props) {
   const opacity = useRef(new Animated.Value(animar ? 0 : 1)).current;
-  const scale = useRef(new Animated.Value(animar ? 0.88 : 1)).current;
+  const scale = useRef(new Animated.Value(animar ? 0.92 : 1)).current;
+  const source = hiRes || size >= 160 ? LOGO_HI : LOGO_MARK;
+  const sombraGrande = size >= 200;
 
   useEffect(() => {
     if (!animar) return;
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 700,
+        duration: 780,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.spring(scale, {
         toValue: 1,
-        friction: 7,
-        tension: 60,
+        friction: 8,
+        tension: 52,
         useNativeDriver: true,
       }),
     ]).start();
@@ -47,13 +54,14 @@ export default function LogoMarca({
     <Animated.View
       style={[
         styles.wrap,
+        sombraGrande ? styles.wrapHero : null,
         { width: size, height: size, borderRadius: size / 2, opacity, transform: [{ scale }] },
         style,
       ]}
       accessibilityRole="image"
       accessibilityLabel={accessibilityLabel}
     >
-      <Image source={LOGO} style={{ width: size, height: size }} resizeMode="contain" />
+      <Image source={source} style={{ width: size, height: size }} resizeMode="contain" />
     </Animated.View>
   );
 }
@@ -66,7 +74,7 @@ export function LogoMarcaEstatico({ size = 36, style }: { size?: number; style?:
       accessibilityRole="image"
       accessibilityLabel="Pesca"
     >
-      <Image source={LOGO} style={{ width: size, height: size }} resizeMode="contain" />
+      <Image source={LOGO_MARK} style={{ width: size, height: size }} resizeMode="contain" />
     </View>
   );
 }
@@ -82,5 +90,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 10,
     elevation: 4,
+  },
+  wrapHero: {
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.35,
+    shadowRadius: 28,
+    elevation: 10,
   },
 });
