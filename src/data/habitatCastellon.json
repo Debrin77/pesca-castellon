@@ -1,0 +1,91 @@
+{
+  "_meta": "Hábitat orientativo Castellón (continental + playas clave). No sustituye normativa GVA.",
+  "zonas": {
+    "embalse_arenos": {
+      "tags": ["cola", "roca", "troncos", "agua_clara", "brazo", "orilla_escarpada", "estiaje"],
+      "profundidad": "variable",
+      "nota": "Montaña: aguas claras, cola del Villahermosa, escalones de roca y árboles sumergidos. Bass y lucio; ciprínidos a fondo.",
+      "fuente": "haypesca.es · haypesca.blogspot · ParaisosParaPescar"
+    },
+    "embalse_sichar": {
+      "tags": ["limo", "brazo", "vegetacion", "orilla_suave"],
+      "profundidad": "media",
+      "nota": "Embalse más abierto: limo y brazos con vegetación de orilla.",
+      "fuente": "Notas Castellón"
+    },
+    "embalse_maria_cristina": {
+      "tags": ["limo", "vegetacion", "juncos", "orilla_suave"],
+      "profundidad": "somera",
+      "nota": "Más somero y vegetado; ciprínidos en limo/juncos.",
+      "fuente": "Notas Castellón"
+    },
+    "embalse_ulldecona": {
+      "tags": ["limo", "vegetacion", "brazo", "estiaje"],
+      "profundidad": "variable",
+      "nota": "Límite provincial: limo y vegetación; nivel variable.",
+      "fuente": "Notas Castellón"
+    },
+    "rio_villahermosa_alto": {
+      "tags": ["corriente", "poza", "grava", "agua_clara"],
+      "profundidad": "somera",
+      "nota": "Tramos altos: pozas y grava; sin muerte / coto según tramo.",
+      "fuente": "Notas GVA"
+    },
+    "rio_mijares_puebla_arenoso_libre": {
+      "tags": ["corriente", "grava", "poza", "agua_clara"],
+      "profundidad": "somera",
+      "nota": "Mijares libre sin muerte: corriente y grava.",
+      "fuente": "Notas GVA"
+    },
+    "rio_palancia_teresa_libre": {
+      "tags": ["corriente", "grava", "poza"],
+      "profundidad": "somera",
+      "nota": "Palancia: tablas y pozas de grava.",
+      "fuente": "Notas GVA"
+    },
+    "rio_palancia_teresa_bejis_libre": {
+      "tags": ["corriente", "grava", "poza", "agua_clara"],
+      "profundidad": "somera",
+      "nota": "Palancia alto: agua más clara y pozas.",
+      "fuente": "Notas GVA"
+    }
+  },
+  "playas": {
+    "vinaros_sol_riu": {
+      "tags": ["desembocadura", "arena", "grava"],
+      "profundidad": "somera",
+      "nota": "Cala/desembocadura: arena-grava; lubina y dorada en cambios de luz.",
+      "fuente": "Catálogo orilla CS"
+    },
+    "vinaros_riu_senia": {
+      "tags": ["desembocadura", "arena", "grava"],
+      "profundidad": "somera",
+      "nota": "Orilla del Sénia: mezcla dulce-salada y arena; lubina/dorada.",
+      "fuente": "Catálogo orilla CS"
+    },
+    "moncofa_grau": {
+      "tags": ["arena", "espigon"],
+      "profundidad": "somera",
+      "nota": "Grau de Moncofa: arena con estructura de espigón; sargo/dorada.",
+      "fuente": "Catálogo orilla CS"
+    },
+    "burriana_arenal": {
+      "tags": ["arena", "desembocadura"],
+      "profundidad": "somera",
+      "nota": "Arenal cerca de la influencia del Mijares; dorada/lubina con mar de fondo.",
+      "fuente": "Catálogo orilla CS"
+    },
+    "grao_pinar": {
+      "tags": ["escollera", "espigon", "arena"],
+      "profundidad": "somera",
+      "nota": "Grao Castellón: escolleras y arena; sargo y lubina en estructura.",
+      "fuente": "Catálogo orilla CS"
+    },
+    "grao_gurugu": {
+      "tags": ["escollera", "roca", "arena"],
+      "profundidad": "somera",
+      "nota": "Gurugú: roca/escollera junto a arena; sargo y sepia crepuscular.",
+      "fuente": "Catálogo orilla CS"
+    }
+  }
+}
