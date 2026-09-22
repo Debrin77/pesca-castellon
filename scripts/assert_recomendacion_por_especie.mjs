@@ -38,6 +38,7 @@ for (const n of [
   "Sitios hoy",
   "onAbrir",
   "ORDINALES",
+  "StyleSheet.create",
 ]) {
   if (!ui.includes(n)) fail(`TopSitiosEspecie sin ${n}`);
 }
