@@ -6,7 +6,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import type { ModoPescaGlobal } from "../data/modoPesca";
+import {
+  etiquetaModo,
+  type ModoPescaGlobal,
+} from "../data/modoPesca";
 import {
   elegirTopSitiosPorEspecie,
   type PackSitiosEspecie,
@@ -18,9 +21,17 @@ import { COLORS, RADIUS, TYPE } from "../theme";
 type Props = {
   especieId: string;
   nombreEspecie: string;
+  /** Modo por defecto (p. ej. río en catálogo continental). */
   modo: ModoPescaGlobal;
+  /**
+   * Si hay varias (p. ej. orilla + barco en costa), preguntamos antes de puntuar.
+   * Si se omite o hay una sola, se usa `modo` directamente.
+   */
+  modosPregunta?: ModoPescaGlobal[];
   ancla: { lat: number; lng: number };
   onAbrir: (sitio: SitioEspecieHoy) => void;
+  /** Cuando el usuario elige modalidad en la pregunta. */
+  onModoElegido?: (modo: ModoPescaGlobal) => void;
 };
 
 const ORDINALES = ["1ª", "2ª", "3ª"];
@@ -28,23 +39,35 @@ const ORDINALES = ["1ª", "2ª", "3ª"];
 /**
  * En ficha de especie: carga bajo demanda el top 3 de sitios hoy
  * (presencia + pulso). Evita martillar la API de clima en catálogos largos.
+ * En costa con orilla+barco, pregunta la modalidad antes de rankear.
  */
 export default function TopSitiosEspecie({
   especieId,
   nombreEspecie,
   modo,
+  modosPregunta,
   ancla,
   onAbrir,
+  onModoElegido,
 }: Props) {
+  const opciones =
+    modosPregunta && modosPregunta.length > 1 ? modosPregunta : null;
   const [abierto, setAbierto] = useState(false);
+  const [modoElegidoLocal, setModoElegidoLocal] = useState<ModoPescaGlobal | null>(
+    opciones ? null : modo
+  );
   const [cargando, setCargando] = useState(false);
   const [pack, setPack] = useState<PackSitiosEspecie | null>(null);
 
+  const modoActivo = modoElegidoLocal ?? modo;
+
   useEffect(() => {
     if (!abierto) return;
+    if (opciones && !modoElegidoLocal) return;
     let vivo = true;
     setCargando(true);
-    elegirTopSitiosPorEspecie({ especieId, modo, ancla })
+    setPack(null);
+    elegirTopSitiosPorEspecie({ especieId, modo: modoActivo, ancla })
       .then((p) => {
         if (vivo) setPack(p);
       })
@@ -54,19 +77,62 @@ export default function TopSitiosEspecie({
     return () => {
       vivo = false;
     };
-  }, [abierto, especieId, modo, ancla.lat, ancla.lng]);
+  }, [
+    abierto,
+    especieId,
+    modoActivo,
+    modoElegidoLocal,
+    !!opciones,
+    ancla.lat,
+    ancla.lng,
+  ]);
 
   if (!abierto) {
     return (
       <TouchableOpacity
         style={styles.cta}
-        onPress={() => setAbierto(true)}
+        onPress={() => {
+          setAbierto(true);
+          if (!opciones) setModoElegidoLocal(modo);
+        }}
         accessibilityRole="button"
         accessibilityLabel={`Ver 3 sitios hoy para ${nombreEspecie}`}
       >
         <Text style={styles.ctaTxt}>3 sitios hoy · {nombreEspecie} ›</Text>
-        <Text style={styles.ctaSub}>Según catálogo y pulso del día</Text>
+        <Text style={styles.ctaSub}>
+          {opciones
+            ? "Elige orilla o barco · catálogo y pulso del día"
+            : "Según catálogo y pulso del día"}
+        </Text>
       </TouchableOpacity>
+    );
+  }
+
+  if (opciones && !modoElegidoLocal) {
+    return (
+      <View style={styles.box}>
+        <Text style={styles.kicker}>Sitios hoy · {nombreEspecie}</Text>
+        <Text style={styles.sub}>¿Desde orilla o en barco?</Text>
+        <View style={styles.modosRow}>
+          {opciones.map((m) => (
+            <TouchableOpacity
+              key={m}
+              style={[
+                styles.modoChip,
+                m === "barco" || m === "orilla" ? styles.modoChipMar : styles.modoChipRio,
+              ]}
+              onPress={() => {
+                setModoElegidoLocal(m);
+                onModoElegido?.(m);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={etiquetaModo(m)}
+            >
+              <Text style={styles.modoChipTxt}>{etiquetaModo(m)}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
     );
   }
 
@@ -96,7 +162,9 @@ export default function TopSitiosEspecie({
       {pack.orientativoSinCatalogo && pack.aviso ? (
         <Text style={styles.aviso}>{pack.aviso}</Text>
       ) : (
-        <Text style={styles.sub}>Presencia en catálogo + pulso (clima/luna)</Text>
+        <Text style={styles.sub}>
+          {etiquetaModo(modoActivo)} · presencia en catálogo + pulso (clima/luna)
+        </Text>
       )}
       {pack.filas.map((fila, i) => (
         <TouchableOpacity
@@ -156,6 +224,18 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginTop: 2,
   },
+  modosRow: { flexDirection: "row", gap: 8, marginTop: 4 },
+  modoChip: {
+    flex: 1,
+    minHeight: 40,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+  modoChipRio: { backgroundColor: COLORS.primaryDark },
+  modoChipMar: { backgroundColor: COLORS.waterDark },
+  modoChipTxt: { color: "#fff", fontWeight: "800", fontSize: 14 },
   box: {
     marginTop: 10,
     marginHorizontal: 16,

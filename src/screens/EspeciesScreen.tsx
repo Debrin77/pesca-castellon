@@ -69,7 +69,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { punto, fijarPunto } = usePuntoConsulta();
-  const { modo: modoGlobal, modoElegido, setModo: setModoGlobal } = useModoPesca();
+  const { modo: modoGlobal, modoElegido, setModo: setModoGlobal, disponibles } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const soloContinental = provincia.continentalOnly;
   const speciesCatalog = provincia.species as any[];
@@ -425,13 +425,19 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   }
 
   function bloqueSitiosEspecie(sp: { id: string; nombre: string }, ambito: "continental" | "maritimo") {
+    const modoBase = modoSitiosParaAmbito(ambito);
+    const modosCosta = disponibles.filter((m) => m === "orilla" || m === "barco");
+    const modosPregunta =
+      ambito === "maritimo" && modosCosta.length > 1 ? modosCosta : undefined;
     return (
       <TopSitiosEspecie
         especieId={sp.id}
         nombreEspecie={sp.nombre}
-        modo={modoSitiosParaAmbito(ambito)}
+        modo={modoBase}
+        modosPregunta={modosPregunta}
         ancla={anclaSitios}
         onAbrir={abrirSitioEspecie}
+        onModoElegido={(m) => void setModoGlobal(m)}
       />
     );
   }
