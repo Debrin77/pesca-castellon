@@ -16,7 +16,6 @@ import {
 import {
   etiquetaModo,
   etiquetaModoLarga,
-  subtituloModo,
   type ModoPescaGlobal,
 } from "../data/modoPesca";
 import {
@@ -210,7 +209,7 @@ export default function QuieroPescarBlock({
           <Text style={styles.lead}>
             Hay costa en esta provincia: elige modalidad y te mostramos especies y zonas.
           </Text>
-          <View style={styles.modosCol}>
+          <View style={styles.modosRow}>
             {disponibles.map((m) => {
               const mar = m === "orilla" || m === "barco";
               return (
@@ -222,7 +221,9 @@ export default function QuieroPescarBlock({
                   accessibilityLabel={etiquetaModoLarga(m)}
                 >
                   <Text style={styles.modoBtnTitulo}>{etiquetaModo(m)}</Text>
-                  <Text style={styles.modoBtnSub}>{subtituloModo(m)}</Text>
+                  <Text style={styles.modoBtnSub} numberOfLines={2}>
+                    {m === "rio" ? "Ríos y embalses" : m === "orilla" ? "Desde tierra" : "Kayak / barco"}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -376,23 +377,29 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 4,
   },
-  modosCol: { gap: 8 },
+  modosRow: { flexDirection: "row", gap: 8 },
   modoBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    flex: 1,
+    minHeight: 64,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     borderRadius: RADIUS.md,
+    justifyContent: "center",
   },
   modoBtnRio: { backgroundColor: COLORS.primaryDark },
   modoBtnMar: { backgroundColor: COLORS.waterDark },
   modoBtnTitulo: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "800",
     color: "#fff",
+    textAlign: "center",
   },
   modoBtnSub: {
-    fontSize: 12,
+    fontSize: 11,
     color: "rgba(255,255,255,0.85)",
-    marginTop: 2,
+    marginTop: 3,
+    textAlign: "center",
+    lineHeight: 14,
   },
   listaScroll: { maxHeight: 280 },
   especieFila: {

@@ -26,6 +26,7 @@ for (const n of [
   "disponibles.length > 1",
   "Sitios hoy",
   "onAbrirSitio",
+  "modosRow",
   "StyleSheet.create",
 ]) {
   if (!bloque.includes(n)) fail(`QuieroPescarBlock sin ${n}`);
