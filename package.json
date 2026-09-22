@@ -16,6 +16,7 @@
     "assert:provincias": "node scripts/assert_provincias_sin_sangrado_gva.mjs"
   },
   "dependencies": {
+    "@expo-google-fonts/bitter": "^0.4.2",
     "@expo-google-fonts/fraunces": "^0.4.1",
     "@expo-google-fonts/source-sans-3": "^0.4.1",
     "@expo/metro-runtime": "~3.2.3",

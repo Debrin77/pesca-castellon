@@ -36,22 +36,45 @@ for (const n of [
   if (!app.includes(n)) fail(`app.json sin ${n}`);
 }
 
+const splash = fs.readFileSync(path.join(root, "src/components/PantallaLogoApertura.tsx"), "utf8");
+for (const n of [
+  "LOGO_APERTURA_MS",
+  "LogoMarca",
+  "OndaAgua",
+  "pantalla completa",
+  "listoParaSalir",
+  "Cuaderno de pesca",
+  "FONTS.brand",
+  "useWindowDimensions",
+  "hiRes",
+]) {
+  if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
+}
+
 const logo = fs.readFileSync(path.join(root, "src/components/LogoMarca.tsx"), "utf8");
-for (const n of ["mark.png", "animar", "LogoMarcaEstatico"]) {
+for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes"]) {
   if (!logo.includes(n)) fail(`LogoMarca sin ${n}`);
 }
 
-const appTsx = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
-if (!appTsx.includes("PantallaLogoApertura") || !appTsx.includes("LOGO_APERTURA_MS")) {
-  fail("App debe mostrar PantallaLogoApertura con duración mínima al abrir");
-}
-if (!appTsx.includes("aperturaT0")) {
-  fail("App debe cronometrar la apertura desde el arranque");
+const theme = fs.readFileSync(path.join(root, "src/theme.ts"), "utf8");
+if (!theme.includes("Bitter_700Bold") || !theme.includes("brand:")) {
+  fail("theme debe definir FONTS.brand con Bitter (cuaderno de pesca)");
 }
 
-const splash = fs.readFileSync(path.join(root, "src/components/PantallaLogoApertura.tsx"), "utf8");
-for (const n of ["LOGO_APERTURA_MS", "LogoMarca", "OndaAgua", "pantalla completa", "listoParaSalir"]) {
-  if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
+const appFonts = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
+if (!appFonts.includes("PantallaLogoApertura") || !appFonts.includes("LOGO_APERTURA_MS")) {
+  fail("App debe mostrar PantallaLogoApertura con duración mínima al abrir");
+}
+if (!appFonts.includes("aperturaT0")) {
+  fail("App debe cronometrar la apertura desde el arranque");
+}
+if (!appFonts.includes("Bitter_700Bold")) {
+  fail("App debe cargar Bitter para el wordmark de apertura");
+}
+
+const web = fs.readFileSync(path.join(root, "src/webChrome.ts"), "utf8");
+if (!web.includes("Bitter")) {
+  fail("webChrome debe cargar Bitter en web");
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");

@@ -8,7 +8,7 @@ export function aplicarEstilosWeb() {
   const font = document.createElement("link");
   font.rel = "stylesheet";
   font.href =
-    "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap";
+    "https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap";
   document.head.appendChild(font);
 
   const style = document.createElement("style");
@@ -23,6 +23,10 @@ export function aplicarEstilosWeb() {
     }
     .pesca-display {
       font-family: "Fraunces", "Source Sans 3", Georgia, serif;
+      font-optical-sizing: auto;
+    }
+    .pesca-brand {
+      font-family: "Bitter", "Fraunces", Georgia, serif;
       font-optical-sizing: auto;
     }
     .pesca-pin--selected {

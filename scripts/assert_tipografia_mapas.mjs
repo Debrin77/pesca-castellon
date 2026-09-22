@@ -49,8 +49,8 @@ if (!zonas.includes("TYPE.mapChip") || !zonas.includes("TYPE.caption")) {
 }
 
 const web = read("src/webChrome.ts");
-if (!web.includes("Fraunces") || !web.includes("Source+Sans+3")) {
-  fail("webChrome debe cargar Fraunces + Source Sans 3");
+if (!web.includes("Fraunces") || !web.includes("Source+Sans+3") || !web.includes("Bitter")) {
+  fail("webChrome debe cargar Fraunces + Bitter + Source Sans 3");
 }
 
 const semaforo = read("src/components/SemaforoVeredicto.tsx");
