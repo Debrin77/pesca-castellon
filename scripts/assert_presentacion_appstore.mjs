@@ -77,6 +77,8 @@ must("App.tsx", [
   "presentacionVirtudesVista",
   "OnboardingScreen",
   "PantallaBloqueo",
+  "PantallaLogoApertura",
+  "LOGO_APERTURA_MS",
   "mostrarOnboarding",
   "Fraunces_700Bold",
   "Fraunces_600SemiBold",
