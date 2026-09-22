@@ -17,6 +17,8 @@ import { COLORS, RADIUS, SHADOW } from "../theme";
 import { accesoDeZona } from "../data/accesosZonas";
 import { abrirEnMaps } from "../utils/abrirEnMaps";
 import TerminoAyuda from "../components/TerminoAyuda";
+import { habitatDeZona } from "../services/habitatService";
+import { ETIQUETA_PROFUNDIDAD, ETIQUETA_TAG } from "../data/habitat";
 
 interface Props {
   route: { params: { zoneId: string } };
@@ -71,6 +73,7 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
 
   const mesActual = MESES[new Date().getMonth()];
   const cara = caraDeZona(zone);
+  const habitat = habitatDeZona(zone.id, provincia.id);
 
   async function toggleFav() {
     const ahora = await alternarFavorito(zone.id, zone.nombre);
@@ -94,6 +97,30 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
         <Text style={styles.badgeEstado}>Zona {zone.estadoZona}</Text>
       </View>
       <Text style={styles.desc}>{zone.descripcion}</Text>
+
+      {habitat ? (
+        <View style={styles.habitatBox} accessibilityRole="summary">
+          <Text style={styles.habitatKicker}>Hábitat del sitio</Text>
+          {habitat.profundidad ? (
+            <Text style={styles.habitatProf}>
+              {ETIQUETA_PROFUNDIDAD[habitat.profundidad]}
+            </Text>
+          ) : null}
+          <View style={styles.habitatChips}>
+            {habitat.tags.map((t) => (
+              <Text key={t} style={styles.habitatChip}>
+                {ETIQUETA_TAG[t]}
+              </Text>
+            ))}
+          </View>
+          <Text style={styles.habitatNota}>{habitat.nota}</Text>
+          {habitat.fuente ? (
+            <Text style={styles.habitatFuente}>Orientativo · {habitat.fuente}</Text>
+          ) : (
+            <Text style={styles.habitatFuente}>Orientativo · no sustituye el cartel del tramo</Text>
+          )}
+        </View>
+      ) : null}
 
       {Array.isArray(zone.avisos) && zone.avisos.length > 0 ? (
         <View style={styles.avisosBox}>
@@ -304,6 +331,50 @@ const styles = StyleSheet.create({
   accesoDetalle: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 20, marginTop: 2 },
   accesoMaps: { marginTop: 4, fontSize: 13, fontWeight: '700', color: COLORS.water },
   accesoAviso: { fontSize: 12, color: COLORS.textMuted, marginTop: 4, fontStyle: 'italic' },
+
+  habitatBox: {
+    marginTop: 12,
+    marginBottom: 4,
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  habitatKicker: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: COLORS.textSecondary,
+    marginBottom: 6,
+  },
+  habitatProf: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: COLORS.waterDark,
+    marginBottom: 8,
+  },
+  habitatChips: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 8 },
+  habitatChip: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.primaryDark,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: RADIUS.pill,
+    overflow: "hidden",
+  },
+  habitatNota: { fontSize: 14, color: COLORS.textPrimary, lineHeight: 20 },
+  habitatFuente: {
+    fontSize: 11,
+    color: COLORS.textMuted,
+    marginTop: 8,
+    fontStyle: "italic",
+  },
 
   container: { flex: 1, backgroundColor: COLORS.background },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },

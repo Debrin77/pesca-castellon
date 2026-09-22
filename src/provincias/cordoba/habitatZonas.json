@@ -1,0 +1,75 @@
+{
+  "_meta": "Hábitat orientativo (guías/foros/campo). No sustituye cartografía ni normativa.",
+  "embalse_de_iznajar": {
+    "tags": ["cola", "brazo", "vegetacion", "troncos", "limo", "canal", "piedra"],
+    "profundidad": "variable",
+    "nota": "Mayor embalse andaluz: cola Genil 1–6 m con vegetación/troncos (bass); limo 4–8 m en brazos (carpa); canal para lucioperca.",
+    "fuente": "guiadepesca.es · haypesca.es"
+  },
+  "embalse_de_la_brena_brena_ii": {
+    "tags": ["brazo", "cobertura", "vegetacion", "limo", "orilla_escarpada"],
+    "profundidad": "variable",
+    "nota": "Brazos con cobertura y limo; orillas más abruptas en sectores de presa.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "embalse_guadalmellato": {
+    "tags": ["vegetacion", "cobertura", "limo", "brazo", "cola"],
+    "profundidad": "media",
+    "nota": "Clásico ciprinícola/bass: vegetación de orilla y limo en brazos.",
+    "fuente": "Guías embalses Córdoba"
+  },
+  "embalse_de_sierra_boyera": {
+    "tags": ["estiaje", "limo", "orilla_suave", "brazo"],
+    "profundidad": "variable",
+    "nota": "Nivel muy variable (estiaje); limo y orillas suaves cuando hay agua.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "embalse_de_vadomojon": {
+    "tags": ["limo", "brazo", "vegetacion", "cola"],
+    "profundidad": "media",
+    "nota": "Brazos limosos y colas para carpa/barbo; cobertura ligera en márgenes.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "embalse_de_puente_nuevo": {
+    "tags": ["roca", "cobertura", "brazo", "agua_clara"],
+    "profundidad": "variable",
+    "nota": "Sierra: más roca/cobertura que limo puro; útil a bass.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "embalse_de_san_rafael_de_navallana": {
+    "tags": ["limo", "vegetacion", "brazo", "urbano"],
+    "profundidad": "media",
+    "nota": "Cercano a capital: limo y vegetación de orilla; presión alta fines de semana.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "embalse_de_yeguas": {
+    "tags": ["limo", "cola", "vegetacion", "brazo"],
+    "profundidad": "media",
+    "nota": "Cola y brazos limosos; ciprínidos y bass en cobertura de orilla.",
+    "fuente": "Notas de campo Córdoba"
+  },
+  "guadalquivir_cordoba_capital": {
+    "tags": ["urbano", "escollera", "remanso", "limo", "canal"],
+    "profundidad": "media",
+    "nota": "Tramo urbano con escolleras y remansos; carpa/alburno/siluro según normativa.",
+    "fuente": "Notas Guadalquivir Córdoba"
+  },
+  "guadalquivir_montoro": {
+    "tags": ["remanso", "grava", "corriente", "limo"],
+    "profundidad": "variable",
+    "nota": "Meandros y tablas: remansos limosos y tramos con más corriente/grava.",
+    "fuente": "Notas Guadalquivir Córdoba"
+  },
+  "guadalquivir_palma_del_rio": {
+    "tags": ["remanso", "limo", "vegetacion", "juncos"],
+    "profundidad": "media",
+    "nota": "Remansos con limo y vegetación de ribera; ciprínidos.",
+    "fuente": "Notas Guadalquivir Córdoba"
+  },
+  "embalse_del_retortillo": {
+    "tags": ["vegetacion", "cobertura", "limo", "brazo"],
+    "profundidad": "variable",
+    "nota": "Límite provincial: cobertura y limo en brazos.",
+    "fuente": "Notas de campo Andalucía"
+  }
+}
