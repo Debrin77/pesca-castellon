@@ -1140,8 +1140,14 @@ export default function HomeScreen({ navigation }: Props) {
                 fuente,
                 etiqueta: r.candidato.nombre,
               });
-              if (r.candidato.zoneId) {
-                navigation.navigate("ZoneDetail", { zoneId: r.candidato.zoneId });
+              // Solo ficha ZoneDetail si el id existe en el catálogo de la provincia
+              // (recomendaciones del mapa usan ids de tramo GeoJSON, no de ficha).
+              const zid = r.candidato.zoneId;
+              const zonaConocida =
+                !!zid &&
+                (provincia.zones as { id: string }[]).some((z) => z.id === zid);
+              if (zonaConocida) {
+                navigation.navigate("ZoneDetail", { zoneId: zid });
                 return;
               }
               navigation.navigate("Mapa", {

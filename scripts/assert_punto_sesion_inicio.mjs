@@ -50,8 +50,11 @@ if (!home.includes("puntoElegido &&")) {
   fail("puntoExplicito / consultaViva debe exigir puntoElegido de esta sesión");
 }
 // Tocar recomendación fija el punto (desbloquea veredicto al volver).
-if (!/onAbrir=\{\(r\) => \{[\s\S]{0,500}fijarPunto\(/.test(home)) {
+if (!/onAbrir=\{\(r\) => \{[\s\S]{0,800}fijarPunto\(/.test(home)) {
   fail("Hoy te conviene debe fijarPunto al tocar una recomendación");
+}
+if (!home.includes("zonaConocida")) {
+  fail("Recomendación: no abrir ZoneDetail con ids de tramo GeoJSON");
 }
 
 const pkg = read("package.json");
