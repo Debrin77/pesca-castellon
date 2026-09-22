@@ -31,6 +31,9 @@ const consejos = read("src/data/consejos.ts");
 if (!home.includes("<RecomendacionHoyCard") || !rec.includes("Hoy te conviene")) {
   fail("Inicio sin recomendación «Hoy te conviene»");
 }
+if (!rec.includes("elegirRecomendacionesHoyPack") || !rec.includes("modosLista")) {
+  fail("Hoy te conviene debe resumir modalidades (pack + lista)");
+}
 if (!home.includes("antesAbierto") || !home.includes("setAntesAbierto")) {
   fail("Inicio sin «Antes de salir» plegable");
 }
