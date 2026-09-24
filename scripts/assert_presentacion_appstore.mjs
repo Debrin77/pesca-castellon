@@ -48,7 +48,7 @@ must("src/screens/OnboardingScreen.tsx", [
   "Hoy pinta",
   "Solo en este móvil",
   "Salgo a pescar",
-  "Sal al agua con criterio",
+  "¿Puedo? ¿Pinta? Sal.",
   "Río · Orilla · Barco",
   "Oficial / orientativo",
   "Desliza para ver",

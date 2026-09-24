@@ -98,7 +98,7 @@ export const SHADOW_SOFT = {
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 /**
- * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Bitter (marca / cuaderno).
+ * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Bitter (marca / bitácora).
  * Bitter: slab serif de campo y outdoor, tipografía del sector pesca.
  */
 export const FONTS = {
@@ -110,14 +110,14 @@ export const FONTS = {
   display: "Fraunces_700Bold",
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
-  /** Wordmark «Cuaderno de pesca» (splash / puerta). */
+  /** Wordmark «Bitácora de pesca» (splash / puerta). */
   brand: "Bitter_700Bold",
   brandSemi: "Bitter_600SemiBold",
 };
 
 /**
  * Escala tipográfica de producto (pesca de campo).
- * Bitter = wordmark de marca (cuaderno).
+ * Bitter = wordmark de marca (bitácora).
  * Fraunces = veredicto / títulos de sheet.
  * Source Sans = UI, chips de mapa, cuerpo y meta.
  */

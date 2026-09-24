@@ -53,8 +53,8 @@ const ajustes = read("src/screens/AjustesScreen.tsx");
 if (!ajustes.includes("confirmarCambiarProvincia")) {
   fail("Ajustes debe confirmar antes de cambiar provincia");
 }
-if (!ajustes.includes("no se borra el cuaderno")) {
-  fail("Ajustes debe aclarar que el cuaderno no se borra");
+if (!ajustes.includes("no se borra la bitácora")) {
+  fail("Ajustes debe aclarar que la bitácora no se borra");
 }
 
 const sel = read("src/screens/SelectorProvinciaScreen.tsx");

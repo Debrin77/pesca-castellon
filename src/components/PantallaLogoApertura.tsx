@@ -55,7 +55,7 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   }, [listoParaSalir, onFin, opacity]);
 
   return (
-    <View style={styles.root} accessibilityLabel="Cuaderno de pesca">
+    <View style={styles.root} accessibilityLabel="Bitácora de pesca">
       <StatusBar style="light" />
       <LinearGradient colors={[...GRADIENTS.primary]} style={StyleSheet.absoluteFill} />
       <OndaAgua intensidad={0.9} />
@@ -74,14 +74,14 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
             size={logoSize}
             animar
             hiRes
-            accessibilityLabel="Logo Cuaderno de pesca"
+            accessibilityLabel="Logo Bitácora de pesca"
           />
         </View>
         <View style={styles.textoBlock}>
           <Text style={styles.marca} accessibilityRole="header">
-            Cuaderno de pesca
+            Bitácora de pesca
           </Text>
-          <Text style={styles.eslogan}>Tu cuaderno de orilla · con criterio</Text>
+          <Text style={styles.eslogan}>¿Puedo? ¿Pinta? Sal.</Text>
         </View>
       </Animated.View>
     </View>

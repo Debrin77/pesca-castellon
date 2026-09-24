@@ -149,7 +149,7 @@ export default function AjustesScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.lead}>
-        Tu cuaderno de pesca es personal: PIN, biometria y datos locales en este
+        Tu bitácora de pesca es personal: PIN, biometria y datos locales en este
         dispositivo. Compartir un sitio es opcional, no el motivo de la app.
       </Text>
 
@@ -160,7 +160,7 @@ export default function AjustesScreen() {
             <Text style={styles.rowTitle}>{provincia.nombre}</Text>
             <Text style={styles.rowSub}>
               El mapa, los sitios y las capturas guardados son por provincia. Al
-              cambiar, no se borra el cuaderno de la anterior.
+              cambiar, no se borra la bitácora de la anterior.
             </Text>
           </View>
         </View>

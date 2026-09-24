@@ -43,10 +43,11 @@ for (const n of [
   "OndaAgua",
   "pantalla completa",
   "listoParaSalir",
-  "Cuaderno de pesca",
+  "Bitácora de pesca",
   "FONTS.brand",
   "useWindowDimensions",
   "hiRes",
+  "¿Puedo? ¿Pinta? Sal.",
 ]) {
   if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
 }
@@ -62,7 +63,7 @@ for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes"]
 
 const theme = fs.readFileSync(path.join(root, "src/theme.ts"), "utf8");
 if (!theme.includes("Bitter_700Bold") || !theme.includes("brand:")) {
-  fail("theme debe definir FONTS.brand con Bitter (cuaderno de pesca)");
+  fail("theme debe definir FONTS.brand con Bitter (bitácora de pesca)");
 }
 
 const appFonts = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
@@ -82,7 +83,7 @@ if (!web.includes("Bitter")) {
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");
-if (!sel.includes("LogoMarca") || !sel.includes("Tu cuaderno de orilla")) {
+if (!sel.includes("LogoMarca") || !sel.includes("¿Puedo? ¿Pinta? Sal.")) {
   fail("Selector debe invitar con logo + eslogan");
 }
 
