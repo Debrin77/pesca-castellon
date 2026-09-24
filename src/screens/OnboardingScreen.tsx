@@ -208,8 +208,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </TouchableOpacity>
 
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
-        <LogoMarca size={64} accessibilityLabel="Logo Bitácora de pesca" />
-        <Text style={styles.brand}>Bitácora de pesca</Text>
+        <LogoMarca size={96} accessibilityLabel="Logo Bitácora de pesca" />
       </Animated.View>
 
       <ScrollView
@@ -673,18 +672,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 1,
     paddingHorizontal: 16,
-  },
-  brand: {
-    textAlign: "center",
-    color: "#fff6e8",
-    fontFamily: FONTS.brand,
-    letterSpacing: -0.6,
-    fontSize: 24,
-    lineHeight: 28,
-    marginTop: 10,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
   },
   pager: { flex: 1, zIndex: 1 },
   slide: {

@@ -1,5 +1,6 @@
 /**
  * Assert: logo parche bordado como marca (icono, splash, puerta, Inicio).
+ * Wordmark «Bitácora de pesca» va en el propio asset del parche.
  */
 import fs from "fs";
 import path from "path";
@@ -25,6 +26,11 @@ for (const f of [
   if (!fs.existsSync(path.join(brand, f))) fail(`falta assets/brand/${f}`);
 }
 
+const attribution = fs.readFileSync(path.join(brand, "ATTRIBUTION.md"), "utf8");
+if (!attribution.includes("BITÁCORA DE PESCA") && !attribution.includes("Bitácora de pesca")) {
+  fail("ATTRIBUTION debe documentar el wordmark Bitácora de pesca en el parche");
+}
+
 const app = fs.readFileSync(path.join(root, "app.json"), "utf8");
 for (const n of [
   '"./assets/brand/icon.png"',
@@ -43,18 +49,14 @@ for (const n of [
   "OndaAgua",
   "pantalla completa",
   "listoParaSalir",
-  "Bitácora",
-  "de pesca",
-  "FONTS.brand",
+  "Bitácora de pesca",
   "useWindowDimensions",
   "hiRes",
-  "marcaLead",
-  "marcaTrail",
 ]) {
   if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
 }
-if (splash.includes("eslogan") || splash.includes("¿Puedo? ¿Pinta? Sal.")) {
-  fail("PantallaLogoApertura debe mostrar solo el wordmark, sin eslogan");
+if (splash.includes("eslogan") || splash.includes("¿Puedo? ¿Pinta? Sal.") || splash.includes("marcaLead")) {
+  fail("PantallaLogoApertura: el wordmark va en el parche, sin texto UI duplicado ni eslogan");
 }
 const durMatch = splash.match(/LOGO_APERTURA_MS\s*=\s*(\d+)/);
 if (!durMatch || Number(durMatch[1]) < 4000) {
@@ -79,7 +81,7 @@ if (!appFonts.includes("aperturaT0")) {
   fail("App debe cronometrar la apertura desde el arranque");
 }
 if (!appFonts.includes("Syne_800ExtraBold")) {
-  fail("App debe cargar Syne para el wordmark de apertura");
+  fail("App debe cargar Syne para tipografía de marca");
 }
 
 const web = fs.readFileSync(path.join(root, "src/webChrome.ts"), "utf8");
@@ -88,16 +90,16 @@ if (!web.includes("Syne")) {
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");
-if (!sel.includes("LogoMarca") || !sel.includes("Bitácora") || !sel.includes("de pesca")) {
-  fail("Selector debe invitar con logo + wordmark Bitácora de pesca");
+if (!sel.includes("LogoMarca") || !sel.includes("Bitácora de pesca")) {
+  fail("Selector debe mostrar logo Bitácora de pesca");
 }
-if (sel.includes("eslogan") || sel.includes("¿Puedo? ¿Pinta? Sal.")) {
-  fail("Selector no debe mostrar eslogan bajo la marca");
+if (sel.includes("brandLead") || sel.includes("eslogan") || sel.includes("¿Puedo? ¿Pinta? Sal.")) {
+  fail("Selector: wordmark en el parche, sin texto UI duplicado ni eslogan");
 }
 
 const onb = fs.readFileSync(path.join(root, "src/screens/OnboardingScreen.tsx"), "utf8");
 if (!onb.includes("LogoMarca")) fail("Onboarding debe mostrar logo de marca");
-if (!onb.includes("Bitácora de pesca")) fail("Onboarding debe mostrar wordmark Bitácora de pesca");
+if (!onb.includes("Bitácora de pesca")) fail("Onboarding debe etiquetar logo Bitácora de pesca");
 if (onb.includes("brandTag") || onb.includes("¿Puedo? ¿Pinta? Sal.")) {
   fail("Onboarding no debe mostrar eslogan bajo la marca");
 }
@@ -107,7 +109,6 @@ if (!home.includes("LogoMarcaEstatico") || !home.includes("brandRow")) {
   fail("Inicio debe llevar marca (logo) como hero, sin texto del nombre");
 }
 if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
-  // Allow accessibilityLabel; forbid visible Text with nombreApp in hero brand
   const heroSlice = home.slice(
     home.indexOf("<AtmosferaMeteo"),
     home.indexOf("veredictoRapido") > 0 ? home.indexOf("veredictoRapido") : home.length
@@ -123,6 +124,12 @@ if (!pkg.includes("assert_logo_marca.mjs")) {
 }
 if (!pkg.includes("@expo-google-fonts/syne")) {
   fail("package.json debe incluir @expo-google-fonts/syne");
+}
+
+// Assets de marca deben ser recientes / no vacíos (wordmark en PNG)
+for (const f of ["logo.png", "mark.png", "splash-logo.png", "icon.png"]) {
+  const st = fs.statSync(path.join(brand, f));
+  if (st.size < 20_000) fail(`${f} parece demasiado pequeño (${st.size} bytes)`);
 }
 
 if (fallos) {

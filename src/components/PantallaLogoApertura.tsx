@@ -3,7 +3,6 @@ import {
   Animated,
   Easing,
   StyleSheet,
-  Text,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -12,7 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LogoMarca from "./LogoMarca";
 import OndaAgua from "./OndaAgua";
-import { COLORS, FONTS, GRADIENTS } from "../theme";
+import { COLORS, GRADIENTS } from "../theme";
 
 /** Duración mínima a pantalla completa en cada apertura (ms). */
 export const LOGO_APERTURA_MS = 4200;
@@ -26,6 +25,7 @@ type Props = {
 /**
  * Presentación de marca a pantalla completa al abrir la app
  * (y antes de la presentación de virtudes, si toca).
+ * El wordmark «Bitácora de pesca» va bordado en el propio parche.
  */
 export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: Props) {
   const opacity = useRef(new Animated.Value(1)).current;
@@ -33,12 +33,10 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // Solo wordmark abajo: el logo ocupa casi todo el alto útil.
   const padTop = Math.max(insets.top, 8);
   const padBottom = Math.max(insets.bottom, 16);
-  const textoBudget = 88;
-  const usableH = Math.max(280, height - padTop - padBottom - textoBudget);
-  const logoSize = Math.min(width * 0.98, usableH);
+  const usableH = Math.max(280, height - padTop - padBottom);
+  const logoSize = Math.min(width * 0.92, usableH * 0.92);
 
   useEffect(() => {
     if (!listoParaSalir || finLanzado.current) return;
@@ -77,10 +75,6 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
             accessibilityLabel="Logo Bitácora de pesca"
           />
         </View>
-        <View style={styles.textoBlock} accessibilityRole="header">
-          <Text style={styles.marcaLead}>Bitácora</Text>
-          <Text style={styles.marcaTrail}>de pesca</Text>
-        </View>
       </Animated.View>
     </View>
   );
@@ -95,39 +89,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   logoStage: {
     flex: 1,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-  textoBlock: {
-    alignItems: "center",
-    gap: 2,
-    paddingHorizontal: 24,
-    paddingBottom: 10,
-    maxWidth: 440,
-  },
-  /** Syne: geométrica moderna, contraste con el parche bordado. */
-  marcaLead: {
-    fontFamily: FONTS.brand,
-    fontSize: 40,
-    lineHeight: 44,
-    letterSpacing: -0.8,
-    color: "#fff6e8",
-    textAlign: "center",
-    fontWeight: "800",
-  },
-  marcaTrail: {
-    fontFamily: FONTS.brandSemi,
-    fontSize: 15,
-    lineHeight: 20,
-    letterSpacing: 4.2,
-    textTransform: "lowercase",
-    color: "rgba(255, 246, 232, 0.72)",
-    textAlign: "center",
-    fontWeight: "600",
   },
 });
