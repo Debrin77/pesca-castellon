@@ -33,7 +33,7 @@ jobs:
         run: npm run assert
 
       - name: Compilar la versión web (Expo)
-        run: npx expo export --platform web
+        run: npm run build:web
 
       - name: Permitir la carpeta _expo en GitHub Pages
         run: touch dist/.nojekyll
