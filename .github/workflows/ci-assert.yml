@@ -1,0 +1,38 @@
+# Comprueba el producto en cada PR (y al pulsar manualmente).
+# Así la IA / cualquier cambio no fusiona norma rota.
+
+name: Comprobar app (assert)
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: assert-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Briefing pack temporada
+        run: npm run season:briefing
+
+      - name: Asserts de producto
+        run: npm run assert

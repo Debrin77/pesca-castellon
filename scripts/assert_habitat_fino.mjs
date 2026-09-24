@@ -82,8 +82,13 @@ const top = read("src/components/TopSitiosEspecie.tsx");
 if (!top.includes("habitatResumen")) fail("TopSitiosEspecie sin habitatResumen");
 
 const zone = read("src/screens/ZoneDetailScreen.tsx");
-for (const n of ["habitatDeZona", "Hábitat del sitio", "ETIQUETA_TAG", "habitatChips"]) {
+for (const n of ["habitatDeZona", "ProfundidadHabitatHoy"]) {
   if (!zone.includes(n)) fail(`ZoneDetail sin ${n}`);
+}
+
+const profundidad = read("src/components/ProfundidadHabitatHoy.tsx");
+for (const n of ["Profundidad y hábitat hoy", "lecturaPesca", "etiquetaSello"]) {
+  if (!profundidad.includes(n)) fail(`ProfundidadHabitatHoy sin ${n}`);
 }
 
 const pkg = read("package.json");
