@@ -210,7 +210,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
         <LogoMarca size={64} accessibilityLabel="Logo Pesca" />
         <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
-        <Text style={styles.brandTag}>Sal al agua con criterio</Text>
+        <Text style={styles.brandTag}>¿Puedo? ¿Pinta? Sal.</Text>
       </Animated.View>
 
       <ScrollView

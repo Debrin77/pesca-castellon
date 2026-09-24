@@ -11,7 +11,7 @@ export function confirmarCambiarProvincia(
   const titulo = "Cambiar provincia";
   const mensaje =
     `Tus capturas, puntos y rutas de ${nombreActual} se quedan guardados.\n\n` +
-    "Solo cambiarás el mapa y las normas. Cada provincia guarda su propio cuaderno.";
+    "Solo cambiarás el mapa y las normas. Cada provincia guarda su propia bitácora.";
 
   if (Platform.OS === "web" && typeof window !== "undefined") {
     if (window.confirm(`${titulo}\n\n${mensaje}`)) {

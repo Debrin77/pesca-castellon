@@ -11,7 +11,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 
 | Sí | No |
 | --- | --- |
-| Cuaderno privado en el dispositivo | Feed social / ranking |
+| Bitácora privada en el dispositivo | Feed social / ranking |
 | PIN + biometría para proteger capturas y sitios | Cuenta obligatoria en la nube |
 | Semáforo legal claro (oficial vs orientativo) | Sustituir el cartel o la sede oficial |
 | Exportar GPX cuando *tú* quieras | Publicar GPS de capturas por defecto |
