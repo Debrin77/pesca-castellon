@@ -90,9 +90,7 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.marcaBlock}>
-          <LogoMarca size={108} animar accessibilityLabel="Logo Bitácora de pesca" />
-          <Text style={styles.brandLead}>Bitácora</Text>
-          <Text style={styles.brandTrail}>de pesca</Text>
+          <LogoMarca size={148} animar accessibilityLabel="Logo Bitácora de pesca" />
         </View>
         <Text style={styles.titulo}>
           {desdeAjustes ? "Cambiar provincia" : "¿Dónde vas a pescar?"}
@@ -159,22 +157,6 @@ const styles = StyleSheet.create({
   marcaBlock: {
     alignItems: "center",
     marginBottom: 22,
-  },
-  brandLead: {
-    color: "#fff6e8",
-    fontSize: 34,
-    fontWeight: "800",
-    fontFamily: FONTS.brand,
-    letterSpacing: -0.7,
-    marginTop: 14,
-  },
-  brandTrail: {
-    color: "rgba(255,246,232,0.72)",
-    fontSize: 13,
-    fontWeight: "600",
-    fontFamily: FONTS.brandSemi,
-    letterSpacing: 3.8,
-    marginBottom: 2,
   },
   titulo: {
     color: "#fff",
