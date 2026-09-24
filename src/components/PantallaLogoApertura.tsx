@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -26,10 +26,12 @@ type Props = {
  * Presentación de marca a pantalla completa al abrir la app
  * (y antes de la presentación de virtudes, si toca).
  * El wordmark «Vámonos de pesca» va bordado en el propio parche.
+ * No cierra hasta que el PNG del logo ha cargado (o timeout de seguridad).
  */
 export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: Props) {
   const opacity = useRef(new Animated.Value(1)).current;
   const finLanzado = useRef(false);
+  const [logoListo, setLogoListo] = useState(false);
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -39,7 +41,8 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   const logoSize = Math.min(width * 0.92, usableH * 0.92);
 
   useEffect(() => {
-    if (!listoParaSalir || finLanzado.current) return;
+    // Sin imagen visible no tiene sentido el fade-out: el usuario solo vería verde.
+    if (!listoParaSalir || !logoListo || finLanzado.current) return;
     finLanzado.current = true;
     Animated.timing(opacity, {
       toValue: 0,
@@ -50,7 +53,7 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
     }).start(({ finished }) => {
       if (finished) onFin?.();
     });
-  }, [listoParaSalir, onFin, opacity]);
+  }, [listoParaSalir, logoListo, onFin, opacity]);
 
   return (
     <View style={styles.root} accessibilityLabel="Vámonos de pesca">
@@ -73,6 +76,7 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
             animar
             hiRes
             accessibilityLabel="Logo Vámonos de pesca"
+            onListo={() => setLogoListo(true)}
           />
         </View>
       </Animated.View>

@@ -53,11 +53,16 @@ for (const n of [
   "Vámonos de pesca",
   "useWindowDimensions",
   "hiRes",
+  "logoListo",
+  "onListo",
 ]) {
   if (!splash.includes(n)) fail(`PantallaLogoApertura sin ${n}`);
 }
 if (splash.includes("eslogan") || splash.includes("¿Puedo? ¿Pinta? Sal.") || splash.includes("marcaLead")) {
   fail("PantallaLogoApertura: el wordmark va en el parche, sin texto UI duplicado ni eslogan");
+}
+if (!splash.includes("!listoParaSalir || !logoListo")) {
+  fail("PantallaLogoApertura no debe cerrar el splash antes de que cargue el logo");
 }
 const durMatch = splash.match(/LOGO_APERTURA_MS\s*=\s*(\d+)/);
 if (!durMatch || Number(durMatch[1]) < 4000) {
@@ -65,11 +70,25 @@ if (!durMatch || Number(durMatch[1]) < 4000) {
 }
 
 const logo = fs.readFileSync(path.join(root, "src/components/LogoMarca.tsx"), "utf8");
-for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes", "HIRES_MIN"]) {
+for (const n of [
+  "mark.png",
+  "logo.png",
+  "animar",
+  "LogoMarcaEstatico",
+  "hiRes",
+  "HIRES_MIN",
+  "prefetchLogoMarca",
+  "onLoad",
+  "onListo",
+  "resolveAssetSource",
+]) {
   if (!logo.includes(n)) fail(`LogoMarca sin ${n}`);
 }
 if (!logo.includes("size >= HIRES_MIN ? LOGO_HI")) {
   fail("LogoMarcaEstatico/LogoMarca deben usar logo.png cuando el tamaño permite leer el wordmark");
+}
+if (!logo.includes("styles.clip") && !logo.includes("overflow: \"hidden\"")) {
+  fail("LogoMarca debe recortar el círculo en un nodo sin transform (Safari iOS)");
 }
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
@@ -108,6 +127,9 @@ if (!appFonts.includes("aperturaT0")) {
 if (!appFonts.includes("Syne_800ExtraBold")) {
   fail("App debe cargar Syne para tipografía de marca");
 }
+if (!appFonts.includes("prefetchLogoMarca")) {
+  fail("App debe precargar el logo al arrancar (prefetchLogoMarca)");
+}
 
 const web = fs.readFileSync(path.join(root, "src/webChrome.ts"), "utf8");
 if (!web.includes("Syne")) {
@@ -137,10 +159,18 @@ if (!pkg.includes("@expo-google-fonts/syne")) {
   fail("package.json debe incluir @expo-google-fonts/syne");
 }
 
-// Assets de marca deben ser recientes / no vacíos (wordmark en PNG)
+// Assets de marca: no vacíos, y el PNG de UI debe caber en móvil (3G/4G).
 for (const f of ["logo.png", "mark.png", "splash-logo.png", "icon.png"]) {
   const st = fs.statSync(path.join(brand, f));
-  if (st.size < 20_000) fail(`${f} parece demasiado pequeño (${st.size} bytes)`);
+  if (st.size < 8_000) fail(`${f} parece demasiado pequeño (${st.size} bytes)`);
+}
+const logoBytes = fs.statSync(path.join(brand, "logo.png")).size;
+if (logoBytes > 350_000) {
+  fail(`logo.png demasiado pesado para móvil (${logoBytes} bytes; máx 350KB)`);
+}
+const splashBytes = fs.statSync(path.join(brand, "splash-logo.png")).size;
+if (splashBytes > 450_000) {
+  fail(`splash-logo.png demasiado pesado (${splashBytes} bytes; máx 450KB)`);
 }
 
 if (fallos) {
