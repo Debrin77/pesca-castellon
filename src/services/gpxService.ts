@@ -59,7 +59,7 @@ export function construirGpx(opts: {
 
   return (
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<gpx version="1.1" creator="Pesca Castellón" xmlns="http://www.topografix.com/GPX/1/1">\n` +
+    `<gpx version="1.1" creator="Vámonos de pesca" xmlns="http://www.topografix.com/GPX/1/1">\n` +
     `  <metadata><name>${escXml(opts.nombre)}</name><time>${now}</time></metadata>\n` +
     wpts.join("\n") +
     (wpts.length ? "\n" : "") +

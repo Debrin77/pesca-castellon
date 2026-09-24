@@ -1,6 +1,6 @@
 /**
  * Assert: logo parche bordado como marca (icono, splash, puerta, Inicio).
- * Wordmark «Bitácora de pesca» va en el propio asset del parche.
+ * Wordmark «Vámonos de pesca» va en el propio asset del parche.
  */
 import fs from "fs";
 import path from "path";
@@ -27,8 +27,8 @@ for (const f of [
 }
 
 const attribution = fs.readFileSync(path.join(brand, "ATTRIBUTION.md"), "utf8");
-if (!attribution.includes("BITÁCORA DE PESCA") && !attribution.includes("Bitácora de pesca")) {
-  fail("ATTRIBUTION debe documentar el wordmark Bitácora de pesca en el parche");
+if (!attribution.includes("VÁMONOS DE PESCA") && !attribution.includes("Vámonos de pesca")) {
+  fail("ATTRIBUTION debe documentar el wordmark Vámonos de pesca en el parche");
 }
 
 const app = fs.readFileSync(path.join(root, "app.json"), "utf8");
@@ -38,6 +38,7 @@ for (const n of [
   '"./assets/brand/adaptive-icon.png"',
   '"./assets/brand/favicon.png"',
   '"#0c2c20"',
+  "Vámonos de pesca",
 ]) {
   if (!app.includes(n)) fail(`app.json sin ${n}`);
 }
@@ -49,7 +50,7 @@ for (const n of [
   "OndaAgua",
   "pantalla completa",
   "listoParaSalir",
-  "Bitácora de pesca",
+  "Vámonos de pesca",
   "useWindowDimensions",
   "hiRes",
 ]) {
@@ -77,10 +78,10 @@ if (!home.includes("LogoMarcaEstatico") || !home.includes("brandRow")) {
 }
 const homeSize = home.match(/LogoMarcaEstatico\s+size=\{(\d+)\}/);
 if (!homeSize || Number(homeSize[1]) < 120) {
-  fail("Inicio: logo ≥120 px para que se lea BITÁCORA DE PESCA bordado");
+  fail("Inicio: logo ≥120 px para que se lea VÁMONOS DE PESCA bordado");
 }
-if (!home.includes('accessibilityLabel="Bitácora de pesca"')) {
-  fail("Inicio debe etiquetar la marca como Bitácora de pesca");
+if (!home.includes('accessibilityLabel="Vámonos de pesca"')) {
+  fail("Inicio debe etiquetar la marca como Vámonos de pesca");
 }
 if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
   const heroSlice = home.slice(
@@ -94,7 +95,7 @@ if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombr
 
 const theme = fs.readFileSync(path.join(root, "src/theme.ts"), "utf8");
 if (!theme.includes("Syne_800ExtraBold") || !theme.includes("brand:")) {
-  fail("theme debe definir FONTS.brand con Syne (bitácora de pesca)");
+  fail("theme debe definir FONTS.brand con Syne (vámonos de pesca)");
 }
 
 const appFonts = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
@@ -114,8 +115,8 @@ if (!web.includes("Syne")) {
 }
 
 const sel = fs.readFileSync(path.join(root, "src/screens/SelectorProvinciaScreen.tsx"), "utf8");
-if (!sel.includes("LogoMarca") || !sel.includes("Bitácora de pesca")) {
-  fail("Selector debe mostrar logo Bitácora de pesca");
+if (!sel.includes("LogoMarca") || !sel.includes("Vámonos de pesca")) {
+  fail("Selector debe mostrar logo Vámonos de pesca");
 }
 if (sel.includes("brandLead") || sel.includes("eslogan") || sel.includes("¿Puedo? ¿Pinta? Sal.")) {
   fail("Selector: wordmark en el parche, sin texto UI duplicado ni eslogan");
@@ -123,7 +124,7 @@ if (sel.includes("brandLead") || sel.includes("eslogan") || sel.includes("¿Pued
 
 const onb = fs.readFileSync(path.join(root, "src/screens/OnboardingScreen.tsx"), "utf8");
 if (!onb.includes("LogoMarca")) fail("Onboarding debe mostrar logo de marca");
-if (!onb.includes("Bitácora de pesca")) fail("Onboarding debe etiquetar logo Bitácora de pesca");
+if (!onb.includes("Vámonos de pesca")) fail("Onboarding debe etiquetar logo Vámonos de pesca");
 if (onb.includes("brandTag") || onb.includes("¿Puedo? ¿Pinta? Sal.")) {
   fail("Onboarding no debe mostrar eslogan bajo la marca");
 }
