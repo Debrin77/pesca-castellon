@@ -153,3 +153,15 @@ src/
 - Andalucía (Sevilla / Córdoba): licencia continental + seguro RC del pescador cuando aplique.
 - Castilla-La Mancha (Cuenca): licencia de pesca JCCM (DIANA) + permiso de coto si aplica; sin seguro RC.
 - Pesca marítima recreativa / declaraciones: app oficial **PescaREC** (MAPA).
+
+## Actualizar norma de temporada (sin ser informático)
+
+GitHub te recuerda en nov / dic–feb / jun. Tú solo pegas un prompt en Cursor Agent.
+
+Guía paso a paso: [`.github/PARA_TI_TEMPORADA.md`](.github/PARA_TI_TEMPORADA.md)  
+Playbook para la IA: [`.github/agents/PACK_TEMPORADA.md`](.github/agents/PACK_TEMPORADA.md)
+
+```bash
+npm run season:briefing   # qué temporada mirar y enlaces
+npm run assert            # incluye assert_pack_temporada
+```

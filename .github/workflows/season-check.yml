@@ -1,0 +1,91 @@
+# Recordatorio automático: pack de norma de temporada.
+# Crea (o recuerda) una issue con instrucciones para ti + prompt para la IA.
+# No publica la app sola: abre el recordatorio.
+
+name: Recordatorio pack temporada
+
+on:
+  schedule:
+    # 1 nov — aviso temprano (temporada siguiente)
+    - cron: "0 9 1 11 *"
+    # 1 dic, 15 dic — ventana principal
+    - cron: "0 9 1,15 12 *"
+    # 15 ene, 1 feb — cierre ventana temporada
+    - cron: "0 9 15 1 *"
+    - cron: "0 9 1 2 *"
+    # 1 jun — correcciones a mitad de año
+    - cron: "0 9 1 6 *"
+  workflow_dispatch:
+    inputs:
+      temporada:
+        description: "Año de temporada (vacío = automático)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  recordar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repo (playbook)
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Calcular temporada
+        id: brief
+        env:
+          TEMPORADA: ${{ inputs.temporada }}
+        run: node scripts/season_briefing.mjs --github-out >> "$GITHUB_OUTPUT"
+
+      - name: Asegurar label pack-temporada
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create pack-temporada --color "0E8A16" --description "Actualización norma / vedas de temporada" 2>/dev/null || true
+
+      - name: Buscar issue abierta
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEMPORADA: ${{ steps.brief.outputs.temporada }}
+        run: |
+          NUM=$(gh issue list --label pack-temporada --state open --json number,title --jq \
+            "[.[] | select(.title | test(\"Pack temporada ${TEMPORADA}\"))][0].number // empty")
+          echo "number=${NUM}" >> "$GITHUB_OUTPUT"
+
+      - name: Crear issue nueva
+        if: steps.existing.outputs.number == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEMPORADA: ${{ steps.brief.outputs.temporada }}
+        run: |
+          BODY_FILE=$(mktemp)
+          node scripts/season_briefing.mjs --issue-body > "$BODY_FILE"
+          gh issue create \
+            --title "Pack temporada ${TEMPORADA} — revisar norma por provincia" \
+            --label pack-temporada \
+            --body-file "$BODY_FILE"
+
+      - name: Comentar en issue existente (recordatorio)
+        if: steps.existing.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEMPORADA: ${{ steps.brief.outputs.temporada }}
+        run: |
+          gh issue comment "${{ steps.existing.outputs.number }}" --body "$(cat <<EOF
+          ## Recordatorio automático ($(date -u +%Y-%m-%d))
+
+          Sigue abierta la issue del pack **${TEMPORADA}**.
+          Si aún no lo has hecho: abre Cursor Agent y pega el prompt de la descripción de esta issue.
+
+          Playbook: \`.github/agents/PACK_TEMPORADA.md\`
+          Guía simple: \`.github/PARA_TI_TEMPORADA.md\`
+          EOF
+          )"
