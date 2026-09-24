@@ -16,6 +16,7 @@ import { aplicarEstilosWeb } from "./src/webChrome";
 import BarraTabsScroll from "./src/components/BarraTabsScroll";
 import PantallaBloqueo from "./src/components/PantallaBloqueo";
 import PantallaLogoApertura, { LOGO_APERTURA_MS } from "./src/components/PantallaLogoApertura";
+import { prefetchLogoMarca } from "./src/components/LogoMarca";
 import { AccesoProvider } from "./src/context/AccesoContext";
 import { ProvinciaProvider, useProvincia } from "./src/context/ProvinciaContext";
 import { PuntoConsultaProvider } from "./src/context/PuntoConsultaContext";
@@ -26,6 +27,7 @@ import SelectorProvinciaScreen from "./src/screens/SelectorProvinciaScreen";
 import { presentacionVirtudesVista } from "./src/services/offlineService";
 
 aplicarEstilosWeb();
+prefetchLogoMarca();
 
 import HomeScreen from "./src/screens/HomeScreen";
 import ZonasLibresScreen from "./src/screens/ZonasLibresScreen";
@@ -259,9 +261,10 @@ function AppRaiz({ aperturaT0 }: { aperturaT0: number }) {
   }, [backendOk, aperturaT0]);
 
   // Red de seguridad si el fade no dispara onFin.
+  // Margen amplio: en móvil el PNG puede llegar después del mínimo de marca.
   useEffect(() => {
     if (!listoParaSalirSplash) return;
-    const t = setTimeout(() => setSplashVisible(false), 700);
+    const t = setTimeout(() => setSplashVisible(false), 6500);
     return () => clearTimeout(t);
   }, [listoParaSalirSplash]);
 
