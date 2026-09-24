@@ -1,8 +1,50 @@
 import { Platform } from "react-native";
 
+const BASE_WEB = "/pesca-castellon";
+
+/** Meta + iconos para «Añadir a pantalla de inicio» (iPhone / Android). */
+function inyectarMetaPwa() {
+  if (typeof document === "undefined") return;
+  if (document.getElementById("pesca-pwa-meta")) return;
+
+  const mark = document.createElement("meta");
+  mark.id = "pesca-pwa-meta";
+  mark.name = "pesca-pwa";
+  mark.content = "1";
+  document.head.appendChild(mark);
+
+  const links: { rel: string; href: string; sizes?: string }[] = [
+    { rel: "apple-touch-icon", href: `${BASE_WEB}/apple-touch-icon.png`, sizes: "180x180" },
+    { rel: "manifest", href: `${BASE_WEB}/manifest.webmanifest` },
+  ];
+  for (const l of links) {
+    if (document.querySelector(`link[rel="${l.rel}"][href="${l.href}"]`)) continue;
+    const el = document.createElement("link");
+    el.rel = l.rel;
+    el.href = l.href;
+    if (l.sizes) el.setAttribute("sizes", l.sizes);
+    document.head.appendChild(el);
+  }
+
+  const metas: { name: string; content: string }[] = [
+    { name: "apple-mobile-web-app-capable", content: "yes" },
+    { name: "mobile-web-app-capable", content: "yes" },
+    { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+    { name: "apple-mobile-web-app-title", content: "Vámonos" },
+  ];
+  for (const m of metas) {
+    if (document.querySelector(`meta[name="${m.name}"]`)) continue;
+    const el = document.createElement("meta");
+    el.name = m.name;
+    el.content = m.content;
+    document.head.appendChild(el);
+  }
+}
+
 /** Tipografía y pulido global solo en navegador. */
 export function aplicarEstilosWeb() {
   if (Platform.OS !== "web" || typeof document === "undefined") return;
+  inyectarMetaPwa();
   if (document.getElementById("pesca-web-chrome")) return;
 
   const font = document.createElement("link");
