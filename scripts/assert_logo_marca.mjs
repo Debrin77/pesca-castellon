@@ -64,8 +64,32 @@ if (!durMatch || Number(durMatch[1]) < 4000) {
 }
 
 const logo = fs.readFileSync(path.join(root, "src/components/LogoMarca.tsx"), "utf8");
-for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes"]) {
+for (const n of ["mark.png", "logo.png", "animar", "LogoMarcaEstatico", "hiRes", "HIRES_MIN"]) {
   if (!logo.includes(n)) fail(`LogoMarca sin ${n}`);
+}
+if (!logo.includes("size >= HIRES_MIN ? LOGO_HI")) {
+  fail("LogoMarcaEstatico/LogoMarca deben usar logo.png cuando el tamaño permite leer el wordmark");
+}
+
+const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
+if (!home.includes("LogoMarcaEstatico") || !home.includes("brandRow")) {
+  fail("Inicio debe llevar marca (logo) como hero, sin texto del nombre");
+}
+const homeSize = home.match(/LogoMarcaEstatico\s+size=\{(\d+)\}/);
+if (!homeSize || Number(homeSize[1]) < 120) {
+  fail("Inicio: logo ≥120 px para que se lea BITÁCORA DE PESCA bordado");
+}
+if (!home.includes('accessibilityLabel="Bitácora de pesca"')) {
+  fail("Inicio debe etiquetar la marca como Bitácora de pesca");
+}
+if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
+  const heroSlice = home.slice(
+    home.indexOf("<AtmosferaMeteo"),
+    home.indexOf("veredictoRapido") > 0 ? home.indexOf("veredictoRapido") : home.length
+  );
+  if (heroSlice.includes("{provincia.nombreApp}") && heroSlice.includes("</Text>")) {
+    fail("Hero de Inicio no debe renderizar el texto del nombre de app");
+  }
 }
 
 const theme = fs.readFileSync(path.join(root, "src/theme.ts"), "utf8");
@@ -102,20 +126,6 @@ if (!onb.includes("LogoMarca")) fail("Onboarding debe mostrar logo de marca");
 if (!onb.includes("Bitácora de pesca")) fail("Onboarding debe etiquetar logo Bitácora de pesca");
 if (onb.includes("brandTag") || onb.includes("¿Puedo? ¿Pinta? Sal.")) {
   fail("Onboarding no debe mostrar eslogan bajo la marca");
-}
-
-const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
-if (!home.includes("LogoMarcaEstatico") || !home.includes("brandRow")) {
-  fail("Inicio debe llevar marca (logo) como hero, sin texto del nombre");
-}
-if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
-  const heroSlice = home.slice(
-    home.indexOf("<AtmosferaMeteo"),
-    home.indexOf("veredictoRapido") > 0 ? home.indexOf("veredictoRapido") : home.length
-  );
-  if (heroSlice.includes("{provincia.nombreApp}") && heroSlice.includes("</Text>")) {
-    fail("Hero de Inicio no debe renderizar el texto del nombre de app");
-  }
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");

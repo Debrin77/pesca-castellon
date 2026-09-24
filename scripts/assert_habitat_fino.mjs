@@ -82,8 +82,18 @@ const top = read("src/components/TopSitiosEspecie.tsx");
 if (!top.includes("habitatResumen")) fail("TopSitiosEspecie sin habitatResumen");
 
 const zone = read("src/screens/ZoneDetailScreen.tsx");
-for (const n of ["habitatDeZona", "Hábitat del sitio", "ETIQUETA_TAG", "habitatChips"]) {
+for (const n of ["habitatDeZona", "ProfundidadHabitatHoy"]) {
   if (!zone.includes(n)) fail(`ZoneDetail sin ${n}`);
+}
+
+const prof = read("src/components/ProfundidadHabitatHoy.tsx");
+for (const n of ["habitat", "lecturaProfundidadHoy", "Profundidad y hábitat hoy", "chips"]) {
+  if (!prof.includes(n)) fail(`ProfundidadHabitatHoy sin ${n}`);
+}
+
+const utilProf = read("src/utils/profundidadEmbalseHoy.ts");
+if (!utilProf.includes("ETIQUETA_TAG")) {
+  fail("profundidadEmbalseHoy debe usar ETIQUETA_TAG del hábitat");
 }
 
 const pkg = read("package.json");

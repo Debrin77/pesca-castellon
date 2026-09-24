@@ -620,8 +620,8 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <AtmosferaMeteo codigo={clima?.codigoTiempo ?? 2} />
         <OndaAgua intensidad={0.85} />
-        <View style={styles.brandRow} accessibilityLabel={provincia.nombreApp}>
-          <LogoMarcaEstatico size={88} style={styles.brandMark} />
+        <View style={styles.brandRow} accessibilityLabel="Bitácora de pesca">
+          <LogoMarcaEstatico size={132} style={styles.brandMark} />
           <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
         </View>
         {actualizando ? (
