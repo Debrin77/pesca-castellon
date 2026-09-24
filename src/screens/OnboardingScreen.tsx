@@ -208,7 +208,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </TouchableOpacity>
 
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
-        <LogoMarca size={112} hiRes accessibilityLabel="Logo Bitácora de pesca" />
+        <LogoMarca size={112} hiRes accessibilityLabel="Logo Vámonos de pesca" />
       </Animated.View>
 
       <ScrollView

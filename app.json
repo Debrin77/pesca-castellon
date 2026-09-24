@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Pesca Castellón",
+    "name": "Vámonos de pesca",
     "slug": "pesca-castellon",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -42,8 +42,8 @@
       "bundler": "metro",
       "output": "single",
       "favicon": "./assets/brand/favicon.png",
-      "name": "Pesca Castellón",
-      "shortName": "Pesca CS",
+      "name": "Vámonos de pesca",
+      "shortName": "Vámonos",
       "themeColor": "#0c2c20",
       "backgroundColor": "#eef2ee",
       "lang": "es"

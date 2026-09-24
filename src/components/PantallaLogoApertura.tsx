@@ -25,7 +25,7 @@ type Props = {
 /**
  * Presentación de marca a pantalla completa al abrir la app
  * (y antes de la presentación de virtudes, si toca).
- * El wordmark «Bitácora de pesca» va bordado en el propio parche.
+ * El wordmark «Vámonos de pesca» va bordado en el propio parche.
  */
 export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: Props) {
   const opacity = useRef(new Animated.Value(1)).current;
@@ -53,7 +53,7 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   }, [listoParaSalir, onFin, opacity]);
 
   return (
-    <View style={styles.root} accessibilityLabel="Bitácora de pesca">
+    <View style={styles.root} accessibilityLabel="Vámonos de pesca">
       <StatusBar style="light" />
       <LinearGradient colors={[...GRADIENTS.primary]} style={StyleSheet.absoluteFill} />
       <OndaAgua intensidad={0.9} />
@@ -72,7 +72,7 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
             size={logoSize}
             animar
             hiRes
-            accessibilityLabel="Logo Bitácora de pesca"
+            accessibilityLabel="Logo Vámonos de pesca"
           />
         </View>
       </Animated.View>

@@ -23,7 +23,7 @@ type Props = {
 };
 
 /**
- * Marca del parche bordado: pez al atardecer + «BITÁCORA DE PESCA».
+ * Marca del parche bordado: pez al atardecer + «VÁMONOS DE PESCA».
  * En Inicio y apertura usar tamaño ≥88 y hiRes para que se lea el texto.
  */
 export default function LogoMarca({
@@ -31,7 +31,7 @@ export default function LogoMarca({
   animar = false,
   hiRes = false,
   style,
-  accessibilityLabel = "Bitácora de pesca",
+  accessibilityLabel = "Vámonos de pesca",
 }: Props) {
   const opacity = useRef(new Animated.Value(animar ? 0 : 1)).current;
   const scale = useRef(new Animated.Value(animar ? 0.92 : 1)).current;
@@ -82,7 +82,7 @@ export default function LogoMarca({
 export function LogoMarcaEstatico({
   size = 36,
   style,
-  accessibilityLabel = "Bitácora de pesca",
+  accessibilityLabel = "Vámonos de pesca",
 }: {
   size?: number;
   style?: ViewStyle;

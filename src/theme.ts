@@ -98,7 +98,7 @@ export const SHADOW_SOFT = {
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 /**
- * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Syne (marca / bitácora).
+ * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Syne (marca / vámonos).
  * Syne: sans geométrica moderna; contraste con el parche bordado y curiosidad.
  */
 export const FONTS = {
@@ -110,14 +110,14 @@ export const FONTS = {
   display: "Fraunces_700Bold",
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
-  /** Wordmark «Bitácora de pesca» (splash / puerta). */
+  /** Wordmark «Vámonos de pesca» (splash / puerta). */
   brand: "Syne_800ExtraBold",
   brandSemi: "Syne_600SemiBold",
 };
 
 /**
  * Escala tipográfica de producto (pesca de campo).
- * Syne = wordmark de marca (bitácora).
+ * Syne = wordmark de marca (vámonos de pesca).
  * Fraunces = veredicto / títulos de sheet.
  * Source Sans = UI, chips de mapa, cuerpo y meta.
  */

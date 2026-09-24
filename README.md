@@ -1,4 +1,4 @@
-# Pesca Castellón
+# Vámonos de pesca
 
 App de pesca **personal e íntima** para salir al agua con criterio: normativa
 local, clima, índice de pesca, diario de capturas y ritual de salida. Pensada
