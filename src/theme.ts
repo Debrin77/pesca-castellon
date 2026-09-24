@@ -98,8 +98,8 @@ export const SHADOW_SOFT = {
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 /**
- * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Bitter (marca / bitácora).
- * Bitter: slab serif de campo y outdoor, tipografía del sector pesca.
+ * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Syne (marca / bitácora).
+ * Syne: sans geométrica moderna; contraste con el parche bordado y curiosidad.
  */
 export const FONTS = {
   regular: "SourceSans3_400Regular",
@@ -111,13 +111,13 @@ export const FONTS = {
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
   /** Wordmark «Bitácora de pesca» (splash / puerta). */
-  brand: "Bitter_700Bold",
-  brandSemi: "Bitter_600SemiBold",
+  brand: "Syne_800ExtraBold",
+  brandSemi: "Syne_600SemiBold",
 };
 
 /**
  * Escala tipográfica de producto (pesca de campo).
- * Bitter = wordmark de marca (bitácora).
+ * Syne = wordmark de marca (bitácora).
  * Fraunces = veredicto / títulos de sheet.
  * Source Sans = UI, chips de mapa, cuerpo y meta.
  */
@@ -125,10 +125,10 @@ export const TYPE = {
   /** Wordmark splash / puerta. */
   brandMark: {
     fontFamily: FONTS.brand,
-    fontSize: 36,
-    lineHeight: 42,
-    letterSpacing: 0.15,
-    fontWeight: "700" as const,
+    fontSize: 40,
+    lineHeight: 44,
+    letterSpacing: -0.8,
+    fontWeight: "800" as const,
   },
   displayHero: {
     fontFamily: FONTS.display,

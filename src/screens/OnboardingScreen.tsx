@@ -208,9 +208,8 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       </TouchableOpacity>
 
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
-        <LogoMarca size={64} accessibilityLabel="Logo Pesca" />
-        <Text style={styles.brand}>{provincia.nombreApp ?? "Pesca"}</Text>
-        <Text style={styles.brandTag}>¿Puedo? ¿Pinta? Sal.</Text>
+        <LogoMarca size={64} accessibilityLabel="Logo Bitácora de pesca" />
+        <Text style={styles.brand}>Bitácora de pesca</Text>
       </Animated.View>
 
       <ScrollView
@@ -677,23 +676,15 @@ const styles = StyleSheet.create({
   },
   brand: {
     textAlign: "center",
-    color: "#fff",
-    fontFamily: FONTS.display,
-    letterSpacing: -0.5,
-    fontSize: 26,
-    lineHeight: 30,
+    color: "#fff6e8",
+    fontFamily: FONTS.brand,
+    letterSpacing: -0.6,
+    fontSize: 24,
+    lineHeight: 28,
     marginTop: 10,
     textShadowColor: "rgba(0,0,0,0.35)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 6,
-  },
-  brandTag: {
-    marginTop: 4,
-    color: "rgba(255,248,235,0.88)",
-    fontFamily: FONTS.displayItalic,
-    fontStyle: "italic",
-    fontSize: 14,
-    letterSpacing: 0.2,
   },
   pager: { flex: 1, zIndex: 1 },
   slide: {
