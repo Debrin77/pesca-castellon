@@ -21,7 +21,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ### Entrada y privacidad
 - **Presentación estilo App Store** al entrar (pantallas a pantalla completa con
   virtudes claras: ¿Puedo?, ¿Pinta?, **Río · Orilla · Barco**, **Cómo medir**
-  (placa propia por especie), privacidad, PIN y «Salgo a pescar»). Marca + eslogan,
+  (placa propia por especie), privacidad, PIN y «Salgo a pescar»). Marca wordmark,
   mockups vivos y CTA “Empezar a pescar”.
   Se cierra con la **✕** arriba a la derecha. Se puede volver a ver desde **Ajustes**.
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico

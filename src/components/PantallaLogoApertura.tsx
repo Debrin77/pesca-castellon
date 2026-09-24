@@ -33,10 +33,10 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // Texto abajo: el logo puede ocupar casi todo el alto útil.
+  // Solo wordmark abajo: el logo ocupa casi todo el alto útil.
   const padTop = Math.max(insets.top, 8);
   const padBottom = Math.max(insets.bottom, 16);
-  const textoBudget = 96;
+  const textoBudget = 88;
   const usableH = Math.max(280, height - padTop - padBottom - textoBudget);
   const logoSize = Math.min(width * 0.98, usableH);
 
@@ -77,11 +77,9 @@ export default function PantallaLogoApertura({ listoParaSalir = false, onFin }: 
             accessibilityLabel="Logo Bitácora de pesca"
           />
         </View>
-        <View style={styles.textoBlock}>
-          <Text style={styles.marca} accessibilityRole="header">
-            Bitácora de pesca
-          </Text>
-          <Text style={styles.eslogan}>¿Puedo? ¿Pinta? Sal.</Text>
+        <View style={styles.textoBlock} accessibilityRole="header">
+          <Text style={styles.marcaLead}>Bitácora</Text>
+          <Text style={styles.marcaTrail}>de pesca</Text>
         </View>
       </Animated.View>
     </View>
@@ -107,26 +105,28 @@ const styles = StyleSheet.create({
   },
   textoBlock: {
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 20,
-    paddingBottom: 8,
+    gap: 2,
+    paddingHorizontal: 24,
+    paddingBottom: 10,
     maxWidth: 440,
   },
-  /** Bitter: slab serif de campo / outdoor, sector pesca. */
-  marca: {
+  /** Syne: geométrica moderna, contraste con el parche bordado. */
+  marcaLead: {
     fontFamily: FONTS.brand,
-    fontSize: 36,
-    lineHeight: 42,
-    letterSpacing: 0.15,
-    color: "#f4f7f2",
+    fontSize: 40,
+    lineHeight: 44,
+    letterSpacing: -0.8,
+    color: "#fff6e8",
     textAlign: "center",
-    fontWeight: "700",
+    fontWeight: "800",
   },
-  eslogan: {
-    fontFamily: FONTS.displayItalic,
+  marcaTrail: {
+    fontFamily: FONTS.brandSemi,
     fontSize: 15,
     lineHeight: 20,
-    color: "rgba(255,255,255,0.82)",
+    letterSpacing: 4.2,
+    textTransform: "lowercase",
+    color: "rgba(255, 246, 232, 0.72)",
     textAlign: "center",
     fontWeight: "600",
   },
