@@ -90,7 +90,7 @@ export default function SelectorProvinciaScreen({ desdeAjustes }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.marcaBlock}>
-          <LogoMarca size={148} animar accessibilityLabel="Logo Bitácora de pesca" />
+          <LogoMarca size={160} animar hiRes accessibilityLabel="Logo Bitácora de pesca" />
         </View>
         <Text style={styles.titulo}>
           {desdeAjustes ? "Cambiar provincia" : "¿Dónde vas a pescar?"}
