@@ -1,7 +1,8 @@
 /**
  * Mapa web (Leaflet). Metro elige este archivo en vez de index.native.tsx.
- * Teselas Carto / relieve / satélite, pines con forma, pulso de ubicación
- * y controles de capas. Misma API que react-native-maps en lo que usa la app.
+ * Basemap por defecto: IGN (sin API key). Alternativas: Carto, relieve, satélite.
+ * Pines con forma, pulso de ubicación y controles de capas.
+ * Misma API que react-native-maps en lo que usa la app.
  */
 import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
@@ -280,20 +281,20 @@ export default function MapView({
         attributionControl={true}
       >
         <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Mapa">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              maxZoom={18}
-              maxNativeZoom={18}
-              errorTileUrl={PIXEL_TRANSPARENTE}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Mapa IGN">
+          <LayersControl.BaseLayer checked name="Mapa IGN">
             <TileLayer
               attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
               url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
               maxZoom={19}
+              maxNativeZoom={18}
+              errorTileUrl={PIXEL_TRANSPARENTE}
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Mapa">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              maxZoom={18}
               maxNativeZoom={18}
               errorTileUrl={PIXEL_TRANSPARENTE}
             />
