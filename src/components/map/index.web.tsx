@@ -29,10 +29,25 @@ const CSS_ID = "pesca-leaflet-theme";
 const PIXEL_TRANSPARENTE =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
+/** Icono de capas apiladas (tipo de mapa / ajustes de capas). */
+const ICONO_CAPAS_SVG =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3.5 2.5 8.5 12 13.5 21.5 8.5 12 3.5Z" stroke="#164a36" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M2.5 12.5 12 17.5 21.5 12.5" stroke="#164a36" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2.5 16.5 12 21.5 21.5 16.5" stroke="#1a6f8a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`
+  );
+
 function inyectarCssMapa() {
-  if (typeof document === "undefined" || document.getElementById(CSS_ID)) return;
-  const style = document.createElement("style");
-  style.id = CSS_ID;
+  if (typeof document === "undefined") return;
+  let style = document.getElementById(CSS_ID) as HTMLStyleElement | null;
+  if (!style) {
+    style = document.createElement("style");
+    style.id = CSS_ID;
+    document.head.appendChild(style);
+  }
   style.textContent = `
     .pesca-map .leaflet-container {
       font-family: "Source Sans 3", system-ui, sans-serif;
@@ -60,8 +75,35 @@ function inyectarCssMapa() {
       background: rgba(255,255,255,0.96);
     }
     .pesca-map .leaflet-control-layers-toggle {
-      width: 38px !important;
-      height: 38px !important;
+      width: 42px !important;
+      height: 42px !important;
+      background-image: url("${ICONO_CAPAS_SVG}") !important;
+      background-size: 22px 22px !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      background-color: rgba(255,255,255,0.98) !important;
+      border: 1.5px solid rgba(22, 74, 54, 0.18) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 2px 10px rgba(12, 44, 32, 0.14);
+      cursor: pointer;
+    }
+    .pesca-map .leaflet-control-layers-toggle:hover {
+      background-color: #f0f7f3 !important;
+      border-color: rgba(22, 74, 54, 0.35) !important;
+    }
+    .pesca-map .leaflet-control-layers-expanded {
+      padding: 10px 12px 10px 10px !important;
+      min-width: 168px;
+    }
+    .pesca-map .leaflet-control-layers-expanded::before {
+      content: "Tipo de mapa";
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #164a36;
+      margin: 0 0 8px 2px;
+      text-transform: uppercase;
     }
     .pesca-map .leaflet-popup-content-wrapper {
       border-radius: 14px;
@@ -140,7 +182,6 @@ function inyectarCssMapa() {
       max-width: 70%;
     }
   `;
-  document.head.appendChild(style);
 }
 
 interface Region {
@@ -228,6 +269,28 @@ function VolarA({ target }: { target?: { latitude: number; longitude: number; zo
     const zoom = Math.min(target.zoom ?? 14, 16);
     map.flyTo([target.latitude, target.longitude], zoom, { duration: 0.7 });
   }, [map, target?.nonce]);
+  return null;
+}
+
+/** Título y aria-label del botón de capas (el cuadrado vacío de Leaflet no se entiende solo). */
+function EtiquetaControlCapas() {
+  const map = useMap();
+  useEffect(() => {
+    const root = map.getContainer().parentElement ?? map.getContainer();
+    const marcar = () => {
+      const toggle = root.querySelector(".leaflet-control-layers-toggle") as HTMLElement | null;
+      if (!toggle) return false;
+      toggle.setAttribute("title", "Tipo de mapa y capas");
+      toggle.setAttribute("aria-label", "Tipo de mapa y capas");
+      toggle.setAttribute("role", "button");
+      return true;
+    };
+    if (marcar()) return;
+    const id = window.setInterval(() => {
+      if (marcar()) window.clearInterval(id);
+    }, 120);
+    return () => window.clearInterval(id);
+  }, [map]);
   return null;
 }
 
@@ -380,6 +443,7 @@ export default function MapView({
         ) : null}
         <ZoomControl position="bottomright" />
         <ScaleControl position="bottomleft" imperial={false} />
+        <EtiquetaControlCapas />
         <SincronizarRegion region={region} disabled={!!fitCoordinates?.length || !!cameraTarget} />
         <EncajarCoordenadas coords={fitCoordinates} />
         <VolarA target={cameraTarget} />
