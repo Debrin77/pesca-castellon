@@ -14,6 +14,7 @@ import ListaAnimada from "./ListaAnimada";
 import SemaforoVeredicto, { etiquetaHoy } from "./SemaforoVeredicto";
 import PescaRecBanner from "./PescaRecBanner";
 import AvisoHorarioLegal from "./AvisoHorarioLegal";
+import PanelKayakEmbalse from "./PanelKayakEmbalse";
 import { certezaDeConsulta } from "../data/certezaConsulta";
 import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
@@ -302,6 +303,9 @@ export default function ConsultaPescaCard({
 
             {normativaCompleta ? (
               <>
+                {consulta.tramo?.fichaId ? (
+                  <PanelKayakEmbalse zoneId={consulta.tramo.fichaId} />
+                ) : null}
                 {consulta.permisos.map((p, i) => (
                   <Text key={`p-${i}`} style={styles.ok}>
                     {p}
