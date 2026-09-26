@@ -106,7 +106,7 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
                 ? "En costa hace falta la licencia marítima recreativa desde tierra. En mar, PescaREC puede pedir declaraciones."
                 : provincia.requisitosLicencia.seguroObligatorio
                   ? "En ríos/embalses: licencia continental, número de registro y seguro de responsabilidad civil."
-                  : "En ríos/embalses: licencia continental. En Castellón no se pide seguro de responsabilidad civil."}
+                  : `En ríos/embalses: licencia continental. ${provincia.requisitosLicencia.seguroNota}`}
             </Text>
             <TouchableOpacity style={styles.opt} onPress={() => navigation.navigate("License")}>
               <Text style={styles.optTitle}>Cómo tramitarla / guardarla</Text>
@@ -187,7 +187,11 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
               }
             >
               <Text style={styles.optTitle}>Caña y carrete</Text>
-              <Text style={styles.optSub}>Qué comprar en España según río, orilla, barco o kayak</Text>
+              <Text style={styles.optSub}>
+                {provincia.continentalOnly
+                  ? "Qué comprar en España para río y embalse"
+                  : "Qué comprar en España según río, orilla, barco o kayak"}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.opt}

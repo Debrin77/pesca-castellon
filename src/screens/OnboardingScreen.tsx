@@ -342,6 +342,16 @@ function useReveal(activo: boolean) {
 function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolean }) {
   const v = useReveal(activo);
   const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
+  const sitiosDemo =
+    nombreProv === "Castellón"
+      ? [
+          { t: "Embalse de María Cristina", s: "Favorito · 12 km", c: COLORS.gold, mx: 28, my: 38, me: "María Cristina" },
+          { t: "Orilla que solo yo conozco", s: "Punto privado · GPS", c: COLORS.water, mx: 58, my: 52, me: "Orilla secreta" },
+        ]
+      : [
+          { t: `Embalse favorito · ${nombreProv}`, s: "Favorito · en este móvil", c: COLORS.gold, mx: 32, my: 40, me: "Favorito" },
+          { t: "Punto privado · GPS", s: "Solo tú lo ves", c: COLORS.water, mx: 62, my: 54, me: "Privado" },
+        ];
   return (
     <View style={[m.fill, { backgroundColor: "#f3f6f2" }]}>
       <View style={m.privBar}>
@@ -353,16 +363,13 @@ function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolea
         animar={activo}
         compacto
         marcadores={[
-          { x: 28, y: 38, color: COLORS.gold, etiqueta: "María Cristina", tipo: "privado" },
-          { x: 58, y: 52, color: COLORS.water, etiqueta: "Orilla secreta", tipo: "privado" },
+          { x: sitiosDemo[0].mx, y: sitiosDemo[0].my, color: sitiosDemo[0].c, etiqueta: sitiosDemo[0].me, tipo: "privado" },
+          { x: sitiosDemo[1].mx, y: sitiosDemo[1].my, color: sitiosDemo[1].c, etiqueta: sitiosDemo[1].me, tipo: "privado" },
           { x: 72, y: 28, color: COLORS.success, etiqueta: "Atardecer", tipo: "libre" },
         ]}
       />
       <Animated.View style={{ opacity: v, transform: [{ translateY: y }], padding: 10, gap: 7 }}>
-        {[
-          { t: "Embalse de María Cristina", s: "Favorito · 12 km", c: COLORS.gold },
-          { t: "Orilla que solo yo conozco", s: "Punto privado · GPS", c: COLORS.water },
-        ].map((row) => (
+        {sitiosDemo.map((row) => (
           <View key={row.t} style={m.listRow}>
             <View style={[m.listDot, { backgroundColor: row.c }]} />
             <View style={{ flex: 1 }}>

@@ -256,7 +256,7 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
         detalle:
           "Úsalo cuando el señuelo es grande o el pez tiene dientes (lucio: además bajo de acero o fluoro grueso). Para trucha UL es excesivo: ahí snap micro.",
         diagrama: "mosqueton",
-        tags: ["lucio", "costa"],
+        tags: ["lucio"],
       },
       {
         id: "con-rapido",
@@ -343,24 +343,34 @@ export const SECCIONES_CONSEJOS: SeccionConsejos[] = [
       {
         id: "ap-cana-carrete",
         titulo: "Caña y carrete: qué comprar en España",
-        resumen: "Continental, orilla, barco y kayak — Decathlon vs tienda especializada.",
+        resumen: "Río y embalse — Decathlon vs tienda especializada.",
         detalle:
-          "Resumen de equipo base (caña + carrete) antes de la primera compra. El detalle de anzuelos, plomos, cebos y lista por especie sigue en Aparejos y en Montajes: aquí no lo sustituimos. Mira potencia en gramos y tamaño de carrete en la etiqueta; los modelos concretos cambian cada temporada.",
+          "Resumen de equipo base (caña + carrete) para continental antes de la primera compra. El detalle de anzuelos, plomos, cebos y lista por especie sigue en Aparejos y en Montajes. Mira potencia en gramos y tamaño de carrete en la etiqueta; los modelos concretos cambian cada temporada.",
         pasos: [
           "Continental (río/embalse): spinning ML 2,10–2,40 m · 5–25 g + carrete frontal 2500–3000. Decathlon / gran superficie: combo spinning medio. Tienda especializada: caña y carrete por separado (mejor equilibrado). Río estrecho / trucha: UL 1,80–2,10 m · 0,5–7 g + 1000–2000. Carpa/barbo a fondo: feeder 3,3–3,6 m + carrete 4000–6000.",
+          "¿Una sola para casi todo?: spinning ML 2,10–2,40 m · 5–25 g + carrete 2500–3000. Cubre embalse y río abierto. No sirve para surfcasting pesado ni jigging de barco: ahí hace falta otro equipo (ver consejo de costa si pescas en mar).",
+        ],
+        tags: ["compra", "principiante", "caña", "carrete", "kit", "Decathlon", "continental"],
+      },
+      {
+        id: "ap-cana-carrete-costa",
+        titulo: "Caña y carrete en costa y embarcación",
+        resumen: "Orilla, barco y kayak — Decathlon vs tienda especializada.",
+        detalle:
+          "Equipo base para mar y embarcación. Para río/embalse abre «Caña y carrete: qué comprar en España».",
+        pasos: [
           "Orilla de mar: spinning de costa 2,70–3,30 m · 15–40 g + carrete 4000–5000 (lubina, llissa…). Surfcasting lejano: 3,90–4,20 m · 100–200 g + carrete 6500–8000 — mejor en tienda especializada; Decathlon cubre iniciación, no el tope de distancia.",
           "Barco: spinning corto 1,80–2,40 m · 20–60 g + carrete 4000–5000 (jig / vinilo). Evita cañas muy largas en cubierta. Tienda especializada si pescas fondo o jigging serio.",
           "Kayak: spinning ML/MH corto 1,80–2,20 m + carrete 3000–4000; prioriza ligereza y transporte. Decathlon suele bastar para empezar.",
-          "¿Una sola para casi todo?: spinning ML 2,10–2,40 m · 5–25 g + carrete 2500–3000. Cubre embalse, río abierto y mucha orilla ligera. No sirve para surfcasting pesado ni jigging de barco: ahí hace falta otro equipo.",
         ],
-        tags: ["compra", "principiante", "caña", "carrete", "kit", "Decathlon"],
+        tags: ["compra", "principiante", "caña", "carrete", "costa", "barco", "kit"],
       },
       {
         id: "ap-guia-compra",
         titulo: "Guía de compra por especie",
         resumen: "Anzuelo, arponcillo, cebador y plomo según cebo — en Aparejos.",
         detalle:
-          "En la pantalla Aparejos elige la especie y verás una tabla: tipo y talla de anzuelo, si lleva arponcillo, si hace falta cebador (y cuál), gramos de plomo según lo que pongas en el anzuelo, lista corta de tienda y restricciones de tu provincia (p. ej. sin arpón en trucheros, PORN Serranía sin patos, costa CS con 2 cañas). Para caña y carrete por modalidad (continental, orilla, barco, kayak), abre «Caña y carrete» en esta misma sección.",
+          "En la pantalla Aparejos elige la especie y verás una tabla: tipo y talla de anzuelo, si lleva arponcillo, si hace falta cebador (y cuál), gramos de plomo según lo que pongas en el anzuelo, lista corta de tienda y restricciones de tu provincia (p. ej. sin arpón en trucheros, PORN Serranía sin patos, costa CS con 2 cañas). Para caña y carrete por modalidad, abre los consejos de caña en esta misma sección.",
         tags: ["compra", "principiante", "aparejo"],
       },
       {
