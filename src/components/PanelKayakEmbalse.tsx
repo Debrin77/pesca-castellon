@@ -4,18 +4,58 @@ import {
   colorNavegacionKayak,
   etiquetaNavegacionKayak,
   navegacionKayakDeZona,
+  type NavegacionKayakEmbalse,
 } from "../data/navegacionKayakEmbalses";
 import { COLORS, RADIUS, TYPE } from "../theme";
 
-type Props = { zoneId: string };
+type Props = {
+  zoneId: string;
+  /** Solo chip resumen (p. ej. consulta compacta del mapa). */
+  compacto?: boolean;
+  onPress?: () => void;
+};
+
+function ChipKayak({
+  ficha,
+  onPress,
+}: {
+  ficha: NavegacionKayakEmbalse;
+  onPress?: () => void;
+}) {
+  const color = colorNavegacionKayak(ficha.pescaDesdeKayak);
+  const body = (
+    <View
+      style={[styles.chip, { borderColor: color }]}
+      accessibilityLabel={`Kayak en este embalse: ${etiquetaNavegacionKayak(ficha.pescaDesdeKayak)}`}
+    >
+      <Text style={styles.chipKicker}>KAYAK EN ESTE EMBALSE</Text>
+      <Text style={[styles.chipVal, { color }]}>
+        {etiquetaNavegacionKayak(ficha.pescaDesdeKayak)}
+        {onPress ? " · ver detalle ›" : ""}
+      </Text>
+    </View>
+  );
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} accessibilityRole="button">
+        {body}
+      </TouchableOpacity>
+    );
+  }
+  return body;
+}
 
 /**
  * Ficha explícita: navegación kayak + pesca desde kayak + documentación,
  * según organismo de cuenca y licencia autonómica.
  */
-export default function PanelKayakEmbalse({ zoneId }: Props) {
+export default function PanelKayakEmbalse({ zoneId, compacto, onPress }: Props) {
   const ficha = navegacionKayakDeZona(zoneId);
   if (!ficha) return null;
+
+  if (compacto) {
+    return <ChipKayak ficha={ficha} onPress={onPress} />;
+  }
 
   const colorNav = colorNavegacionKayak(ficha.navegacion);
   const colorPesca = colorNavegacionKayak(ficha.pescaDesdeKayak);
@@ -80,6 +120,22 @@ export default function PanelKayakEmbalse({ zoneId }: Props) {
 }
 
 const styles = StyleSheet.create({
+  chip: {
+    borderWidth: 1.5,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#fff",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 10,
+  },
+  chipKicker: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.4,
+    color: COLORS.textMuted,
+    marginBottom: 2,
+  },
+  chipVal: { fontSize: 14, fontWeight: "800" },
   box: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
