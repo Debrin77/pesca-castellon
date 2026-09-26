@@ -19,6 +19,7 @@ import { abrirEnMaps } from "../utils/abrirEnMaps";
 import TerminoAyuda from "../components/TerminoAyuda";
 import { habitatDeZona } from "../services/habitatService";
 import ProfundidadHabitatHoy from "../components/ProfundidadHabitatHoy";
+import PanelKayakEmbalse from "../components/PanelKayakEmbalse";
 
 interface Props {
   route: { params: { zoneId: string } };
@@ -125,6 +126,8 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
           ))}
         </View>
       ) : null}
+
+      <PanelKayakEmbalse zoneId={zone.id} />
 
       <TemporadaBanner compact />
       <LicenseBanner onPress={() => navigation.navigate("License")} />
