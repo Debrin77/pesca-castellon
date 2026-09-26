@@ -31,7 +31,7 @@ export const MODALIDADES: {
     id: "kayak",
     etiqueta: "Kayak / paddle",
     corta: "Kayak",
-    ambito: "ambos",
+    ambito: "maritimo",
     notaLegal:
       "En mar: licencia de artefacto flotante / embarcación según caso, no la de orilla. PescaREC si aplica. Columbretes: reserva.",
   },
@@ -39,7 +39,7 @@ export const MODALIDADES: {
     id: "embarcacion",
     etiqueta: "Embarcación",
     corta: "Barco",
-    ambito: "ambos",
+    ambito: "maritimo",
     notaLegal:
       "Mar Castellón: licencia desde embarcación (no «desde tierra»), fuera de dársena, sin Columbretes. PescaREC cuando la norma lo exija.",
   },

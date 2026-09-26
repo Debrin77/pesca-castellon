@@ -511,7 +511,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
             <Text style={styles.sectionTitle}>Zonas favoritas ({favoritos.length})</Text>
             {favoritos.length === 0 && (
               <Text style={styles.emptyText}>
-                Aún no tienes favoritos. Abre una ficha (Arenós, Sichar…) y toca la estrella.
+                Aún no tienes favoritos. Abre una ficha de zona en el mapa y toca la estrella.
               </Text>
             )}
             {favoritos.map((f, i) => (
@@ -601,7 +601,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 )}
 
                 <Text style={styles.formLabel}>Lugar (opcional)</Text>
-                <TextInput style={styles.input} value={nombreLugar} onChangeText={setNombreLugar} placeholder="Ej. Embalse de Arenós" />
+                <TextInput style={styles.input} value={nombreLugar} onChangeText={setNombreLugar} placeholder="Ej. Embalse o tramo" />
 
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>

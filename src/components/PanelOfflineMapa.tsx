@@ -38,8 +38,9 @@ export default function PanelOfflineMapa() {
         Mapa offline · {nombre}
       </Text>
       <Text style={styles.sub}>
-        Calienta teselas de {nombre} en caché (en Castellón también costa y rampas). Normativa y
-        especies de esta provincia ya van en la app.
+        {provinciaCtx && !provinciaCtx.continentalOnly
+          ? `Calienta teselas de ${nombre} en caché (también costa y rampas). Normativa y especies de esta provincia ya van en la app.`
+          : `Calienta teselas de ${nombre} en caché. Normativa y especies de esta provincia ya van en la app.`}
       </Text>
       {estado ? (
         <Text style={styles.meta}>

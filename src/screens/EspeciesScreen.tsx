@@ -530,7 +530,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
             style={[styles.modoBtn, styles.modoBtnOnBosque]}
             onPress={abrirCatalogoContinental}
             accessibilityRole="button"
-            accessibilityLabel="Ver especies de ríos y embalses de Sevilla"
+            accessibilityLabel={`Ver especies de ríos y embalses de ${provincia.nombre}`}
           >
             <Text style={[styles.modoTxt, styles.modoTxtOn]}>Ríos y embalses · ver especies</Text>
           </TouchableOpacity>
@@ -877,7 +877,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           <>
             <Text style={styles.cardText}>{orilla.fuenteTallas}</Text>
             <Text style={[styles.cardText, { marginBottom: 8 }]}>
-              Las 15 especies más usuales desde orilla en Castellón (más invasoras). El resto queda en Tallas.
+              Las 15 especies más usuales desde orilla en {provincia.nombre} (más invasoras). El resto queda en Tallas.
             </Text>
             {especiesOrillaFiltradas.length === 0 ? (
               <Text style={styles.catalogoVacio}>Ninguna especie coincide con «{busquedaCatalogo.trim()}».</Text>

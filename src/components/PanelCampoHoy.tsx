@@ -171,10 +171,9 @@ export default function PanelCampoHoy({ navigation }: Props) {
             <View style={styles.card}>
               <Text style={styles.cardTitle}>PescaREC</Text>
               <Text style={styles.cardBody}>
-                En {provincia.nombre} la guía es continental: PescaREC aplica a gestiones marítimas
-                estatales.
+                En {provincia.nombre} la guía es continental: PescaREC solo aplica a gestiones marítimas
+                estatales, no a ríos ni embalses.
               </Text>
-              <PescaRecBanner compacto />
             </View>
           ) : (
             <View style={styles.card}>

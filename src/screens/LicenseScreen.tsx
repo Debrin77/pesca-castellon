@@ -210,9 +210,8 @@ export default function LicenseScreen() {
           <Text style={styles.cardTitle}>PescaREC</Text>
           <Text style={styles.cardText}>
             PescaREC es la app estatal para pesca marítima recreativa. En {provincia.nombre} esta guía es
-            continental: no sustituye ni exige PescaREC en ríos/embalses.
+            continental: no aplica ni se exige en ríos/embalses.
           </Text>
-          <PescaRecBanner compacto />
         </View>
       ) : (
         <View style={styles.card}>
@@ -379,7 +378,7 @@ export default function LicenseScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
-        {esAndalucia
+        {esAndalucia || esClm
           ? (provincia.species as any[]).map((sp) => (
               <View key={sp.id} style={styles.tallaRow}>
                 <Text style={styles.tallaName}>{sp.nombre}</Text>
@@ -394,7 +393,16 @@ export default function LicenseScreen() {
             ))}
       </View>
 
-      {!esAndalucia ? (
+      {esClm ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Tramitación Castilla-La Mancha</Text>
+          <Text style={styles.cardText}>
+            Licencia y cotos: sede electrónica / oficinas de la Junta de Comunidades de Castilla-La Mancha.
+            Confirma el plan técnico del coto y la Orden de vedas vigente. Las tasas y exenciones las publica la
+            JCCM cada temporada (no uses importes de la GVA).
+          </Text>
+        </View>
+      ) : !esAndalucia ? (
         <>
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Tasas 2026 (continental)</Text>
@@ -424,20 +432,10 @@ export default function LicenseScreen() {
             ))}
           </View>
 
-          {!esClm ? (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>Oficina en Castellón</Text>
-              <Text style={styles.cardText}>{LICENCIA_INFO.oficinaCastellon}</Text>
-            </View>
-          ) : (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>Tramitación Castilla-La Mancha</Text>
-              <Text style={styles.cardText}>
-                Licencia y cotos: sede electrónica / oficinas de la Junta de Comunidades de Castilla-La Mancha.
-                Confirma el plan técnico del coto y la Orden de vedas vigente.
-              </Text>
-            </View>
-          )}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Oficina en Castellón</Text>
+            <Text style={styles.cardText}>{LICENCIA_INFO.oficinaCastellon}</Text>
+          </View>
         </>
       ) : null}
 
@@ -468,11 +466,13 @@ export default function LicenseScreen() {
         onPress={() => Linking.openURL(fuente.urlOrden || FUENTE_NORMATIVA.urlOrden)}
       >
         <Text style={styles.ctaTextSecondary}>
-          {esAndalucia ? "Consultar normativa / orden de vedas" : "Consultar resolución de tramos (DOGV)"}
+          {esAndalucia || esClm
+            ? "Consultar normativa / orden de vedas"
+            : "Consultar resolución de tramos (DOGV)"}
         </Text>
       </TouchableOpacity>
 
-      {!esAndalucia ? (
+      {!esAndalucia && !esClm ? (
         <TouchableOpacity
           style={styles.ctaButtonSecondary}
           onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}
@@ -483,7 +483,8 @@ export default function LicenseScreen() {
 
       <Text style={styles.footnote}>
         Los importes, vedas y anexos pueden actualizarse cada temporada. Confirma siempre los datos vigentes en la sede
-        electrónica y el DOGV antes de pescar.
+        electrónica
+        {esAndalucia ? " y el BOJA" : esClm ? " y el DOCM" : " y el DOGV"} antes de pescar.
       </Text>
     </ScrollView>
   );

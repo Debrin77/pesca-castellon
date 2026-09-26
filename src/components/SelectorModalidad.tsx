@@ -13,7 +13,9 @@ interface Props {
 export default function SelectorModalidad({ value, onChange, filtroAmbito }: Props) {
   const lista = MODALIDADES.filter((m) => {
     if (!filtroAmbito || filtroAmbito === "ambos") return true;
-    return m.ambito === filtroAmbito || m.ambito === "ambos";
+    // Solo el ámbito pedido: no mezclar kayak/barco («ambos») en mapa/capturas continentales
+    // (sus notas legales son de costa y confunden en Sevilla / Córdoba / Cuenca / río CS).
+    return m.ambito === filtroAmbito;
   });
   const porDefecto: ModalidadPesca =
     filtroAmbito === "maritimo" ? "orilla_mar" : "orilla_continental";
