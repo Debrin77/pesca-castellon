@@ -16,6 +16,7 @@ import PescaRecBanner from "./PescaRecBanner";
 import AvisoHorarioLegal from "./AvisoHorarioLegal";
 import PanelKayakEmbalse from "./PanelKayakEmbalse";
 import { certezaDeConsulta } from "../data/certezaConsulta";
+import { navegacionKayakDeZona } from "../data/navegacionKayakEmbalses";
 import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
@@ -106,6 +107,7 @@ export default function ConsultaPescaCard({
     ...consulta.restriccionesHoy.map((t) => ({ tipo: "warn" as const, t })),
     ...consulta.permisos.map((t) => ({ tipo: "ok" as const, t })),
   ].slice(0, 3);
+  const hayKayakEmbalse = !!navegacionKayakDeZona(consulta.tramo?.fichaId);
   const hayMasNormativa =
     consulta.permisos.length + consulta.restriccionesHoy.length > puntosClave.length ||
     !!permisoInfo ||
@@ -207,6 +209,9 @@ export default function ConsultaPescaCard({
                 ) : null}
               </View>
             </View>
+            {consulta.tramo?.fichaId && hayKayakEmbalse ? (
+              <PanelKayakEmbalse zoneId={consulta.tramo.fichaId} compacto onPress={toggleDetalle} />
+            ) : null}
             <TouchableOpacity
               onPress={toggleDetalle}
               style={styles.btnDetalle}
@@ -253,6 +258,9 @@ export default function ConsultaPescaCard({
 
         {mostrarTodo ? (
           <>
+            {consulta.tramo?.fichaId && hayKayakEmbalse ? (
+              <PanelKayakEmbalse zoneId={consulta.tramo.fichaId} />
+            ) : null}
             <AvisoHorarioLegal
               ambito={
                 consulta.modalidadMar === "embarcacion"
@@ -303,9 +311,6 @@ export default function ConsultaPescaCard({
 
             {normativaCompleta ? (
               <>
-                {consulta.tramo?.fichaId ? (
-                  <PanelKayakEmbalse zoneId={consulta.tramo.fichaId} />
-                ) : null}
                 {consulta.permisos.map((p, i) => (
                   <Text key={`p-${i}`} style={styles.ok}>
                     {p}
