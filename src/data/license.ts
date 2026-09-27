@@ -21,16 +21,16 @@ export const LICENCIA_INFO = {
     {
       id: "maritima_tierra" as const,
       titulo: "Pesca marítima recreativa desde tierra (GVA)",
-      donde: "Orilla del mar (no embarcación ni submarina)",
+      donde: "Orilla del mar y kayak / artefacto flotante (no submarina)",
       detalle:
-        "Nombre oficial en sede GVA. Decreto 41/2013: no puertos, no a menos de 100 m de bañistas, no vender capturas.",
+        "Nombre oficial en sede GVA. También cubre la pesca desde kayak en mar (artefacto flotante). Decreto 41/2013: no puertos, no a menos de 100 m de bañistas, no vender capturas. PescaREC cuando aplique.",
     },
     {
       id: "maritima_embarcacion" as const,
-      titulo: "Pesca marítima desde embarcación / kayak",
-      donde: "Mar (fuera de dársena); Columbretes = reserva",
+      titulo: "Pesca marítima desde embarcación (barco matriculado)",
+      donde: "Mar desde barco inscrito; Columbretes = reserva",
       detalle:
-        "No vale sola la licencia «desde tierra». Usa el ritual Salgo en barco, PescaREC cuando aplique y la cartografía oficial de reservas.",
+        "Licencia distinta a la de «desde tierra». Exige documentación del barco (asiento/permiso de navegación) y titulación del patrón si aplica. El kayak NO usa esta licencia: usa la de desde tierra. Ritual Salgo en barco + PescaREC.",
     },
   ],
   exentos: [
@@ -46,6 +46,6 @@ export const LICENCIA_INFO = {
     "Llévala siempre contigo junto al DNI: los agentes medioambientales pueden solicitarla en cualquier momento.",
     "Las tasas e importes pueden actualizarse cada ejercicio — confírmalos en la sede electrónica antes de pagar.",
     "Puedes anotar en la app la caducidad de tus licencias: se guarda solo en este dispositivo.",
-    "Embarcación: el semáforo de orilla no autoriza a zarpar; usa modalidad Barco y el índice Salgo en barco.",
+    "Kayak en mar: licencia marítima recreativa desde tierra (artefacto flotante). Barco matriculado: licencia desde embarcación. El semáforo de orilla no autoriza a zarpar; usa modalidad Barco / Kayak.",
   ],
 };

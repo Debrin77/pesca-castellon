@@ -83,7 +83,8 @@ export const REGLAS_ORILLA_MAR = [
 
 /** Checklist / reglas orientativas para zarpar a pescar (no sustituyen BOE ni el patrón). */
 export const REGLAS_EMBARCACION_MAR = [
-  "Licencia/autorización de pesca marítima recreativa desde embarcación o artefacto flotante según tu caso (estatal/CCAA). La de «desde tierra» no cubre barco.",
+  "Kayak / artefacto flotante (CV): licencia marítima recreativa DESDE TIERRA (GVA). No es la licencia de «desde embarcación».",
+  "Barco matriculado: licencia marítima DESDE EMBARCACIÓN (GVA) + documentación del barco + titulación del patrón si aplica. La de «desde tierra» sola no cubre el barco.",
   "PescaREC: declara cuando la norma lo exija (especies/zonas). Esta app solo enlaza; no declara por ti.",
   "Prohibido pescar en dársena, canales de entrada y zonas de fondeo/varada salvo autorización del puerto.",
   "Reserva marina de las Islas Columbretes: no entres a pescar sin comprobar la cartografía y normas oficiales.",
@@ -94,9 +95,14 @@ export const REGLAS_EMBARCACION_MAR = [
   "Seguridad: chaleco, medios de comunicación, combustible de sobra y plan de regreso al puerto.",
 ];
 
+/**
+ * Checklist del ritual «Salgo en barco» (cubre kayak marítimo y barco).
+ * Separa claramente qué licencia pide cada plataforma.
+ */
 export const CHECKLIST_EMBARCACION = [
-  "Licencia de embarcación / kayak en regla (no solo «desde tierra»).",
-  "PescaREC instalado o a mano para declarar si aplica.",
+  "Kayak / artefacto flotante: licencia marítima recreativa DESDE TIERRA (GVA) — no la de embarcación.",
+  "Barco matriculado: licencia DESDE EMBARCACIÓN + asiento/permiso de navegación + titulación del patrón si aplica.",
+  "PescaREC instalado o a mano para declarar la jornada si aplica.",
   "Chaleco salvavidas para todos a bordo.",
   "Móvil cargado / VHF si llevas; avisa a alguien de la hora de vuelta.",
   "Combustible o baterías de sobra + ancla ligera si el barco lo lleva.",
