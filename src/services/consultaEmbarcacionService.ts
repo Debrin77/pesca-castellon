@@ -193,10 +193,11 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
       FUENTE_EMBARCACION.titulo,
       REGLAS_EMBARCACION_MAR[0],
       REGLAS_EMBARCACION_MAR[1],
+      REGLAS_EMBARCACION_MAR[2],
       cerca
         ? `Rampa/puerto más cercano (~${cerca.km.toFixed(1)} km): ${cerca.rampa.nombre}.`
         : "Elige rampa de salida en el mapa.",
-      "Tallas: RD 560/1995 anexo II. Especies: RD 347/2011. PescaREC cuando aplique.",
+      "Tallas: RD 560/1995 anexo II. Especies: RD 347/2011.",
     ],
   };
 }

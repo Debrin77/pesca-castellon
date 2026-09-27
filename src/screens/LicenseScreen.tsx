@@ -33,6 +33,7 @@ import {
 import TemporadaBanner from "../components/TemporadaBanner";
 import PescaRecBanner from "../components/PescaRecBanner";
 import { infoPermisoCoto } from "../data/permisosCoto";
+import { documentacionKayakDeProvincia } from "../data/documentacionKayak";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -94,6 +95,7 @@ export default function LicenseScreen() {
       ? textoVigenciaNormativaClm()
       : textoVigenciaNormativa();
   const fuente = provincia.fuenteNormativa;
+  const docKayak = documentacionKayakDeProvincia(provincia.id);
   const [licencias, setLicencias] = useState<LicenciaGuardada[]>([]);
   const [tipo, setTipo] = useState<TipoLicencia>("continental");
   const [numero, setNumero] = useState("");
@@ -182,6 +184,53 @@ export default function LicenseScreen() {
           </Text>
         ) : null}
       </View>
+
+      {docKayak ? (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kayak · documentación que debes pedir</Text>
+          <Text style={styles.cardText}>{docKayak.embalse.resumen}</Text>
+          <Text style={[styles.cardTitle, { marginTop: 12 }]}>
+            Embalse · navegación ({docKayak.embalse.organismoTipico})
+          </Text>
+          {docKayak.embalse.navegacion.map((d, i) => (
+            <Text key={`kn-${i}`} style={styles.bullet}>
+              • {d}
+            </Text>
+          ))}
+          <Text style={[styles.cardTitle, { marginTop: 12 }]}>Embalse · pesca desde kayak</Text>
+          {docKayak.embalse.pesca.map((d, i) => (
+            <Text key={`kp-${i}`} style={styles.bullet}>
+              • {d}
+            </Text>
+          ))}
+          {docKayak.mar ? (
+            <>
+              <Text style={[styles.cardTitle, { marginTop: 12 }]}>Mar · kayak (artefacto flotante)</Text>
+              <Text style={[styles.privacy, { marginBottom: 4 }]}>{docKayak.mar.resumen}</Text>
+              {docKayak.mar.kayak.map((d, i) => (
+                <Text key={`mk-${i}`} style={styles.bullet}>
+                  • {d}
+                </Text>
+              ))}
+              <Text style={[styles.cardTitle, { marginTop: 12 }]}>Mar · barco matriculado</Text>
+              {docKayak.mar.barcoMatriculado.map((d, i) => (
+                <Text key={`mb-${i}`} style={styles.bullet}>
+                  • {d}
+                </Text>
+              ))}
+            </>
+          ) : (
+            <Text style={[styles.privacy, { marginTop: 12 }]}>
+              En {provincia.nombre} esta guía es continental: no hay flujo de pesca marítima desde kayak/barco
+              en la app.
+            </Text>
+          )}
+          <Text style={[styles.privacy, { marginTop: 10 }]}>
+            Detalle por embalse: ficha del vaso → panel «Kayak · embalse». Confirma siempre en la web del
+            organismo.
+          </Text>
+        </View>
+      ) : null}
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Cartografía · qué está cubierto</Text>

@@ -84,7 +84,10 @@ export default function PanelKayakEmbalse({ zoneId, compacto, onPress }: Props) 
         </View>
       </View>
 
-      <Text style={styles.section}>Documentación / permisos</Text>
+      <Text style={styles.section}>Qué documentación pedir</Text>
+      <Text style={styles.subSection}>
+        Navegación ({ficha.organismo.toUpperCase()}) + pesca (licencia de la provincia). Llévalo encima.
+      </Text>
       {ficha.documentacion.map((d, i) => (
         <Text key={i} style={styles.bullet}>
           • {d}
@@ -184,6 +187,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "800",
     color: COLORS.textPrimary,
+  },
+  subSection: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: COLORS.textMuted,
+    marginBottom: 6,
   },
   bullet: {
     fontSize: 12.5,

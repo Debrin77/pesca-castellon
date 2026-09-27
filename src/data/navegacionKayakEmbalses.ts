@@ -73,18 +73,20 @@ const DOC_PESCA_CLM = [
 ];
 
 const DOC_NAV_CHJ = [
-  "Declaración responsable de navegación ante la CHJ (salvo exenciones por eslora muy corta: consulta hoja informativa vigente).",
+  "Declaración responsable (DR) de navegación ante la CHJ si el kayak tiene eslora ≥ 2,5 m (o ≥ 1,5 m en masas con mejillón cebra). Por debajo: flotador de baño (solo donde el baño esté permitido).",
+  "Formulario DR + hoja informativa vigentes en chj.es (trámites de navegación).",
   "En masas con mejillón cebra: protocolo de limpieza / confinamiento según zona marcada en la DR.",
-  "Si el embalse es de otro concesionario: notificación previa al explotador (adjunto a la DR).",
+  "Si el embalse es de otro concesionario: notificación previa al explotador (sin ella la CHJ puede denegar).",
 ];
 const DOC_NAV_CHG = [
+  "Comprobar en IDE/tabla CHG que el vaso admite navegación recreativa (remo/pala).",
   "Declaración responsable de navegación ante la CHG (antelación según hoja informativa vigente).",
   "Canon de ocupación / navegación cuando proceda.",
   "En masas con EEI (mejillón cebra): protocolo de desinfección y, si hay confinamiento, no sacar la embarcación sin lavado autorizado.",
 ];
 const DOC_NAV_CHT = [
   "Declaración responsable de navegación ante la CHT (sede electrónica MITECO / CHT).",
-  "Documentación de la embarcación y seguro según instrucciones de la CHT.",
+  "Documentación de la embarcación y seguro según instrucciones de la CHT (hoja informativa vigente).",
   "Desinfección / confinamiento cuando el embalse figure afectado (p. ej. Buendía, Bolarque).",
 ];
 
