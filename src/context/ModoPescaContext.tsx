@@ -22,8 +22,8 @@ interface ModoPescaContextValue {
   /** Modo activo (fallback técnico si aún no hay elección en esta sesión). */
   modo: ModoPescaGlobal;
   /**
-   * True solo tras pulsar Río/Orilla/Barco en esta sesión, o si la provincia
-   * tiene una sola modalidad (continentalOnly → río).
+   * True solo tras pulsar una modalidad en esta sesión, o si la provincia
+   * tiene una sola modalidad.
    * No se restaura desde almacenamiento: al abrir la app hay que elegir de nuevo.
    */
   modoElegido: boolean;

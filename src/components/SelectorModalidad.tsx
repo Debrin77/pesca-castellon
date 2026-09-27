@@ -13,8 +13,6 @@ interface Props {
 export default function SelectorModalidad({ value, onChange, filtroAmbito }: Props) {
   const lista = MODALIDADES.filter((m) => {
     if (!filtroAmbito || filtroAmbito === "ambos") return true;
-    // Solo el ámbito pedido: no mezclar kayak/barco («ambos») en mapa/capturas continentales
-    // (sus notas legales son de costa y confunden en Sevilla / Córdoba / Cuenca / río CS).
     return m.ambito === filtroAmbito;
   });
   const porDefecto: ModalidadPesca =
@@ -25,29 +23,44 @@ export default function SelectorModalidad({ value, onChange, filtroAmbito }: Pro
     <View style={styles.wrap} accessibilityLabel="Modalidad de pesca">
       <Text style={styles.label}>Modalidad</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-        {lista.map((m) => (
-          <TouchableOpacity
-            key={m.id}
-            style={[styles.chip, value === m.id && styles.chipOn]}
-            onPress={() => {
-              // Kayak/barco/sub: segundo toque vuelve a orilla (desactivar).
-              if (value === m.id && m.id !== porDefecto) {
-                onChange(porDefecto);
-                return;
+        {lista.map((m) => {
+          const kayak = m.id === "kayak" || m.id === "kayak_embalse";
+          const on = value === m.id;
+          return (
+            <TouchableOpacity
+              key={m.id}
+              style={[
+                styles.chip,
+                kayak && styles.chipKayak,
+                on && (kayak ? styles.chipOnKayak : styles.chipOn),
+              ]}
+              onPress={() => {
+                if (value === m.id && m.id !== porDefecto) {
+                  onChange(porDefecto);
+                  return;
+                }
+                onChange(m.id);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={
+                on && m.id !== porDefecto
+                  ? `${m.etiqueta} (pulsar para desactivar)`
+                  : m.etiqueta
               }
-              onChange(m.id);
-            }}
-            accessibilityRole="button"
-            accessibilityState={{ selected: value === m.id }}
-            accessibilityLabel={
-              value === m.id && m.id !== porDefecto
-                ? `${m.etiqueta} (pulsar para desactivar)`
-                : m.etiqueta
-            }
-          >
-            <Text style={[styles.chipText, value === m.id && styles.chipTextOn]}>{m.corta}</Text>
-          </TouchableOpacity>
-        ))}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  kayak && !on && styles.chipTextKayak,
+                  on && styles.chipTextOn,
+                ]}
+              >
+                {kayak ? `★ ${m.corta}` : m.corta}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
       {actual ? <Text style={styles.nota}>{actual.notaLegal}</Text> : null}
     </View>
@@ -66,8 +79,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  chipKayak: {
+    borderColor: COLORS.kayak,
+    backgroundColor: COLORS.kayakLight,
+    borderWidth: 1.5,
+  },
   chipOn: { backgroundColor: COLORS.water, borderColor: COLORS.water },
+  chipOnKayak: { backgroundColor: COLORS.kayakDark, borderColor: COLORS.kayakSun },
   chipText: { fontSize: 12.5, fontWeight: "700", color: COLORS.textPrimary },
+  chipTextKayak: { color: COLORS.kayakDark },
   chipTextOn: { color: "#fff" },
   nota: { fontSize: 11, color: COLORS.textSecondary, marginTop: 6, lineHeight: 15 },
 });

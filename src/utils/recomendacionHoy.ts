@@ -66,7 +66,7 @@ function pescableHoy(veredicto: string, sePuede: boolean): boolean {
 /** ¿Este punto encaja legalmente en la modalidad? */
 function sitioEncajaModo(modo: ModoPescaGlobal, lat: number, lng: number): boolean {
   try {
-    if (modo === "rio") {
+    if (modo === "rio" || modo === "embalse" || modo === "kayak") {
       const c = consultarPuntoPesca(lat, lng);
       if (c.ambito === "maritimo") return false;
       return pescableHoy(c.veredicto, c.sePuedePescarHoy);
@@ -75,7 +75,9 @@ function sitioEncajaModo(modo: ModoPescaGlobal, lat: number, lng: number): boole
       const c = consultarCosta(lat, lng);
       return pescableHoy(c.veredicto, c.sePuedePescarHoy);
     }
-    const c = consultarEmbarcacion(lat, lng);
+    const c = consultarEmbarcacion(lat, lng, {
+      variante: modo === "kayak_mar" ? "kayak" : "barco",
+    });
     return pescableHoy(c.veredicto, c.sePuedePescarHoy);
   } catch {
     return false;
@@ -140,7 +142,7 @@ async function puntuarCandidato(
   c: CandidatoRecomendacion
 ): Promise<RecomendacionModoHoy | null> {
   try {
-    if (modo === "barco") {
+    if (modo === "barco" || modo === "kayak_mar") {
       const ind = await calcularIndiceBarco(c.lat, c.lng);
       const cat = CATEGORIA_BARCO_INFO[ind.categoria];
       return {
@@ -239,8 +241,12 @@ async function mejorDeModo(opts: {
   let mejor = await mejorDeLista(opts.modo, propios);
 
   let desdeCatalogo = await mejorDesdeCatalogo(opts.modo, opts.ancla);
-  // GPS interior: el radio de orilla/barco no alcanza la costa.
-  if (!desdeCatalogo && (opts.modo === "orilla" || opts.modo === "barco") && opts.anclaCosta) {
+  // GPS interior: el radio de orilla/barco/kayak mar no alcanza la costa.
+  if (
+    !desdeCatalogo &&
+    (opts.modo === "orilla" || opts.modo === "barco" || opts.modo === "kayak_mar") &&
+    opts.anclaCosta
+  ) {
     const misma =
       Math.abs(opts.anclaCosta.lat - opts.ancla.lat) < 0.01 &&
       Math.abs(opts.anclaCosta.lng - opts.ancla.lng) < 0.01;

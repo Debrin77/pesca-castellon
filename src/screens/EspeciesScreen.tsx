@@ -21,7 +21,7 @@ import { especiesOrillaParaSeleccion } from "../services/catalogoEspeciesService
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
-import { modoAMapaModo } from "../data/modoPesca";
+import { modoAMapaModo, esModoEmbarcado } from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { COLORS, PIN, RADIUS, TYPE, FONTS } from "../theme";
 import BotonMiPosicion from "../components/BotonMiPosicion";
@@ -204,12 +204,14 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const aplicarPuntoCompartido = useCallback(
     (lat: number, lng: number, opts?: { abrirFicha?: boolean }) => {
       const r =
-        !soloContinental && modoGlobal === "barco"
-          ? consultarEmbarcacion(lat, lng)
+        !soloContinental && esModoEmbarcado(modoGlobal)
+          ? consultarEmbarcacion(lat, lng, {
+              variante: modoGlobal === "kayak_mar" ? "kayak" : "barco",
+            })
           : consultarToqueMapa(lat, lng);
       setConsulta(r);
       setMarcador({ latitude: lat, longitude: lng });
-      if (!soloContinental && (modoGlobal === "barco" || r.ambito === "maritimo")) {
+      if (!soloContinental && (esModoEmbarcado(modoGlobal) || r.ambito === "maritimo")) {
         setModo("costa");
         setCatalogo("mar");
       } else {
@@ -272,7 +274,7 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   function cambiarModo(siguiente: ModoEspecies, opts?: { abrirCatalogo?: boolean }) {
     if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
-    void setModoGlobal(siguiente === "costa" ? (modoGlobal === "barco" ? "barco" : "orilla") : "rio");
+    void setModoGlobal(siguiente === "costa" ? (esModoEmbarcado(modoGlobal) ? modoGlobal : "orilla") : "rio");
     setFichaAbierta(false);
     if (siguiente === "costa") {
       setCatalogo("mar");
@@ -414,8 +416,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   }, [punto?.lat, punto?.lng, punto?.fuente, provincia.regionMapa.latitude, provincia.regionMapa.longitude]);
 
   function modoSitiosParaAmbito(ambito: "continental" | "maritimo"): ModoPescaGlobal {
-    if (ambito === "continental") return "rio";
-    if (modoElegido && modoGlobal === "barco") return "barco";
+    if (ambito === "continental") {
+      if (modoElegido && (modoGlobal === "embalse" || modoGlobal === "kayak")) return modoGlobal;
+      return "rio";
+    }
+    if (modoElegido && esModoEmbarcado(modoGlobal)) return modoGlobal;
     return "orilla";
   }
 
@@ -453,7 +458,9 @@ export default function EspeciesScreen({ navigation, route }: Props) {
     autoAbrir = false
   ) {
     const modoBase = modoSitiosParaAmbito(ambito);
-    const modosCosta = disponibles.filter((m) => m === "orilla" || m === "barco");
+    const modosCosta = disponibles.filter(
+      (m) => m === "orilla" || m === "barco" || m === "kayak_mar"
+    );
     const modosPregunta =
       ambito === "maritimo" && modosCosta.length > 1 ? modosCosta : undefined;
     return (

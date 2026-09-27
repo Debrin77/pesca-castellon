@@ -45,7 +45,7 @@ import {
   listarWaypointsMarinos,
   type WaypointMarino,
 } from "../services/navegacionEmbarcacionService";
-import { esModalidadEmbarcacionMar } from "../data/modalidades";
+import { esModalidadEmbarcacionMar, modalidadDesdeModoGlobal } from "../data/modalidades";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
 import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
@@ -71,7 +71,7 @@ import type { ModalidadPesca } from "../data/modalidades";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
-import { modoAMapaModo } from "../data/modoPesca";
+import { esModoEmbarcado, esModoKayak, modoAMapaModo } from "../data/modoPesca";
 import SelectorModoPesca from "../components/SelectorModoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
@@ -129,7 +129,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [radarUrl, setRadarUrl] = useState<string | null>(null);
   const [radarFrame, setRadarFrame] = useState<FrameRadarActivo | null>(null);
   const [modalidad, setModalidad] = useState<ModalidadPesca>(
-    modoGlobal === "barco" ? "embarcacion" : modoGlobal === "orilla" ? "orilla_mar" : "orilla_continental"
+    modalidadDesdeModoGlobal(modoGlobal)
   );
   const [tracks, setTracks] = useState<TrackPesca[]>([]);
   const [grabandoId, setGrabandoId] = useState<string | null>(null);
@@ -140,28 +140,37 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [waypoints, setWaypoints] = useState<WaypointMarino[]>([]);
   const [infoNavegacion, setInfoNavegacion] = useState<string | null>(null);
   const mar = !soloContinental && modo === "costa";
-  const modoBarco = mar && (modoGlobal === "barco" || esModalidadEmbarcacionMar(modalidad));
+  const modoBarco = mar && (esModoEmbarcado(modoGlobal) || esModalidadEmbarcacionMar(modalidad));
+  const modoKayak = esModoKayak(modoGlobal) || modalidad === "kayak" || modalidad === "kayak_embalse";
 
   // Sincronizar mapa con el modo global (Inicio / Salgo) solo si ya hay elección.
   useEffect(() => {
     if (!modoElegido) return;
     const mapa = modoAMapaModo(modoGlobal);
     setModo(mapa);
-    setModalidad(
-      modoGlobal === "barco" ? "embarcacion" : modoGlobal === "orilla" ? "orilla_mar" : "orilla_continental"
-    );
+    setModalidad(modalidadDesdeModoGlobal(modoGlobal));
   }, [modoGlobal, modoElegido]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: modoBarco
-        ? `Mapa · Embarcación · ${provincia.nombre}`
-        : mar
-          ? `Mapa · Costa · ${provincia.nombre}`
-          : `Mapa · ${provincia.nombre}`,
-      headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
+      title: modoKayak && !mar
+        ? `Mapa · Kayak · ${provincia.nombre}`
+        : modoKayak && mar
+          ? `Mapa · Kayak mar · ${provincia.nombre}`
+          : modoBarco
+            ? `Mapa · Barco · ${provincia.nombre}`
+            : mar
+              ? `Mapa · Costa · ${provincia.nombre}`
+              : `Mapa · ${provincia.nombre}`,
+      headerStyle: {
+        backgroundColor: modoKayak
+          ? COLORS.kayakDark
+          : mar
+            ? COLORS.waterDark
+            : COLORS.primaryDark,
+      },
     });
-  }, [mar, modoBarco, navigation, provincia.nombre]);
+  }, [mar, modoBarco, modoKayak, navigation, provincia.nombre]);
 
   useEffect(() => {
     setCuencaFiltro(null);
@@ -267,11 +276,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const radarFechaPlaca = etiquetaFechaRadarPlaca(radarFrame);
 
   useEffect(() => {
-    setModalidad(
-      modoGlobal === "barco" ? "embarcacion" : mar ? "orilla_mar" : "orilla_continental"
-    );
+    if (modoElegido) {
+      setModalidad(modalidadDesdeModoGlobal(modoGlobal));
+    } else {
+      setModalidad(mar ? "orilla_mar" : "orilla_continental");
+    }
     setInfoNavegacion(null);
-  }, [mar, modoGlobal]);
+  }, [mar, modoGlobal, modoElegido]);
 
   useEffect(() => {
     if (!modoBarco) return;
@@ -281,7 +292,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   useEffect(() => {
     if (!marcador || !mar) return;
     if (esModalidadEmbarcacionMar(modalidad)) {
-      const r = consultarEmbarcacion(marcador.latitude, marcador.longitude);
+      const r = consultarEmbarcacion(marcador.latitude, marcador.longitude, {
+        variante: modalidad === "kayak" || modoGlobal === "kayak_mar" ? "kayak" : "barco",
+      });
       setConsulta(r);
       const prof = estimarProfundidadMarCastellon(marcador.latitude, marcador.longitude);
       const eta = etaAPuerto(marcador.latitude, marcador.longitude);
@@ -292,7 +305,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       setConsulta(consultarCosta(marcador.latitude, marcador.longitude));
       setInfoNavegacion(null);
     }
-  }, [modalidad]);
+  }, [modalidad, modoGlobal]);
 
   useEffect(() => {
     if (!grabandoId || !yo || rutaPausada) return;
@@ -410,7 +423,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   function evaluarPunto(lat: number, lng: number) {
     if (modoBarco || (mar && esModalidadEmbarcacionMar(modalidad))) {
-      const r = consultarEmbarcacion(lat, lng);
+      const r = consultarEmbarcacion(lat, lng, {
+        variante: modalidad === "kayak" || modoGlobal === "kayak_mar" ? "kayak" : "barco",
+      });
       setModo("costa");
       setCamara({ latitude: lat, longitude: lng, zoom: 12, nonce: Date.now() });
       mostrarFicha(r);
@@ -463,7 +478,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     if (soloContinental && siguiente === "costa") return;
     setModo(siguiente);
     if (siguiente === "costa") {
-      void setModoGlobal(modoGlobal === "barco" ? "barco" : "orilla");
+      const costaPreferida =
+        modoGlobal === "barco" || modoGlobal === "kayak_mar"
+          ? modoGlobal
+          : "orilla";
+      void setModoGlobal(costaPreferida);
       const costa = provincia.regionCosta ?? {
         latitude: provincia.regionMapa.latitude,
         longitude: provincia.regionMapa.longitude,
@@ -472,13 +491,19 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       setCamara({ latitude: costa.latitude, longitude: costa.longitude, zoom: costa.zoom, nonce: Date.now() });
       if (marcador) {
         setConsulta(
-          modoGlobal === "barco" || modalidad === "embarcacion" || modalidad === "kayak"
-            ? consultarEmbarcacion(marcador.latitude, marcador.longitude)
+          esModoEmbarcado(costaPreferida) ||
+            modalidad === "embarcacion" ||
+            modalidad === "kayak"
+            ? consultarEmbarcacion(marcador.latitude, marcador.longitude, {
+                variante: costaPreferida === "kayak_mar" || modalidad === "kayak" ? "kayak" : "barco",
+              })
             : consultarCosta(marcador.latitude, marcador.longitude)
         );
       }
     } else {
-      void setModoGlobal("rio");
+      const contPreferido =
+        modoGlobal === "kayak" || modoGlobal === "embalse" ? modoGlobal : "rio";
+      void setModoGlobal(contPreferido);
       if (marcador) {
         setConsulta(consultarPuntoPesca(marcador.latitude, marcador.longitude));
       }
@@ -728,8 +753,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         )}
       </View>
 
-      {!soloContinental ? (
-        <View style={[styles.modoBar, mar && styles.modoBarMar]}>
+      {modosDisp.length > 1 ? (
+        <View
+          style={[
+            styles.modoBar,
+            mar && styles.modoBarMar,
+            modoKayak && !mar && { backgroundColor: COLORS.kayakLight },
+          ]}
+        >
           <SelectorModoPesca
             modo={modoElegido ? modoGlobal : null}
             disponibles={modosDisp}
@@ -737,11 +768,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             compacto
             onChange={(m) => {
               void setModoGlobal(m);
-              setModo(m === "rio" ? "continental" : "costa");
-              setModalidad(
-                m === "barco" ? "embarcacion" : m === "orilla" ? "orilla_mar" : "orilla_continental"
-              );
-              if (m !== "rio") {
+              setModo(modoAMapaModo(m));
+              setModalidad(modalidadDesdeModoGlobal(m));
+              if (modoAMapaModo(m) === "costa") {
                 const costa = provincia.regionCosta ?? {
                   latitude: provincia.regionMapa.latitude,
                   longitude: provincia.regionMapa.longitude,

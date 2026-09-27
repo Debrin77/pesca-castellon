@@ -72,7 +72,7 @@ export interface ConsultaPesca {
    * En mar: orilla vs embarcación/kayak.
    * Evita mostrar el horario de «caña desde tierra» en el ritual Salgo en barco.
    */
-  modalidadMar?: "orilla" | "embarcacion";
+  modalidadMar?: "orilla" | "embarcacion" | "kayak";
   especiesHabituales?: string;
   especiesIds?: string[];
   sitiosCosta?: { nombre: string; especies: string; cuando: string; detalle: string }[];

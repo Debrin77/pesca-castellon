@@ -260,7 +260,7 @@ export default function AparejosScreen({ route, navigation }: Props) {
             >
               <Text style={styles.headerKicker}>
                 {ambito === "barco"
-                  ? "Embarcación / kayak · Castellón"
+                  ? "Desde barco / kayak mar · Castellón"
                   : ambito === "costa"
                     ? "Desde tierra · Mediterráneo"
                     : `Continental · ${provincia.nombre}`}

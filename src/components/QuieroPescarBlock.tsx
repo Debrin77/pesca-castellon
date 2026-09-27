@@ -16,6 +16,9 @@ import {
 import {
   etiquetaModo,
   etiquetaModoLarga,
+  esModoEmbarcado,
+  esModoKayak,
+  pistaModo,
   type ModoPescaGlobal,
 } from "../data/modoPesca";
 import {
@@ -52,7 +55,7 @@ function catalogoDeModo(
   especiesRio: EspecieCatalogo[]
 ): EspecieCatalogo[] {
   if (modo === "orilla") return especiesOrillaParaSeleccion();
-  if (modo === "barco") return especiesEmbarcacionUsuales();
+  if (esModoEmbarcado(modo)) return especiesEmbarcacionUsuales();
   return especiesRio;
 }
 
@@ -61,7 +64,7 @@ function anclaParaModo(
   ancla: { lat: number; lng: number },
   anclaCosta?: { lat: number; lng: number } | null
 ): { lat: number; lng: number } {
-  if ((modo === "orilla" || modo === "barco") && anclaCosta) return anclaCosta;
+  if ((modo === "orilla" || esModoEmbarcado(modo)) && anclaCosta) return anclaCosta;
   return ancla;
 }
 
@@ -170,7 +173,7 @@ export default function QuieroPescarBlock({
         <Text style={styles.ctaTitulo}>Quiero pescar…</Text>
         <Text style={styles.ctaSub}>
           {multi
-            ? "Elige río, orilla o barco · especie · 3 zonas con mejor puntuación"
+            ? "Elige río, embalse, kayak u orilla · especie · 3 zonas con mejor puntuación"
             : "Elige especie · 3 zonas con mejor puntuación hoy"}
         </Text>
       </TouchableOpacity>
@@ -207,22 +210,35 @@ export default function QuieroPescarBlock({
         <>
           <Text style={styles.kicker}>¿Cómo vas a pescar?</Text>
           <Text style={styles.lead}>
-            Hay costa en esta provincia: elige modalidad y te mostramos especies y zonas.
+            Elige modalidad: río o embalse desde orilla, kayak (¡a remar!), o costa desde orilla /
+            kayak / barco.
           </Text>
           <View style={styles.modosRow}>
             {disponibles.map((m) => {
-              const mar = m === "orilla" || m === "barco";
+              const kayak = esModoKayak(m);
+              const mar = m === "orilla" || m === "barco" || m === "kayak_mar";
               return (
                 <TouchableOpacity
                   key={m}
-                  style={[styles.modoBtn, mar ? styles.modoBtnMar : styles.modoBtnRio]}
+                  style={[
+                    styles.modoBtn,
+                    mar && !kayak ? styles.modoBtnMar : styles.modoBtnRio,
+                    kayak && styles.modoBtnKayak,
+                  ]}
                   onPress={() => elegirModo(m)}
                   accessibilityRole="button"
                   accessibilityLabel={etiquetaModoLarga(m)}
                 >
-                  <Text style={styles.modoBtnTitulo}>{etiquetaModo(m)}</Text>
-                  <Text style={styles.modoBtnSub} numberOfLines={2}>
-                    {m === "rio" ? "Ríos y embalses" : m === "orilla" ? "Desde tierra" : "Kayak / barco"}
+                  {kayak ? <Text style={styles.modoBtnStar}>★</Text> : null}
+                  <Text style={[styles.modoBtnTitulo, kayak && styles.modoBtnTituloKayak]}>
+                    {etiquetaModo(m)}
+                    {m === "kayak_mar" ? " mar" : ""}
+                  </Text>
+                  <Text
+                    style={[styles.modoBtnSub, kayak && styles.modoBtnSubKayak]}
+                    numberOfLines={2}
+                  >
+                    {pistaModo(m)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -377,23 +393,40 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 4,
   },
-  modosRow: { flexDirection: "row", gap: 8 },
+  modosRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   modoBtn: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: "30%",
+    minWidth: 96,
     minHeight: 64,
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: RADIUS.md,
     justifyContent: "center",
+    position: "relative",
   },
   modoBtnRio: { backgroundColor: COLORS.primaryDark },
   modoBtnMar: { backgroundColor: COLORS.waterDark },
+  modoBtnKayak: {
+    backgroundColor: COLORS.kayakLight,
+    borderWidth: 2,
+    borderColor: COLORS.kayakSun,
+  },
+  modoBtnStar: {
+    position: "absolute",
+    top: 4,
+    right: 6,
+    fontSize: 11,
+    color: COLORS.kayakSun,
+    fontWeight: "800",
+  },
   modoBtnTitulo: {
     fontSize: 14,
     fontWeight: "800",
     color: "#fff",
     textAlign: "center",
   },
+  modoBtnTituloKayak: { color: COLORS.kayakDark },
   modoBtnSub: {
     fontSize: 11,
     color: "rgba(255,255,255,0.85)",
@@ -401,6 +434,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 14,
   },
+  modoBtnSubKayak: { color: COLORS.kayak },
   listaScroll: { maxHeight: 280 },
   especieFila: {
     flexDirection: "row",

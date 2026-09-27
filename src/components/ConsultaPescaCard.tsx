@@ -276,7 +276,7 @@ export default function ConsultaPescaCard({
             ) : null}
             <AvisoHorarioLegal
               ambito={
-                consulta.modalidadMar === "embarcacion"
+                consulta.modalidadMar === "embarcacion" || consulta.modalidadMar === "kayak"
                   ? "embarcacion"
                   : mar
                     ? "maritimo"
@@ -390,8 +390,10 @@ export default function ConsultaPescaCard({
                     sitios={consulta.sitiosCosta ?? []}
                     titulo={
                       consulta.modalidadMar === "embarcacion"
-                        ? "Referencias de salida (embarcación)"
-                        : "Dónde se pesca a caña (uso habitual)"
+                        ? "Referencias de salida (desde barco)"
+                        : consulta.modalidadMar === "kayak"
+                          ? "Referencias de salida (desde kayak)"
+                          : "Dónde se pesca a caña (uso habitual)"
                     }
                     aviso={avisoSitiosCosta()}
                   />

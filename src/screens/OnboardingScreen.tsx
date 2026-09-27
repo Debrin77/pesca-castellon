@@ -518,10 +518,16 @@ function MockModos({
   const modos = esCosta
     ? [
         { id: "rio", label: "Río", on: false },
+        { id: "embalse", label: "Embalse", on: false },
+        { id: "kayak", label: "Kayak", on: true },
         { id: "orilla", label: "Orilla", on: false },
-        { id: "barco", label: "Barco", on: true },
+        { id: "barco", label: "Barco", on: false },
       ]
-    : [{ id: "rio", label: "Ríos y embalses", on: true }];
+    : [
+        { id: "rio", label: "Río", on: false },
+        { id: "embalse", label: "Embalse", on: false },
+        { id: "kayak", label: "Kayak", on: true },
+      ];
 
   return (
     <LinearGradient colors={["#f4f8f6", "#e4eef2"]} style={m.fill}>
@@ -533,7 +539,7 @@ function MockModos({
       <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 14, paddingHorizontal: 12 }}>
         <View style={m.modoRow}>
           {modos.map((x) => (
-            <View key={x.id} style={[m.modoChip, x.on && (x.id === "rio" ? m.modoChipOnRio : m.modoChipOnMar)]}>
+            <View key={x.id} style={[m.modoChip, x.on && (x.id === "kayak" ? m.modoChipOnKayak : x.id === "rio" || x.id === "embalse" ? m.modoChipOnRio : m.modoChipOnMar)]}>
               <Text style={[m.modoChipTxt, x.on && m.modoChipTxtOn]}>{x.label}</Text>
             </View>
           ))}
@@ -1027,6 +1033,11 @@ const m = StyleSheet.create({
   modoChipOnRio: {
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
+  },
+  modoChipOnKayak: {
+    backgroundColor: "#0a3f38",
+    borderColor: "#c45f12",
+    borderWidth: 2,
   },
   modoChipOnMar: {
     backgroundColor: COLORS.water,

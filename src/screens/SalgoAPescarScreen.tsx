@@ -205,7 +205,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      if (modoGlobal === "barco") {
+      if (modoGlobal === "barco" || modoGlobal === "kayak_mar") {
         navigation.replace("SalgoEnBarco");
         return;
       }
@@ -425,19 +425,26 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 modo={
                   !modoElegido
                     ? null
-                    : modoGlobal === "barco"
+                    : modoGlobal === "barco" || modoGlobal === "kayak_mar"
                       ? "orilla"
                       : modoGlobal
                 }
-                disponibles={modosDisp.filter((m) => m !== "barco") as ModoPescaGlobal[]}
+                disponibles={
+                  modosDisp.filter(
+                    (m) => m !== "barco" && m !== "kayak_mar"
+                  ) as ModoPescaGlobal[]
+                }
                 modoRecordado={
-                  !modoElegido && modoRecordado && modoRecordado !== "barco"
+                  !modoElegido &&
+                  modoRecordado &&
+                  modoRecordado !== "barco" &&
+                  modoRecordado !== "kayak_mar"
                     ? modoRecordado
                     : null
                 }
                 onChange={(m) => {
-                  if (m === "barco") {
-                    void setModoGlobal("barco");
+                  if (m === "barco" || m === "kayak_mar") {
+                    void setModoGlobal(m);
                     navigation.replace("SalgoEnBarco");
                     return;
                   }
@@ -445,18 +452,38 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 }}
               />
             ) : null}
-            {permiteCosta && modosDisp.includes("barco") ? (
-              <TouchableOpacity
-                style={styles.barcoLink}
-                onPress={() => {
-                  void setModoGlobal("barco");
-                  navigation.replace("SalgoEnBarco");
-                }}
-                accessibilityRole="button"
-                accessibilityLabel="Ir a Salgo en barco"
-              >
-                <Text style={styles.barcoLinkTxt}>¿Vas en barco o kayak? → Salgo en barco</Text>
-              </TouchableOpacity>
+            {permiteCosta &&
+            (modosDisp.includes("barco") || modosDisp.includes("kayak_mar")) ? (
+              <View style={{ gap: 8 }}>
+                {modosDisp.includes("kayak_mar") ? (
+                  <TouchableOpacity
+                    style={[styles.barcoLink, { borderColor: COLORS.kayak, backgroundColor: COLORS.kayakLight }]}
+                    onPress={() => {
+                      void setModoGlobal("kayak_mar");
+                      navigation.replace("SalgoEnBarco");
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Ir a Salgo en kayak"
+                  >
+                    <Text style={[styles.barcoLinkTxt, { color: COLORS.kayakDark }]}>
+                      ★ ¿Vas en kayak al mar? → Salgo en kayak
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+                {modosDisp.includes("barco") ? (
+                  <TouchableOpacity
+                    style={styles.barcoLink}
+                    onPress={() => {
+                      void setModoGlobal("barco");
+                      navigation.replace("SalgoEnBarco");
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Ir a Salgo en barco"
+                  >
+                    <Text style={styles.barcoLinkTxt}>¿Vas en barco matriculado? → Salgo en barco</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
             ) : null}
 
             <AvisoHorarioLegal

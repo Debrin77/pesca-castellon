@@ -55,14 +55,18 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 - Ventanas solunar / marea (costa) cuando aplica.
 - Alertas locales de buen día (solo app nativa, no web).
 
-### Embarcación / kayak (Castellón)
-- Ritual **Salgo en barco**: rampa → ¿Puedo? (legal) → ¿Pinta? (oleaje/viento) → checklist.
+### Kayak (todas) + barco (Castellón)
+- **Kayak es modalidad propia**, no un subtítulo de «Barco».
+- Continental: **Río** · **Embalse** · **Kayak** (remo; DR de navegación + licencia continental).
+- Costa Castellón: **Orilla** · **Kayak** (artefacto flotante, licencia desde tierra) · **Barco** (matriculado).
+- Ritual **Salgo en barco / kayak**: rampa → ¿Puedo? (legal) → ¿Pinta? (oleaje/viento) → checklist.
 - Capas Columbretes, rampas (Vinaròs→Moncofa), waypoints marinos y grabación de ruta GPS.
 - Catálogo de especies/aparejos de barco y enlace a **PescaREC**.
 - **Herramientas complementarias**: esta app no es plotter. Para navegar usa **Navionics**
   (u otra carta / plotter) + consulta IHM; el bloque «día de la salida» está en el ritual
   y en Consejos → Seguridad.
 - Caché offline del índice barco; el mapa offline calienta también costa y rampas.
+- Ficha por embalse (`PanelKayakEmbalse`) + documentación kayak en Licencia.
 
 ### Capturas (diario íntimo)
 - Favoritos, puntos guardados y capturas con foto/GPS.

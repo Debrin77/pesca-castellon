@@ -31,8 +31,10 @@ export function etiquetaHoy(c: ConsultaPesca): { texto: string; sub: string } {
       sub:
         c.ambito === "maritimo"
           ? c.modalidadMar === "embarcacion"
-            ? "Mar · embarcación / kayak (orientativo)"
-            : "Orilla · licencia marítima"
+            ? "Mar · desde barco (orientativo)"
+            : c.modalidadMar === "kayak"
+              ? "Mar · desde kayak (orientativo)"
+              : "Orilla · licencia marítima"
           : "Zona libre · con licencia",
     };
   }

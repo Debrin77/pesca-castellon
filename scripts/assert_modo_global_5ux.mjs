@@ -30,7 +30,18 @@ for (const f of [
 }
 
 const modo = read("src/data/modoPesca.ts");
-for (const n of ['"rio"', '"orilla"', '"barco"', "modosDisponibles", "modoAMapaModo", "textoPedirModo"]) {
+for (const n of [
+  '"rio"',
+  '"orilla"',
+  '"barco"',
+  '"kayak"',
+  '"kayak_mar"',
+  '"embalse"',
+  "modosDisponibles",
+  "modoAMapaModo",
+  "textoPedirModo",
+  "esModoKayak",
+]) {
   if (!modo.includes(n)) fail(`modoPesca sin ${n}`);
 }
 
@@ -102,7 +113,9 @@ if (!home.includes("modoListo && !modoElegido")) {
 if (home.includes("Embarcación / kayak</Text>") && home.includes("Salgo a pescar</Text>") && home.includes("Salgo en barco</Text>") && !home.includes("modo === \"barco\"")) {
   fail("Home aún muestra dos CTAs gemelos sin unificar por modo");
 }
-if (!home.includes('modo === "barco"')) fail("Home debe ramificar CTA según modo barco");
+if (!home.includes('modo === "barco"') && !home.includes("esModoEmbarcado")) {
+  fail("Home debe ramificar CTA según modo barco/kayak mar");
+}
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
 for (const n of ["mapaSimple", "Solo consulta", "Capas avanzadas", "SelectorModoPesca", "modoGlobal", "modoElegido", "modoRecordado"]) {

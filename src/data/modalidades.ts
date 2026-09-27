@@ -3,6 +3,7 @@ export type ModalidadPesca =
   | "orilla_continental"
   | "orilla_mar"
   | "kayak"
+  | "kayak_embalse"
   | "embarcacion"
   | "submarina";
 
@@ -16,7 +17,7 @@ export const MODALIDADES: {
   {
     id: "orilla_continental",
     etiqueta: "Orilla · río / embalse",
-    corta: "Río",
+    corta: "Orilla",
     ambito: "continental",
     notaLegal: "Licencia continental. Una caña en tramos trucheros; respeta ZPL/ZPC/vedado.",
   },
@@ -28,20 +29,28 @@ export const MODALIDADES: {
     notaLegal: "Licencia marítima recreativa desde tierra. Cupo habitual 5 kg/día. PescaREC si aplica.",
   },
   {
+    id: "kayak_embalse",
+    etiqueta: "Kayak · embalse / río",
+    corta: "Kayak",
+    ambito: "continental",
+    notaLegal:
+      "Divertido y distinto: remas hasta el sitio. Navegación = organismo de cuenca (DR). Pesca = licencia continental. No se sustituyen.",
+  },
+  {
     id: "kayak",
-    etiqueta: "Kayak / paddle",
+    etiqueta: "Kayak · mar",
     corta: "Kayak",
     ambito: "maritimo",
     notaLegal:
-      "En mar: licencia de artefacto flotante / embarcación según caso, no la de orilla. PescaREC si aplica. Columbretes: reserva.",
+      "Artefacto flotante: licencia marítima DESDE TIERRA (no la de embarcación). PescaREC si aplica. Columbretes: reserva.",
   },
   {
     id: "embarcacion",
-    etiqueta: "Embarcación",
+    etiqueta: "Embarcación · barco",
     corta: "Barco",
     ambito: "maritimo",
     notaLegal:
-      "Mar Castellón: licencia desde embarcación (no «desde tierra»), fuera de dársena, sin Columbretes. PescaREC cuando la norma lo exija.",
+      "Mar Castellón: licencia DESDE EMBARCACIÓN (matriculada). Distinta del kayak. Fuera de dársena, sin Columbretes. PescaREC cuando la norma lo exija.",
   },
   {
     id: "submarina",
@@ -58,6 +67,21 @@ export function esModalidadEmbarcacionMar(id: ModalidadPesca): boolean {
   return id === "embarcacion" || id === "kayak";
 }
 
+export function esModalidadKayak(id: ModalidadPesca): boolean {
+  return id === "kayak" || id === "kayak_embalse";
+}
+
 export function modalidadPorId(id: ModalidadPesca) {
   return MODALIDADES.find((m) => m.id === id) ?? MODALIDADES[0];
+}
+
+/** Modalidad fina según modo global. */
+export function modalidadDesdeModoGlobal(
+  modo: "rio" | "embalse" | "orilla" | "barco" | "kayak" | "kayak_mar"
+): ModalidadPesca {
+  if (modo === "barco") return "embarcacion";
+  if (modo === "kayak_mar") return "kayak";
+  if (modo === "kayak") return "kayak_embalse";
+  if (modo === "orilla") return "orilla_mar";
+  return "orilla_continental";
 }
