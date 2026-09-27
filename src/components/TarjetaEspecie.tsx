@@ -18,6 +18,18 @@ export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: s
     return { valor: String(sp.tallaKg), unidad: "kg", pie: `Peso mínimo ${sp.tallaKg} kg${sp.tallaNota ? ` · ${sp.tallaNota}` : ""}` };
   }
   const fuente = `${sp?.tallaOficial ?? ""} ${sp?.tallaNota ?? ""}`;
+  // Preferir régimen sin muerte cuando el texto mezcla talla excepcional + SM (p. ej. barbos CLM).
+  if (/sin muerte/i.test(fuente)) {
+    const mCond = fuente.match(/(\d+(?:[.,]\d+)?)\s*cm/i);
+    const pieExtra = mCond
+      ? ` · ${mCond[1].replace(",", ".")} cm solo donde la Orden autorice extracción`
+      : "";
+    return {
+      valor: "SM",
+      unidad: "",
+      pie: `Sin muerte · no hay talla de retención por defecto${pieExtra}`,
+    };
+  }
   const m = fuente.match(/(\d+(?:[.,]\d+)?)\s*(cm|kg)/i);
   if (m) {
     const n = m[1].replace(",", ".");
@@ -28,7 +40,6 @@ export function tallaDestacada(sp: any): { valor: string; unidad: string; pie: s
       pie: u === "kg" ? `Peso mínimo ${n} kg` : `Talla mínima ${n} cm${sp.tallaOficial ? ` · ${sp.tallaOficial}` : ""}`,
     };
   }
-  if (/sin muerte/i.test(fuente)) return { valor: "SM", unidad: "", pie: "Sin muerte · no hay talla de retención" };
   if (sp?.invasora || sp?.id === "cangrejo_azul") return { valor: "INV", unidad: "", pie: sp.tallaOficial ?? "Invasora · no devolver" };
   return { valor: "—", unidad: "", pie: sp?.tallaOficial ?? sp?.tallaNota ?? "Sin talla mínima en el anexo" };
 }

@@ -52,13 +52,15 @@ export function periodoTruchaAltaMontana(fecha: Date = new Date()): boolean {
   return false;
 }
 
-/** Ventana genérica de trucha en Cuenca (baja montaña por defecto). */
+/** Ventana genérica de trucha en Cuenca (baja montaña por defecto).
+ *  Alta montaña (1 may–15 oct) y aperturas especiales (p. ej. Laguna del Marquesado 1 jun)
+ *  requieren cartel/visor JCCM; la app aplica baja montaña hasta etiquetar tramos. */
 export function periodoTruchaCuencaAbierto(fecha: Date = new Date()): boolean {
   return periodoTruchaBajaMontana(fecha);
 }
 
 export function etiquetaTemporadaTruchaCuenca(anio: number = new Date().getFullYear()): string {
-  return `Trucheras CLM ${anio}: baja montaña 1 abr–30 sep; alta montaña 1 may–15 oct (art. 2 Orden 20/2026). Solo sin muerte.`;
+  return `Trucheras CLM ${anio}: la app aplica baja montaña 1 abr–30 sep (por defecto). Alta montaña 1 may–15 oct y aperturas especiales (p. ej. Marquesado 1 jun) → confirma visor JCCM / cartel (art. 2 Orden 20/2026). Solo sin muerte.`;
 }
 
 export function textoVigenciaNormativaClm(): string {

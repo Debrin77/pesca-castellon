@@ -73,3 +73,5 @@ Translation by User:Theklan
 - `barbo_gitano.jpg` — File:Barbo gitano (Barbus sclateri).jpg — CC BY-SA 4.0 — Javier Vázquez Rodríguez (reconfirmado)
 - `mugilidos.jpg` — File:Muble (Chelon labrosus), Parque natural de la Arrábida, Portugal, 2021-09-10, DD 48.jpg — CC BY-SA 4.0 — Diego Delso (antes duplicaba `llisa.jpg`)
 - `herrera.jpg` — File:Peces herrera (Lithognathus mormyrus), Madeira, Portugal, 2019-05-30, DD 01.jpg — CC BY-SA 4.0 — Diego Delso
+- `boga.jpg` — File:Pseudochondrostoma willkommii1 cropped.jpg — boga de río continental (Pseudochondrostoma); no usar para costa
+- `boga_mar.jpg` — File:Boga (Boops boops), franja marina Teno-Rasca, Tenerife, España, 2022-01-08, DD 99.jpg — CC BY-SA 4.0 — Diego Delso (Boops de orilla; id separado de la boga continental)
