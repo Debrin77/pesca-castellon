@@ -11,6 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { useModoPesca } from "../context/ModoPescaContext";
+import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { sitiosFacilesDe, type SitioFacil } from "../data/sitiosFaciles";
 import { marcarPrimeraSalidaHecha, marcarLicenciaOk } from "../services/primeraSalidaService";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";

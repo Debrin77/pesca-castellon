@@ -176,7 +176,7 @@ export default function LicenseScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Permisos de coto</Text>
         <Text style={styles.cardText}>{infoPermisoCoto(provincia.id).comoObtener}</Text>
-        <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPlan}</Text>
+        <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPtop}</Text>
         {esAndalucia ? (
           <Text style={[styles.cardText, { marginTop: 8 }]}>
             En {provincia.nombre} (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
