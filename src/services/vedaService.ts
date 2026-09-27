@@ -121,8 +121,12 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
   }
 
   if (esProvinciaCastillaLaMancha(provincia.id)) {
-    if (especieId === "trucha_comun" || especieId === "trucha_arcoiris") {
+    if (especieId === "trucha_comun") {
       return !periodoTruchaCuencaAbierto(fecha);
+    }
+    /** Arcoíris: en CLM suele ir ligada a cotos intensivos / plan del coto, no al calendario genérico de trucheras. */
+    if (especieId === "trucha_arcoiris") {
+      return false;
     }
     if (especieId === "anguila" || especieId === "siluro") return true;
     /** Cangrejo rojo: veda de control 1 feb–31 may (Orden 20/2026). */

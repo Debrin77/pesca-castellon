@@ -75,3 +75,15 @@ Translation by User:Theklan
 - `herrera.jpg` — File:Peces herrera (Lithognathus mormyrus), Madeira, Portugal, 2019-05-30, DD 01.jpg — CC BY-SA 4.0 — Diego Delso
 - `boga.jpg` — File:Pseudochondrostoma willkommii1 cropped.jpg — boga de río continental (Pseudochondrostoma); no usar para costa
 - `boga_mar.jpg` — File:Boga (Boops boops), franja marina Teno-Rasca, Tenerife, España, 2022-01-08, DD 99.jpg — CC BY-SA 4.0 — Diego Delso (Boops de orilla; id separado de la boga continental)
+
+## Auditoría 2026-09 (2.ª pasada exhaustiva)
+- `alburno.jpg` — File:Hal - Alburnus alburnus - 1.jpg — CC BY-SA 4.0 — Emőke Dénes
+- `sargo.jpg` — File:Sargo común (Diplodus sargus), Parque natural de la Arrábida, Portugal, 2020-07-21, DD 56.jpg — CC BY-SA 4.0 — Diego Delso (antes parecía *D. annularis*)
+- `carpin.jpg` — File:Carassius gibelio 2008 G1.jpg — CC BY-SA 3.0 — George Chernilevsky (carpín salvaje, no goldfish ornamental)
+- `pagel.jpg` — File:Breca (Pagellus erythrinus), franja marina Teno-Rasca, Tenerife, España, 2022-01-08, DD 13.jpg — CC BY-SA 4.0 — Diego Delso
+- `denton.jpg` — File:Dentón común (Dentex dentex), Cabo de Palos, España, 2022-07-15, DD 59.jpg — CC BY-SA 4.0 — Diego Delso
+- `cacho.jpg` — File:Hal - Squalius cephalus - 1.jpg — CC BY-SA 4.0 — Emőke Dénes
+- `lucioperca.jpg` — File:Hal - Sander lucioperca - 1.jpg — CC BY-SA 4.0 — Emőke Dénes
+- `percasol.jpg` — File:Lepomis gibbosus Pumpkinseed.jpg — ver licencia en Commons
+- `bonito.jpg` — File:Sarda sarda 1.jpg — ver licencia en Commons
+- Placas regeneradas: `black_bass` (TL horizontal), `palometon` (Lichia, no tarpon), `mojarra` (2 bandas), `boga_mar`, `cangrejo_americano` (anchura de caparazón), `siluro`, `jurel`, `mugilidos`

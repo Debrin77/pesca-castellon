@@ -54,8 +54,29 @@ export function periodoTruchaAltaMontana(fecha: Date = new Date()): boolean {
 
 /** Ventana genérica de trucha en Cuenca (baja montaña por defecto).
  *  Alta montaña (1 may–15 oct) y aperturas especiales (p. ej. Laguna del Marquesado 1 jun)
- *  requieren cartel/visor JCCM; la app aplica baja montaña hasta etiquetar tramos. */
+ *  requieren cartel/visor JCCM; la app aplica baja montaña salvo apertura explícita en el tramo. */
 export function periodoTruchaCuencaAbierto(fecha: Date = new Date()): boolean {
+  return periodoTruchaBajaMontana(fecha);
+}
+
+/**
+ * Periodo hábil de un tramo truchero CLM.
+ * Si el régimen indica apertura especial (p. ej. «apertura trucha 1 jun»), se aplica esa fecha
+ * hasta el cierre de baja montaña (30 sep). Si no, baja montaña 1 abr–30 sep.
+ */
+export function periodoTruchaTramoClmAbierto(
+  tramo: { id?: string; regimen?: string | null; nombre?: string | null },
+  fecha: Date = new Date()
+): boolean {
+  const texto = `${tramo.regimen ?? ""} ${tramo.nombre ?? ""} ${tramo.id ?? ""}`.toLowerCase();
+  const m = fecha.getMonth() + 1;
+  const d = fecha.getDate();
+  if (/apertura\s+trucha\s+1\s*jun|marquesado/.test(texto)) {
+    if (m > 6 && m < 9) return true;
+    if (m === 6 && d >= 1) return true;
+    if (m === 9 && d <= 30) return true;
+    return false;
+  }
   return periodoTruchaBajaMontana(fecha);
 }
 

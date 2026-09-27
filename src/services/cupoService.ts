@@ -25,14 +25,28 @@ function claveManual(): string {
 export function parsearCupo(texto: string | undefined | null): { maxUnidades: number | null; maxKg: number | null } {
   if (!texto) return { maxUnidades: null, maxKg: null };
   const t = texto.toLowerCase();
-  if (/sin\s*(cupo|l[ií]mite)|no se retiene|devoluci[oó]n|sin muerte|fomentada|prohibida/.test(t)) {
-    return { maxUnidades: null, maxKg: null };
-  }
-  const ud = t.match(/(\d+)\s*(ud|u\.|piezas|ejemplares)/);
   const kg = t.match(/(\d+(?:[.,]\d+)?)\s*kg/);
+  const maxKg = kg ? parseFloat(kg[1].replace(",", ".")) : null;
+
+  // Cupo excepcional tras «salvo» / «máx.» (p. ej. barbos CLM en Buendía/Alarcón/Contreras).
+  const excepcion = t.match(
+    /(?:salvo|excepto|excepci[oó]n)[^.]{0,80}?(?:m[aá]x\.?\s*)?(\d+)\s*(?:\/\s*d[ií]a|ud|u\.|piezas|ejemplares)?/
+  );
+  if (excepcion) {
+    return { maxUnidades: parseInt(excepcion[1], 10), maxKg };
+  }
+
+  if (/sin\s*(cupo|l[ií]mite)|no se retiene|devoluci[oó]n|sin muerte|fomentada|prohibida/.test(t)) {
+    return { maxUnidades: null, maxKg };
+  }
+
+  const ud =
+    t.match(/(\d+)\s*(ud|u\.|piezas|ejemplares)/) ||
+    t.match(/(?:m[aá]x\.?\s*)?(\d+)\s*\/\s*d[ií]a/) ||
+    t.match(/(?:m[aá]x\.?\s*|cupo\s*)(\d+)\b/);
   return {
     maxUnidades: ud ? parseInt(ud[1], 10) : null,
-    maxKg: kg ? parseFloat(kg[1].replace(",", ".")) : null,
+    maxKg,
   };
 }
 

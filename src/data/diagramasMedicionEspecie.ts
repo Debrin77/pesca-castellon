@@ -54,6 +54,7 @@ const POR_ID: Record<string, ImageSourcePropType> = {
 /** Alias cuando la morfología es equivalente. */
 const ALIAS: Record<string, string> = {
   // bonito ~ caballa (scombridae) si se añade talla después
+  bonito: "caballa",
 };
 
 export function diagramaMedicionEspecie(especieId?: string | null): ImageSourcePropType | null {

@@ -212,9 +212,9 @@
     "categoria": "invasora",
     "invasora": true,
     "icono": "🦞",
-    "notas": "Invasora. En Andalucía / cuenca del Guadalquivir la captura recreativa NO está abierta a cualquiera en el ámbito de la Orden 3/08/2016 (marismas): solo controladores autorizados. En Córdoba confirma si tu masa entra en algún plan de control vigente.",
-    "tallaOficial": "No es pesca recreativa libre en el plan de marismas del Guadalquivir.",
-    "cupo": "Solo controladores autorizados (Orden 3/08/2016) donde aplique.",
+    "notas": "Invasora. En Córdoba la captura recreativa del cangrejo rojo NO está abierta con carácter general: confirma masa y autorización. El régimen de controladores de la Orden 3/08/2016 (marismas del Guadalquivir) es propio de Sevilla, no el default de Córdoba.",
+    "tallaOficial": "No es pesca recreativa libre con carácter general en Córdoba; confirma masa/autorización.",
+    "cupo": "Solo controladores autorizados donde aplique el plan de la masa.",
     "mejoresMeses": [
       "abril",
       "mayo",
@@ -225,17 +225,17 @@
     ],
     "ventanas": "Atardecer y alba (solo si estás autorizado como controlador)",
     "mejorHora": {
-      "resumen": "Más activo al atardecer y al alba. La pesca recreativa general no está habilitada en el plan de marismas.",
-      "verano": "19:00–21:30 y 6:00–9:00 si el arte y la autorización lo permiten.",
+      "resumen": "No es modalidad recreativa general en Córdoba.",
+      "verano": "19:00–21:30 y 6:00–9:00 solo si el plan y la autorización lo permiten.",
       "invierno": "Menos activo.",
       "noche": "Muy activo de noche; sin autorización de controlador no aplica."
     },
-    "habitats": "Zonas húmedas de la cuenca del Guadalquivir (ámbito Orden 3/08/2016 y planes locales)",
+    "habitats": "Masas de la provincia de Córdoba donde exista plan de control vigente (confirma Junta / cartel)",
     "senuelosClave": [
       "Nasas/reteles solo si estás autorizado"
     ],
-    "normativaResumen": "Andalucía: cangrejo rojo solo por controladores autorizados (Orden 3/08/2016, marismas del Guadalquivir) donde aplique.",
-    "normativaEspecial": "⚠️ ANDALUCÍA: cangrejo rojo — solo controladores autorizados (Orden 3/08/2016). No es pesca recreativa libre en las marismas del Guadalquivir.",
+    "normativaResumen": "Córdoba: cangrejo rojo no es pesca recreativa libre general; confirma masa/autorización. Marismas Guadalquivir (Orden 3/08/2016) = Sevilla.",
+    "normativaEspecial": "⚠️ CÓRDOBA: cangrejo rojo — no copies el régimen de marismas del Guadalquivir (Sevilla). Solo si tu masa tiene plan/autorización de control.",
     "equipo": {
       "cana": "No aplica a pesca recreativa general",
       "carrete": "No aplica",
@@ -243,7 +243,7 @@
       "senuelosCebos": [
         "Nasa/retel solo con autorización"
       ],
-      "tecnica": "Reservado a controladores del plan de marismas"
+      "tecnica": "Reservado a controladores autorizados de la masa"
     }
   }
 ]
