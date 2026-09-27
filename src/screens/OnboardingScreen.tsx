@@ -214,8 +214,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
       <Animated.View style={[styles.brandBlock, { marginTop: topPad + 20, opacity: textOpacity }]}>
         <LogoMarca size={96} hiRes accessibilityLabel="Logo Vámonos de pesca" />
-        <Text style={styles.brandWord}>Vámonos de pesca</Text>
-        <Text style={styles.brandTag}>Castellón · Sevilla · Córdoba · Cuenca</Text>
+        <Text style={styles.provinciasLine}>Castellón · Sevilla · Córdoba · Cuenca</Text>
       </Animated.View>
 
       <ScrollView
@@ -715,18 +714,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
     paddingHorizontal: 16,
   },
-  brandWord: {
+  provinciasLine: {
     marginTop: 6,
-    color: "#fff",
-    fontFamily: FONTS.brand,
-    fontSize: 22,
-    letterSpacing: -0.5,
-    textShadowColor: "rgba(0,0,0,0.35)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
-  },
-  brandTag: {
-    marginTop: 2,
     color: "rgba(255,255,255,0.78)",
     fontFamily: FONTS.semibold,
     fontSize: 12,

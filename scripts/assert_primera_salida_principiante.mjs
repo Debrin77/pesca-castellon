@@ -37,6 +37,8 @@ must("src/screens/PrimeraSalidaScreen.tsx", [
   "elegirMedio",
   "★ Kayak · embalse / río",
   "useModoPesca",
+  "usePuntoConsulta",
+  "fijarPunto",
 ]);
 
 // El CTA «Seguir sin sitio concreto» no debe quedar disabled cuando hay opciones.
