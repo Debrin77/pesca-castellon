@@ -303,7 +303,8 @@ if (hCang.estado !== 'dentro') throw new Error('cangrejo ocaso+2: 20:30 debe est
 if (hGenNoche.estado !== 'fuera') throw new Error('genérico ocaso+1: 20:30 debe estar fuera');
 
 const al15 = tramosCs.find((t) => t.id === 'al15.zpc');
-if (al15?.especies?.includes('anguila')) throw new Error('al15.zpc no debe listar anguila (recreativa prohibida)');
+const conAnguila = tramosCs.filter((t) => (t.especies || []).includes('anguila'));
+if (conAnguila.length) throw new Error('tramos CS no deben listar anguila recreativa: ' + conAnguila.map(t=>t.id).join(','));
 
 console.log('RUNTIME_OK auditoria_contenido');
 `;

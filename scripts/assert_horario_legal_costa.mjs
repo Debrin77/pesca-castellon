@@ -50,9 +50,15 @@ if (!svc.includes('ambito === "embarcacion"') && !svc.includes("ambito === 'emba
   fail("horarioLegalService debe ramificar ambito embarcacion (no reutilizar orilla)");
 }
 
-// Franja continental = orto−1h / ocaso+1h
-if (!svc.includes("sumarHoras(orto, -1)") || !svc.includes("sumarHoras(ocaso, 1)")) {
-  fail("horario continental debe ser orto-1h → ocaso+1h");
+// Franja continental = orto−margen / ocaso+margen (margen 1 por defecto; Iznájar 0; cangrejo CLM fin=2)
+if (
+  !svc.includes("sumarHoras(orto, -margenInicio)") ||
+  !svc.includes("sumarHoras(ocaso, margenFin)")
+) {
+  fail("horario continental debe usar margenInicio/margenFin (orto− / ocaso+)");
+}
+if (!svc.includes("margenFinHoras") || !svc.includes("esHorarioCangrejoClm")) {
+  fail("horarioLegalService debe soportar margenFinHoras / cangrejo CLM");
 }
 
 const norma = read("src/data/normativaMaritima.ts");
