@@ -11,6 +11,7 @@ import {
   Platform,
   Animated,
   Easing,
+  ImageSourcePropType,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -22,12 +23,23 @@ import OndaAgua from "../components/OndaAgua";
 import PulsePress from "../components/PulsePress";
 import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
 import LogoMarca from "../components/LogoMarca";
+import FondoCinePresentacion from "../components/FondoCinePresentacion";
+import CarruselFotosPresentacion from "../components/CarruselFotosPresentacion";
 
 const { width: W, height: H } = Dimensions.get("window");
 /** Marco tipo captura App Store: domina el alto de la pantalla. */
 const PHONE_W = Math.min(W * 0.86, 360);
 const PHONE_H = Math.min(H * 0.52, 540);
 const nativo = Platform.OS !== "web";
+
+/** Atmósferas fotográficas por virtud (Wikimedia empaquetadas). */
+const FOTO_LEGAL = require("../../assets/especies/black_bass.jpg") as ImageSourcePropType;
+const FOTO_PINTA = require("../../assets/especies/dorada.jpg") as ImageSourcePropType;
+const FOTO_MODOS = require("../../assets/especies/lubina.jpg") as ImageSourcePropType;
+const FOTO_MEDIR = require("../../assets/especies/corvina.jpg") as ImageSourcePropType;
+const FOTO_INTIMA = require("../../assets/especies/trucha_arcoiris.jpg") as ImageSourcePropType;
+const FOTO_PIN = require("../../assets/especies/carpa.jpg") as ImageSourcePropType;
+const FOTO_CAMPO = require("../../assets/especies/sargo.jpg") as ImageSourcePropType;
 
 type SlideId = "legal" | "pinta" | "modos" | "medir" | "intima" | "pin" | "campo";
 
@@ -38,6 +50,7 @@ type Slide = {
   texto: string;
   accent: readonly [string, string, string];
   tonoOnda: "claro" | "agua";
+  foto: ImageSourcePropType;
 };
 
 /**
@@ -66,8 +79,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           : provincia.tieneIcv
             ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — confirma el cartel."
             : `Verde, rojo o ámbar. En ${nombreProv} es orientativo: confirma siempre en la fuente oficial.`,
-        accent: ["#1a7588", "#125968", "#0c3d48"],
+        accent: ["#0f5c6e", "#0a3d48", "#062830"],
         tonoOnda: "agua",
+        foto: FOTO_LEGAL,
       },
       {
         id: "pinta",
@@ -75,8 +89,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         titulo: "Hoy pinta",
         texto:
           "Índice 0–100 con aire, agua, presión, solunar y franjas. «¿Pinta?» no autoriza: solo ayuda a elegir hora.",
-        accent: ["#1f7a94", "#166278", "#0e4456"],
+        accent: ["#156a82", "#0e4a5c", "#083240"],
         tonoOnda: "agua",
+        foto: FOTO_PINTA,
       },
       {
         id: "modos",
@@ -85,8 +100,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         texto: esCosta
           ? "Elige cómo vas a pescar: orilla de río o embalse, kayak (¡a remar!) o, en costa, orilla / kayak / barco. Se alinean mapa, especies, aparejos y el ritual."
           : `En ${nombreProv}: elige río, embalse o kayak. Mapa de tramos, especies, montajes y «Salgo a pescar» paso a paso.`,
-        accent: ["#1a5f78", "#134a5c", "#0c3340"],
+        accent: ["#125066", "#0c3646", "#072430"],
         tonoOnda: "agua",
+        foto: FOTO_MODOS,
       },
       {
         id: "medir",
@@ -94,8 +110,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         titulo: "Cómo medir · placa propia",
         texto:
           "Cada especie tiene su gráfico: longitud total, manto o peso. Sin reutilizar siluetas ni confundir lubina con corvina.",
-        accent: ["#1b6a5a", "#134a42", "#0c2e2a"],
+        accent: ["#146050", "#0e3f36", "#082822"],
         tonoOnda: "agua",
+        foto: FOTO_MEDIR,
       },
       {
         id: "intima",
@@ -103,16 +120,18 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         titulo: "Personal e íntima",
         texto:
           "Sitios, capturas y notas en tu móvil. Exporta GPX si quieres — compartir es opcional, nunca el motivo.",
-        accent: ["#1c6346", "#134033", "#0a261c"],
+        accent: ["#16523a", "#0f3528", "#081c16"],
         tonoOnda: "claro",
+        foto: FOTO_INTIMA,
       },
       {
         id: "pin",
         eyebrow: "Cerrada para los demás",
         titulo: "PIN + biometría",
         texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, solo tú entras.",
-        accent: ["#153528", "#0e241c", "#081612"],
+        accent: ["#123028", "#0b1e18", "#061210"],
         tonoOnda: "claro",
+        foto: FOTO_PIN,
       },
       {
         id: "campo",
@@ -120,8 +139,9 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         titulo: "Salgo a pescar",
         texto:
           "Ritual corto para tu primera salida: sitio → ¿Puedo? → ¿Pinta? → montaje → qué llevar. Consejos con fotos cuando haga falta.",
-        accent: ["#234036", "#172c25", "#0f1c18"],
+        accent: ["#1c3830", "#122620", "#0a1612"],
         tonoOnda: "claro",
+        foto: FOTO_CAMPO,
       },
     ],
     [provincia.continentalOnly, provincia.tieneIcv, nombreProv, esCosta]
@@ -179,23 +199,8 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={[...slide.accent]} style={StyleSheet.absoluteFill} />
-      <OndaAgua intensidad={0.7} tono={slide.tonoOnda} />
-      <LinearGradient
-        colors={["rgba(0,0,0,0.22)", "transparent", "rgba(0,0,0,0.42)"]}
-        locations={[0, 0.32, 1]}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
-      />
-      {/* Luz suave tipo orilla al amanecer */}
-      <LinearGradient
-        colors={["rgba(255,236,200,0.14)", "transparent", "transparent"]}
-        locations={[0, 0.28, 1]}
-        start={{ x: 0.15, y: 0 }}
-        end={{ x: 0.85, y: 0.55 }}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
-      />
+      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.52} />
+      <OndaAgua intensidad={0.55} tono={slide.tonoOnda} />
 
       <TouchableOpacity
         style={[styles.closeBtn, { top: topPad + 4 }]}
@@ -207,8 +212,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <Text style={styles.closeTxt}>✕</Text>
       </TouchableOpacity>
 
-      <Animated.View style={[styles.brandBlock, { marginTop: topPad + 28, opacity: textOpacity }]}>
-        <LogoMarca size={112} hiRes accessibilityLabel="Logo Vámonos de pesca" />
+      <Animated.View style={[styles.brandBlock, { marginTop: topPad + 20, opacity: textOpacity }]}>
+        <LogoMarca size={96} hiRes accessibilityLabel="Logo Vámonos de pesca" />
+        <Text style={styles.brandWord}>Vámonos de pesca</Text>
+        <Text style={styles.brandTag}>Castellón · Sevilla · Córdoba · Cuenca</Text>
       </Animated.View>
 
       <ScrollView
@@ -274,6 +281,15 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
         )}
 
+        <View style={styles.progressTrack}>
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${((page + 1) / slides.length) * 100}%` as `${number}%` },
+            ]}
+          />
+        </View>
+
         <View style={styles.dots}>
           {slides.map((s, i) => (
             <View key={s.id} style={[styles.dot, i === page && styles.dotOn]} />
@@ -292,7 +308,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           }}
           accessibilityLabel={page < slides.length - 1 ? "Continuar" : "Empezar a pescar"}
         >
-          <LinearGradient colors={["#ffffff", "#eef6f1"]} style={styles.ctaGrad}>
+          <LinearGradient colors={["#ffffff", "#e8f4ef"]} style={styles.ctaGrad}>
             <Text style={styles.ctaTxt}>
               {page < slides.length - 1 ? "Continuar" : "Empezar a pescar"}
             </Text>
@@ -546,10 +562,10 @@ function MockModos({
         </View>
         {esCosta ? (
           <View style={m.barcoCard}>
-            <Text style={m.barcoTitle}>Salgo en barco</Text>
-            <Text style={m.barcoSub}>Rampa → ¿Puedo? → ¿Pinta? → qué llevar</Text>
+            <Text style={m.barcoTitle}>Kayak · modalidad propia</Text>
+            <Text style={m.barcoSub}>¡A remar! · embalse o mar · docs por provincia</Text>
             <View style={m.barcoTags}>
-              {["Rampas", "Ruta GPS", "Columbretes"].map((t) => (
+              {["Kayak", "Rampas", "Barco"].map((t) => (
                 <View key={t} style={m.barcoTag}>
                   <Text style={m.barcoTagTxt}>{t}</Text>
                 </View>
@@ -558,10 +574,10 @@ function MockModos({
           </View>
         ) : (
           <View style={m.barcoCard}>
-            <Text style={m.barcoTitle}>Tramos y embalses</Text>
-            <Text style={m.barcoSub}>Semáforo + SAIH + montaje por especie</Text>
+            <Text style={m.barcoTitle}>Kayak en embalse</Text>
+            <Text style={m.barcoSub}>Semáforo + SAIH + qué pedir para remar</Text>
             <View style={m.barcoTags}>
-              {["Mapa", "Especies", "Consejos"].map((t) => (
+              {["Río", "Embalse", "Kayak"].map((t) => (
                 <View key={t} style={m.barcoTag}>
                   <Text style={m.barcoTagTxt}>{t}</Text>
                 </View>
@@ -590,12 +606,19 @@ function MockMedir({ activo }: { activo: boolean }) {
     { nombre: "Pulpo", cota: "Peso del ejemplar entero", patron: "kg" },
     { nombre: "Sepia", cota: "Longitud del manto", patron: "cm" },
   ];
+  const fotosPlaca = [
+    { source: require("../../assets/especies/lubina.jpg"), caption: "Lubina · longitud total" },
+    { source: require("../../assets/especies/corvina.jpg"), caption: "Corvina · placa propia" },
+    { source: require("../../assets/especies/pulpo.jpg"), caption: "Pulpo · peso entero" },
+    { source: require("../../assets/especies/sepia.jpg"), caption: "Sepia · manto" },
+  ];
   return (
     <LinearGradient colors={["#f4faf8", "#e2efea"]} style={m.fill}>
       <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Ficha · especie</Text>
       <Text style={[m.navSub, { color: COLORS.textSecondary }]}>Cómo medir · gráfica única</Text>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 10, gap: 7, paddingHorizontal: 10 }}>
-        <View style={m.medirHero}>
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 8, gap: 7 }}>
+        <CarruselFotosPresentacion fotos={fotosPlaca} activo={activo} height={104} intervaloMs={2400} />
+        <View style={[m.medirHero, { marginHorizontal: 10 }]}>
           <Text style={m.medirHeroKicker}>Particularidad</Text>
           <Text style={m.medirHeroTitle}>Una placa por especie</Text>
           <View style={m.medirCota}>
@@ -607,8 +630,8 @@ function MockMedir({ activo }: { activo: boolean }) {
           </View>
           <Text style={m.medirHeroPie}>Norma UE / RD 560 · sin siluetas repetidas</Text>
         </View>
-        {fichas.map((f) => (
-          <View key={f.nombre} style={m.medirRow}>
+        {fichas.slice(0, 2).map((f) => (
+          <View key={f.nombre} style={[m.medirRow, { marginHorizontal: 10 }]}>
             <View style={m.medirDot} />
             <View style={{ flex: 1 }}>
               <Text style={m.medirNombre}>{f.nombre}</Text>
@@ -633,13 +656,20 @@ function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
     { n: "3", t: "Montaje de la especie", done: false },
     { n: "4", t: "Equipo a llevar", done: false },
   ];
+  const fotosCampo = [
+    { source: require("../../assets/especies/black_bass.jpg"), caption: "Montaje · black bass" },
+    { source: require("../../assets/consejos/aparejos/cucharilla-giratoria.jpg"), caption: "Cucharilla · orilla" },
+    { source: require("../../assets/consejos/aparejos/montaje-texas.jpg"), caption: "Texas · embalse" },
+    { source: require("../../assets/especies/lubina.jpg"), caption: "Costa · lubina" },
+  ];
   return (
     <LinearGradient colors={["#f7faf7", "#e6efe8"]} style={m.fill}>
       <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Salgo a pescar</Text>
       <Text style={[m.navSub, { color: COLORS.textSecondary }]}>
-        Tu primera salida · paso a paso{esCosta ? " · o en barco" : ""}
+        Tu primera salida · paso a paso{esCosta ? " · kayak o barco" : " · o en kayak"}
       </Text>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 12, gap: 7 }}>
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 8, gap: 7 }}>
+        <CarruselFotosPresentacion fotos={fotosCampo} activo={activo} height={96} intervaloMs={2200} />
         {steps.map((s, i) => (
           <View key={s.n} style={[m.stepRow, s.done && m.stepDone]}>
             <View style={[m.stepNum, s.done && m.stepNumDone]}>
@@ -651,7 +681,7 @@ function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
         ))}
       </Animated.View>
       <View style={m.montajePreview}>
-        <Text style={m.montajeTitle}>Montaje · black bass</Text>
+        <Text style={m.montajeTitle}>Consejos con fotos · guía de caña y carrete</Text>
         <View style={m.montajeDots}>
           {["Caña", "Línea", "Señuelo"].map((x) => (
             <View key={x} style={m.montajeChip}>
@@ -659,7 +689,6 @@ function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
             </View>
           ))}
         </View>
-        <Text style={m.montajeHint}>Consejos con fotos · guía de caña y carrete</Text>
       </View>
     </LinearGradient>
   );
@@ -686,42 +715,59 @@ const styles = StyleSheet.create({
     zIndex: 1,
     paddingHorizontal: 16,
   },
+  brandWord: {
+    marginTop: 6,
+    color: "#fff",
+    fontFamily: FONTS.brand,
+    fontSize: 22,
+    letterSpacing: -0.5,
+    textShadowColor: "rgba(0,0,0,0.35)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
+  },
+  brandTag: {
+    marginTop: 2,
+    color: "rgba(255,255,255,0.78)",
+    fontFamily: FONTS.semibold,
+    fontSize: 12,
+    letterSpacing: 0.2,
+  },
   pager: { flex: 1, zIndex: 1 },
   slide: {
     paddingHorizontal: SPACING.sm,
     alignItems: "center",
-    paddingTop: 4,
+    paddingTop: 2,
   },
   eyebrow: {
-    color: "rgba(255,255,255,0.82)",
+    color: "rgba(255,255,255,0.88)",
     fontSize: 13.5,
     fontFamily: FONTS.displayItalic,
     fontStyle: "italic",
-    letterSpacing: 0.15,
-    marginBottom: 3,
+    letterSpacing: 0.2,
+    marginBottom: 2,
     textAlign: "center",
   },
   titulo: {
     color: "#fff",
-    fontSize: 30,
+    fontSize: 32,
     fontFamily: FONTS.display,
     textAlign: "center",
-    letterSpacing: -0.6,
-    marginBottom: 6,
-    lineHeight: 34,
-    textShadowColor: "rgba(0,0,0,0.25)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    letterSpacing: -0.7,
+    marginBottom: 5,
+    lineHeight: 36,
+    textShadowColor: "rgba(0,0,0,0.35)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   texto: {
     color: "rgba(245,250,247,0.96)",
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 14.5,
+    lineHeight: 20,
     textAlign: "center",
     fontFamily: FONTS.regular,
     maxWidth: 340,
-    marginBottom: 8,
-    minHeight: 42,
+    marginBottom: 6,
+    minHeight: 40,
     paddingHorizontal: 4,
   },
   phoneWrap: { alignItems: "center", justifyContent: "center" },
@@ -732,12 +778,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#050d0a",
     padding: 8,
     borderWidth: 2.5,
-    borderColor: "rgba(255,255,255,0.32)",
+    borderColor: "rgba(255,255,255,0.38)",
     shadowColor: "#000",
-    shadowOpacity: 0.48,
-    shadowRadius: 26,
-    shadowOffset: { width: 0, height: 18 },
-    elevation: 16,
+    shadowOpacity: 0.55,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 20 },
+    elevation: 18,
     zIndex: 2,
   },
   phoneGlow: {
@@ -746,7 +792,7 @@ const styles = StyleSheet.create({
     width: PHONE_W * 0.72,
     height: 28,
     borderRadius: 40,
-    backgroundColor: "rgba(0,0,0,0.28)",
+    backgroundColor: "rgba(0,0,0,0.32)",
     zIndex: 1,
   },
   phoneNotch: {
@@ -774,11 +820,23 @@ const styles = StyleSheet.create({
   footer: { paddingHorizontal: 24, zIndex: 1 },
   hintSwipe: {
     textAlign: "center",
-    color: "rgba(255,255,255,0.72)",
+    color: "rgba(255,255,255,0.78)",
     fontFamily: FONTS.semibold,
     fontSize: 12.5,
-    marginBottom: 10,
+    marginBottom: 8,
     letterSpacing: 0.15,
+  },
+  progressTrack: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "rgba(255,255,255,0.22)",
+    marginBottom: 10,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#fff",
   },
   dots: { flexDirection: "row", justifyContent: "center", gap: 7, marginBottom: 12 },
   dot: {
@@ -814,7 +872,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.88)",
     fontFamily: FONTS.semibold,
     fontSize: 13,
-    marginBottom: 10,
+    marginBottom: 8,
     letterSpacing: 0.1,
   },
 });

@@ -64,6 +64,21 @@ must("src/screens/OnboardingScreen.tsx", [
   "Particularidad · ficha de especie",
   "Una placa por especie",
   "Solunar",
+  "FondoCinePresentacion",
+  "CarruselFotosPresentacion",
+  "Castellón · Sevilla · Córdoba · Cuenca",
+  "FONTS.brand",
+]);
+
+must("src/components/FondoCinePresentacion.tsx", [
+  "FondoCinePresentacion",
+  "Ken Burns",
+  "crossfade",
+]);
+
+must("src/components/CarruselFotosPresentacion.tsx", [
+  "CarruselFotosPresentacion",
+  "crossfade",
 ]);
 
 must("src/components/MapaIgnPresentacion.tsx", [
@@ -72,7 +87,7 @@ must("src/components/MapaIgnPresentacion.tsx", [
   "1 km",
 ]);
 
-must("src/theme.ts", ["display:", "Fraunces_700Bold", "Fraunces_600SemiBold"]);
+must("src/theme.ts", ["display:", "Fraunces_700Bold", "Fraunces_600SemiBold", "brand:"]);
 
 must("App.tsx", [
   "presentacionVirtudesVista",
@@ -105,7 +120,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v3",
+  "presentacion_virtudes_v4",
 ]);
 
 must("README.md", [
@@ -116,6 +131,7 @@ must("README.md", [
   "Sevilla",
   "personal",
   "Kayak es modalidad propia",
+  "fondos fotográficos",
 ]);
 
 const pkg = read("package.json");
