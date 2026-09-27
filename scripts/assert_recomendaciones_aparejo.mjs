@@ -39,7 +39,8 @@ for (const needle of [
   "ambito: \"costa\"",
   "EMBARCACION_CS",
   'soloAmbito: "embarcacion"',
-  "la licencia «desde tierra» no cubre barco",
+  "artefacto flotante",
+  "DESDE EMBARCACIÓN",
 ]) {
   if (!data.includes(needle)) fail(`recomendacionesAparejo.ts falta «${needle}»`);
 }
@@ -127,8 +128,8 @@ if (!costa.some((r) => r.texto.includes('desde tierra'))) throw new Error('costa
 if (barco.some((r) => r.texto.includes('máx. 2 cañas desde tierra'))) {
   throw new Error('barco no debe mostrar 2 cañas desde tierra');
 }
-if (!barco.some((r) => r.texto.includes('no cubre barco') || r.soloAmbito === 'embarcacion')) {
-  throw new Error('barco debe mostrar reglas de embarcación');
+if (!barco.some((r) => /DESDE EMBARCACI[OÓ]N|artefacto flotante|embarcacion/i.test(r.texto) || r.soloAmbito === 'embarcacion')) {
+  throw new Error('barco debe mostrar reglas de embarcación / kayak');
 }
 console.log('RUNTIME_OK', barco.map((r) => r.texto.slice(0, 60)).join(' | '));
 `;

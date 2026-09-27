@@ -33,6 +33,14 @@ export const COLORS = {
   textMuted: "#55665e",
   mist: "#f7faf7",
   puerto: "#4b5563",
+  /**
+   * Kayak: acento propio (remo / aventura), distinto de río (verde) y mar (azul).
+   * Pensado para destacar la modalidad sin caer en púrpura ni glow.
+   */
+  kayak: "#0f6b5c",
+  kayakDark: "#0a3f38",
+  kayakLight: "#e3f4f0",
+  kayakSun: "#c45f12",
 };
 
 /** Semáforo legal: un verde, un rojo, un ámbar. */
@@ -69,6 +77,8 @@ export const GRADIENTS = {
   sunset: ["#b8860b", "#9a4a0a"] as const,
   dusk: ["#24352c", "#0f3326"] as const,
   danger: ["#c53030", "#8a1f1f"] as const,
+  /** Hero / CTA cuando el modo es kayak. */
+  kayak: ["#1a8a78", "#0a3f38"] as const,
 };
 
 export const RADIUS = {

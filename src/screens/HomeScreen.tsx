@@ -51,8 +51,16 @@ import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
 import SelectorModoPesca from "../components/SelectorModoPesca";
+import BannerKayakDestacado from "../components/BannerKayakDestacado";
 import TarjetaPuntoHoy from "../components/TarjetaPuntoHoy";
-import { etiquetaModoLarga, etiquetaModo, textoPedirModo } from "../data/modoPesca";
+import {
+  etiquetaModoLarga,
+  etiquetaModo,
+  esModoEmbarcado,
+  esModoKayak,
+  modoEsMar,
+  textoPedirModo,
+} from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { primeraSalidaHecha } from "../services/primeraSalidaService";
 import { etiquetaFuente } from "../services/puntoConsultaService";
@@ -470,8 +478,10 @@ export default function HomeScreen({ navigation }: Props) {
    */
   const consultaViva =
     modoListo && modoElegido && puntoExplicito
-      ? modo === "barco"
-        ? consultarEmbarcacion(punto!.lat, punto!.lng)
+      ? esModoEmbarcado(modo)
+        ? consultarEmbarcacion(punto!.lat, punto!.lng, {
+            variante: modo === "kayak_mar" ? "kayak" : "barco",
+          })
         : modo === "orilla"
           ? consultarCosta(punto!.lat, punto!.lng)
           : consultarPuntoPesca(punto!.lat, punto!.lng)
@@ -485,7 +495,7 @@ export default function HomeScreen({ navigation }: Props) {
   const puntoNoEncajaModo =
     !!consultaViva &&
     consultaViva.veredicto === "fuera_catalogo" &&
-    modo !== "rio";
+    modoEsMar(modo);
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const alertasClima =
     clima
@@ -639,6 +649,14 @@ export default function HomeScreen({ navigation }: Props) {
           sobreOscuro
         />
 
+        {modoElegido && esModoKayak(modo) ? (
+          <BannerKayakDestacado
+            modo={modo}
+            provinciaId={provincia.id}
+            onVerDocumentacion={() => navigation.navigate("License")}
+          />
+        ) : null}
+
         {cargando && !clima && !indiceHoy && !consultaViva ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
@@ -753,7 +771,7 @@ export default function HomeScreen({ navigation }: Props) {
 
         <PulsePress
           onPress={() => {
-            if (modo === "barco") navigation.navigate("SalgoEnBarco");
+            if (esModoEmbarcado(modo)) navigation.navigate("SalgoEnBarco");
             else navigation.navigate("SalgoAPescar");
           }}
           style={styles.ctaSalgo}
@@ -763,11 +781,21 @@ export default function HomeScreen({ navigation }: Props) {
               ? "Salgo a pescar"
               : modo === "barco"
                 ? "Salgo en barco"
-                : "Salgo a pescar"
+                : modo === "kayak_mar"
+                  ? "Salgo en kayak"
+                  : esModoKayak(modo)
+                    ? "Salgo a pescar en kayak"
+                    : "Salgo a pescar"
           }
         >
           <LinearGradient
-            colors={[...(modoElegido && modo === "barco" ? GRADIENTS.dusk : GRADIENTS.water)]}
+            colors={[
+              ...(modoElegido && esModoKayak(modo)
+                ? GRADIENTS.kayak
+                : modoElegido && modo === "barco"
+                  ? GRADIENTS.dusk
+                  : GRADIENTS.water),
+            ]}
             style={styles.ctaSalgoInner}
           >
             <OndaAgua intensidad={0.9} />
@@ -779,14 +807,24 @@ export default function HomeScreen({ navigation }: Props) {
                     : "Preparar salida"}
                 </Text>
                 <Text style={styles.ctaSalgoTitle}>
-                  {modoElegido && modo === "barco" ? "Salgo en barco" : "Salgo a pescar"}
+                  {modoElegido && modo === "barco"
+                    ? "Salgo en barco"
+                    : modoElegido && modo === "kayak_mar"
+                      ? "Salgo en kayak"
+                      : modoElegido && modo === "kayak"
+                        ? "Salgo en kayak"
+                        : "Salgo a pescar"}
                 </Text>
                 <Text style={styles.ctaSalgoSub}>
                   {!modoElegido
                     ? `${textoPedirModo(disponibles)} o sigue desde aquí`
                     : modo === "barco"
                       ? "Legal · oleaje · qué llevar · Columbretes"
-                      : "Punto del día y qué llevar"}
+                      : modo === "kayak_mar"
+                        ? "Artefacto flotante · legal · oleaje · qué llevar"
+                        : modo === "kayak"
+                          ? "Embalse · navegación · licencia · qué llevar"
+                          : "Punto del día y qué llevar"}
                 </Text>
               </View>
               <View style={styles.ctaSalgoArrow} accessibilityElementsHidden>
@@ -802,7 +840,7 @@ export default function HomeScreen({ navigation }: Props) {
               style={styles.atajoChip}
               onPress={() =>
                 navigation.navigate("Aparejos", {
-                  ambitoEmbarcacion: modo === "barco",
+                  ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
                   ambitoModo: modo,
                 })
               }
@@ -911,7 +949,7 @@ export default function HomeScreen({ navigation }: Props) {
             onPinta={() => navigation.navigate("Previsión")}
             onEquipo={() =>
               navigation.navigate("Aparejos", {
-                ambitoEmbarcacion: modo === "barco",
+                ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
                 ambitoModo: modo,
               })
             }
@@ -1041,7 +1079,7 @@ export default function HomeScreen({ navigation }: Props) {
                 return;
               }
               if (accion.tipo === "salgo") {
-                if (modo === "barco") {
+                if (esModoEmbarcado(modo)) {
                   navigation.navigate("SalgoEnBarco");
                   return;
                 }
@@ -1393,7 +1431,7 @@ export default function HomeScreen({ navigation }: Props) {
             style={styles.linkChip}
             onPress={() =>
               navigation.navigate("Aparejos", {
-                ambitoEmbarcacion: modoElegido && modo === "barco",
+                ambitoEmbarcacion: modoElegido && esModoEmbarcado(modo),
                 ambitoModo: modoElegido ? modo : undefined,
               })
             }

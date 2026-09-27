@@ -49,7 +49,8 @@ must("src/screens/OnboardingScreen.tsx", [
   "Solo en este móvil",
   "Salgo a pescar",
   "Vámonos de pesca",
-  "Río · Orilla · Barco",
+  "Río · Embalse · Kayak · Mar",
+  "Río · Embalse · Kayak",
   "Oficial / orientativo",
   "Desliza para ver",
   'id: "legal"',
@@ -114,7 +115,7 @@ must("README.md", [
   "Castellón",
   "Sevilla",
   "personal",
-  "Río · Orilla · Barco",
+  "Kayak es modalidad propia",
 ]);
 
 const pkg = read("package.json");

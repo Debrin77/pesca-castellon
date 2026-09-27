@@ -1,4 +1,5 @@
-import { etiquetaModo, type ModoPescaGlobal } from "../data/modoPesca";
+import { etiquetaModo, zonaEncajaModoContinental, type ModoPescaGlobal } from "../data/modoPesca";
+import { getProvinciaActiva } from "../provincias/runtime";
 import {
   calcularIndiceBarco,
   CATEGORIA_BARCO_INFO,
@@ -63,19 +64,32 @@ function pescableHoy(veredicto: string, sePuede: boolean): boolean {
   return sePuede;
 }
 
-/** ¿Este punto encaja legalmente en la modalidad? */
-function sitioEncajaModo(modo: ModoPescaGlobal, lat: number, lng: number): boolean {
+/** ¿Este punto encaja legalmente (y por tipo de zona) en la modalidad? */
+function sitioEncajaModo(
+  modo: ModoPescaGlobal,
+  lat: number,
+  lng: number,
+  zoneId?: string | null
+): boolean {
   try {
-    if (modo === "rio") {
+    if (modo === "rio" || modo === "embalse" || modo === "kayak") {
       const c = consultarPuntoPesca(lat, lng);
       if (c.ambito === "maritimo") return false;
-      return pescableHoy(c.veredicto, c.sePuedePescarHoy);
+      if (!pescableHoy(c.veredicto, c.sePuedePescarHoy)) return false;
+      if (zoneId) {
+        const zonas = (getProvinciaActiva().zones as { id: string; tipo?: string }[]) ?? [];
+        const z = zonas.find((x) => x.id === zoneId);
+        if (z && !zonaEncajaModoContinental(modo, z.tipo, z.id)) return false;
+      }
+      return true;
     }
     if (modo === "orilla") {
       const c = consultarCosta(lat, lng);
       return pescableHoy(c.veredicto, c.sePuedePescarHoy);
     }
-    const c = consultarEmbarcacion(lat, lng);
+    const c = consultarEmbarcacion(lat, lng, {
+      variante: modo === "kayak_mar" ? "kayak" : "barco",
+    });
     return pescableHoy(c.veredicto, c.sePuedePescarHoy);
   } catch {
     return false;
@@ -97,7 +111,7 @@ function recolectarCandidatosUsuario(opts: {
     if (out.length >= opts.max) return;
     const key = `${c.lat.toFixed(3)},${c.lng.toFixed(3)}`;
     if (vistos.has(key)) return;
-    if (!sitioEncajaModo(opts.modo, c.lat, c.lng)) return;
+    if (!sitioEncajaModo(opts.modo, c.lat, c.lng, c.zoneId)) return;
     vistos.add(key);
     out.push(c);
   }
@@ -140,7 +154,7 @@ async function puntuarCandidato(
   c: CandidatoRecomendacion
 ): Promise<RecomendacionModoHoy | null> {
   try {
-    if (modo === "barco") {
+    if (modo === "barco" || modo === "kayak_mar") {
       const ind = await calcularIndiceBarco(c.lat, c.lng);
       const cat = CATEGORIA_BARCO_INFO[ind.categoria];
       return {
@@ -239,8 +253,12 @@ async function mejorDeModo(opts: {
   let mejor = await mejorDeLista(opts.modo, propios);
 
   let desdeCatalogo = await mejorDesdeCatalogo(opts.modo, opts.ancla);
-  // GPS interior: el radio de orilla/barco no alcanza la costa.
-  if (!desdeCatalogo && (opts.modo === "orilla" || opts.modo === "barco") && opts.anclaCosta) {
+  // GPS interior: el radio de orilla/barco/kayak mar no alcanza la costa.
+  if (
+    !desdeCatalogo &&
+    (opts.modo === "orilla" || opts.modo === "barco" || opts.modo === "kayak_mar") &&
+    opts.anclaCosta
+  ) {
     const misma =
       Math.abs(opts.anclaCosta.lat - opts.ancla.lat) < 0.01 &&
       Math.abs(opts.anclaCosta.lng - opts.ancla.lng) < 0.01;

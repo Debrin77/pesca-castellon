@@ -81,10 +81,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       {
         id: "modos",
         eyebrow: esCosta ? "Un gesto · toda la app" : "Tu ámbito de pesca",
-        titulo: esCosta ? "Río · Orilla · Barco" : "Ríos y embalses",
+        titulo: esCosta ? "Río · Embalse · Kayak · Mar" : "Río · Embalse · Kayak",
         texto: esCosta
-          ? "Elige cómo vas a pescar y se alinean mapa, especies, aparejos y el ritual de salida — también kayak o barco."
-          : `En ${nombreProv}: mapa de tramos, especies continentales, montajes y «Salgo a pescar» paso a paso.`,
+          ? "Elige cómo vas a pescar: orilla de río o embalse, kayak (¡a remar!) o, en costa, orilla / kayak / barco. Se alinean mapa, especies, aparejos y el ritual."
+          : `En ${nombreProv}: elige río, embalse o kayak. Mapa de tramos, especies, montajes y «Salgo a pescar» paso a paso.`,
         accent: ["#1a5f78", "#134a5c", "#0c3340"],
         tonoOnda: "agua",
       },
@@ -518,10 +518,16 @@ function MockModos({
   const modos = esCosta
     ? [
         { id: "rio", label: "Río", on: false },
+        { id: "embalse", label: "Embalse", on: false },
+        { id: "kayak", label: "Kayak", on: true },
         { id: "orilla", label: "Orilla", on: false },
-        { id: "barco", label: "Barco", on: true },
+        { id: "barco", label: "Barco", on: false },
       ]
-    : [{ id: "rio", label: "Ríos y embalses", on: true }];
+    : [
+        { id: "rio", label: "Río", on: false },
+        { id: "embalse", label: "Embalse", on: false },
+        { id: "kayak", label: "Kayak", on: true },
+      ];
 
   return (
     <LinearGradient colors={["#f4f8f6", "#e4eef2"]} style={m.fill}>
@@ -533,7 +539,7 @@ function MockModos({
       <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 14, paddingHorizontal: 12 }}>
         <View style={m.modoRow}>
           {modos.map((x) => (
-            <View key={x.id} style={[m.modoChip, x.on && (x.id === "rio" ? m.modoChipOnRio : m.modoChipOnMar)]}>
+            <View key={x.id} style={[m.modoChip, x.on && (x.id === "kayak" ? m.modoChipOnKayak : x.id === "rio" || x.id === "embalse" ? m.modoChipOnRio : m.modoChipOnMar)]}>
               <Text style={[m.modoChipTxt, x.on && m.modoChipTxtOn]}>{x.label}</Text>
             </View>
           ))}
@@ -1027,6 +1033,11 @@ const m = StyleSheet.create({
   modoChipOnRio: {
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
+  },
+  modoChipOnKayak: {
+    backgroundColor: "#0a3f38",
+    borderColor: "#c45f12",
+    borderWidth: 2,
   },
   modoChipOnMar: {
     backgroundColor: COLORS.water,

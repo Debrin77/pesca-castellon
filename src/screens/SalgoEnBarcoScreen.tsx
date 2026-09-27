@@ -16,7 +16,9 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { consultarEmbarcacion, todasLasRampas } from "../services/consultaEmbarcacionService";
 import type { ConsultaPesca } from "../services/consultaPescaService";
 import { calcularIndiceBarco, type IndiceBarco } from "../services/boatIndexService";
+import { useModoPesca } from "../context/ModoPescaContext";
 import { CHECKLIST_EMBARCACION, FUENTE_EMBARCACION, HERRAMIENTAS_COMPLEMENTARIAS_BARCO } from "../data/normativaMaritima";
+import { documentacionKayakDeProvincia } from "../data/documentacionKayak";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -31,6 +33,7 @@ import PescaRecBanner from "../components/PescaRecBanner";
 import EjeLegalMeteo from "../components/EjeLegalMeteo";
 import PasoSalida from "../components/PasoSalida";
 import PulsePress from "../components/PulsePress";
+import BannerKayakDestacado from "../components/BannerKayakDestacado";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
 
 interface Props {
@@ -38,14 +41,23 @@ interface Props {
 }
 
 /**
- * Ritual «Salgo en barco» (Castellón): rampa → legal → índice marino → checklist.
- * Los CTA «Siguiente» (pasos 1–2) van en pie absoluto sobre las tabs; en checklist
- * los CTA van dentro del scroll para no aplastar la lista.
+ * Ritual «Salgo en barco / kayak» (Castellón): rampa → legal → índice marino → checklist.
+ * Distingue barco matriculado vs kayak (artefacto flotante).
  */
 export default function SalgoEnBarcoScreen({ navigation }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { fijarPunto } = usePuntoConsulta();
+  const { modo } = useModoPesca();
+  const esKayak = modo === "kayak_mar";
+  const docKayak = documentacionKayakDeProvincia(provincia.id);
+  const checklistItems = esKayak
+    ? [
+        ...(docKayak?.mar?.kayak ?? []),
+        "Chaleco puesto · plan de regreso · meteo OK",
+        "No pesques en dársena ni Columbretes",
+      ]
+    : CHECKLIST_EMBARCACION;
   const [paso, setPaso] = useState(0);
   const [cargando, setCargando] = useState(false);
   const [consulta, setConsulta] = useState<ConsultaPesca | null>(null);
@@ -88,7 +100,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
     setCargando(true);
     setEtiqueta(etiquetaPunto);
     setCoords({ lat, lng });
-    const c = consultarEmbarcacion(lat, lng);
+    const c = consultarEmbarcacion(lat, lng, { variante: esKayak ? "kayak" : "barco" });
     setConsulta(c);
     const online = await hayConexion();
     let ind = await calcularIndiceBarco(lat, lng);
@@ -149,10 +161,16 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
         contentContainerStyle={[styles.content, { paddingBottom: scrollPadBottom }]}
         keyboardShouldPersistTaps="handled"
       >
-        <LinearGradient colors={[...GRADIENTS.water]} style={styles.hero}>
-          <Text style={styles.heroKicker}>CASTELLÓN · EMBARCACIÓN</Text>
-          <Text style={styles.heroTitle}>Salgo en barco</Text>
-          <Text style={styles.heroSub}>Legal · meteo marina · qué llevar · carta náutica</Text>
+        <LinearGradient colors={[...(esKayak ? GRADIENTS.kayak : GRADIENTS.water)]} style={styles.hero}>
+          <Text style={styles.heroKicker}>
+            {esKayak ? "CASTELLÓN · KAYAK DE MAR" : "CASTELLÓN · EMBARCACIÓN"}
+          </Text>
+          <Text style={styles.heroTitle}>{esKayak ? "Salgo en kayak" : "Salgo en barco"}</Text>
+          <Text style={styles.heroSub}>
+            {esKayak
+              ? "Artefacto flotante · legal · meteo · qué llevar"
+              : "Legal · meteo marina · qué llevar · carta náutica"}
+          </Text>
           <PasoSalida
             pasos={["Salida", "¿Puedo?", "¿Pinta?", "Qué llevar"]}
             activo={paso}
@@ -160,11 +178,21 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
           />
         </LinearGradient>
 
+        {esKayak && paso === 0 ? (
+          <BannerKayakDestacado
+            modo="kayak_mar"
+            provinciaId={provincia.id}
+            onVerDocumentacion={() => navigation.navigate("License")}
+          />
+        ) : null}
+
         {paso === 0 ? (
           <View style={styles.bloque}>
             <Text style={styles.bloqueTitulo}>1. Elige rampa o GPS</Text>
             <Text style={styles.bloqueSub}>
-              Zarpas desde puerto; pescas fuera de dársena. Columbretes es reserva.
+              {esKayak
+                ? "Sales desde rampa o playa; pescas fuera de dársena. Licencia desde tierra (no la de barco)."
+                : "Zarpas desde puerto; pescas fuera de dársena. Columbretes es reserva."}
             </Text>
             <PulsePress onPress={() => void usarGps()} style={styles.btnPrimary}>
               <Text style={styles.btnPrimaryTxt}>{cargando ? "Localizando…" : "Usar mi GPS"}</Text>
@@ -189,7 +217,9 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
                 })
               }
             >
-              <Text style={styles.link}>Elegir en el mapa (modalidad Barco / Kayak)</Text>
+              <Text style={styles.link}>
+                {esKayak ? "Elegir en el mapa (modalidad Kayak mar)" : "Elegir en el mapa (modalidad Barco)"}
+              </Text>
             </TouchableOpacity>
           </View>
         ) : null}
@@ -233,7 +263,7 @@ export default function SalgoEnBarcoScreen({ navigation }: Props) {
             <PescaRecBanner />
             <ChecklistInteractivo
               provinciaId={provincia.id}
-              items={itemsDesdeTextos(CHECKLIST_EMBARCACION)}
+              items={itemsDesdeTextos(checklistItems)}
               onLicencia={() => navigation.navigate("License")}
               onMapa={() =>
                 navigation.navigate("Mapa", {

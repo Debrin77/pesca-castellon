@@ -102,8 +102,12 @@ if (!nav.includes("estimarProfundidadMarCastellon") || !nav.includes("etaAPuerto
 ok("navegacionEmbarcacionService");
 
 const embSvc = read("src/services/consultaEmbarcacionService.ts");
-if (!embSvc.includes('modalidadMar: "embarcacion"')) {
-  fail("consultaEmbarcacion debe marcar modalidadMar embarcacion (evita horario de orilla)");
+if (
+  !embSvc.includes('"embarcacion"') ||
+  !embSvc.includes("variante") ||
+  !/modalidadMar:\s*kayak \? "kayak" : "embarcacion"/.test(embSvc)
+) {
+  fail("consultaEmbarcacion debe marcar modalidadMar embarcacion|kayak según variante");
 }
 ok("consultaEmbarcacion modalidadMar");
 

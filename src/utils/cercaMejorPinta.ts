@@ -67,8 +67,11 @@ export type FilaCercaMejorPinta = CandidatoCerca & {
  */
 const RADIO_KM: Record<ModoPescaGlobal, number> = {
   rio: 55,
+  embalse: 55,
+  kayak: 55,
   orilla: 25,
   barco: 30,
+  kayak_mar: 30,
 };
 
 /** Cuántos más cercanos puntuamos (red); luego nos quedamos con top 3. */
@@ -167,11 +170,21 @@ function pasaFiltroLegal(
     }
     if (origen === "playa") return esPescableHoy(consultarCosta(lat, lng));
     if (origen === "rampa" || origen === "waypoint") {
-      return esPescableHoy(consultarEmbarcacion(lat, lng));
+      return esPescableHoy(
+        consultarEmbarcacion(lat, lng, {
+          variante: modo === "kayak_mar" ? "kayak" : "barco",
+        })
+      );
     }
-    if (modo === "rio") return esPescableHoy(consultarPuntoPesca(lat, lng));
+    if (modo === "rio" || modo === "embalse" || modo === "kayak") {
+      return esPescableHoy(consultarPuntoPesca(lat, lng));
+    }
     if (modo === "orilla") return esPescableHoy(consultarCosta(lat, lng));
-    return esPescableHoy(consultarEmbarcacion(lat, lng));
+    return esPescableHoy(
+      consultarEmbarcacion(lat, lng, {
+        variante: modo === "kayak_mar" ? "kayak" : "barco",
+      })
+    );
   } catch {
     return false;
   }
@@ -207,12 +220,22 @@ export function listarCandidatosCercaSync(opts: {
     out.push({ id, nombre, lat, lng, distanciaKm: d, origen });
   }
 
-  if (opts.modo === "rio") {
+  if (opts.modo === "rio" || opts.modo === "embalse" || opts.modo === "kayak") {
     for (const t of todosLosTramos()) {
+      const esEmbalse =
+        t.fichaId?.startsWith("embalse") ||
+        t.id.includes("embalse") ||
+        t.nombre.toLowerCase().includes("embalse");
+      if (opts.modo === "embalse" && !esEmbalse) continue;
+      if (opts.modo === "rio" && esEmbalse) continue;
       push(`tramo:${t.id}`, t.nombre, t.lat, t.lng, "tramo", t.id);
     }
     for (const s of sitiosFacilesDe(provincia.id as ProvinciaId)) {
       if (s.ambito !== "continental") continue;
+      const esEmbalse =
+        s.zoneId?.startsWith("embalse") || s.id.includes("embalse") || s.nombre.toLowerCase().includes("embalse");
+      if (opts.modo === "embalse" && !esEmbalse) continue;
+      if (opts.modo === "rio" && esEmbalse) continue;
       const tramo = resolverTramoDeSitioFacil(s);
       // Si hay tramo, usamos su centroide (más fiable) y filtro por tramo.
       if (tramo) {
@@ -231,6 +254,7 @@ export function listarCandidatosCercaSync(opts: {
       push(`facil:${s.id}`, s.nombre, s.lat, s.lng, "facil");
     }
   } else {
+    // barco + kayak_mar
     for (const r of todasLasRampas()) {
       push(`rampa:${r.id}`, r.nombre, r.lat, r.lng, "rampa");
     }
@@ -272,7 +296,7 @@ async function candidatosConPersonales(opts: {
     /* ignore storage */
   }
 
-  if (opts.modo === "barco") {
+  if (opts.modo === "barco" || opts.modo === "kayak_mar") {
     try {
       const wps = await listarWaypointsMarinos();
       for (const w of wps) {
@@ -339,7 +363,7 @@ export async function rankearCercaMejorPinta(opts: {
 
   const aPuntuar = candidatos.slice(0, MAX_A_PUNTUAR);
 
-  if (opts.modo === "barco") {
+  if (opts.modo === "barco" || opts.modo === "kayak_mar") {
     const resultados = await Promise.all(
       aPuntuar.map(async (c) => {
         try {

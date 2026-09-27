@@ -54,7 +54,7 @@ function buscaZona(lat: number, lng: number, zonas: ZonaCosta[]): ZonaCosta | nu
   return zonas.find((z) => puntoEnPoligono(lat, lng, z.anillo)) ?? null;
 }
 
-function baseMar(): Pick<
+function baseMar(variante: "barco" | "kayak" = "barco"): Pick<
   ConsultaPesca,
   | "tramo"
   | "fuenteGeometria"
@@ -63,16 +63,20 @@ function baseMar(): Pick<
   | "modalidadMar"
   | "fuenteNormativaDetalle"
 > {
+  const kayak = variante === "kayak";
   return {
     tramo: null,
     fuenteGeometria: "ninguna",
     confianza: "aproximada",
     ambito: "maritimo",
-    modalidadMar: "embarcacion",
+    modalidadMar: kayak ? "kayak" : "embarcacion",
     fuenteNormativaDetalle: {
-      titulo: "Pesca marítima recreativa desde embarcación (RD 347/2011 + reservas)",
-      vigenciaNota:
-        "Modalidad embarcación/kayak — no uses el horario ni el semáforo de caña desde tierra. Verifica BOE, Columbretes y PescaREC.",
+      titulo: kayak
+        ? "Pesca marítima recreativa desde kayak / artefacto flotante"
+        : "Pesca marítima recreativa desde embarcación (RD 347/2011 + reservas)",
+      vigenciaNota: kayak
+        ? "Kayak = artefacto flotante: licencia DESDE TIERRA (no la de embarcación). Verifica BOE, Columbretes y PescaREC."
+        : "Modalidad embarcación matriculada — no uses el horario ni el semáforo de caña desde tierra. Verifica BOE, Columbretes y PescaREC.",
       urlOrden: "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
       consultadoEn: new Date().toISOString().slice(0, 10),
     },
@@ -104,16 +108,23 @@ export function rampaMasCercana(lat: number, lng: number): { rampa: RampaEmbarca
 }
 
 /**
- * Semáforo legal para modalidad embarcación/kayak.
+ * Semáforo legal para modalidad embarcación o kayak de mar.
  * - Columbretes / reserva marina → vedado
  * - Interior de dársena → vedado (no pescar en puerto)
- * - Resto del mar provincial → libre orientativo + reglas embarcación
+ * - Resto del mar provincial → libre orientativo + reglas según variante
  */
-export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
+export function consultarEmbarcacion(
+  lat: number,
+  lng: number,
+  opts?: { variante?: "barco" | "kayak" }
+): ConsultaPesca {
+  const variante = opts?.variante ?? "barco";
+  const kayak = variante === "kayak";
+  const labelModo = kayak ? "kayak (artefacto flotante)" : "embarcación matriculada";
   const reserva = buscaZona(lat, lng, todosLosVedadosMarinos());
   if (reserva) {
     return {
-      ...baseMar(),
+      ...baseMar(variante),
       veredicto: "vedado",
       titulo: `Reserva marina · ${reserva.nombre}`,
       color: COLORES.vedado,
@@ -126,7 +137,7 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
         FUENTE_EMBARCACION.urlColumbretes,
       ],
       permisos: [
-        "Modalidad: embarcación / kayak — no entres a pescar aquí sin norma que lo permita.",
+        `Modalidad: ${labelModo} — no entres a pescar aquí sin norma que lo permita.`,
       ],
     };
   }
@@ -134,7 +145,7 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
   const puerto = buscaZona(lat, lng, todosLosPuertos());
   if (puerto) {
     return {
-      ...baseMar(),
+      ...baseMar(variante),
       veredicto: "vedado",
       titulo: `Dársena / aguas portuarias · ${puerto.nombre}`,
       color: COLORES.vedado,
@@ -145,7 +156,11 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
         "No pesques en dársena, fondeo ni canales de entrada salvo autorización del puerto.",
         "Zarpa y consulta de nuevo fuera del recinto portuario.",
       ],
-      permisos: ["Modalidad: embarcación — el puerto es para salir, no para pescar."],
+      permisos: [
+        kayak
+          ? "Modalidad: kayak — el puerto es para salir, no para pescar."
+          : "Modalidad: embarcación — el puerto es para salir, no para pescar.",
+      ],
       sitiosCosta: [
         {
           nombre: "Rampa de salida",
@@ -159,16 +174,20 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
 
   if (!esMarConsultaEmbarcacion(lat, lng)) {
     return {
-      ...baseMar(),
+      ...baseMar(variante),
       veredicto: "fuera_catalogo",
-      titulo: "Fuera del mar de consulta (Castellón)",
+      titulo: kayak
+        ? "Fuera del mar de consulta (kayak · Castellón)"
+        : "Fuera del mar de consulta (Castellón)",
       color: COLORES.fuera,
       distanciaKm: null,
       dentroDelRadio: false,
       sePuedePescarHoy: false,
       restriccionesHoy: [
-        "Ese punto no está en el mar cubierto para embarcación en Castellón.",
-        "Acércate a la costa o elige una rampa del catálogo.",
+        kayak
+          ? "Ese punto no está en el mar cubierto para kayak en Castellón."
+          : "Ese punto no está en el mar cubierto para embarcación en Castellón.",
+        "Acércate a la costa o elige una rampa / playa del catálogo.",
       ],
       permisos: [],
     };
@@ -176,9 +195,13 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
 
   const cerca = rampaMasCercana(lat, lng);
   return {
-    ...baseMar(),
+    ...baseMar(variante),
     veredicto: "libre",
-    titulo: cerca ? `Mar · salida orientativa ${cerca.rampa.nombre}` : "Mar abierto (orientativo)",
+    titulo: cerca
+      ? `Mar · salida orientativa ${cerca.rampa.nombre}`
+      : kayak
+        ? "Mar abierto · kayak (orientativo)"
+        : "Mar abierto (orientativo)",
     color: COLORES.libre,
     distanciaKm: cerca?.km ?? null,
     dentroDelRadio: true,
@@ -187,16 +210,20 @@ export function consultarEmbarcacion(lat: number, lng: number): ConsultaPesca {
     especiesIds: ["lubina", "dorada", "jurel", "caballa", "sepia", "denton", "bonito"],
     restriccionesHoy: [
       ...REGLAS_EMBARCACION_MAR.slice(2, 7),
-      "Índice «Salgo en barco» orienta meteo; no autoriza a zarpar si el patrón decide lo contrario.",
+      kayak
+        ? "Licencia marítima DESDE TIERRA (artefacto flotante). No uses la de «desde embarcación»."
+        : "Índice «Salgo en barco» orienta meteo; no autoriza a zarpar si el patrón decide lo contrario.",
     ],
     permisos: [
       FUENTE_EMBARCACION.titulo,
-      REGLAS_EMBARCACION_MAR[0],
+      kayak
+        ? "Kayak / artefacto flotante: licencia DESDE TIERRA + PescaREC si aplica."
+        : REGLAS_EMBARCACION_MAR[0],
       REGLAS_EMBARCACION_MAR[1],
       REGLAS_EMBARCACION_MAR[2],
       cerca
         ? `Rampa/puerto más cercano (~${cerca.km.toFixed(1)} km): ${cerca.rampa.nombre}.`
-        : "Elige rampa de salida en el mapa.",
+        : "Elige rampa o playa de salida en el mapa.",
       "Tallas: RD 560/1995 anexo II. Especies: RD 347/2011.",
     ],
   };

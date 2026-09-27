@@ -10,34 +10,54 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { useModoPesca } from "../context/ModoPescaContext";
 import { sitiosFacilesDe, type SitioFacil } from "../data/sitiosFaciles";
 import { marcarPrimeraSalidaHecha, marcarLicenciaOk } from "../services/primeraSalidaService";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SPACING } from "../theme";
 import OndaAgua from "../components/OndaAgua";
 
 type Props = { navigation: any };
+type MedioPrimera = "continental" | "maritimo" | "kayak" | "kayak_mar";
 
 /** Wizard «Mi primera salida»: medio → licencia → sitio fácil → kit → listo. */
 export default function PrimeraSalidaScreen({ navigation }: Props) {
   const { provincia: ctx } = useProvincia();
   const provincia = ctx ?? getProvinciaActiva();
   const { fijarPunto } = usePuntoConsulta();
+  const { setModo } = useModoPesca();
   const sitios = useMemo(
     () => sitiosFacilesDe(provincia.id as "castellon" | "sevilla" | "cordoba" | "cuenca"),
     [provincia.id]
   );
   const [paso, setPaso] = useState(0);
-  const [medio, setMedio] = useState<"continental" | "maritimo" | null>(
+  const [medio, setMedio] = useState<MedioPrimera | null>(
     provincia.continentalOnly ? "continental" : null
   );
   const [sitio, setSitio] = useState<SitioFacil | null>(null);
   const total = 5;
 
   const sitiosVisibles = useMemo(() => {
-    if (medio === "maritimo") return sitios.filter((s) => s.ambito === "maritimo");
-    return sitios.filter((s) => s.ambito === "continental").slice(0, 3);
+    if (medio === "maritimo" || medio === "kayak_mar") {
+      return sitios.filter((s) => s.ambito === "maritimo");
+    }
+    // Continental y kayak embalse: prioriza embalses si kayak.
+    const cont = sitios.filter((s) => s.ambito === "continental");
+    if (medio === "kayak") {
+      const emb = cont.filter(
+        (s) => s.zoneId?.startsWith("embalse") || s.nombre.toLowerCase().includes("embalse")
+      );
+      return (emb.length ? emb : cont).slice(0, 3);
+    }
+    return cont.slice(0, 3);
   }, [medio, sitios]);
+
+  function elegirMedio(m: MedioPrimera) {
+    setMedio(m);
+    if (m === "kayak") void setModo("kayak");
+    else if (m === "kayak_mar") void setModo("kayak_mar");
+    else if (m === "maritimo") void setModo("orilla");
+    else void setModo("rio");
+  }
 
   async function terminar() {
     await marcarPrimeraSalidaHecha();
@@ -67,12 +87,12 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
           <View style={styles.card}>
             <Text style={styles.title}>¿Dónde quieres empezar?</Text>
             <Text style={styles.sub}>
-              Elige un medio. Eso fija la licencia y el tipo de sitio recomendado.
+              Elige un medio. Eso fija la licencia, el modo de la app y el tipo de sitio.
             </Text>
             {!provincia.continentalOnly ? (
               <TouchableOpacity
                 style={[styles.opt, medio === "maritimo" && styles.optOn]}
-                onPress={() => setMedio("maritimo")}
+                onPress={() => elegirMedio("maritimo")}
               >
                 <Text style={styles.optTitle}>Costa / orilla de mar</Text>
                 <Text style={styles.optSub}>Licencia marítima recreativa desde tierra (GVA)</Text>
@@ -80,11 +100,42 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             ) : null}
             <TouchableOpacity
               style={[styles.opt, medio === "continental" && styles.optOn]}
-              onPress={() => setMedio("continental")}
+              onPress={() => elegirMedio("continental")}
             >
-              <Text style={styles.optTitle}>Río o embalse</Text>
+              <Text style={styles.optTitle}>Río o embalse · desde orilla</Text>
               <Text style={styles.optSub}>{provincia.etiquetaLicenciaContinental}</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.opt,
+                medio === "kayak" && styles.optOn,
+                { borderColor: COLORS.kayak, backgroundColor: medio === "kayak" ? COLORS.kayakLight : COLORS.surface },
+              ]}
+              onPress={() => elegirMedio("kayak")}
+            >
+              <Text style={[styles.optTitle, { color: COLORS.kayakDark }]}>★ Kayak · embalse / río</Text>
+              <Text style={styles.optSub}>
+                Remo + declaración de navegación + licencia continental. Divertido y distinto.
+              </Text>
+            </TouchableOpacity>
+            {!provincia.continentalOnly ? (
+              <TouchableOpacity
+                style={[
+                  styles.opt,
+                  medio === "kayak_mar" && styles.optOn,
+                  {
+                    borderColor: COLORS.kayak,
+                    backgroundColor: medio === "kayak_mar" ? COLORS.kayakLight : COLORS.surface,
+                  },
+                ]}
+                onPress={() => elegirMedio("kayak_mar")}
+              >
+                <Text style={[styles.optTitle, { color: COLORS.kayakDark }]}>★ Kayak · mar</Text>
+                <Text style={styles.optSub}>
+                  Artefacto flotante · licencia marítima desde tierra (no la de barco)
+                </Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={[styles.cta, !medio && styles.ctaOff]}
               disabled={!medio}
@@ -104,9 +155,13 @@ export default function PrimeraSalidaScreen({ navigation }: Props) {
             <Text style={styles.sub}>
               {medio === "maritimo"
                 ? "En costa hace falta la licencia marítima recreativa desde tierra. En mar, PescaREC puede pedir declaraciones."
-                : provincia.requisitosLicencia.seguroObligatorio
-                  ? "En ríos/embalses: licencia continental, número de registro y seguro de responsabilidad civil."
-                  : `En ríos/embalses: licencia continental. ${provincia.requisitosLicencia.seguroNota}`}
+                : medio === "kayak_mar"
+                  ? "Kayak en mar = artefacto flotante: licencia marítima DESDE TIERRA (no la de embarcación) + PescaREC si aplica."
+                  : medio === "kayak"
+                    ? "Kayak en embalse: organismo de cuenca (navegación) + licencia continental (pesca). No se sustituyen."
+                    : provincia.requisitosLicencia.seguroObligatorio
+                      ? "En ríos/embalses: licencia continental, número de registro y seguro de responsabilidad civil."
+                      : `En ríos/embalses: licencia continental. ${provincia.requisitosLicencia.seguroNota}`}
             </Text>
             <TouchableOpacity style={styles.opt} onPress={() => navigation.navigate("License")}>
               <Text style={styles.optTitle}>Cómo tramitarla / guardarla</Text>

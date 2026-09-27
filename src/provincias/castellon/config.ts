@@ -38,9 +38,9 @@ export const castellonConfig: ProvinciaConfig = {
     seguroNota:
       "En la Comunitat Valenciana no se exige seguro de responsabilidad civil para tramitar ni ejercer la licencia de pesca.",
     requisitos: [
-      "Licencia continental GVA en ríos y embalses.",
-      "Licencia marítima recreativa desde tierra (GVA) si pescas en la orilla del mar.",
-      "Embarcación / kayak: licencia de embarcación (no solo «desde tierra») + PescaREC cuando aplique; Columbretes es reserva.",
+      "Licencia continental GVA en ríos y embalses (también si pescas desde kayak en embalse).",
+      "Licencia marítima recreativa desde tierra (GVA) si pescas en la orilla del mar o desde kayak / artefacto flotante.",
+      "Barco matriculado: licencia marítima DESDE EMBARCACIÓN (distinta de la de tierra) + papeles del buque + PescaREC cuando aplique; Columbretes es reserva.",
       "En ZPC: además, permiso del coto / PTOP del día.",
       "No hace falta seguro de RC de pescador (a diferencia de Andalucía).",
     ],

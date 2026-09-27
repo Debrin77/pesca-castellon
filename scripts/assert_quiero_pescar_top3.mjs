@@ -37,7 +37,7 @@ if (!home.includes("QuieroPescarBlock")) fail("HomeScreen sin QuieroPescarBlock"
 if (!home.includes("onAbrirSitio=")) fail("Home debe cablear onAbrirSitio de QuieroPescar");
 
 const top = read("src/components/TopSitiosEspecie.tsx");
-for (const n of ["modosPregunta", "¿Desde orilla o en barco?", "onModoElegido"]) {
+for (const n of ["modosPregunta", "¿Desde orilla, kayak o barco?", "onModoElegido"]) {
   if (!top.includes(n)) fail(`TopSitiosEspecie sin ${n}`);
 }
 

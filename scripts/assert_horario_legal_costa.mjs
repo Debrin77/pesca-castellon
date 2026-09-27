@@ -41,7 +41,7 @@ for (const n of [
   "HORARIO_SUBMARINA_CV",
   "Hoy permitido (aprox.)",
   "Hoy luz solar",
-  "Horario · embarcación",
+  "Horario · barco / kayak mar",
   "caña desde tierra",
 ]) {
   if (!svc.includes(n)) fail(`horarioLegalService sin ${n}`);
@@ -72,6 +72,10 @@ for (const n of [
   "Embarcación / kayak",
 ]) {
   if (!norma.includes(n)) fail(`normativaMaritima sin ${n}`);
+}
+const horarioSvc = read("src/services/horarioLegalService.ts");
+if (!horarioSvc.includes("Horario · barco / kayak mar")) {
+  fail("horarioLegalService debe titular la franja de barco/kayak mar");
 }
 
 const aviso = read("src/components/AvisoHorarioLegal.tsx");

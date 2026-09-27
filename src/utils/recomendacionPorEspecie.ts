@@ -270,7 +270,7 @@ export async function elegirTopSitiosPorEspecie(opts: {
   const topN = opts.topN ?? TOP_N;
   const { especieId, modo, ancla } = opts;
 
-  if (modo === "barco") {
+  if (modo === "barco" || modo === "kayak_mar") {
     const rampas = candidatosRampas()
       .map((c) => ({
         ...c,
@@ -289,12 +289,25 @@ export async function elegirTopSitiosPorEspecie(opts: {
       filas,
       orientativoSinCatalogo: true,
       aviso:
-        "Barco: no hay catálogo de especies por punto. Rampas por índice de salida (oleaje/viento), no por picada esperada.",
+        modo === "kayak_mar"
+          ? "Kayak mar: rampas/salidas por índice de oleaje·viento. Licencia desde tierra (artefacto flotante)."
+          : "Barco: no hay catálogo de especies por punto. Rampas por índice de salida (oleaje/viento), no por picada esperada.",
     };
   }
 
   const crudos =
-    modo === "orilla" ? candidatosOrilla(especieId) : candidatosContinental(especieId);
+    modo === "orilla"
+      ? candidatosOrilla(especieId)
+      : candidatosContinental(especieId).filter((c) => {
+          if (modo === "embalse") {
+            return c.tipo === "embalse" || c.zoneId?.startsWith("embalse");
+          }
+          if (modo === "rio") {
+            return !(c.tipo === "embalse" || c.zoneId?.startsWith("embalse"));
+          }
+          // kayak continental: todos, con boost embalse más abajo
+          return true;
+        });
 
   if (crudos.length === 0) {
     return {
@@ -305,7 +318,11 @@ export async function elegirTopSitiosPorEspecie(opts: {
       aviso:
         modo === "orilla"
           ? "Ninguna playa del catálogo lista esta especie."
-          : "Ninguna zona de la provincia lista esta especie.",
+          : modo === "embalse"
+            ? "Ningún embalse de la provincia lista esta especie."
+            : modo === "kayak"
+              ? "Ninguna zona navegable lista esta especie."
+              : "Ninguna zona de la provincia lista esta especie.",
     };
   }
 
@@ -315,10 +332,12 @@ export async function elegirTopSitiosPorEspecie(opts: {
         (c.zoneId ? habitatDeZona(c.zoneId) : null) ||
         (c.playaId ? habitatDePlaya(c.playaId) : null) ||
         habitatDeCandidatoId(c.id);
+      const boostKayak =
+        modo === "kayak" && (c.tipo === "embalse" || c.zoneId?.startsWith("embalse")) ? 8 : 0;
       return {
         ...c,
         d: distanciaKm(ancla.lat, ancla.lng, c.lat, c.lng),
-        pref: boostTipo(especieId, c.tipo) + boostHabitatEspecie(especieId, habitat),
+        pref: boostTipo(especieId, c.tipo) + boostHabitatEspecie(especieId, habitat) + boostKayak,
       };
     })
     // Preferir hábitat afin + cercanía antes de gastar llamadas de meteo.

@@ -2,7 +2,7 @@
  * Franjas horarias legales / de luz según ámbito.
  * Continental CV / Andalucía: 1 h antes del orto → 1 h después del ocaso.
  * Costa caña desde tierra (CV): sin veda nocturna general; orto/ocaso como referencia de luz.
- * Embarcación / kayak: luz solar orienta seguridad/regreso — no reutilizar el texto de orilla.
+ * Barco / kayak mar: luz solar orienta seguridad/regreso — no reutilizar el texto de orilla.
  * Submarina: ocaso → orto prohibido (no cubierta por la app).
  */
 import {
@@ -119,7 +119,7 @@ export function construirAvisoHorario(args: {
     return {
       ambito: args.ambito,
       titulo: embarcacion
-        ? "Horario · embarcación / kayak"
+        ? "Horario · barco / kayak mar"
         : "Horario · costa (caña desde tierra)",
       franjaTxt:
         ortoTxt && ocasoTxt

@@ -47,7 +47,7 @@ for (const n of ["useModoPesca", "modoAAparejoAmbito", "setModoGlobal", "ambitoM
 }
 
 const especies = read("src/screens/EspeciesScreen.tsx");
-for (const n of ["consultarEmbarcacion", 'modoGlobal === "barco"']) {
+for (const n of ["consultarEmbarcacion", "esModoEmbarcado"]) {
   if (!especies.includes(n)) fail(`EspeciesScreen sin ${n}`);
 }
 

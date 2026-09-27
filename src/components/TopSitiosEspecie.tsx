@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import {
   etiquetaModo,
+  esModoKayak,
   type ModoPescaGlobal,
 } from "../data/modoPesca";
 import {
@@ -120,14 +121,18 @@ export default function TopSitiosEspecie({
     return (
       <View style={styles.box}>
         <Text style={styles.kicker}>Sitios hoy · {nombreEspecie}</Text>
-        <Text style={styles.sub}>¿Desde orilla o en barco?</Text>
+        <Text style={styles.sub}>¿Desde orilla, kayak o barco?</Text>
         <View style={styles.modosRow}>
           {opciones.map((m) => (
             <TouchableOpacity
               key={m}
               style={[
                 styles.modoChip,
-                m === "barco" || m === "orilla" ? styles.modoChipMar : styles.modoChipRio,
+                esModoKayak(m)
+                  ? styles.modoChipKayak
+                  : m === "barco" || m === "orilla"
+                    ? styles.modoChipMar
+                    : styles.modoChipRio,
               ]}
               onPress={() => {
                 setModoElegidoLocal(m);
@@ -136,7 +141,11 @@ export default function TopSitiosEspecie({
               accessibilityRole="button"
               accessibilityLabel={etiquetaModo(m)}
             >
-              <Text style={styles.modoChipTxt}>{etiquetaModo(m)}</Text>
+              <Text
+                style={[styles.modoChipTxt, esModoKayak(m) && styles.modoChipTxtKayak]}
+              >
+                {m === "kayak_mar" ? "Kayak" : etiquetaModo(m)}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -243,6 +252,12 @@ const styles = StyleSheet.create({
   },
   modoChipRio: { backgroundColor: COLORS.primaryDark },
   modoChipMar: { backgroundColor: COLORS.waterDark },
+  modoChipKayak: {
+    backgroundColor: COLORS.kayakLight,
+    borderWidth: 1.5,
+    borderColor: COLORS.kayakSun,
+  },
+  modoChipTxtKayak: { color: COLORS.kayakDark },
   modoChipTxt: { color: "#fff", fontWeight: "800", fontSize: 14 },
   box: {
     marginTop: 10,
