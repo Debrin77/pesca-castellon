@@ -1,5 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getProvinciaIdActiva } from "../provincias/runtime";
+import {
+  EMBALSES_BARBO_CON_CUPO_CUENCA,
+  EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA,
+} from "../provincias/cuenca/normativa";
 import { obtenerCapturas } from "./storageService";
 
 /**
@@ -28,7 +32,13 @@ export function parsearCupo(texto: string | undefined | null): { maxUnidades: nu
   const kg = t.match(/(\d+(?:[.,]\d+)?)\s*kg/);
   const maxKg = kg ? parseFloat(kg[1].replace(",", ".")) : null;
 
-  // Cupo excepcional tras «salvo» / «máx.» (p. ej. barbos CLM en Buendía/Alarcón/Contreras).
+  // «Sin muerte» por defecto con cupo excepcional ligado a un sitio (salvo/excepto):
+  // no inventar el número como cupo global del chip (p. ej. barbos CLM → 6 solo en 3 embalses).
+  if (/sin muerte|devoluci[oó]n|no se retiene/.test(t) && /salvo|excepto|excepci[oó]n/.test(t)) {
+    return { maxUnidades: null, maxKg };
+  }
+
+  // Cupo excepcional tras «salvo» / «máx.» cuando no hay régimen SM dominante.
   const excepcion = t.match(
     /(?:salvo|excepto|excepci[oó]n)[^.]{0,80}?(?:m[aá]x\.?\s*)?(\d+)\s*(?:\/\s*d[ií]a|ud|u\.|piezas|ejemplares)?/
   );
@@ -48,6 +58,21 @@ export function parsearCupo(texto: string | undefined | null): { maxUnidades: nu
     maxUnidades: ud ? parseInt(ud[1], 10) : null,
     maxKg,
   };
+}
+
+/**
+ * Cupo de barbos en Cuenca solo en masas con cupo 6 en todo el vaso (Contreras/Alarcón).
+ * Buendía es subtramo: devolver null para no mostrar «6» como si valiera todo el embalse.
+ */
+export function cupoBarboCuencaParaFicha(fichaId?: string | null): number | null {
+  if (!fichaId) return null;
+  if (EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA.has(fichaId)) return null;
+  return EMBALSES_BARBO_CON_CUPO_CUENCA.has(fichaId) ? 6 : null;
+}
+
+/** True si la ficha es Buendía (u otra masa) con cupo 6 solo en subtramo cartel. */
+export function esCupoBarboSoloSubtramoCuenca(fichaId?: string | null): boolean {
+  return !!fichaId && EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA.has(fichaId);
 }
 
 export async function resumenCupoHoy(

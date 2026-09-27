@@ -147,12 +147,17 @@ function slug(nombre) {
 
 function cuencaDe(nombre, municipios) {
   const t = `${nombre} ${municipios}`.toLowerCase();
+  // Genil antes de reglas genéricas: Cordobilla/Malpasillo y Aguilar no son Corbones.
+  if (/cordobilla|malpasillo|genil|puente genil|aguilar de la frontera/.test(t)) return "Genil";
   if (/huéznar|hueznar|san pedro|alan[ií]s|constantina/.test(t)) return "Rivera de Huelva";
   if (/minilla|cala|agrio|guadiamar|gergal|ronquillo|guillena/.test(t)) return "Rivera de Huelva";
   if (/pintado|melonares|viár|viar|cazalla|pedroso/.test(t)) return "Rivera de Huelva";
   if (/guadaíra|guadaira|alcalá de guadaíra/.test(t)) return "Guadaíra";
   if (/corbones|osuna|marchena|puebla de cazalla/.test(t)) return "Corbones";
-  if (/torre|águila|aguila|santiago|salado|utrera|lebrija|morón|moron/.test(t)) return "Corbones";
+  // Torre del Águila (word boundary): no confundir Aguilar ↔ águila.
+  if (/torre\s+del\s+[aá]guila|\b[aá]guila\b|santiago|salado|utrera|lebrija|morón|moron/.test(t)) {
+    return "Corbones";
+  }
   if (/doñana|entremuros|dehesa de abajo|puebla del r[ií]o|isla mayor/.test(t)) return "Guadalquivir";
   return "Guadalquivir";
 }

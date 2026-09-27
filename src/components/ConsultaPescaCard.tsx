@@ -20,6 +20,7 @@ import { navegacionKayakDeZona } from "../data/navegacionKayakEmbalses";
 import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { esHorarioCangrejoClm, esHorarioIznajarAnexoV2 } from "../services/horarioLegalService";
 
 interface Props {
   consulta: ConsultaPesca;
@@ -67,6 +68,18 @@ export default function ConsultaPescaCard({
   const lngEfectiva = lng ?? punto?.lng ?? null;
   const especieDestacada =
     consulta.ambito === "maritimo" ? consulta.especiesIds?.[0] : consulta.tramo?.especies?.[0];
+  const iznajar = esHorarioIznajarAnexoV2(consulta.tramo);
+  const cangrejoClm = esHorarioCangrejoClm({
+    provinciaId: provincia.id,
+    especieId: especieDestacada,
+  });
+  const margenHorasHorario = iznajar ? 0 : 1;
+  const margenFinHorasHorario = iznajar ? 0 : cangrejoClm ? 2 : undefined;
+  const normaHorario = iznajar
+    ? "Iznájar (Anexo V.2 Orden 13/01/2023): horario orto → ocaso sin ±1 h. Límites de línea, cebos y señuelos; confirma cartel."
+    : cangrejoClm
+      ? "CLM cangrejo rojo: fuera de veda feb–may, de 1 h antes del orto a 2 h después del ocaso (control de poblaciones)."
+      : undefined;
   const montajeDisponible = especieDestacada ? !!consejoIdMontajeEspecie(especieDestacada, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly }) : false;
   const mar = consulta.ambito === "maritimo";
   const acento = mar ? COLORS.water : COLORS.primary;
@@ -273,6 +286,9 @@ export default function ConsultaPescaCard({
               lng={lngEfectiva}
               provinciaId={provincia.id}
               compacto
+              margenHoras={margenHorasHorario}
+              margenFinHoras={margenFinHorasHorario}
+              normaOverride={normaHorario}
             />
             <Text style={styles.claveKicker}>Lo esencial hoy</Text>
             {puntosClave.length === 0 ? (

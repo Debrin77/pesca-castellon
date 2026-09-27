@@ -320,7 +320,6 @@
     "especies": [
       "barbo",
       "carpa",
-      "anguila",
       "mugilidos"
     ],
     "cuenca": "Mijares",
@@ -850,8 +849,7 @@
     "fichaId": null,
     "especies": [
       "carpa",
-      "black_bass",
-      "anguila"
+      "black_bass"
     ],
     "cuenca": "Palancia",
     "municipios": [

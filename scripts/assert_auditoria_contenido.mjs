@@ -108,15 +108,54 @@ for (const id of ["jurel", "palometon", "black_bass", "mojarra", "siluro", "mugi
 }
 ok("placas críticas presentes");
 
-// Runtime: fechas / cupo / Marquesado
+// Sevilla checklist no debe sangrar Iznájar (Córdoba Anexo V.2)
+const sevNorm = read("src/provincias/sevilla/normativa.ts");
+if (/Izn[aá]jar/i.test(sevNorm)) fail("Sevilla normativa no debe mencionar Iznájar (es Córdoba)");
+else ok("Sevilla checklist sin Iznájar");
+
+// Cordobilla / Malpasillo = Genil (no Corbones por Aguilar↔águila)
+const sevTramos = JSON.parse(read("src/provincias/sevilla/tramosOficiales.json"));
+const cordobilla = sevTramos.find((t) => t.id === "sev-refugio_embalse_de_cordobilla");
+const malpasillo = sevTramos.find((t) => t.id === "sev-refugio_embalse_de_malpasillo");
+if (!cordobilla || cordobilla.cuenca !== "Genil") fail("Cordobilla Sevilla debe ser cuenca Genil");
+else ok("Cordobilla Sevilla = Genil");
+if (!malpasillo || malpasillo.cuenca !== "Genil") fail("Malpasillo Sevilla debe ser cuenca Genil");
+else ok("Malpasillo Sevilla = Genil");
+const builderSev = read("scripts/build_sevilla_pesca_geojson.mjs");
+if (!/cordobilla\|malpasillo\|genil/.test(builderSev)) fail("builder Sevilla debe mapear Cordobilla/Malpasillo a Genil");
+if (/\/torre\|[aá]guila\|aguila\|santiago/.test(builderSev)) fail("builder Sevilla no debe usar /aguila/ sin word-boundary (rompe Aguilar→Genil)");
+else ok("builder Sevilla evita Aguilar→Corbones");
+
+// Placas regeneradas: herrera sin mancha caudal; oblada con mancha; tenca presente
+for (const id of ["herrera", "oblada", "tenca"]) {
+  if (!exists(`assets/medicion/especies/${id}.jpg`)) fail(`falta placa ${id}`);
+}
+ok("placas herrera/oblada/tenca presentes");
+
+// Carpín Castellón alineado con foto gibelio
+const spCs = JSON.parse(read("src/data/species.json"));
+const carpin = spCs.find((s) => s.id === "carpin");
+if (!carpin || !/gibelio/i.test(carpin.nombreCientifico || "")) fail("carpin Castellón debe ser Carassius gibelio");
+else ok("carpin = Carassius gibelio");
+
+// Runtime: fechas / cupo / Marquesado / ZPC CLM / Iznájar / régimen especial / Buendía subtramo
 const runtime = `
 import { setProvinciaActiva } from './src/provincias/runtime.ts';
 import { estaEnVeda, PERIODOS_HABILES } from './src/services/vedaService.ts';
 import { tercerDomingoDeMarzo } from './src/data/normativa2026.ts';
-import { periodoTruchaTramoClmAbierto } from './src/provincias/cuenca/normativa.ts';
-import { parsearCupo } from './src/services/cupoService.ts';
+import {
+  periodoTruchaTramoClmAbierto,
+  periodoTruchaAltaMontana,
+  esRegimenEspecialCiprinidosClm,
+  EMBALSES_BARBO_CON_CUPO_CUENCA,
+  EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA,
+} from './src/provincias/cuenca/normativa.ts';
+import { parsearCupo, cupoBarboCuencaParaFicha, esCupoBarboSoloSubtramoCuenca } from './src/services/cupoService.ts';
 import { consultarPorTramo } from './src/services/consultaPescaService.ts';
+import { construirAvisoHorario, esHorarioIznajarAnexoV2, esHorarioCangrejoClm } from './src/services/horarioLegalService.ts';
 import tramos from './src/provincias/cuenca/tramosOficiales.json';
+import tramosCs from './src/data/tramosOficiales.json';
+import { REGLAS_GENERALES_CLM } from './src/provincias/cuenca/normativa.ts';
 
 const ini = PERIODOS_HABILES.find((p) => p.especieId === 'trucha_comun')!.inicio;
 const t2027 = tercerDomingoDeMarzo(2027);
@@ -134,8 +173,29 @@ if (periodoTruchaTramoClmAbierto(marq, new Date(2026, 3, 15))) {
 if (!periodoTruchaTramoClmAbierto(marq, new Date(2026, 5, 1))) {
   throw new Error('Marquesado debe abrir 1 jun');
 }
+// Cierre alta montaña 15 oct (no 30 sep de baja)
+if (!periodoTruchaTramoClmAbierto(marq, new Date(2026, 9, 10))) {
+  throw new Error('Marquesado debe seguir abierto el 10 oct (alta montaña)');
+}
+if (periodoTruchaTramoClmAbierto(marq, new Date(2026, 9, 16))) {
+  throw new Error('Marquesado debe cerrar tras 15 oct');
+}
 const c = consultarPorTramo(marq, new Date(2026, 3, 20));
 if (c.sePuedePescarHoy) throw new Error('consulta Marquesado 20 abr debe ser HOY NO');
+
+// Régimen especial ciprínidos: fuera de temporada de trucha el punto NO cierra
+const valde = tramos.find((x) => x.id === 'cue-rio_jucar_valdecabras');
+const crist = tramos.find((x) => x.id === 'cue-rio_cabriel_cristinas');
+if (!valde || !esRegimenEspecialCiprinidosClm(valde)) throw new Error('Valdecabras debe ser régimen especial');
+if (!crist || !esRegimenEspecialCiprinidosClm(crist)) throw new Error('Cristinas debe ser régimen especial');
+const cVal = consultarPorTramo(valde, new Date(2026, 9, 5)); // 5 oct fuera baja/alta trucha
+if (!cVal.sePuedePescarHoy) throw new Error('Valdecabras régimen especial 5 oct debe permitir pesca (ciprínidos)');
+const cCri = consultarPorTramo(crist, new Date(2026, 9, 5));
+if (!cCri.sePuedePescarHoy) throw new Error('Cristinas régimen especial 5 oct debe permitir pesca');
+
+// Alta montaña helper debe usarse (Marquesado 10 oct)
+if (!periodoTruchaAltaMontana(new Date(2026, 9, 10))) throw new Error('alta montaña 10 oct abierta');
+if (periodoTruchaAltaMontana(new Date(2026, 3, 15))) throw new Error('alta montaña 15 abr cerrada');
 
 if (estaEnVeda('cangrejo_americano', new Date(2026, 2, 1)) !== true) throw new Error('cangrejo CLM veda mar');
 if (estaEnVeda('trucha_arcoiris', new Date(2026, 0, 15)) !== false) {
@@ -143,9 +203,108 @@ if (estaEnVeda('trucha_arcoiris', new Date(2026, 0, 15)) !== false) {
 }
 
 const cupoBarbo = parsearCupo('0 (sin muerte) salvo Contreras/Alarcón/Buendía: máx. 6/día.');
-if (cupoBarbo.maxUnidades !== 6) throw new Error('parsearCupo debe leer máx. 6 tras salvo, got ' + cupoBarbo.maxUnidades);
+if (cupoBarbo.maxUnidades !== null) {
+  throw new Error('parsearCupo no debe inventar cupo 6 global si el régimen base es sin muerte (+salvo sitio)');
+}
+// Buendía: subtramo → no cupo numérico 6 en ficha del vaso entero
+if (cupoBarboCuencaParaFicha('embalse_de_buendia') !== null) {
+  throw new Error('Buendía vaso entero no debe exponer cupo 6 (solo subtramo cartel)');
+}
+if (!esCupoBarboSoloSubtramoCuenca('embalse_de_buendia')) throw new Error('Buendía debe marcarse subtramo');
+if (cupoBarboCuencaParaFicha('embalse_de_alarcon') !== 6) throw new Error('Alarcón cupo 6');
+if (cupoBarboCuencaParaFicha('embalse_de_contreras') !== 6) throw new Error('Contreras cupo 6');
+if (EMBALSES_BARBO_CON_CUPO_CUENCA.has('embalse_de_buendia')) {
+  throw new Error('Buendía no debe estar en EMBALSES_BARBO_CON_CUPO_CUENCA');
+}
+if (!EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA.has('embalse_de_buendia')) {
+  throw new Error('Buendía debe estar en set de solo-subtramo');
+}
+if (cupoBarboCuencaParaFicha('embalse_de_entrepenas') !== null) throw new Error('otras masas: sin cupo barbo');
 const cupo4 = parsearCupo('4/día (Res. 16/09/2024)');
 if (cupo4.maxUnidades !== 4) throw new Error('parsearCupo debe leer 4/día');
+
+const buendia = tramos.find((x) => x.fichaId === 'embalse_de_buendia');
+if (buendia) {
+  const cb = consultarPorTramo(buendia, new Date(2026, 5, 15));
+  const blob = [...cb.restriccionesHoy, ...cb.permisos].join(' ');
+  if (!/presa|Alcocer|subtramo/i.test(blob)) {
+    throw new Error('consulta Buendía debe avisar subtramo presa→Alcocer: ' + blob.slice(0, 220));
+  }
+}
+
+// REGLAS no deben afirmar que Alto Tajo está cableado si no hay tramo
+if (/Alto Tajo[\s\S]{0,80}La app aplica estos calendarios/i.test(REGLAS_GENERALES_CLM.join(' '))) {
+  throw new Error('REGLAS CLM no deben afirmar soporte runtime de Alto Tajo sin tramo en catálogo');
+}
+if (!/no hay tramo separado|confirma visor/i.test(REGLAS_GENERALES_CLM.join(' '))) {
+  throw new Error('REGLAS CLM deben matizar Alto Tajo / visor');
+}
+
+const cotoClm = tramos.find((x) => x.aprovechamiento === 'ZPC');
+if (cotoClm) {
+  const cc = consultarPorTramo(cotoClm, new Date(2026, 5, 15));
+  const blob = [...cc.restriccionesHoy, ...cc.permisos].join(' ');
+  if (/Hermanos Bou|Orden 30\\/2016|Castellón \\/ Segorbe/i.test(blob)) {
+    throw new Error('ZPC CLM no debe sangrar PTOP/oficina GVA: ' + blob.slice(0, 200));
+  }
+  if (!/JCCM|venta en línea|CLM/i.test(blob)) {
+    throw new Error('ZPC CLM debe mencionar JCCM/venta en línea');
+  }
+}
+
+if (!esHorarioIznajarAnexoV2({ id: 'cor-embalse_de_iznajar', notaAnexo: 'ANEXO_V_2' })) {
+  throw new Error('debe detectar Iznájar Anexo V.2');
+}
+if (!esHorarioCangrejoClm({ provinciaId: 'cuenca', especieId: 'cangrejo_americano' })) {
+  throw new Error('debe detectar horario cangrejo CLM');
+}
+if (esHorarioCangrejoClm({ provinciaId: 'sevilla', especieId: 'cangrejo_americano' })) {
+  throw new Error('cangrejo +2 h es excepción CLM, no Andalucía');
+}
+const fakeOrto = {
+  ortoIso: '2026-09-27T07:00:00+02:00',
+  ocasoIso: '2026-09-27T19:00:00+02:00',
+  ortoTxt: '07:00',
+  ocasoTxt: '19:00',
+};
+const hGen = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T06:30:00+02:00'),
+  provinciaId: 'cordoba',
+  margenHoras: 1,
+});
+const hIzn = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T06:30:00+02:00'),
+  provinciaId: 'cordoba',
+  margenHoras: 0,
+  normaOverride: 'Iznájar Anexo V.2',
+});
+if (hGen.estado !== 'dentro') throw new Error('con ±1 h, 06:30 debe estar dentro');
+if (hIzn.estado !== 'fuera') throw new Error('Iznájar sin ±1 h, 06:30 debe estar fuera');
+const hCang = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T20:30:00+02:00'),
+  provinciaId: 'cuenca',
+  margenHoras: 1,
+  margenFinHoras: 2,
+});
+const hGenNoche = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T20:30:00+02:00'),
+  provinciaId: 'cuenca',
+  margenHoras: 1,
+});
+if (hCang.estado !== 'dentro') throw new Error('cangrejo ocaso+2: 20:30 debe estar dentro');
+if (hGenNoche.estado !== 'fuera') throw new Error('genérico ocaso+1: 20:30 debe estar fuera');
+
+const al15 = tramosCs.find((t) => t.id === 'al15.zpc');
+const conAnguila = tramosCs.filter((t) => (t.especies || []).includes('anguila'));
+if (conAnguila.length) throw new Error('tramos CS no deben listar anguila recreativa: ' + conAnguila.map(t=>t.id).join(','));
 
 console.log('RUNTIME_OK auditoria_contenido');
 `;

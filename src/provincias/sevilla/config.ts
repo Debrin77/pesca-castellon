@@ -37,7 +37,7 @@ export const sevillaConfig: ProvinciaConfig = {
     latitudeDelta: 1.35,
     longitudeDelta: 1.35,
   },
-  cuencas: ["Guadalquivir", "Guadaíra", "Rivera de Huelva", "Corbones", "Otras"],
+  cuencas: ["Guadalquivir", "Guadaíra", "Genil", "Rivera de Huelva", "Corbones", "Otras"],
   tramos: tramos as ProvinciaConfig["tramos"],
   zones: zones as any[],
   species: construirSpeciesSevilla(),

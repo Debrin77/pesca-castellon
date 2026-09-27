@@ -81,6 +81,17 @@ export function construirAvisoHorario(args: {
   ortoOcaso: OrtoOcasoDia | null;
   ahora?: Date;
   provinciaId?: string;
+  /**
+   * Margen legal en horas alrededor de orto/ocaso (continental).
+   * Art. 4 Andalucía / CV / CLM genérico = 1.
+   * Iznájar Anexo V.2 = 0 (orto → ocaso sin ±1 h).
+   * Si solo se informa margenHoras, aplica simétrico a orto y ocaso.
+   */
+  margenHoras?: number;
+  /** Margen distinto tras el ocaso (p. ej. cangrejo CLM = 2 h). */
+  margenFinHoras?: number;
+  /** Sustituye el texto de norma continental (p. ej. Anexo V.2 Iznájar). */
+  normaOverride?: string | null;
 }): AvisoHorarioLegal {
   const ahora = args.ahora ?? new Date();
   const disclaimer =
@@ -129,7 +140,9 @@ export function construirAvisoHorario(args: {
     };
   }
 
-  const normaTxt = normaContinentalTxt(args.provinciaId);
+  const margenInicio = args.margenHoras ?? 1;
+  const margenFin = args.margenFinHoras ?? args.margenHoras ?? 1;
+  const normaTxt = args.normaOverride?.trim() || normaContinentalTxt(args.provinciaId);
   if (!args.ortoOcaso) {
     return {
       ambito: "continental",
@@ -148,17 +161,27 @@ export function construirAvisoHorario(args: {
 
   const orto = parseIsoLocal(args.ortoOcaso.ortoIso);
   const ocaso = parseIsoLocal(args.ortoOcaso.ocasoIso);
-  const inicio = sumarHoras(orto, -1);
-  const fin = sumarHoras(ocaso, 1);
-  const inicioTxt = ajustarHoraTxt(args.ortoOcaso.ortoTxt, -1);
-  const finTxt = ajustarHoraTxt(args.ortoOcaso.ocasoTxt, 1);
+  const inicio = sumarHoras(orto, -margenInicio);
+  const fin = sumarHoras(ocaso, margenFin);
+  const inicioTxt = ajustarHoraTxt(args.ortoOcaso.ortoTxt, -margenInicio);
+  const finTxt = ajustarHoraTxt(args.ortoOcaso.ocasoTxt, margenFin);
   const dentro =
     ahora.getTime() >= inicio.getTime() && ahora.getTime() <= fin.getTime();
 
+  const iznajar = margenInicio === 0 && margenFin === 0;
+  const cangrejo = margenFin === 2 && margenInicio === 1;
   return {
     ambito: "continental",
-    titulo: "Horario legal · continental",
-    franjaTxt: `Hoy permitido (aprox.): ${inicioTxt} – ${finTxt}`,
+    titulo: iznajar
+      ? "Horario legal · Iznájar (Anexo V.2)"
+      : cangrejo
+        ? "Horario legal · cangrejo (CLM)"
+        : "Horario legal · continental",
+    franjaTxt: iznajar
+      ? `Hoy permitido (orto→ocaso, sin ±1 h): ${inicioTxt} – ${finTxt}`
+      : cangrejo
+        ? `Hoy permitido (cangrejo: orto−1 h → ocaso+2 h): ${inicioTxt} – ${finTxt}`
+        : `Hoy permitido (aprox.): ${inicioTxt} – ${finTxt}`,
     estado: dentro ? "dentro" : "fuera",
     estadoTxt: dentro
       ? "Ahora estás dentro de la franja legal orientativa."
@@ -178,6 +201,9 @@ export async function obtenerAvisoHorarioLegal(args: {
   lng?: number | null;
   provinciaId?: string;
   ahora?: Date;
+  margenHoras?: number;
+  margenFinHoras?: number;
+  normaOverride?: string | null;
 }): Promise<AvisoHorarioLegal> {
   const provincia = getProvinciaActiva();
   const fallback =
@@ -192,5 +218,31 @@ export async function obtenerAvisoHorarioLegal(args: {
     ortoOcaso,
     ahora: args.ahora,
     provinciaId: args.provinciaId,
+    margenHoras: args.margenHoras,
+    margenFinHoras: args.margenFinHoras,
+    normaOverride: args.normaOverride,
   });
+}
+
+/** True si el tramo exige Anexo V.2 Iznájar (horario orto→ocaso sin ±1 h). */
+export function esHorarioIznajarAnexoV2(tramo?: {
+  id?: string | null;
+  notaAnexo?: string | null;
+  fichaId?: string | null;
+  nombre?: string | null;
+} | null): boolean {
+  if (!tramo) return false;
+  const nota = `${tramo.notaAnexo ?? ""}`.toUpperCase();
+  if (nota === "ANEXO_V_2" || nota === "IZNAJAR") return true;
+  const blob = `${tramo.id ?? ""} ${tramo.fichaId ?? ""} ${tramo.nombre ?? ""}`.toLowerCase();
+  return blob.includes("iznajar");
+}
+
+/** CLM: control de cangrejo rojo → ocaso + 2 h (Ley 1/1992 / Orden vedas). */
+export function esHorarioCangrejoClm(args: {
+  provinciaId?: string | null;
+  especieId?: string | null;
+}): boolean {
+  if (args.provinciaId !== "cuenca") return false;
+  return /cangrejo/.test(`${args.especieId ?? ""}`.toLowerCase());
 }

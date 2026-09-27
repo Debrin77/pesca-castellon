@@ -59,29 +59,63 @@ export function periodoTruchaCuencaAbierto(fecha: Date = new Date()): boolean {
   return periodoTruchaBajaMontana(fecha);
 }
 
+/** Texto de tramo/ficha que marca régimen especial de ciprínidos en veda de trucha. */
+export function esRegimenEspecialCiprinidosClm(tramo: {
+  regimen?: string | null;
+  vocacion?: string | null;
+  nombre?: string | null;
+  id?: string | null;
+}): boolean {
+  const texto = `${tramo.regimen ?? ""} ${tramo.vocacion ?? ""} ${tramo.nombre ?? ""} ${tramo.id ?? ""}`;
+  return /r[eé]gimen especial|cipr[ií]nidos en veda/i.test(texto);
+}
+
+/** Alta montaña o apertura art. 7 con cierre 15 oct (Orden 20/2026 art. 2 / art. 7). */
+export function esTramoAltaMontanaClm(tramo: {
+  regimen?: string | null;
+  vocacion?: string | null;
+  nombre?: string | null;
+  id?: string | null;
+  notaAnexo?: string | null;
+}): boolean {
+  const texto = `${tramo.regimen ?? ""} ${tramo.vocacion ?? ""} ${tramo.nombre ?? ""} ${tramo.id ?? ""} ${tramo.notaAnexo ?? ""}`.toLowerCase();
+  return /alta\s*monta[nñ]a|al[_\s-]?montana|marquesado|alto\s*tajo|apertura\s+trucha\s+1\s*jun/.test(texto);
+}
+
 /**
  * Periodo hábil de un tramo truchero CLM.
- * Si el régimen indica apertura especial (p. ej. «apertura trucha 1 jun»), se aplica esa fecha
- * hasta el cierre de baja montaña (30 sep). Si no, baja montaña 1 abr–30 sep.
+ * - Apertura especial art. 7 (Marquesado / Alto Tajo «1 jun»): 1 jun → 15 oct (cierre alta montaña).
+ * - Alta montaña marcada: 1 may → 15 oct.
+ * - Resto: baja montaña 1 abr → 30 sep.
  */
 export function periodoTruchaTramoClmAbierto(
-  tramo: { id?: string; regimen?: string | null; nombre?: string | null },
+  tramo: {
+    id?: string;
+    regimen?: string | null;
+    nombre?: string | null;
+    vocacion?: string | null;
+    notaAnexo?: string | null;
+  },
   fecha: Date = new Date()
 ): boolean {
   const texto = `${tramo.regimen ?? ""} ${tramo.nombre ?? ""} ${tramo.id ?? ""}`.toLowerCase();
   const m = fecha.getMonth() + 1;
   const d = fecha.getDate();
-  if (/apertura\s+trucha\s+1\s*jun|marquesado/.test(texto)) {
-    if (m > 6 && m < 9) return true;
+  if (/apertura\s+trucha\s+1\s*jun|marquesado|alto\s*tajo/.test(texto)) {
+    // Art. 7: abre 1 jun; cierra con alta montaña (15 oct), no con baja (30 sep).
+    if (m > 6 && m < 10) return true;
     if (m === 6 && d >= 1) return true;
-    if (m === 9 && d <= 30) return true;
+    if (m === 10 && d <= 15) return true;
     return false;
+  }
+  if (esTramoAltaMontanaClm(tramo)) {
+    return periodoTruchaAltaMontana(fecha);
   }
   return periodoTruchaBajaMontana(fecha);
 }
 
 export function etiquetaTemporadaTruchaCuenca(anio: number = new Date().getFullYear()): string {
-  return `Trucheras CLM ${anio}: la app aplica baja montaña 1 abr–30 sep (por defecto). Alta montaña 1 may–15 oct y aperturas especiales (p. ej. Marquesado 1 jun) → confirma visor JCCM / cartel (art. 2 Orden 20/2026). Solo sin muerte.`;
+  return `Trucheras CLM ${anio}: baja montaña 1 abr–30 sep (defecto); alta montaña 1 may–15 oct si el tramo lo declara; art. 7 Marquesado (y Alto Tajo si está en catálogo) 1 jun–15 oct. Confirma visor JCCM / cartel (Orden 20/2026). Solo sin muerte.`;
 }
 
 export function textoVigenciaNormativaClm(): string {
@@ -112,23 +146,28 @@ export function avisosPorNotaAnexoClm(nota: string | null | undefined): string[]
 }
 
 /**
- * Embalses de Cuenca donde la Orden permite retención de barbos (cupo 6/día):
- * Contreras, Alarcón y Buendía (presa → puente nuevo Alcocer).
+ * Embalses de Cuenca donde la Orden permite retención de barbos (cupo 6/día)
+ * en todo el vaso catalogado: Contreras y Alarcón.
+ * Buendía NO entra aquí: el cupo 6 solo vale en el subtramo presa→puente nuevo Alcocer
+ * (ver EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA).
  */
 export const EMBALSES_BARBO_CON_CUPO_CUENCA = new Set([
   "embalse_de_contreras",
   "embalse_de_alarcon",
-  "embalse_de_buendia",
 ]);
+
+/** Masas con cupo barbo 6 solo en un subtramo señalizado (no todo el vaso). */
+export const EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA = new Set(["embalse_de_buendia"]);
 
 export const REGLAS_GENERALES_CLM = [
   "Licencia de pesca de Castilla-La Mancha (JCCM / plataforma DIANA) obligatoria en ríos y embalses.",
   "No se exige seguro de RC del pescador para tramitar la licencia CLM (a diferencia de Andalucía).",
   "Cotos especiales e intensivos: además de la licencia, permiso del día (venta en línea JCCM / concesionario).",
-  "Horario (Ley 1/1992): 1 h antes del orto – 1 h después del ocaso, salvo excepciones.",
+  "Horario (Ley 1/1992): 1 h antes del orto – 1 h después del ocaso, salvo excepciones (cangrejo: hasta 2 h tras ocaso).",
   "Trucha común, madrija, cacho del Mediterráneo y bordallo del Tajo: solo pesca sin muerte en todo tipo de aguas.",
+  "Aperturas especiales art. 7 (confirma Orden/visor): Laguna del Marquesado 1 jun–15 oct (catalogada). Alto Tajo (nacimiento → entrada Guadalajara) 1 jun: confirma visor JCCM — no hay tramo separado en la app aún.",
   "Anguila: pesca prohibida (temporada 2026 / normativa UE).",
-  "Cuenca · barbos: solo sin muerte en todas las aguas, excepto Contreras, Alarcón y Buendía (presa→puente Alcocer), con cupo máx. 6 barbos/pescador/día.",
+  "Cuenca · barbos: solo sin muerte en todas las aguas, excepto Contreras y Alarcón (cupo 6/vaso) y Buendía solo presa→puente nuevo Alcocer (cupo 6 en ese subtramo; resto del vaso sin muerte).",
   "Aguas trucheras: periodos hábiles art. 2; anzuelos sin arponcillo; cebos según Plan de Gestión de la Trucha.",
   "Invasoras (Anexo I): sacrificio inmediato fuera de áreas Anexo III; no devolver ni traslocar (RD 630/2013).",
   "Siluro, cangrejo señal y otras del Anexo I con pesca prohibida: no son objeto de pesca.",
@@ -142,10 +181,10 @@ export const CHECKLIST_ANTES_DE_PESCAR_CLM = [
   "Licencia de pesca de Castilla-La Mancha en vigor (DIANA / Delegación).",
   "Si es coto especial o intensivo: permiso del día además de la licencia.",
   "Comprobar que el punto no es vedado ni refugio (visor JCCM / cartel).",
-  "Barbos en Cuenca: sin muerte salvo Contreras, Alarcón o Buendía (cupo 6).",
-  "Trucha: solo sin muerte; confirma periodo hábil si es agua truchera.",
+  "Barbos en Cuenca: sin muerte salvo Contreras/Alarcón (cupo 6) o Buendía presa→Alcocer (subtramo).",
+  "Trucha: solo sin muerte; confirma periodo hábil si es agua truchera (alta/baja montaña o art. 7).",
   "Invasoras: sacrificio si la norma lo exige; no traslocar (RD 630/2013).",
-  "Horario: 1 h antes del orto – 1 h después del ocaso.",
+  "Horario: 1 h antes del orto – 1 h después del ocaso (cangrejo: hasta 2 h tras ocaso).",
   "Llevar DNI/NIE y licencia (y permiso de coto si aplica).",
   "Desinfectar y secar material al cambiar de masa de agua.",
 ];

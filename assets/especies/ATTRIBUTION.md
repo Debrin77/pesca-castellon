@@ -87,3 +87,9 @@ Translation by User:Theklan
 - `percasol.jpg` — File:Lepomis gibbosus Pumpkinseed.jpg — ver licencia en Commons
 - `bonito.jpg` — File:Sarda sarda 1.jpg — ver licencia en Commons
 - Placas regeneradas: `black_bass` (TL horizontal), `palometon` (Lichia, no tarpon), `mojarra` (2 bandas), `boga_mar`, `cangrejo_americano` (anchura de caparazón), `siluro`, `jurel`, `mugilidos`
+
+## Auditoría experta 2026-09 (3.ª pasada)
+- `barbo.jpg` — File:Barbus graellsii 03 by-dpc.jpg — CC BY 3.0 — David Perez (barbillas visibles)
+- `tenca.jpg` — File:Tinca tinca Prague Vltava 2.jpg — ver licencia en Commons (solo tencas; sin carpa)
+- Placas regeneradas (rasgos diagnósticos): `herrera` (barras finas sin mancha caudal), `oblada` (mancha caudal sin barras tipo Diplodus), `tenca` (2 barbillones, cola casi cuadrada)
+
