@@ -199,8 +199,8 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <View style={styles.root}>
-      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.52} />
-      <OndaAgua intensidad={0.55} tono={slide.tonoOnda} />
+      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.32} />
+      <OndaAgua intensidad={0.4} tono={slide.tonoOnda} />
 
       <TouchableOpacity
         style={[styles.closeBtn, { top: topPad + 4 }]}

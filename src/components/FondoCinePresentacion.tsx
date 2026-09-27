@@ -26,7 +26,7 @@ type Props = {
  * foto a sangrado + Ken Burns suave + crossfade al cambiar de slide
  * + degradado de marca. Evita fondos planos y da atmósfera de orilla.
  */
-export default function FondoCinePresentacion({ foto, accent, velo = 0.55 }: Props) {
+export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Props) {
   const [capaA, setCapaA] = useState(foto);
   const [capaB, setCapaB] = useState(foto);
   const [frenteEsB, setFrenteEsB] = useState(false);
@@ -86,9 +86,9 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.55 }: Pro
     return () => loop.stop();
   }, [ken, foto]);
 
-  const scale = ken.interpolate({ inputRange: [0, 1], outputRange: [1.08, 1.18] });
-  const tx = ken.interpolate({ inputRange: [0, 1], outputRange: [-12, 14] });
-  const ty = ken.interpolate({ inputRange: [0, 1], outputRange: [-6, 10] });
+  const scale = ken.interpolate({ inputRange: [0, 1], outputRange: [1.1, 1.22] });
+  const tx = ken.interpolate({ inputRange: [0, 1], outputRange: [-18, 20] });
+  const ty = ken.interpolate({ inputRange: [0, 1], outputRange: [-10, 14] });
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -104,18 +104,25 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.55 }: Pro
         </Animated.View>
       </Animated.View>
 
-      {/* Velo + tinte de marca para legibilidad del copy */}
-      <View style={[styles.velo, { backgroundColor: `rgba(6,18,14,${velo})` }]} />
+      {/* Velo + tinte de marca: deja leer el copy sin aplastar la foto */}
+      <View style={[styles.velo, { backgroundColor: `rgba(4,14,12,${velo})` }]} />
       <LinearGradient
-        colors={[`${accent[0]}CC`, `${accent[1]}99`, `${accent[2]}E6`]}
-        locations={[0, 0.45, 1]}
+        colors={[`${accent[0]}99`, `${accent[1]}66`, `${accent[2]}CC`]}
+        locations={[0, 0.42, 1]}
         style={StyleSheet.absoluteFill}
       />
       <LinearGradient
-        colors={["rgba(255,228,180,0.16)", "transparent", "rgba(0,0,0,0.45)"]}
-        locations={[0, 0.32, 1]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
+        colors={["rgba(255,232,190,0.18)", "transparent", "rgba(0,0,0,0.5)"]}
+        locations={[0, 0.35, 1]}
+        start={{ x: 0.15, y: 0 }}
+        end={{ x: 0.85, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {/* Viñeta lateral: la foto respira más en el centro */}
+      <LinearGradient
+        colors={["rgba(0,0,0,0.35)", "transparent", "rgba(0,0,0,0.35)"]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
         style={StyleSheet.absoluteFill}
       />
     </View>
