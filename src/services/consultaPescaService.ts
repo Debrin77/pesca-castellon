@@ -1,4 +1,5 @@
 import ptopCotos from "../data/ptopCotos.json";
+import { infoPermisoCoto } from "../data/permisosCoto";
 import {
   Aprovechamiento,
   diaHabilMijares,
@@ -11,6 +12,9 @@ import {
   avisosPorNotaAnexoClm,
   etiquetaTemporadaTruchaCuenca,
   periodoTruchaTramoClmAbierto,
+  esRegimenEspecialCiprinidosClm,
+  EMBALSES_BARBO_CON_CUPO_CUENCA,
+  EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA,
 } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -206,11 +210,12 @@ function evaluarTramo(
   const truchaOk = temporadaTruchaAbierta(fecha);
   const nota = notaDias(t.notaAnexo);
   const diaOk = diaHabilMijares(nota, fecha);
-  /** CLM: vocación/nota truchera (no "régimen especial" de ciprínidos). */
+  /** CLM: agua truchera. Régimen especial de ciprínidos NO cierra el punto fuera de temporada. */
+  const regimenEspecialCiprinidosClm = esClm && esRegimenEspecialCiprinidosClm(t);
   const trucheraClm =
     esClm &&
-    (t.notaAnexo === "TRUCHERA" ||
-      (/truchera/i.test(t.vocacion) && !/r[eé]gimen especial/i.test(t.vocacion)));
+    !regimenEspecialCiprinidosClm &&
+    (t.notaAnexo === "TRUCHERA" || /truchera/i.test(t.vocacion));
   const truchaClmOk = periodoTruchaTramoClmAbierto(t, fecha);
   const dow = fecha.toLocaleDateString("es-ES", { weekday: "long" });
 
@@ -297,6 +302,16 @@ function evaluarTramo(
       );
       restricciones.push("Sin ese permiso no es zona libre: es coto de pesca.");
       restricciones.push("Consulta condiciones del coto y la orden de vedas de la Junta de Andalucía.");
+    } else if (esClm) {
+      const info = infoPermisoCoto("cuenca", t.matriculaCoto, t.nombre);
+      permisos.push(
+        `Permiso de coto especial/intensivo (${t.matriculaCoto ?? "ZPC"}). ${info.comoObtener}`
+      );
+      restricciones.push("Sin ese permiso no es zona libre: es coto de pesca CLM.");
+      restricciones.push(info.avisoPtop);
+      if (info.urlTramite) {
+        permisos.push(`Venta en línea JCCM: ${info.urlTramite}`);
+      }
     } else {
       permisos.push(
         `Permiso de coto intransferible (${t.matriculaCoto ?? "ZPC"}). Lo expide el titular / servicios territoriales.`
@@ -319,7 +334,9 @@ function evaluarTramo(
     permisos.push(
       esAndalucia
         ? "No hace falta permiso de coto: es zona de pesca libre (aguas libres)."
-        : "No hace falta permiso de coto: es zona de pesca libre (ZPL)."
+        : esClm
+          ? "No hace falta permiso de coto: es zona libre (aguas libres CLM)."
+          : "No hace falta permiso de coto: es zona de pesca libre (ZPL)."
     );
   }
 
@@ -392,13 +409,29 @@ function evaluarTramo(
     permisos.push(
       "Horario diurno legal (1 h antes del orto – 1 h después del ocaso), salvo excepciones (p. ej. cangrejo). Cotos: permiso del titular / plan técnico JCCM."
     );
-    if (trucheraClm) {
+    if (regimenEspecialCiprinidosClm) {
+      permisos.push(etiquetaTemporadaTruchaCuenca(fecha.getFullYear()));
+      if (!truchaClmOk) {
+        permisos.push(
+          "Fuera del periodo hábil de trucha: en este tramo de régimen especial puedes pescar ciprínidos (cebo vegetal, anzuelo sin arponcillo); trucha cerrada. Confirma cartel/visor JCCM."
+        );
+      }
+    } else if (trucheraClm) {
       permisos.push(etiquetaTemporadaTruchaCuenca(fecha.getFullYear()));
       if (!truchaClmOk) {
         restricciones.push(
           "Fuera del periodo hábil de aguas trucheras (art. 2 Orden 20/2026): pesca cerrada salvo régimen especial de ciprínidos señalizado."
         );
       }
+    }
+    if (t.fichaId && EMBALSES_BARBO_CON_CUPO_CUENCA.has(t.fichaId)) {
+      permisos.push("Barbos: cupo máx. 6/día y talla 18 cm en esta masa (Orden 20/2026).");
+    } else if (t.fichaId && EMBALSES_BARBO_CUPO_SOLO_SUBTRAMO_CUENCA.has(t.fichaId)) {
+      permisos.push(
+        "Barbos en Buendía: cupo 6/día SOLO presa→puente nuevo Alcocer (cartel). Resto del vaso: sin muerte. La app no da cupo 6 al vaso entero."
+      );
+    } else if (t.aprovechamiento !== "ZPC") {
+      permisos.push("Barbos en Cuenca: solo sin muerte fuera de Contreras, Alarcón y el subtramo autorizado de Buendía.");
     }
   } else {
     permisos.push(
@@ -409,6 +442,7 @@ function evaluarTramo(
   let sePuedePescarHoy = true;
   if (t.aprovechamiento === "ZPC") sePuedePescarHoy = false;
   if (!esAndalucia && salmonicola && (!truchaOk || !diaOk)) sePuedePescarHoy = false;
+  // Régimen especial ciprínidos: el punto sigue abierto fuera de temporada de trucha.
   if (trucheraClm && !truchaClmOk) sePuedePescarHoy = false;
 
   return {

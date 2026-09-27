@@ -116,6 +116,6 @@ export const CHECKLIST_ANTES_DE_PESCAR_ANDALUCIA = [
   "Si pescas barbo o boga: periodo hábil y captura y suelta.",
   "Invasoras: no traslocar; sacrificio si la norma lo exige (RD 630/2013 y art. 8).",
   "No cebar ni usar pez como cebo (art. 9.4), salvo FAPD autorizada.",
-  "Horario: 1 h antes del orto – 1 h después del ocaso (en Iznájar: orto–ocaso, sin ±1 h).",
+  "Horario: 1 h antes del orto – 1 h después del ocaso.",
   "Llevar DNI/NIE, licencia y justificante del seguro.",
 ];
