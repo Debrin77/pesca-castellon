@@ -12,6 +12,13 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const nativo = Platform.OS !== "web";
 
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 type Props = {
   /** Foto atmosférica del slide activo. */
   foto: ImageSourcePropType;
@@ -107,7 +114,7 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
       {/* Velo + tinte de marca: deja leer el copy sin aplastar la foto */}
       <View style={[styles.velo, { backgroundColor: `rgba(4,14,12,${velo})` }]} />
       <LinearGradient
-        colors={[`${accent[0]}99`, `${accent[1]}66`, `${accent[2]}CC`]}
+        colors={[hexToRgba(accent[0], 0.55), hexToRgba(accent[1], 0.35), hexToRgba(accent[2], 0.72)]}
         locations={[0, 0.42, 1]}
         style={StyleSheet.absoluteFill}
       />
@@ -120,7 +127,7 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
       />
       {/* Viñeta lateral: la foto respira más en el centro */}
       <LinearGradient
-        colors={["rgba(0,0,0,0.35)", "transparent", "rgba(0,0,0,0.35)"]}
+        colors={["rgba(0,0,0,0.28)", "transparent", "rgba(0,0,0,0.28)"]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={StyleSheet.absoluteFill}
