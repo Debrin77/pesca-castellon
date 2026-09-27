@@ -109,7 +109,7 @@
     },
     {
       "id": "anjova",
-      "nombre": "Anjova / Llampuga",
+      "nombre": "Anjova",
       "nombreCientifico": "Pomatomus saltatrix",
       "tallaCm": null,
       "tecnicas": ["currican", "spinning_barco"],

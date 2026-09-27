@@ -98,6 +98,8 @@ const paresCriticos = [
   ["llisa", "mabra"],
   ["llisa", "mugilidos"],
   ["sargo", "mojarra"],
+  ["boga", "boga_mar"],
+  ["jurel", "caballa"],
 ];
 function ahashBits(buf) {
   // Promedio 16×16 sobre luminancia aproximada del JPEG (suficiente anti-copia).
@@ -135,6 +137,22 @@ for (const f of fs.readdirSync(fotosDir).filter((x) => x.endsWith(".jpg"))) {
     fail(`Fotos de especies duplicadas (mismo contenido): ${fotoHashes.get(h)} y ${f}`);
   }
   fotoHashes.set(h, f);
+}
+
+// Boga de río ≠ boga de mar (Boops): ids, placas y fotos deben estar separados.
+if (!catalog.includes("boga_mar:")) fail("Falta diagrama boga_mar (Boops)");
+if (!fs.existsSync(path.join(dir, "boga_mar.jpg"))) fail("Falta asset boga_mar.jpg");
+const media = read("src/data/especiesMedia.ts");
+if (!media.includes("boga_mar:")) fail("especiesMedia debe mapear boga_mar");
+if (!fs.existsSync(path.join(fotosDir, "boga_mar.jpg"))) fail("Falta foto especies/boga_mar.jpg");
+
+const orillaIds = JSON.parse(read("src/data/especiesOrilla.json"));
+const bogaOrilla = (orillaIds.pescablesOrilla || []).find((s) => s.id === "boga" || s.id === "boga_mar");
+if (!bogaOrilla || bogaOrilla.id !== "boga_mar") {
+  fail("Orilla debe usar id boga_mar (Boops), no boga continental");
+}
+if (!/Boops/i.test(bogaOrilla.nombreCientifico || "")) {
+  fail("boga_mar debe ser Boops boops");
 }
 
 if (fs.existsSync(path.join(root, "src/components/FotoConMedicion.tsx"))) {

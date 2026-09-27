@@ -24,6 +24,7 @@ const FOTOS: Record<string, ImageSourcePropType> = {
   llisa: require("../../assets/especies/llisa.jpg"),
   alburno: require("../../assets/especies/alburno.jpg"),
   boga: require("../../assets/especies/boga.jpg"),
+  boga_mar: require("../../assets/especies/boga_mar.jpg"),
   lubina: require("../../assets/especies/lubina.jpg"),
   dorada: require("../../assets/especies/dorada.jpg"),
   sargo: require("../../assets/especies/sargo.jpg"),
@@ -47,6 +48,12 @@ const FOTOS: Record<string, ImageSourcePropType> = {
   caballito: require("../../assets/especies/caballito.jpg"),
   tortuga: require("../../assets/especies/tortuga.jpg"),
   mero_pequeno: require("../../assets/especies/mero_pequeno.jpg"),
+  pagel: require("../../assets/especies/pagel.jpg"),
+  denton: require("../../assets/especies/denton.jpg"),
+  cacho: require("../../assets/especies/cacho.jpg"),
+  lucioperca: require("../../assets/especies/lucioperca.jpg"),
+  percasol: require("../../assets/especies/percasol.jpg"),
+  bonito: require("../../assets/especies/bonito.jpg"),
 };
 
 export function fotoEspecie(id?: string | null): ImageSourcePropType | null {

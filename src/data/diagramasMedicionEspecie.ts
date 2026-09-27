@@ -18,6 +18,7 @@ const POR_ID: Record<string, ImageSourcePropType> = {
   caballa: require("../../assets/medicion/especies/caballa.jpg"),
   salmonete: require("../../assets/medicion/especies/salmonete.jpg"),
   boga: require("../../assets/medicion/especies/boga.jpg"),
+  boga_mar: require("../../assets/medicion/especies/boga_mar.jpg"),
   pulpo: require("../../assets/medicion/especies/pulpo.jpg"),
   herrera: require("../../assets/medicion/especies/herrera.jpg"),
   oblada: require("../../assets/medicion/especies/oblada.jpg"),
@@ -53,6 +54,7 @@ const POR_ID: Record<string, ImageSourcePropType> = {
 /** Alias cuando la morfología es equivalente. */
 const ALIAS: Record<string, string> = {
   // bonito ~ caballa (scombridae) si se añade talla después
+  bonito: "caballa",
 };
 
 export function diagramaMedicionEspecie(especieId?: string | null): ImageSourcePropType | null {

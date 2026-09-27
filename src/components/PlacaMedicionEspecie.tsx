@@ -23,6 +23,7 @@ type Morfo =
   | "caballa"
   | "salmonete"
   | "boga"
+  | "boga_mar"
   | "anguila"
   | "pulpo"
   | "sepia"
@@ -44,6 +45,7 @@ function morfoDe(id?: string | null, nombre?: string | null): Morfo {
   if (k.includes("salema") || k.includes("salpa") || k.includes("sarpa")) return "salema";
   if (k.includes("mojarra")) return "mojarra";
   if (k.includes("sargo") || k.includes("diplodus")) return "sargo";
+  if (k.includes("boga_mar") || k.includes("boops")) return "boga_mar";
   if (k.includes("boga")) return "boga";
   if (k.includes("dorada") || k.includes("sparus")) return "dorada";
   if (k.includes("lubina") || k.includes("llobarro") || k.includes("dicentrarchus")) return "lubina";
@@ -127,7 +129,7 @@ function SiluetaPez({ morfo }: { morfo: Morfo }) {
       </G>
     );
   }
-  if (morfo === "sargo" || morfo === "mojarra" || morfo === "boga" || morfo === "salema") {
+  if (morfo === "sargo" || morfo === "mojarra" || morfo === "boga" || morfo === "boga_mar" || morfo === "salema") {
     return (
       <G>
         <Path

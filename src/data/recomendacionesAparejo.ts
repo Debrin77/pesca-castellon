@@ -502,7 +502,7 @@ export const RECOMENDACIONES_APAREJO: RecomendacionAparejo[] = [
     restricciones: [NO_CEBAR_TRUCHERO, ANDALUCIA_NO_CEBAR, CUENCA_PORN_PATOS, ANDALUCIA_SEGURO],
   },
   {
-    especieId: "boga",
+    especieId: "boga_mar",
     ambito: "costa",
     resumenCompra: "Rockfishing fino; anzuelo #10–#6; sin cebador.",
     anzueloTipo: "Simple fino de orilla",

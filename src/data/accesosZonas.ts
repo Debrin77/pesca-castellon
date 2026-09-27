@@ -129,7 +129,103 @@ const ACCESOS: AccesoZona[] = [
         lng: -6.50592,
       },
     ],
-  }
+  },
+  {
+    zoneId: "embalse_de_buendia",
+    resumen: "Accesos orientativos a Embalse de Buendía (Cuenca/Guadalajara). Confirma el último tramo en Maps; el nivel y las restricciones de coto cambian el acceso.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamientos / ensanches habituales en orillas recreativas. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 40.39105,
+        lng: -2.71214,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_alarcon",
+    resumen: "Accesos orientativos a Embalse de Alarcón. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 39.65549,
+        lng: -2.20795,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_contreras",
+    resumen: "Accesos orientativos a Embalse de Contreras. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 39.58538,
+        lng: -1.52382,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_iznajar",
+    resumen: "Accesos orientativos a Embalse de Iznájar. Confirma el último tramo en Maps; el nivel (SAIH) cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 37.24204,
+        lng: -4.28606,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_san_rafael_de_navallana",
+    resumen: "Accesos orientativos a Embalse de San Rafael de Navallana. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 37.98435,
+        lng: -4.65164,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_guadalmellato",
+    resumen: "Accesos orientativos a Embalse del Guadalmellato. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 38.048,
+        lng: -4.652,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_la_minilla",
+    resumen: "Accesos orientativos a Embalse de la Minilla. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 37.69753,
+        lng: -6.20743,
+      },
+    ],
+  },
+  {
+    zoneId: "embalse_de_torre_del_aguila",
+    resumen: "Accesos orientativos a Embalse de Torre del Águila. Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    puntos: [
+      {
+        nombre: "Entorno principal",
+        detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
+        lat: 37.03432,
+        lng: -5.71923,
+      },
+    ],
+  },
 ];
 
 const POR_ID: Record<string, AccesoZona> = Object.fromEntries(ACCESOS.map((a) => [a.zoneId, a]));

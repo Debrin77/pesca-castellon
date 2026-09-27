@@ -780,16 +780,16 @@
     ],
     "mejoresEpocas": {
       "trucha_comun": [
-        "abril",
-        "mayo",
         "junio",
+        "julio",
+        "agosto",
         "septiembre"
       ],
       "trucha_arcoiris": [
-        "marzo",
-        "abril",
-        "mayo",
-        "octubre"
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre"
       ],
       "barbo": [
         "abril",

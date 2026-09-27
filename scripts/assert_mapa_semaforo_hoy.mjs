@@ -17,7 +17,7 @@ function read(r) {
 }
 
 const svc = read("src/services/consultaPescaService.ts");
-for (const k of ["aspectoMapaTramo", "colorMarcadorTramo", "colorSemaforo", "sePuedePescarHoy", "periodoTruchaCuencaAbierto", "trucheraClm"]) {
+for (const k of ["aspectoMapaTramo", "colorMarcadorTramo", "colorSemaforo", "sePuedePescarHoy", "periodoTruchaTramoClmAbierto", "trucheraClm"]) {
   if (!svc.includes(k)) fail(`consultaPescaService falta ${k}`);
 }
 if (!svc.includes("consultarPorTramo(t, fecha)")) {

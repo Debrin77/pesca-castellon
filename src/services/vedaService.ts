@@ -9,6 +9,7 @@
 import {
   etiquetaTemporadaTrucha,
   temporadaTruchaAbierta,
+  tercerDomingoDeMarzo,
   TALLAS_OFICIALES,
 } from "../data/normativa2026";
 import { periodoBarboAbierto, periodoBogaAbierto } from "../provincias/sevilla/normativa";
@@ -27,17 +28,22 @@ export interface PeriodoHabil {
   notas?: string;
 }
 
+function inicioTruchaCastellon(anio: number = new Date().getFullYear()): { mes: number; dia: number } {
+  const d = tercerDomingoDeMarzo(anio);
+  return { mes: d.getMonth() + 1, dia: d.getDate() };
+}
+
 /** Periodos Castellón / GVA. No usar bajo provincia Sevilla. */
 export const PERIODOS_HABILES: PeriodoHabil[] = [
   {
     especieId: "trucha_comun",
-    inicio: { mes: 3, dia: 15 },
+    inicio: inicioTruchaCastellon(),
     fin: { mes: 8, dia: 31 },
     notas: `Temporada ${new Date().getFullYear()}: ${etiquetaTemporadaTrucha()}. Pesca sin muerte. Confirmar orden anual.`,
   },
   {
     especieId: "trucha_arcoiris",
-    inicio: { mes: 3, dia: 15 },
+    inicio: inicioTruchaCastellon(),
     fin: { mes: 8, dia: 31 },
     notas:
       "Misma ventana que la trucha común en tramos trucheros. Fuera de ellos, retención y sacrificio si se captura. Solo mosca o cucharilla, un anzuelo sin arponcillo en tramo truchero.",
@@ -115,10 +121,19 @@ export function estaEnVeda(especieId: string, fecha: Date = new Date()): boolean
   }
 
   if (esProvinciaCastillaLaMancha(provincia.id)) {
-    if (especieId === "trucha_comun" || especieId === "trucha_arcoiris") {
+    if (especieId === "trucha_comun") {
       return !periodoTruchaCuencaAbierto(fecha);
     }
+    /** Arcoíris: en CLM suele ir ligada a cotos intensivos / plan del coto, no al calendario genérico de trucheras. */
+    if (especieId === "trucha_arcoiris") {
+      return false;
+    }
     if (especieId === "anguila" || especieId === "siluro") return true;
+    /** Cangrejo rojo: veda de control 1 feb–31 may (Orden 20/2026). */
+    if (especieId === "cangrejo_americano") {
+      const m = fecha.getMonth() + 1;
+      return m >= 2 && m <= 5;
+    }
     return false;
   }
 

@@ -295,13 +295,13 @@
       }
     },
     {
-      "id": "boga",
-      "nombre": "Boga",
+      "id": "boga_mar",
+      "nombre": "Boga de mar",
       "nombreCientifico": "Boops boops",
       "tallaCm": 11,
-      "tallaNota": "11 cm Mediterráneo (RD 560/1995 anexo II: Boops boops).",
-      "noConfundirCon": "Oblada.",
-      "notas": "Cardumen de orilla. Pesca menor.",
+      "tallaNota": "11 cm Mediterráneo (RD 560/1995 anexo II: Boops boops). No confundir con la boga de río (Pseudochondrostoma).",
+      "noConfundirCon": "Oblada · boga de río (ciprínido continental).",
+      "notas": "Cardumen de orilla (Boops). Pesca menor. Distinta de la boga continental.",
       "mejorHora": {
         "resumen": "De día.",
         "verano": "Mañana.",

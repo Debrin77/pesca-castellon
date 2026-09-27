@@ -118,12 +118,12 @@
       "senuelosCebos": ["Gusano fino", "Tita pequeña"],
       "tecnica": "Fondo de arena junto a piedra. 11 cm."
     },
-    "boga": {
+    "boga_mar": {
       "cana": "Rockfishing UL",
       "carrete": "1000–2000",
       "linea": "Fluoro 0,14–0,18 mm",
       "senuelosCebos": ["Pan", "Jig 2–5 g"],
-      "tecnica": "Cardumen de orilla. No te lleves alevines."
+      "tecnica": "Cardumen de orilla (Boops). No te lleves alevines."
     },
     "corvina": {
       "cana": "Spinning 2,70 m H o surfcasting potente",

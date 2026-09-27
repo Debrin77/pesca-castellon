@@ -47,9 +47,12 @@ for (const needle of [
 const n = (data.match(/especieId: "/g) || []).length;
 if (n < 30) fail(`Se esperan ≥30 fichas de recomendación (hay ${n})`);
 
-// boga río + costa
-if ((data.match(/especieId: "boga"/g) || []).length < 2) {
-  fail("boga debe tener ficha río y costa");
+// boga río (Pseudochondrostoma) + boga de mar (Boops)
+if (!data.includes('especieId: "boga"') || !data.includes('ambito: "rio"')) {
+  fail("boga continental debe tener ficha río");
+}
+if (!data.includes('especieId: "boga_mar"') || !data.includes('ambito: "costa"')) {
+  fail("boga_mar (Boops) debe tener ficha costa");
 }
 
 for (const sp of ["llobarro", "lucioperca"]) {

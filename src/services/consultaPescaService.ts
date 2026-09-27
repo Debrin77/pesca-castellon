@@ -10,7 +10,7 @@ import { avisosPorNotaAnexo as avisosPorNotaAnexoCordoba } from "../provincias/c
 import {
   avisosPorNotaAnexoClm,
   etiquetaTemporadaTruchaCuenca,
-  periodoTruchaCuencaAbierto,
+  periodoTruchaTramoClmAbierto,
 } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -211,7 +211,7 @@ function evaluarTramo(
     esClm &&
     (t.notaAnexo === "TRUCHERA" ||
       (/truchera/i.test(t.vocacion) && !/r[eé]gimen especial/i.test(t.vocacion)));
-  const truchaClmOk = periodoTruchaCuencaAbierto(fecha);
+  const truchaClmOk = periodoTruchaTramoClmAbierto(t, fecha);
   const dow = fecha.toLocaleDateString("es-ES", { weekday: "long" });
 
   const restricciones: string[] = [];

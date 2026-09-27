@@ -108,7 +108,7 @@ export const REGLAS_GENERALES_ANDALUCIA = [
   "Anguila: no es especie objeto de pesca (Decreto 209/2020).",
   "Exóticas (carpa, bass, lucio, carpín): todo el año, sin talla ni cupo. Bass/lucio/carpa solo en áreas de la Resolución 19/12/2019; fuera de ellas, sacrificio inmediato (art. 8).",
   "Alburno, siluro y otras invasoras no listadas en art. 2: no son objeto de pesca. Junta: pesca del siluro prohibida; captura fortuita → sacrificio y no devolver (no basta con avisar a agentes).",
-  "Cangrejo rojo: solo controladores autorizados (Orden 3/08/2016, marismas del Guadalquivir).",
+  "Cangrejo rojo: en Córdoba no es modalidad libre general — confirma masa/autorización; el régimen de controladores de marismas del Guadalquivir (Orden 3/08/2016) es de Sevilla, no el default provincial.",
   "Una caña en aguas trucheras; dos cañas en el resto, máximo 10 m entre ellas (art. 9).",
   "Art. 9.4: prohibido cebar (precebo/spod/method como cebado) y usar pez como cebo, salvo competiciones oficiales FAPD autorizadas. El cebo va en el anzuelo.",
   "Iznájar: régimen específico Anexo V.2 (horario orto–ocaso sin ±1 h; límites de línea, cebos y señuelos). No copies el art. 4 genérico ahí.",
