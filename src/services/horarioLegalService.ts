@@ -81,6 +81,14 @@ export function construirAvisoHorario(args: {
   ortoOcaso: OrtoOcasoDia | null;
   ahora?: Date;
   provinciaId?: string;
+  /**
+   * Margen legal en horas alrededor de orto/ocaso (continental).
+   * Art. 4 Andalucía / CV / CLM genérico = 1.
+   * Iznájar Anexo V.2 = 0 (orto → ocaso sin ±1 h).
+   */
+  margenHoras?: number;
+  /** Sustituye el texto de norma continental (p. ej. Anexo V.2 Iznájar). */
+  normaOverride?: string | null;
 }): AvisoHorarioLegal {
   const ahora = args.ahora ?? new Date();
   const disclaimer =
@@ -129,7 +137,8 @@ export function construirAvisoHorario(args: {
     };
   }
 
-  const normaTxt = normaContinentalTxt(args.provinciaId);
+  const margen = args.margenHoras ?? 1;
+  const normaTxt = args.normaOverride?.trim() || normaContinentalTxt(args.provinciaId);
   if (!args.ortoOcaso) {
     return {
       ambito: "continental",
@@ -148,17 +157,20 @@ export function construirAvisoHorario(args: {
 
   const orto = parseIsoLocal(args.ortoOcaso.ortoIso);
   const ocaso = parseIsoLocal(args.ortoOcaso.ocasoIso);
-  const inicio = sumarHoras(orto, -1);
-  const fin = sumarHoras(ocaso, 1);
-  const inicioTxt = ajustarHoraTxt(args.ortoOcaso.ortoTxt, -1);
-  const finTxt = ajustarHoraTxt(args.ortoOcaso.ocasoTxt, 1);
+  const inicio = sumarHoras(orto, -margen);
+  const fin = sumarHoras(ocaso, margen);
+  const inicioTxt = ajustarHoraTxt(args.ortoOcaso.ortoTxt, -margen);
+  const finTxt = ajustarHoraTxt(args.ortoOcaso.ocasoTxt, margen);
   const dentro =
     ahora.getTime() >= inicio.getTime() && ahora.getTime() <= fin.getTime();
 
   return {
     ambito: "continental",
-    titulo: "Horario legal · continental",
-    franjaTxt: `Hoy permitido (aprox.): ${inicioTxt} – ${finTxt}`,
+    titulo: margen === 0 ? "Horario legal · Iznájar (Anexo V.2)" : "Horario legal · continental",
+    franjaTxt:
+      margen === 0
+        ? `Hoy permitido (orto→ocaso, sin ±1 h): ${inicioTxt} – ${finTxt}`
+        : `Hoy permitido (aprox.): ${inicioTxt} – ${finTxt}`,
     estado: dentro ? "dentro" : "fuera",
     estadoTxt: dentro
       ? "Ahora estás dentro de la franja legal orientativa."
@@ -178,6 +190,8 @@ export async function obtenerAvisoHorarioLegal(args: {
   lng?: number | null;
   provinciaId?: string;
   ahora?: Date;
+  margenHoras?: number;
+  normaOverride?: string | null;
 }): Promise<AvisoHorarioLegal> {
   const provincia = getProvinciaActiva();
   const fallback =
@@ -192,5 +206,21 @@ export async function obtenerAvisoHorarioLegal(args: {
     ortoOcaso,
     ahora: args.ahora,
     provinciaId: args.provinciaId,
+    margenHoras: args.margenHoras,
+    normaOverride: args.normaOverride,
   });
+}
+
+/** True si el tramo exige Anexo V.2 Iznájar (horario orto→ocaso sin ±1 h). */
+export function esHorarioIznajarAnexoV2(tramo?: {
+  id?: string | null;
+  notaAnexo?: string | null;
+  fichaId?: string | null;
+  nombre?: string | null;
+} | null): boolean {
+  if (!tramo) return false;
+  const nota = `${tramo.notaAnexo ?? ""}`.toUpperCase();
+  if (nota === "ANEXO_V_2" || nota === "IZNAJAR") return true;
+  const blob = `${tramo.id ?? ""} ${tramo.fichaId ?? ""} ${tramo.nombre ?? ""}`.toLowerCase();
+  return blob.includes("iznajar");
 }

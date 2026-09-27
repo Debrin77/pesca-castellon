@@ -802,7 +802,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       ? [
                           {
                             id: "pesca-rec",
-                            texto: "Si pescas en costa: declara en PescaREC (obligatorio desde 2026).",
+                            texto: "Si pescas en costa: declara en PescaREC cuando la norma lo exija (especies/zonas protegidas, etc.).",
                             accion: { tipo: "pesca_rec" },
                           },
                         ]

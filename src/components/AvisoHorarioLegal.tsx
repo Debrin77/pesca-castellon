@@ -14,6 +14,9 @@ type Props = {
   provinciaId?: string;
   /** Compacto: solo título + franja + estado. */
   compacto?: boolean;
+  /** Continental: 1 = art. 4 genérico; 0 = Iznájar Anexo V.2. */
+  margenHoras?: number;
+  normaOverride?: string | null;
 };
 
 export default function AvisoHorarioLegal({
@@ -22,6 +25,8 @@ export default function AvisoHorarioLegal({
   lng,
   provinciaId,
   compacto = false,
+  margenHoras,
+  normaOverride,
 }: Props) {
   const [aviso, setAviso] = useState<AvisoData | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -32,7 +37,14 @@ export default function AvisoHorarioLegal({
 
     function cargar() {
       setCargando(true);
-      void obtenerAvisoHorarioLegal({ ambito, lat, lng, provinciaId }).then((a) => {
+      void obtenerAvisoHorarioLegal({
+        ambito,
+        lat,
+        lng,
+        provinciaId,
+        margenHoras,
+        normaOverride,
+      }).then((a) => {
         if (!vivo) return;
         setAviso(a);
         setCargando(false);
@@ -49,7 +61,7 @@ export default function AvisoHorarioLegal({
       vivo = false;
       if (timer) clearTimeout(timer);
     };
-  }, [ambito, lat, lng, provinciaId]);
+  }, [ambito, lat, lng, provinciaId, margenHoras, normaOverride]);
 
   const mar = ambito === "maritimo" || ambito === "embarcacion";
   const acento = mar ? COLORS.waterDark : COLORS.primaryDark;

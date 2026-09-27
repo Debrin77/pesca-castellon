@@ -50,9 +50,12 @@ if (!svc.includes('ambito === "embarcacion"') && !svc.includes("ambito === 'emba
   fail("horarioLegalService debe ramificar ambito embarcacion (no reutilizar orilla)");
 }
 
-// Franja continental = orto−1h / ocaso+1h
-if (!svc.includes("sumarHoras(orto, -1)") || !svc.includes("sumarHoras(ocaso, 1)")) {
-  fail("horario continental debe ser orto-1h → ocaso+1h");
+// Franja continental genérica = orto±margen (margen 1); Iznájar Anexo V.2 = margen 0
+if (!svc.includes("margenHoras") || !svc.includes("sumarHoras(orto, -margen)")) {
+  fail("horario continental debe usar margenHoras (1 genérico / 0 Iznájar)");
+}
+if (!svc.includes("esHorarioIznajarAnexoV2")) {
+  fail("horarioLegalService debe exportar esHorarioIznajarAnexoV2");
 }
 
 const norma = read("src/data/normativaMaritima.ts");
@@ -81,6 +84,9 @@ if (!card.includes('modalidadMar === "embarcacion"') || !card.includes('"embarca
 }
 if (card.includes('ambito={mar ? "maritimo" : "continental"}')) {
   fail("ConsultaPescaCard no debe tratar todo el mar como caña desde tierra");
+}
+if (!card.includes("esHorarioIznajarAnexoV2") || !card.includes("margenHoras=")) {
+  fail("ConsultaPescaCard debe aplicar margen 0 en Iznájar Anexo V.2");
 }
 
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");

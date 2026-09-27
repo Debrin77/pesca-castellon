@@ -20,6 +20,7 @@ import { navegacionKayakDeZona } from "../data/navegacionKayakEmbalses";
 import { COLORS, RADIUS, TYPE, FONTS } from "../theme";
 import { colorSemaforo } from "../services/consultaPescaService";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
+import { esHorarioIznajarAnexoV2 } from "../services/horarioLegalService";
 
 interface Props {
   consulta: ConsultaPesca;
@@ -273,6 +274,12 @@ export default function ConsultaPescaCard({
               lng={lngEfectiva}
               provinciaId={provincia.id}
               compacto
+              margenHoras={esHorarioIznajarAnexoV2(consulta.tramo) ? 0 : undefined}
+              normaOverride={
+                esHorarioIznajarAnexoV2(consulta.tramo)
+                  ? "Iznájar (Anexo V.2 Orden 13/01/2023): horario orto → ocaso sin ±1 h. Límites de línea, cebos y señuelos; confirma cartel."
+                  : undefined
+              }
             />
             <Text style={styles.claveKicker}>Lo esencial hoy</Text>
             {puntosClave.length === 0 ? (

@@ -1,4 +1,5 @@
 import ptopCotos from "../data/ptopCotos.json";
+import { infoPermisoCoto } from "../data/permisosCoto";
 import {
   Aprovechamiento,
   diaHabilMijares,
@@ -11,6 +12,7 @@ import {
   avisosPorNotaAnexoClm,
   etiquetaTemporadaTruchaCuenca,
   periodoTruchaTramoClmAbierto,
+  EMBALSES_BARBO_CON_CUPO_CUENCA,
 } from "../provincias/cuenca/normativa";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -297,6 +299,16 @@ function evaluarTramo(
       );
       restricciones.push("Sin ese permiso no es zona libre: es coto de pesca.");
       restricciones.push("Consulta condiciones del coto y la orden de vedas de la Junta de Andalucía.");
+    } else if (esClm) {
+      const info = infoPermisoCoto("cuenca", t.matriculaCoto, t.nombre);
+      permisos.push(
+        `Permiso de coto especial/intensivo (${t.matriculaCoto ?? "ZPC"}). ${info.comoObtener}`
+      );
+      restricciones.push("Sin ese permiso no es zona libre: es coto de pesca CLM.");
+      restricciones.push(info.avisoPtop);
+      if (info.urlTramite) {
+        permisos.push(`Venta en línea JCCM: ${info.urlTramite}`);
+      }
     } else {
       permisos.push(
         `Permiso de coto intransferible (${t.matriculaCoto ?? "ZPC"}). Lo expide el titular / servicios territoriales.`
@@ -319,7 +331,9 @@ function evaluarTramo(
     permisos.push(
       esAndalucia
         ? "No hace falta permiso de coto: es zona de pesca libre (aguas libres)."
-        : "No hace falta permiso de coto: es zona de pesca libre (ZPL)."
+        : esClm
+          ? "No hace falta permiso de coto: es zona libre (aguas libres CLM)."
+          : "No hace falta permiso de coto: es zona de pesca libre (ZPL)."
     );
   }
 
@@ -399,6 +413,13 @@ function evaluarTramo(
           "Fuera del periodo hábil de aguas trucheras (art. 2 Orden 20/2026): pesca cerrada salvo régimen especial de ciprínidos señalizado."
         );
       }
+    }
+    if (t.fichaId && EMBALSES_BARBO_CON_CUPO_CUENCA.has(t.fichaId)) {
+      permisos.push(
+        "Barbos: cupo máx. 6/día y talla 18 cm en esta masa (Orden 20/2026). En Buendía solo presa→puente Alcocer; confirma cartel del subtramo."
+      );
+    } else if (t.aprovechamiento !== "ZPC") {
+      permisos.push("Barbos en Cuenca: solo sin muerte fuera de Contreras, Alarcón y Buendía (tramo autorizado).");
     }
   } else {
     permisos.push(

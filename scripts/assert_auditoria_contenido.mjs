@@ -108,15 +108,17 @@ for (const id of ["jurel", "palometon", "black_bass", "mojarra", "siluro", "mugi
 }
 ok("placas críticas presentes");
 
-// Runtime: fechas / cupo / Marquesado
+// Runtime: fechas / cupo / Marquesado / ZPC CLM / Iznájar
 const runtime = `
 import { setProvinciaActiva } from './src/provincias/runtime.ts';
 import { estaEnVeda, PERIODOS_HABILES } from './src/services/vedaService.ts';
 import { tercerDomingoDeMarzo } from './src/data/normativa2026.ts';
 import { periodoTruchaTramoClmAbierto } from './src/provincias/cuenca/normativa.ts';
-import { parsearCupo } from './src/services/cupoService.ts';
+import { parsearCupo, cupoBarboCuencaParaFicha } from './src/services/cupoService.ts';
 import { consultarPorTramo } from './src/services/consultaPescaService.ts';
+import { construirAvisoHorario, esHorarioIznajarAnexoV2 } from './src/services/horarioLegalService.ts';
 import tramos from './src/provincias/cuenca/tramosOficiales.json';
+import tramosCs from './src/data/tramosOficiales.json';
 
 const ini = PERIODOS_HABILES.find((p) => p.especieId === 'trucha_comun')!.inicio;
 const t2027 = tercerDomingoDeMarzo(2027);
@@ -143,9 +145,55 @@ if (estaEnVeda('trucha_arcoiris', new Date(2026, 0, 15)) !== false) {
 }
 
 const cupoBarbo = parsearCupo('0 (sin muerte) salvo Contreras/Alarcón/Buendía: máx. 6/día.');
-if (cupoBarbo.maxUnidades !== 6) throw new Error('parsearCupo debe leer máx. 6 tras salvo, got ' + cupoBarbo.maxUnidades);
+if (cupoBarbo.maxUnidades !== null) {
+  throw new Error('parsearCupo no debe inventar cupo 6 global si el régimen base es sin muerte (+salvo sitio)');
+}
+if (cupoBarboCuencaParaFicha('embalse_de_buendia') !== 6) throw new Error('Buendía debe tener cupo 6');
+if (cupoBarboCuencaParaFicha('embalse_de_entrepenas') !== null) throw new Error('otras masas: sin cupo barbo');
 const cupo4 = parsearCupo('4/día (Res. 16/09/2024)');
 if (cupo4.maxUnidades !== 4) throw new Error('parsearCupo debe leer 4/día');
+
+const cotoClm = tramos.find((x) => x.aprovechamiento === 'ZPC');
+if (cotoClm) {
+  const cc = consultarPorTramo(cotoClm, new Date(2026, 5, 15));
+  const blob = [...cc.restriccionesHoy, ...cc.permisos].join(' ');
+  if (/Hermanos Bou|Orden 30\\/2016|Castellón \\/ Segorbe/i.test(blob)) {
+    throw new Error('ZPC CLM no debe sangrar PTOP/oficina GVA: ' + blob.slice(0, 200));
+  }
+  if (!/JCCM|venta en línea|CLM/i.test(blob)) {
+    throw new Error('ZPC CLM debe mencionar JCCM/venta en línea');
+  }
+}
+
+if (!esHorarioIznajarAnexoV2({ id: 'cor-embalse_de_iznajar', notaAnexo: 'ANEXO_V_2' })) {
+  throw new Error('debe detectar Iznájar Anexo V.2');
+}
+const fakeOrto = {
+  ortoIso: '2026-09-27T07:00:00+02:00',
+  ocasoIso: '2026-09-27T19:00:00+02:00',
+  ortoTxt: '07:00',
+  ocasoTxt: '19:00',
+};
+const hGen = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T06:30:00+02:00'),
+  provinciaId: 'cordoba',
+  margenHoras: 1,
+});
+const hIzn = construirAvisoHorario({
+  ambito: 'continental',
+  ortoOcaso: fakeOrto,
+  ahora: new Date('2026-09-27T06:30:00+02:00'),
+  provinciaId: 'cordoba',
+  margenHoras: 0,
+  normaOverride: 'Iznájar Anexo V.2',
+});
+if (hGen.estado !== 'dentro') throw new Error('con ±1 h, 06:30 debe estar dentro');
+if (hIzn.estado !== 'fuera') throw new Error('Iznájar sin ±1 h, 06:30 debe estar fuera');
+
+const al15 = tramosCs.find((t) => t.id === 'al15.zpc');
+if (al15?.especies?.includes('anguila')) throw new Error('al15.zpc no debe listar anguila (recreativa prohibida)');
 
 console.log('RUNTIME_OK auditoria_contenido');
 `;

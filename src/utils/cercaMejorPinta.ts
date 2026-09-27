@@ -136,11 +136,12 @@ export function resolverTramoDeSitioFacil(sitio: SitioFacil): TramoOficial | nul
   return hits[0] ?? null;
 }
 
-/** Cotos sí (con permiso); vedados / reservas / HOY NO / fuera de catálogo no. */
+/** Cotos sí solo con permiso (consulta ya marca sePuedePescarHoy=false en ZPC). Vedados / reservas / HOY NO / fuera de catálogo no. */
 function esPescableHoy(c: ConsultaPesca): boolean {
   if (c.veredicto === "vedado" || c.veredicto === "reserva_trucha") return false;
   if (c.veredicto === "fuera_catalogo") return false;
-  if (c.veredicto === "coto") return true;
+  // No recomendar cotos ZPC sin permiso del día.
+  if (c.veredicto === "coto") return false;
   return c.sePuedePescarHoy;
 }
 

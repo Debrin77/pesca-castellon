@@ -81,7 +81,7 @@ export function periodoTruchaTramoClmAbierto(
 }
 
 export function etiquetaTemporadaTruchaCuenca(anio: number = new Date().getFullYear()): string {
-  return `Trucheras CLM ${anio}: la app aplica baja montaña 1 abr–30 sep (por defecto). Alta montaña 1 may–15 oct y aperturas especiales (p. ej. Marquesado 1 jun) → confirma visor JCCM / cartel (art. 2 Orden 20/2026). Solo sin muerte.`;
+  return `Trucheras CLM ${anio}: la app aplica baja montaña 1 abr–30 sep (por defecto). Alta montaña 1 may–15 oct y aperturas especiales (Marquesado / Alto Tajo 1 jun, art. 7) → confirma visor JCCM / cartel (Orden 20/2026). Solo sin muerte.`;
 }
 
 export function textoVigenciaNormativaClm(): string {
@@ -127,6 +127,7 @@ export const REGLAS_GENERALES_CLM = [
   "Cotos especiales e intensivos: además de la licencia, permiso del día (venta en línea JCCM / concesionario).",
   "Horario (Ley 1/1992): 1 h antes del orto – 1 h después del ocaso, salvo excepciones.",
   "Trucha común, madrija, cacho del Mediterráneo y bordallo del Tajo: solo pesca sin muerte en todo tipo de aguas.",
+  "Aperturas especiales art. 7 (confirma Orden/visor): Laguna del Marquesado 1 jun; tramo Alto Tajo (nacimiento → entrada Guadalajara) apertura trucha 1 jun. La app aplica estos calendarios cuando el tramo lo declara en su régimen.",
   "Anguila: pesca prohibida (temporada 2026 / normativa UE).",
   "Cuenca · barbos: solo sin muerte en todas las aguas, excepto Contreras, Alarcón y Buendía (presa→puente Alcocer), con cupo máx. 6 barbos/pescador/día.",
   "Aguas trucheras: periodos hábiles art. 2; anzuelos sin arponcillo; cebos según Plan de Gestión de la Trucha.",

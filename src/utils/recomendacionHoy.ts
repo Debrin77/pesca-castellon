@@ -59,7 +59,8 @@ function pescableHoy(veredicto: string, sePuede: boolean): boolean {
   if (veredicto === "vedado" || veredicto === "reserva_trucha" || veredicto === "fuera_catalogo") {
     return false;
   }
-  if (veredicto === "coto") return true;
+  // ZPC/coto: sin permiso del día no es «hoy sí» para recomendar salir.
+  if (veredicto === "coto") return false;
   return sePuede;
 }
 
