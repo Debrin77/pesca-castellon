@@ -128,7 +128,7 @@ const EMBARCACION_CS: RestriccionAparejo = {
   provincias: ["castellon"],
   soloAmbito: "embarcacion",
   texto:
-    "Embarcación / kayak Castellón: la licencia «desde tierra» no cubre barco. No pesques en dársena ni Columbretes. Artes de recreo (sin redes). Declara en PescaREC si aplica. Meteo y plan de regreso mandan.",
+    "Kayak mar Castellón: licencia marítima DESDE TIERRA (artefacto flotante). Barco matriculado: licencia DESDE EMBARCACIÓN (la de tierra no basta). No pesques en dársena ni Columbretes. Artes de recreo. PescaREC si aplica. Meteo y plan de regreso mandan.",
   severidad: "obligatorio",
 };
 

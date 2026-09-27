@@ -38,9 +38,15 @@ for (const id of [
 }
 
 if (!data.includes("Declaración responsable")) fail("debe citar declaración responsable");
+if (!data.includes("2,5 m") || !data.includes("1,5 m")) {
+  fail("DOC_NAV_CHJ debe citar umbrales de eslora 2,5 m / 1,5 m (mejillón cebra)");
+}
 if (!data.includes("no_autorizado")) fail("debe marcar embalses no autorizados (CHG abastecimiento)");
 if (!panel.includes("Navegación kayak") || !panel.includes("Pesca desde kayak")) {
   fail("PanelKayakEmbalse debe mostrar navegación y pesca");
+}
+if (!panel.includes("Qué documentación pedir")) {
+  fail("PanelKayakEmbalse debe pedir documentación de forma explícita");
 }
 if (!zone.includes("PanelKayakEmbalse")) fail("ZoneDetailScreen debe montar PanelKayakEmbalse");
 
