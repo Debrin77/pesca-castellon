@@ -59,8 +59,8 @@ export default function TarjetaPuntoHoy({
         kicker={EJE_METEO.tituloCorto}
         titulo={cat ? `${indice!.puntuacion} · ${cat.texto}` : "Sin índice aún"}
         sub={
-          indice?.mejorFranja
-            ? `Mejor ventana ~${indice.mejorFranja}`
+          indice?.mejorFranjaInicio && indice?.mejorFranjaFin
+            ? `Mejor ventana ~${indice.mejorFranjaInicio}–${indice.mejorFranjaFin}`
             : "Orientativo · no autoriza"
         }
         accent={cat?.color ?? COLORS.water}

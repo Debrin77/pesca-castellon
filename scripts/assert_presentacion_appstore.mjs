@@ -67,7 +67,6 @@ must("src/screens/OnboardingScreen.tsx", [
   "FondoCinePresentacion",
   "CarruselFotosPresentacion",
   "Castellón · Sevilla · Córdoba · Cuenca",
-  "FONTS.brand",
 ]);
 
 must("src/components/FondoCinePresentacion.tsx", [
