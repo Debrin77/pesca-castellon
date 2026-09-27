@@ -199,11 +199,11 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
         ? [
             `Este punto está en el mar (~${kmTxt} km de la costa), no en la franja de pesca desde orilla (~${playasData.kmOrilla} km).`,
             "No es un tramo continental (río/embalse): no uses este punto como pesca desde tierra.",
-            "Si pescas desde barco o kayak, cambia a modalidad Embarcación en el mapa o usa Salgo en barco.",
+            "Si pescas desde kayak, elige modalidad Kayak (mar) en el mapa o usa Salgo en kayak. Si vas en barco matriculado, elige Barco / Salgo en barco.",
           ]
         : [
             `Ese toque no está en la franja de playa (unos ${playasData.kmOrilla} km de la orilla; ~${kmTxt} km al trazo de costa).`,
-            "Para ríos y embalses cambia a «Ríos y embalses». Para barco/kayak usa Embarcación.",
+            "Para río o embalse elige Continental. Para kayak o barco en mar, cambia a esa modalidad (no uses «Orilla»).",
           ],
       permisos: enMar
         ? ["Modalidad actual: pesca marítima desde tierra — este punto no es orilla."]

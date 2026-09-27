@@ -81,10 +81,10 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
       {
         id: "modos",
         eyebrow: esCosta ? "Un gesto · toda la app" : "Tu ámbito de pesca",
-        titulo: esCosta ? "Río · Orilla · Barco" : "Ríos y embalses",
+        titulo: esCosta ? "Río · Embalse · Kayak · Mar" : "Río · Embalse · Kayak",
         texto: esCosta
-          ? "Elige cómo vas a pescar y se alinean mapa, especies, aparejos y el ritual de salida — también kayak o barco."
-          : `En ${nombreProv}: mapa de tramos, especies continentales, montajes y «Salgo a pescar» paso a paso.`,
+          ? "Elige cómo vas a pescar: orilla de río o embalse, kayak (¡a remar!) o, en costa, orilla / kayak / barco. Se alinean mapa, especies, aparejos y el ritual."
+          : `En ${nombreProv}: elige río, embalse o kayak. Mapa de tramos, especies, montajes y «Salgo a pescar» paso a paso.`,
         accent: ["#1a5f78", "#134a5c", "#0c3340"],
         tonoOnda: "agua",
       },

@@ -98,11 +98,25 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
   const [notaSalida, setNotaSalida] = useState("");
   const [salidaRegistrada, setSalidaRegistrada] = useState(false);
   const [guardandoSalida, setGuardandoSalida] = useState(false);
-  /** Derivado del modo global (rio → continental, orilla → maritimo). */
+  /** Derivado del modo global (costa marítima vs continental). */
   const medio: MedioSalida =
-    modoGlobal === "orilla" ? "maritimo" : "continental";
+    modoGlobal === "orilla" || modoGlobal === "barco" || modoGlobal === "kayak_mar"
+      ? "maritimo"
+      : "continental";
   const setMedio = (m: MedioSalida) => {
-    void setModoGlobal(m === "maritimo" ? "orilla" : "rio");
+    if (m === "maritimo") {
+      void setModoGlobal(
+        modoGlobal === "barco" || modoGlobal === "kayak_mar" ? modoGlobal : "orilla"
+      );
+      return;
+    }
+    // Continental: no pisar embalse/kayak si ya los eligió.
+    if (modoGlobal === "rio" || modoGlobal === "embalse" || modoGlobal === "kayak") return;
+    if (modoGlobal === "kayak_mar") {
+      void setModoGlobal("kayak");
+      return;
+    }
+    void setModoGlobal("rio");
   };
   const gpsResolver = useRef<((ok: boolean) => void) | null>(null);
   const irChecklistPendiente = useRef(!!route.params?.irAChecklist);

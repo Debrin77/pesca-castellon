@@ -39,7 +39,7 @@ export default function TablaRecomendacionAparejo({ rec, provinciaId, ambitoLega
   const accentSoft = esMar ? COLORS.waterLight : COLORS.mist;
   const tituloRest =
     ambito === "embarcacion"
-      ? "Restricciones · embarcación / kayak"
+      ? "Restricciones · barco / kayak mar"
       : ambito === "costa"
         ? "Restricciones · orilla (desde tierra)"
         : "Restricciones en tu provincia";

@@ -34,6 +34,9 @@ must("src/screens/PrimeraSalidaScreen.tsx", [
   "marcarPrimeraSalidaHecha",
   "Seguir sin sitio concreto",
   "Usar este sitio · seguir",
+  "elegirMedio",
+  "★ Kayak · embalse / río",
+  "useModoPesca",
 ]);
 
 // El CTA «Seguir sin sitio concreto» no debe quedar disabled cuando hay opciones.

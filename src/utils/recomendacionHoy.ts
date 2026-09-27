@@ -1,4 +1,5 @@
-import { etiquetaModo, type ModoPescaGlobal } from "../data/modoPesca";
+import { etiquetaModo, zonaEncajaModoContinental, type ModoPescaGlobal } from "../data/modoPesca";
+import { getProvinciaActiva } from "../provincias/runtime";
 import {
   calcularIndiceBarco,
   CATEGORIA_BARCO_INFO,
@@ -63,13 +64,24 @@ function pescableHoy(veredicto: string, sePuede: boolean): boolean {
   return sePuede;
 }
 
-/** ¿Este punto encaja legalmente en la modalidad? */
-function sitioEncajaModo(modo: ModoPescaGlobal, lat: number, lng: number): boolean {
+/** ¿Este punto encaja legalmente (y por tipo de zona) en la modalidad? */
+function sitioEncajaModo(
+  modo: ModoPescaGlobal,
+  lat: number,
+  lng: number,
+  zoneId?: string | null
+): boolean {
   try {
     if (modo === "rio" || modo === "embalse" || modo === "kayak") {
       const c = consultarPuntoPesca(lat, lng);
       if (c.ambito === "maritimo") return false;
-      return pescableHoy(c.veredicto, c.sePuedePescarHoy);
+      if (!pescableHoy(c.veredicto, c.sePuedePescarHoy)) return false;
+      if (zoneId) {
+        const zonas = (getProvinciaActiva().zones as { id: string; tipo?: string }[]) ?? [];
+        const z = zonas.find((x) => x.id === zoneId);
+        if (z && !zonaEncajaModoContinental(modo, z.tipo, z.id)) return false;
+      }
+      return true;
     }
     if (modo === "orilla") {
       const c = consultarCosta(lat, lng);
@@ -99,7 +111,7 @@ function recolectarCandidatosUsuario(opts: {
     if (out.length >= opts.max) return;
     const key = `${c.lat.toFixed(3)},${c.lng.toFixed(3)}`;
     if (vistos.has(key)) return;
-    if (!sitioEncajaModo(opts.modo, c.lat, c.lng)) return;
+    if (!sitioEncajaModo(opts.modo, c.lat, c.lng, c.zoneId)) return;
     vistos.add(key);
     out.push(c);
   }
