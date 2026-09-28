@@ -38,6 +38,7 @@ import IconoMeteo from "../components/IconoMeteo";
 import { cieloDeCodigo } from "../components/meteoSky";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
 import GraficoIndiceScrubable from "../components/GraficoIndiceScrubable";
+import GraficoPrecipitacion from "../components/GraficoPrecipitacion";
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const DIAS_CORTOS = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -211,6 +212,7 @@ export default function PrevisionScreen() {
         vientoMaxKmh: dia.vientoMaxKmh,
         rafagaMaxKmh: dia.rafagaMaxKmh,
         probabilidadLluvia: dia.probabilidadLluvia,
+        precipitacionMm: dia.precipitacionMm,
         tempMax: dia.tempMax,
         tempMin: dia.tempMin,
       })
@@ -439,12 +441,24 @@ export default function PrevisionScreen() {
             />
           ) : null}
 
+          {horasDia.length > 0 ? (
+            <GraficoPrecipitacion horas={horasDia} oscuro titulo="Precipitación · toca para cambiar" />
+          ) : null}
+
           {horasDia.length > 0 && (
             <View style={{ marginTop: 8 }}>
               <Text style={styles.sectionTitle}>Por horas</Text>
+              <Text style={styles.subtitleSoft}>Ráfaga, precipitación (mm) y probabilidad</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hours}>
                 {horasDia.map((h) => {
                   const th = descripcionTiempo(h.codigoTiempo);
+                  const partes = [
+                    h.rafagaKmh != null ? `ráf. ${Math.round(h.rafagaKmh)}` : null,
+                    h.precipitacionMm != null && h.precipitacionMm > 0
+                      ? `${h.precipitacionMm.toFixed(1)} mm`
+                      : null,
+                    h.probabilidadLluvia != null ? `${h.probabilidadLluvia}%` : null,
+                  ].filter(Boolean);
                   return (
                     <View
                       key={`${h.fecha}-${h.hora}`}
@@ -453,12 +467,8 @@ export default function PrevisionScreen() {
                       <Text style={styles.hourTime}>{h.hora}</Text>
                       <IconoMeteo codigo={h.codigoTiempo} size={48} etiqueta={th.texto} />
                       <Text style={styles.hourTemp}>{Math.round(h.temperatura)}°</Text>
-                      <Text style={styles.hourRain} numberOfLines={2}>
-                        {h.rafagaKmh != null
-                          ? `ráfaga ${Math.round(h.rafagaKmh)}`
-                          : h.probabilidadLluvia !== null
-                            ? `${h.probabilidadLluvia}% lluvia`
-                            : climaCorto(th.texto)}
+                      <Text style={styles.hourRain} numberOfLines={3}>
+                        {partes.length ? partes.join(" · ") : climaCorto(th.texto)}
                       </Text>
                     </View>
                   );
@@ -528,7 +538,11 @@ export default function PrevisionScreen() {
         style={styles.topVeil}
         pointerEvents="none"
       />
-      <AtmosferaMeteo codigo={dia?.codigoTiempo ?? 2} />
+      <AtmosferaMeteo
+        codigo={dia?.codigoTiempo ?? 2}
+        vientoKmh={dia?.vientoMaxKmh}
+        rafagaKmh={dia?.rafagaMaxKmh}
+      />
       {/* Veladura inferior para anclar el contenido como en Weather.app */}
       <LinearGradient
         colors={["transparent", "rgba(10,20,35,0.45)"]}

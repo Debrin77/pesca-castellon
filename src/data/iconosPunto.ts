@@ -1,5 +1,6 @@
 /**
- * Colores e iconos para puntos guardados (estilo Fishing Points, catálogo corto).
+ * Colores e iconos para puntos guardados (estilo Fishing Points).
+ * Catálogo amplio: 10 colores · 40+ iconos.
  * Los glifos son símbolos tipográficos — sin emoji — para mapa nativo y web.
  */
 
@@ -11,7 +12,9 @@ export type ColorPuntoId =
   | "violeta"
   | "slate"
   | "arena"
-  | "rojo";
+  | "rojo"
+  | "lima"
+  | "cian";
 
 export type IconoPuntoId =
   | "spot"
@@ -29,7 +32,33 @@ export type IconoPuntoId =
   | "pozo"
   | "corriente"
   | "muelle"
-  | "faro";
+  | "faro"
+  | "playa"
+  | "canal"
+  | "presa"
+  | "isla"
+  | "bahia"
+  | "delta"
+  | "cascada"
+  | "laguna"
+  | "remolino"
+  | "piedra"
+  | "caña"
+  | "red"
+  | "anzuelo"
+  | "campamento"
+  | "parking"
+  | "acceso"
+  | "mirador"
+  | "sombra"
+  | "noche"
+  | "amanecer"
+  | "corriente2"
+  | "fondo"
+  | "tablas"
+  | "boya"
+  | "fondeo"
+  | "estrecho";
 
 export type ColorPunto = { id: ColorPuntoId; hex: string; label: string };
 export type IconoPunto = { id: IconoPuntoId; glyph: string; label: string };
@@ -43,6 +72,8 @@ export const COLORES_PUNTO: ColorPunto[] = [
   { id: "slate", hex: "#3d4f5c", label: "Pizarra" },
   { id: "arena", hex: "#8a6a3a", label: "Arena" },
   { id: "rojo", hex: "#b33a3a", label: "Rojo" },
+  { id: "lima", hex: "#5a8a1a", label: "Lima" },
+  { id: "cian", hex: "#0e7a7a", label: "Cian" },
 ];
 
 export const ICONOS_PUNTO: IconoPunto[] = [
@@ -62,6 +93,32 @@ export const ICONOS_PUNTO: IconoPunto[] = [
   { id: "corriente", glyph: "»", label: "Corriente" },
   { id: "muelle", glyph: "▤", label: "Muelle" },
   { id: "faro", glyph: "✦", label: "Faro" },
+  { id: "playa", glyph: "∽", label: "Playa" },
+  { id: "canal", glyph: "⫽", label: "Canal" },
+  { id: "presa", glyph: "▬", label: "Presa" },
+  { id: "isla", glyph: "◈", label: "Isla" },
+  { id: "bahia", glyph: "︵", label: "Bahía" },
+  { id: "delta", glyph: "▽", label: "Delta" },
+  { id: "cascada", glyph: "⋮", label: "Cascada" },
+  { id: "laguna", glyph: "◎", label: "Laguna" },
+  { id: "remolino", glyph: "◍", label: "Remolino" },
+  { id: "piedra", glyph: "◆", label: "Piedra" },
+  { id: "caña", glyph: "┊", label: "Caña" },
+  { id: "red", glyph: "▦", label: "Red" },
+  { id: "anzuelo", glyph: " Neg", label: "Anzuelo" },
+  { id: "campamento", glyph: "⌂", label: "Campamento" },
+  { id: "parking", glyph: "P", label: "Parking" },
+  { id: "acceso", glyph: "⇢", label: "Acceso" },
+  { id: "mirador", glyph: "△", label: "Mirador" },
+  { id: "sombra", glyph: "∩", label: "Sombra" },
+  { id: "noche", glyph: "☽", label: "Noche" },
+  { id: "amanecer", glyph: "☼", label: "Amanecer" },
+  { id: "corriente2", glyph: "≫", label: "Rápidos" },
+  { id: "fondo", glyph: "≡", label: "Fondo" },
+  { id: "tablas", glyph: "▭", label: "Tablas" },
+  { id: "boya", glyph: "⊙", label: "Boya" },
+  { id: "fondeo", glyph: "⊥", label: "Fondeo" },
+  { id: "estrecho", glyph: "⇔", label: "Estrecho" },
 ];
 
 export const COLOR_PUNTO_DEFAULT: ColorPuntoId = "oro";
@@ -83,4 +140,12 @@ export function esColorPuntoId(v: unknown): v is ColorPuntoId {
 
 export function esIconoPuntoId(v: unknown): v is IconoPuntoId {
   return typeof v === "string" && ICONOS_PUNTO.some((i) => i.id === v);
+}
+
+export function etiquetaColorPunto(id?: string | null): string {
+  return COLORES_PUNTO.find((c) => c.id === id)?.label ?? "Sin color";
+}
+
+export function etiquetaIconoPunto(id?: string | null): string {
+  return ICONOS_PUNTO.find((i) => i.id === id)?.label ?? "Spot";
 }

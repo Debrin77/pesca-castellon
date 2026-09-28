@@ -54,12 +54,18 @@ import {
   importarKmlOKmzDesdeTextoOBytes,
   placemarksAPuntos,
 } from "../services/kmlService";
-import { glyphIconoPunto, hexColorPunto } from "../data/iconosPunto";
+import {
+  glyphIconoPunto,
+  hexColorPunto,
+  etiquetaColorPunto,
+  etiquetaIconoPunto,
+} from "../data/iconosPunto";
 import LlevameAlPunto from "../components/LlevameAlPunto";
+import { compartirUbicacion } from "../utils/abrirEnMaps";
 
 type Tab = "favoritos" | "puntos" | "capturas";
-type OrdenLista = "fecha" | "especie" | "sitio";
-type GrupoLista = "ninguno" | "dia" | "sitio";
+type OrdenLista = "fecha" | "especie" | "sitio" | "color";
+type GrupoLista = "ninguno" | "dia" | "sitio" | "color" | "icono";
 
 interface Props {
   navigation: any;
@@ -346,13 +352,25 @@ export default function MyCatchesScreen({ navigation }: Props) {
       );
     }
     list.sort((a, b) => {
+      if (ordenLista === "color") {
+        const ca = etiquetaColorPunto(a.color).localeCompare(etiquetaColorPunto(b.color), "es");
+        if (ca !== 0) return ca;
+        return a.nombre.localeCompare(b.nombre, "es");
+      }
       if (ordenLista === "sitio" || ordenLista === "especie") {
         return a.nombre.localeCompare(b.nombre, "es");
       }
       return (b.creadoEn || "").localeCompare(a.creadoEn || "");
     });
+    if (grupoLista === "color") {
+      list.sort((a, b) => etiquetaColorPunto(a.color).localeCompare(etiquetaColorPunto(b.color), "es"));
+    } else if (grupoLista === "icono") {
+      list.sort((a, b) => etiquetaIconoPunto(a.icono).localeCompare(etiquetaIconoPunto(b.icono), "es"));
+    } else if (grupoLista === "dia") {
+      list.sort((a, b) => (b.creadoEn || "").localeCompare(a.creadoEn || ""));
+    }
     return list;
-  }, [puntos, busquedaLista, ordenLista]);
+  }, [puntos, busquedaLista, ordenLista, grupoLista]);
 
   async function handleGuardarCaptura() {
     if (!especieId) {
@@ -641,35 +659,51 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 style={styles.input}
                 value={busquedaLista}
                 onChangeText={setBusquedaLista}
-                placeholder={tab === "capturas" ? "Buscar especie, sitio, notas…" : "Buscar punto…"}
+                placeholder={
+                  tab === "capturas"
+                    ? "Buscar especie, sitio, notas…"
+                    : "Buscar por nombre o notas…"
+                }
                 placeholderTextColor={COLORS.textMuted}
                 accessibilityLabel="Buscar en la lista"
               />
               <View style={styles.ordenRow}>
-                {(["fecha", "especie", "sitio"] as OrdenLista[]).map((o) => (
+                {(tab === "capturas"
+                  ? (["fecha", "especie", "sitio"] as OrdenLista[])
+                  : (["fecha", "sitio", "color"] as OrdenLista[])
+                ).map((o) => (
                   <TouchableOpacity
                     key={o}
                     style={[styles.ordenChip, ordenLista === o && styles.ordenChipOn]}
                     onPress={() => setOrdenLista(o)}
                   >
                     <Text style={[styles.ordenChipTxt, ordenLista === o && styles.ordenChipTxtOn]}>
-                      {o === "fecha" ? "Fecha" : o === "especie" ? "Especie" : "Sitio"}
+                      {o === "fecha" ? "Fecha" : o === "especie" ? "Especie" : o === "color" ? "Color" : "Nombre"}
                     </Text>
                   </TouchableOpacity>
                 ))}
-                {tab === "capturas"
-                  ? (["ninguno", "dia", "sitio"] as GrupoLista[]).map((g) => (
-                      <TouchableOpacity
-                        key={g}
-                        style={[styles.ordenChip, grupoLista === g && styles.ordenChipOn]}
-                        onPress={() => setGrupoLista(g)}
-                      >
-                        <Text style={[styles.ordenChipTxt, grupoLista === g && styles.ordenChipTxtOn]}>
-                          {g === "ninguno" ? "Sin grupo" : g === "dia" ? "Por día" : "Por sitio"}
-                        </Text>
-                      </TouchableOpacity>
-                    ))
-                  : null}
+                {(tab === "capturas"
+                  ? (["ninguno", "dia", "sitio"] as GrupoLista[])
+                  : (["ninguno", "color", "icono", "dia"] as GrupoLista[])
+                ).map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    style={[styles.ordenChip, grupoLista === g && styles.ordenChipOn]}
+                    onPress={() => setGrupoLista(g)}
+                  >
+                    <Text style={[styles.ordenChipTxt, grupoLista === g && styles.ordenChipTxtOn]}>
+                      {g === "ninguno"
+                        ? "Sin grupo"
+                        : g === "dia"
+                          ? "Por día"
+                          : g === "sitio"
+                            ? "Por sitio"
+                            : g === "color"
+                              ? "Por color"
+                              : "Por icono"}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           )}
@@ -1082,47 +1116,79 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   : `Aún no has guardado ningún punto en ${provincia.nombre}. Usa GPS, el mapa o las coordenadas.`}
               </Text>
             )}
-            {puntosFiltrados.map((p, i) => (
-              <ListaAnimada key={p.id} index={i}>
-                <TouchableOpacity style={styles.cardPad} onPress={() => verPuntoEnMapa(p)}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
-                      <View
-                        style={[
-                          styles.puntoGlyph,
-                          { backgroundColor: hexColorPunto(p.color) },
-                        ]}
-                      >
-                        <Text style={styles.puntoGlyphTxt}>{glyphIconoPunto(p.icono)}</Text>
+            {puntosFiltrados.map((p, i) => {
+              const prev = puntosFiltrados[i - 1];
+              const diaP = (p.creadoEn || "").slice(0, 10);
+              const diaPrev = (prev?.creadoEn || "").slice(0, 10);
+              const showGrupo =
+                grupoLista === "color"
+                  ? !prev || (prev.color || "") !== (p.color || "")
+                  : grupoLista === "icono"
+                    ? !prev || (prev.icono || "") !== (p.icono || "")
+                    : grupoLista === "dia"
+                      ? !prev || diaPrev !== diaP
+                      : false;
+              const grupoLabel =
+                grupoLista === "color"
+                  ? etiquetaColorPunto(p.color)
+                  : grupoLista === "icono"
+                    ? `${glyphIconoPunto(p.icono)} ${etiquetaIconoPunto(p.icono)}`
+                    : diaP || "Sin fecha";
+              return (
+                <ListaAnimada key={p.id} index={i}>
+                  <>
+                    {showGrupo ? <Text style={styles.grupoTitulo}>{grupoLabel}</Text> : null}
+                    <TouchableOpacity style={styles.cardPad} onPress={() => verPuntoEnMapa(p)}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
+                          <View
+                            style={[
+                              styles.puntoGlyph,
+                              { backgroundColor: hexColorPunto(p.color) },
+                            ]}
+                          >
+                            <Text style={styles.puntoGlyphTxt}>{glyphIconoPunto(p.icono)}</Text>
+                          </View>
+                          <Text style={styles.cardTitle}>{p.nombre}</Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => {
+                            eliminarPunto(p.id).then(cargar);
+                          }}
+                        >
+                          <Text style={styles.deleteText}>Eliminar</Text>
+                        </TouchableOpacity>
                       </View>
-                      <Text style={styles.cardTitle}>{p.nombre}</Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        eliminarPunto(p.id).then(cargar);
-                      }}
-                    >
-                      <Text style={styles.deleteText}>Eliminar</Text>
+                      <Text style={styles.cardMeta}>
+                        {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
+                      </Text>
+                      {p.notas ? <Text style={styles.cardNotas}>{p.notas}</Text> : null}
+                      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 4 }}>
+                        <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                        <TouchableOpacity
+                          onPress={(e) => {
+                            e?.stopPropagation?.();
+                            setLlevame({ nombre: p.nombre, lat: p.lat, lng: p.lng });
+                          }}
+                        >
+                          <Text style={styles.verMapaHint}>Llévame →</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={(e) => {
+                            e?.stopPropagation?.();
+                            void compartirUbicacion(p.lat, p.lng, p.nombre);
+                          }}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Compartir enlace de ${p.nombre}`}
+                        >
+                          <Text style={styles.verMapaHint}>Compartir enlace →</Text>
+                        </TouchableOpacity>
+                      </View>
                     </TouchableOpacity>
-                  </View>
-                  <Text style={styles.cardMeta}>
-                    {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
-                  </Text>
-                  {p.notas ? <Text style={styles.cardNotas}>{p.notas}</Text> : null}
-                  <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
-                    <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
-                    <TouchableOpacity
-                      onPress={(e) => {
-                        e?.stopPropagation?.();
-                        setLlevame({ nombre: p.nombre, lat: p.lat, lng: p.lng });
-                      }}
-                    >
-                      <Text style={styles.verMapaHint}>Llévame →</Text>
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              </ListaAnimada>
-            ))}
+                  </>
+                </ListaAnimada>
+              );
+            })}
           </>
         )}
       </ScrollView>

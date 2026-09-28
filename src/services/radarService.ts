@@ -46,6 +46,26 @@ function elegirFrameActivo(past: RadarFrame[], nowcast: RadarFrame[]): FrameRada
   return null;
 }
 
+/** Plantilla de tesela para un path RainViewer concreto. */
+export function urlPlantillaRadar(host: string, path: string): string {
+  return `${host}${path}/256/{z}/{x}/{y}/2/1_1.png`;
+}
+
+/** Frame con tipo (observado vs nowcast) a partir de listas RainViewer. */
+export function frameConTipo(
+  frame: RadarFrame,
+  past: RadarFrame[],
+  nowcast: RadarFrame[]
+): FrameRadarActivo {
+  const esPrevisto = nowcast.some((f) => f.path === frame.path);
+  const enPast = past.some((f) => f.path === frame.path);
+  return {
+    path: frame.path,
+    time: frame.time,
+    tipo: esPrevisto && !enPast ? "previsto" : "observado",
+  };
+}
+
 export async function obtenerRadar(): Promise<RadarDisponible> {
   if (cache && Date.now() - cache.at < 5 * 60 * 1000) return cache.data;
   try {
@@ -58,7 +78,7 @@ export async function obtenerRadar(): Promise<RadarDisponible> {
     const frames: RadarFrame[] = [...past, ...nowcast];
     const frameActivo = elegirFrameActivo(past, nowcast);
     const urlPlantilla = frameActivo
-      ? `${host}${frameActivo.path}/256/{z}/{x}/{y}/2/1_1.png`
+      ? urlPlantillaRadar(host, frameActivo.path)
       : null;
     const generated =
       typeof data.generated === "number" && Number.isFinite(data.generated)

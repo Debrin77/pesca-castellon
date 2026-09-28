@@ -504,6 +504,7 @@ export default function HomeScreen({ navigation }: Props) {
           codigoTiempo: clima.codigoTiempo,
           vientoMaxKmh: clima.velocidadVientoKmh,
           rafagaMaxKmh: clima.rafagaKmh,
+          precipitacionMm: clima.precipitacionMm,
         })
       : [];
   const etiquetaClima = (() => {
@@ -1046,14 +1047,13 @@ export default function HomeScreen({ navigation }: Props) {
           ) : null}
           {alertasClima.length > 0 ? (
             <View style={styles.alertRow}>
-              {alertasClima.slice(0, 1).map((alerta, idx) => (
+              {alertasClima.slice(0, 3).map((alerta, idx) => (
                 <View
                   key={idx}
                   style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
                 >
                   <Text style={styles.weatherAlertText}>
                     {alerta.icono} {alerta.texto}
-                    {alertasClima.length > 1 ? ` · +${alertasClima.length - 1}` : ""}
                   </Text>
                 </View>
               ))}
