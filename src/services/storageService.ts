@@ -42,7 +42,7 @@ export interface Captura {
   tallaCm?: number | null;
   pesoKg?: number | null;
   notas?: string;
-  /** URI local de foto (opcional). */
+  /** URI durable de foto (data:image/… base64). No guardar blob:/file: temporales. */
   fotoUri?: string | null;
   lat?: number | null;
   lng?: number | null;

@@ -50,6 +50,7 @@ import IdentificarEspecie from "../components/IdentificarEspecie";
 import SelectorModalidad from "../components/SelectorModalidad";
 import { LinearGradient } from "expo-linear-gradient";
 import { capturarCondicionesDelMomento } from "../services/condicionesCapturaService";
+import { fotoDesdeAsset, persistirFotoCaptura } from "../services/fotoCapturaService";
 import {
   importarKmlOKmzDesdeTextoOBytes,
   placemarksAPuntos,
@@ -450,20 +451,36 @@ export default function MyCatchesScreen({ navigation }: Props) {
       condiciones = await capturarCondicionesDelMomento(lat, lng);
     }
     const pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
-    await guardarCaptura({
-      especieId,
-      fecha: fechaCaptura.trim(),
-      puntoId,
-      nombreLugar: nombreLugar.trim() || pSel?.nombre || undefined,
-      tallaCm: tallaCm ? parseFloat(tallaCm) : null,
-      pesoKg: pesoKg ? parseFloat(pesoKg) : null,
-      notas: notas || undefined,
-      fotoUri: fotoUri || null,
-      lat,
-      lng,
-      modalidad,
-      condiciones,
-    });
+    // Asegura data URI durable: las URIs temporales del picker se invalidan al cerrar.
+    const fotoPersistida = await persistirFotoCaptura(fotoUri);
+    if (fotoUri && !fotoPersistida) {
+      Alert.alert(
+        "Foto",
+        "La foto es demasiado grande o no se pudo guardar. La captura se guardará sin foto."
+      );
+    }
+    try {
+      await guardarCaptura({
+        especieId,
+        fecha: fechaCaptura.trim(),
+        puntoId,
+        nombreLugar: nombreLugar.trim() || pSel?.nombre || undefined,
+        tallaCm: tallaCm ? parseFloat(tallaCm) : null,
+        pesoKg: pesoKg ? parseFloat(pesoKg) : null,
+        notas: notas || undefined,
+        fotoUri: fotoPersistida,
+        lat,
+        lng,
+        modalidad,
+        condiciones,
+      });
+    } catch {
+      Alert.alert(
+        "Captura",
+        "No se pudo guardar. Si la foto es muy grande, quítala e inténtalo de nuevo."
+      );
+      return;
+    }
     setNombreLugar("");
     setTallaCm("");
     setPesoKg("");
@@ -484,41 +501,99 @@ export default function MyCatchesScreen({ navigation }: Props) {
   async function elegirFoto() {
     try {
       const ImagePicker = await import("expo-image-picker");
-      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!perm.granted) {
-        Alert.alert("Permiso", "Necesitas permitir acceso a la galería para añadir foto.");
-        return;
+      // En web el permiso es siempre granted; en nativo pedimos acceso a la galería.
+      if (Platform.OS !== "web") {
+        const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!perm.granted) {
+          Alert.alert("Permiso", "Necesitas permitir acceso a la galería para añadir foto.");
+          return;
+        }
       }
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.7,
-        allowsEditing: true,
+        quality: 0.55,
+        allowsEditing: Platform.OS !== "web",
         aspect: [4, 3],
+        base64: true,
+        exif: false,
       });
-      if (!res.canceled && res.assets?.[0]?.uri) {
-        setFotoUri(res.assets[0].uri);
+      if (res.canceled || !res.assets?.[0]) return;
+      const durable = await fotoDesdeAsset(res.assets[0]);
+      if (!durable) {
+        Alert.alert("Foto", "No se pudo guardar la foto (demasiado grande o formato no válido).");
+        return;
       }
+      setFotoUri(durable);
     } catch {
+      // Fallback web: input file nativo si expo-image-picker falla en PWA.
+      if (Platform.OS === "web" && typeof document !== "undefined") {
+        try {
+          await elegirFotoWebFallback();
+          return;
+        } catch {
+          /* fall through */
+        }
+      }
       Alert.alert("Foto", "No se pudo abrir la galería en este entorno.");
     }
+  }
+
+  function elegirFotoWebFallback(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = async () => {
+        try {
+          const file = input.files?.[0];
+          if (!file) {
+            resolve();
+            return;
+          }
+          const durable = await fotoDesdeAsset({
+            uri: URL.createObjectURL(file),
+            mimeType: file.type || "image/jpeg",
+          });
+          if (!durable) {
+            Alert.alert("Foto", "No se pudo guardar la foto (demasiado grande o formato no válido).");
+            resolve();
+            return;
+          }
+          setFotoUri(durable);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      };
+      input.oncancel = () => resolve();
+      input.click();
+    });
   }
 
   async function tomarFotoCamara() {
     try {
       const ImagePicker = await import("expo-image-picker");
-      const perm = await ImagePicker.requestCameraPermissionsAsync();
-      if (!perm.granted) {
-        Alert.alert("Cámara", "Necesitas permitir la cámara para la captura rápida.");
-        return;
+      if (Platform.OS !== "web") {
+        const perm = await ImagePicker.requestCameraPermissionsAsync();
+        if (!perm.granted) {
+          Alert.alert("Cámara", "Necesitas permitir la cámara para la captura rápida.");
+          return;
+        }
       }
       const res = await ImagePicker.launchCameraAsync({
-        quality: 0.7,
-        allowsEditing: true,
+        quality: 0.55,
+        allowsEditing: Platform.OS !== "web",
         aspect: [4, 3],
+        base64: true,
+        exif: false,
       });
-      if (!res.canceled && res.assets?.[0]?.uri) {
-        setFotoUri(res.assets[0].uri);
+      if (res.canceled || !res.assets?.[0]) return;
+      const durable = await fotoDesdeAsset(res.assets[0]);
+      if (!durable) {
+        Alert.alert("Cámara", "No se pudo guardar la foto (demasiado grande o formato no válido).");
+        return;
       }
+      setFotoUri(durable);
     } catch {
       Alert.alert("Cámara", "No se pudo abrir la cámara en este entorno.");
     }
