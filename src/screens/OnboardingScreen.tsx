@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { marcarPresentacionVirtudesVista } from "../services/offlineService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
-import { COLORS, FONTS, RADIUS, SEMAFORO, SPACING } from "../theme";
+import { COLORS, FONTS, RADIUS, SEMAFORO, SPACING, TYPE } from "../theme";
 import OndaAgua from "../components/OndaAgua";
 import PulsePress from "../components/PulsePress";
 import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
@@ -74,20 +74,20 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
     () => [
       {
         id: "legal",
-        eyebrow: "Antes de lanzar",
+        eyebrow: "Antes de lanzar a la orilla",
         titulo: "¿Puedo aquí?",
         texto: provincia.continentalOnly
-          ? `Semáforo claro. Si sale «SIN TRAMO», no es veda: mira el cartel en tu primera salida en ${nombreProv}.`
-          : "Verde hoy sí · rojo veda · ámbar coto. «SIN TRAMO» no es veda — confirma el cartel.",
+          ? `En el agua, el semáforo habla claro. Si sale «SIN TRAMO», no es veda: mira el cartel en tu primera salida en ${nombreProv}.`
+          : "Verde hoy sí · rojo veda · ámbar coto junto al agua. «SIN TRAMO» no es veda — confirma el cartel.",
         accent: ["#0f5c6e", "#0a3d48", "#062830"],
         tonoOnda: "agua",
         foto: FOTO_ORILLA,
       },
       {
         id: "pinta",
-        eyebrow: "La norma autoriza · el tiempo orienta",
+        eyebrow: "El río autoriza · el tiempo susurra",
         titulo: "Hoy pinta",
-        texto: "Índice 0–100 con aire, agua, solunar y franjas. Orientativo: nunca sustituye al semáforo.",
+        texto: "Aire, agua, Solunar y franjas de luz en un índice 0–100. Orientativo: nunca sustituye al semáforo.",
         accent: ["#156a82", "#0e4a5c", "#083240"],
         tonoOnda: "agua",
         foto: FOTO_ROCA,
@@ -96,7 +96,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "sitios",
         eyebrow: "Personal e íntima · PIN + biometría",
         titulo: "Mis sitios",
-        texto: "Long-press, color e icono. Solo en este móvil — exporta GPX cuando tú quieras.",
+        texto: "Long-press en la orilla: color e icono. Solo en este móvil — exporta GPX cuando tú quieras.",
         accent: ["#16523a", "#0f3528", "#081c16"],
         tonoOnda: "claro",
         foto: FOTO_ORILLA,
@@ -105,7 +105,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         id: "campo",
         eyebrow: esCosta ? "Río · Embalse · Kayak · Mar" : "Río · Embalse · Kayak",
         titulo: "Salgo a pescar",
-        texto: "Ritual corto: sitio → ¿Puedo? → ¿Pinta? → montaje. Tu primera salida, paso a paso.",
+        texto: "Ritual corto junto al agua: sitio → ¿Puedo? → ¿Pinta? → montaje. Tu primera salida, paso a paso.",
         accent: ["#1c3830", "#122620", "#0a1612"],
         tonoOnda: "claro",
         foto: FOTO_ROCA,
@@ -522,9 +522,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   modoLabel: {
-    color: "rgba(255,255,255,0.88)",
-    fontFamily: FONTS.semibold,
-    fontSize: 12,
+    ...TYPE.storyCaption,
+    color: "rgba(255,248,235,0.92)",
     marginBottom: 6,
     textAlign: "center",
   },
@@ -548,11 +547,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   provinciasLine: {
-    marginTop: 4,
-    color: "rgba(255,255,255,0.78)",
-    fontFamily: FONTS.semibold,
-    fontSize: 12,
-    letterSpacing: 0.2,
+    ...TYPE.storyCaption,
+    marginTop: 6,
+    color: "rgba(255,248,235,0.82)",
   },
   pager: { flex: 1, zIndex: 1 },
   slide: {
@@ -561,36 +558,28 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   eyebrow: {
-    color: "rgba(255,255,255,0.9)",
-    fontSize: 13,
-    fontFamily: FONTS.displayItalic,
-    fontStyle: "italic",
-    letterSpacing: 0.2,
-    marginBottom: 2,
+    ...TYPE.storyEyebrow,
+    color: "rgba(255,236,200,0.95)",
+    marginBottom: 4,
     textAlign: "center",
   },
   titulo: {
+    ...TYPE.storyTitle,
     color: "#fff",
-    fontSize: 34,
-    fontFamily: FONTS.display,
     textAlign: "center",
-    letterSpacing: -0.8,
-    marginBottom: 4,
-    lineHeight: 38,
-    textShadowColor: "rgba(0,0,0,0.35)",
+    marginBottom: 8,
+    textShadowColor: "rgba(0,0,0,0.4)",
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    textShadowRadius: 10,
   },
   texto: {
+    ...TYPE.storyLead,
     color: "rgba(245,250,247,0.96)",
-    fontSize: 14.5,
-    lineHeight: 20,
     textAlign: "center",
-    fontFamily: FONTS.regular,
-    maxWidth: 340,
-    marginBottom: 8,
-    minHeight: 40,
-    paddingHorizontal: 4,
+    maxWidth: 348,
+    marginBottom: 10,
+    minHeight: 48,
+    paddingHorizontal: 6,
   },
   phoneWrap: { alignItems: "center", justifyContent: "center" },
   phone: {
@@ -641,12 +630,10 @@ const styles = StyleSheet.create({
   },
   footer: { paddingHorizontal: 24, zIndex: 1 },
   hintSwipe: {
+    ...TYPE.storyCaption,
     textAlign: "center",
-    color: "rgba(255,255,255,0.78)",
-    fontFamily: FONTS.semibold,
-    fontSize: 12.5,
+    color: "rgba(255,248,235,0.86)",
     marginBottom: 8,
-    letterSpacing: 0.15,
   },
   progressTrack: {
     height: 3,
@@ -684,18 +671,17 @@ const styles = StyleSheet.create({
   },
   ctaTxt: {
     color: COLORS.primaryDark,
-    fontFamily: FONTS.extrabold,
+    fontFamily: FONTS.brand,
     fontWeight: "800",
     fontSize: 16,
+    letterSpacing: -0.2,
   },
-  ctaArrow: { fontSize: 16, color: COLORS.primaryDark, fontFamily: FONTS.extrabold },
+  ctaArrow: { fontSize: 16, color: COLORS.primaryDark, fontFamily: FONTS.brand },
   tipCierre: {
+    ...TYPE.storyCaption,
     textAlign: "center",
-    color: "rgba(255,255,255,0.88)",
-    fontFamily: FONTS.semibold,
-    fontSize: 13,
+    color: "rgba(255,248,235,0.9)",
     marginBottom: 8,
-    letterSpacing: 0.1,
   },
 });
 

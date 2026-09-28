@@ -776,6 +776,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     zonaRelacionadaId?: string | null;
     puntoId?: string | null;
   }) {
+    let puntoIdGuardado = datos.puntoId ?? null;
     if (datos.puntoId) {
       await actualizarPunto(datos.puntoId, {
         nombre: datos.nombre,
@@ -783,7 +784,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         icono: datos.icono,
       });
     } else {
-      await guardarPunto({
+      const nuevo = await guardarPunto({
         nombre: datos.nombre,
         lat: datos.lat,
         lng: datos.lng,
@@ -791,6 +792,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         color: datos.color,
         icono: datos.icono,
       });
+      puntoIdGuardado = nuevo.id;
     }
     setPuntosPersonales(await obtenerPuntosGuardados());
     setCapas((prev) => ({ ...prev, misPuntos: true }));
@@ -802,13 +804,29 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       setModoAnadir(false);
       setMotivoPick(null);
       setFichaAbierta(false);
-      navigation.navigate("Capturas", { screen: "CapturasMain" });
+      navigation.navigate("Capturas", {
+        screen: "CapturasMain",
+        params: puntoIdGuardado ? { capturaEnPuntoId: puntoIdGuardado } : undefined,
+      });
       return;
     }
 
     Alert.alert(
       datos.puntoId ? "Punto actualizado" : "Punto guardado",
-      `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`
+      `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`,
+      puntoIdGuardado
+        ? [
+            { text: "Listo", style: "cancel" },
+            {
+              text: "Añadir captura",
+              onPress: () =>
+                navigation.navigate("Capturas", {
+                  screen: "CapturasMain",
+                  params: { capturaEnPuntoId: puntoIdGuardado },
+                }),
+            },
+          ]
+        : undefined
     );
   }
 

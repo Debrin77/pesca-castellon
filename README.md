@@ -21,7 +21,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ### Entrada y privacidad
 - **Presentación estilo App Store** al entrar (4 virtudes a pantalla completa:
   ¿Puedo?, Hoy pinta, Mis sitios, «Salgo a pescar»). Marca wordmark,
-  **fondos fotográficos** de orilla con Ken Burns visible (velo ligero), mockups de producto, elección
+  **tipografía Fraunces de orilla** (relato, no formulario), **fondos fotográficos**
+  de orilla con Ken Burns visible (velo ligero), mockups de producto, elección
   de modalidad y CTA “Empezar a pescar”. Se cierra con la **✕**. Se puede volver
   a ver desde **Ajustes**.
 - **Punto de sesión**: al abrir, Mapa/Especies arrancan sin pin marcado. El último
@@ -35,6 +36,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
   e intensidad por hora, animación de viento, alertas meteo ampliadas.
 - **Capturas y sitios**: búsqueda por nombre/notas, orden y agrupación (día /
   color / icono), import KML/KMZ, «Llévame» y compartir enlace del punto.
+  Puedes **enlazar una captura a un sitio guardado** (misma orilla, otra fecha)
+  desde Capturas → Sitio guardado o desde Puntos → «Añadir captura».
 - **Inicio**: hero una composición (marca · veredicto · ¿Pinta? · Salgo).
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico
   a pantalla completa al abrir o al volver de segundo plano.
@@ -84,6 +87,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 
 ### Capturas (diario íntimo)
 - Favoritos, puntos guardados y capturas con foto/GPS.
+- Al volver al mismo sitio: elige el punto guardado y cambia solo la fecha.
 - Cupos, filtro por ámbito, exportar **GPX** (compartir es una acción, no un feed).
 
 ### Licencia y cumplimiento

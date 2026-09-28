@@ -50,7 +50,7 @@ export function aplicarEstilosWeb() {
   const font = document.createElement("link");
   font.rel = "stylesheet";
   font.href =
-    "https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700;800&display=swap";
+    "https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Source+Sans+3:wght@400;600;700;800&display=swap";
   document.head.appendChild(font);
 
   const style = document.createElement("style");
@@ -66,6 +66,11 @@ export function aplicarEstilosWeb() {
     .pesca-display {
       font-family: "Fraunces", "Source Sans 3", Georgia, serif;
       font-optical-sizing: auto;
+    }
+    .pesca-story {
+      font-family: "Fraunces", Georgia, "Source Sans 3", serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
     }
     .pesca-brand {
       font-family: "Syne", "Source Sans 3", system-ui, sans-serif;

@@ -79,7 +79,16 @@ must("src/components/MapaIgnPresentacion.tsx", [
   "1 km",
 ]);
 
-must("src/theme.ts", ["display:", "Fraunces_700Bold", "Fraunces_600SemiBold", "brand:"]);
+must("src/theme.ts", [
+  "display:",
+  "Fraunces_700Bold",
+  "Fraunces_600SemiBold",
+  "Fraunces_400Regular",
+  "story:",
+  "storyLead",
+  "storyTitle",
+  "brand:",
+]);
 
 must("App.tsx", [
   "presentacionVirtudesVista",
@@ -90,6 +99,8 @@ must("App.tsx", [
   "mostrarOnboarding",
   "Fraunces_700Bold",
   "Fraunces_600SemiBold",
+  "Fraunces_400Regular",
+  "Fraunces_400Regular_Italic",
 ]);
 
 must("src/components/PantallaBloqueo.tsx", [
@@ -196,6 +207,12 @@ for (const n of [
 const onb = read("src/screens/OnboardingScreen.tsx");
 if (!onb.includes("SelectorModoPesca") || !onb.includes("STAGE_W")) {
   fail("Onboarding debe personalizar modalidad y limitar ancho web");
+}
+if (!onb.includes("TYPE.storyLead") || !onb.includes("TYPE.storyTitle") || !onb.includes("TYPE.storyCaption")) {
+  fail("Onboarding debe usar tipografía story (Fraunces) en textos de presentación");
+}
+if (onb.includes("fontFamily: FONTS.regular") && onb.match(/texto:\s*\{[\s\S]*?fontFamily:\s*FONTS\.regular/)) {
+  fail("El párrafo de virtud no debe usar Source Sans (parece formulario)");
 }
 
 const pkg = read("package.json");
