@@ -67,7 +67,10 @@ import {
   etiquetaFechaRadarPlaca,
   etiquetaHoraRadarCorta,
   etiquetaTipoRadar,
+  frameConTipo,
   obtenerRadar,
+  urlPlantillaRadar,
+  type RadarFrame,
 } from "../services/radarService";
 import type { FrameRadarActivo } from "../services/radarService";
 import {
@@ -131,6 +134,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     zpc: true,
     vedado: true,
     misPuntos: true,
+    capturas: true,
     radar: false,
     batimetria: false,
     tracks: false,
@@ -144,6 +148,11 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [cuencaFiltro, setCuencaFiltro] = useState<string | null>(null);
   const [radarUrl, setRadarUrl] = useState<string | null>(null);
   const [radarFrame, setRadarFrame] = useState<FrameRadarActivo | null>(null);
+  const [radarHost, setRadarHost] = useState("");
+  const [radarFrames, setRadarFrames] = useState<RadarFrame[]>([]);
+  const [radarPast, setRadarPast] = useState<RadarFrame[]>([]);
+  const [radarNowcast, setRadarNowcast] = useState<RadarFrame[]>([]);
+  const [radarIdx, setRadarIdx] = useState(0);
   const [modalidad, setModalidad] = useState<ModalidadPesca>(
     modalidadDesdeModoGlobal(modoGlobal)
   );
@@ -167,10 +176,20 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const modoBarco = mar && (esModoEmbarcado(modoGlobal) || esModalidadEmbarcacionMar(modalidad));
   const modoKayak = esModoKayak(modoGlobal) || modalidad === "kayak" || modalidad === "kayak_embalse";
   const normativaOn = capas.zpl || capas.zpc || capas.vedado;
-  const distanciaMedidaM =
-    medidaPts.length >= 2
-      ? Math.round(distanciaKm(medidaPts[0].latitude, medidaPts[0].longitude, medidaPts[1].latitude, medidaPts[1].longitude) * 1000)
-      : null;
+  const distanciaMedidaM = useMemo(() => {
+    if (medidaPts.length < 2) return null;
+    let total = 0;
+    for (let i = 1; i < medidaPts.length; i++) {
+      total +=
+        distanciaKm(
+          medidaPts[i - 1].latitude,
+          medidaPts[i - 1].longitude,
+          medidaPts[i].latitude,
+          medidaPts[i].longitude
+        ) * 1000;
+    }
+    return Math.round(total);
+  }, [medidaPts]);
 
   useEffect(() => {
     ftueLongpressMapaVista().then((visto) => {
@@ -301,11 +320,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     if (!capas.radar) {
       setRadarUrl(null);
       setRadarFrame(null);
+      setRadarFrames([]);
+      setRadarHost("");
       return;
     }
     let cancel = false;
     void obtenerRadar().then((r) => {
       if (cancel) return;
+      setRadarHost(r.host);
+      setRadarFrames(r.frames);
+      setRadarPast(r.past);
+      setRadarNowcast(r.nowcast);
+      const idx = r.frameActivo
+        ? r.frames.findIndex((f) => f.path === r.frameActivo?.path)
+        : -1;
+      setRadarIdx(idx >= 0 ? idx : Math.max(0, r.past.length - 1));
       setRadarUrl(r.urlPlantilla);
       setRadarFrame(r.frameActivo);
     });
@@ -313,6 +342,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       cancel = true;
     };
   }, [capas.radar]);
+
+  useEffect(() => {
+    if (!capas.radar || !radarHost || !radarFrames.length) return;
+    const f = radarFrames[Math.max(0, Math.min(radarIdx, radarFrames.length - 1))];
+    if (!f) return;
+    setRadarUrl(urlPlantillaRadar(radarHost, f.path));
+    setRadarFrame(frameConTipo(f, radarPast, radarNowcast));
+  }, [radarIdx, radarHost, radarFrames, radarPast, radarNowcast, capas.radar]);
 
   const radarCuando = etiquetaCuandoRadar(radarFrame);
   const radarHoraCorta = etiquetaHoraRadarCorta(radarFrame);
@@ -447,10 +484,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   function alPulsarMapa(lat: number, lng: number) {
     if (midiendo) {
-      setMedidaPts((prev) => {
-        if (prev.length >= 2) return [{ latitude: lat, longitude: lng }];
-        return [...prev, { latitude: lat, longitude: lng }];
-      });
+      // Polilínea: cada toque añade un vértice (reinicia con el botón Medir).
+      setMedidaPts((prev) => [...prev, { latitude: lat, longitude: lng }]);
       return;
     }
     evaluarPunto(lat, lng);
@@ -1017,9 +1052,26 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         >
           <Text style={[styles.layerChipText, normativaOn && styles.layerChipTextActive]}>Normativa</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
+        <TouchableOpacity
+          style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]}
+          onPress={() => toggleCapa("misPuntos")}
+          accessibilityRole="button"
+          accessibilityLabel="Mostrar u ocultar sitios guardados"
+          accessibilityState={{ selected: capas.misPuntos }}
+        >
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>
-            Mis puntos{sitiosPersonales.length ? ` (${sitiosPersonales.length})` : ""}
+            Sitios{puntosPersonales.length ? ` (${puntosPersonales.length})` : ""}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.layerChip, capas.capturas && styles.layerChipActive]}
+          onPress={() => toggleCapa("capturas")}
+          accessibilityRole="button"
+          accessibilityLabel="Mostrar u ocultar capturas en el mapa"
+          accessibilityState={{ selected: capas.capturas }}
+        >
+          <Text style={[styles.layerChipText, capas.capturas && styles.layerChipTextActive]}>
+            Capturas{capturasPersonales.length ? ` (${capturasPersonales.length})` : ""}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -1242,12 +1294,27 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         </Text>
       ) : null}
       {midiendo ? (
-        <Text style={styles.hintMedir}>
-          Medir: toca origen y destino
-          {distanciaMedidaM != null
-            ? ` · ${distanciaMedidaM < 1000 ? `${distanciaMedidaM} m` : `${(distanciaMedidaM / 1000).toFixed(2)} km`}`
-            : ""}
-        </Text>
+        <View style={styles.hintMedirRow}>
+          <Text style={styles.hintMedir}>
+            Medir: toca varios puntos
+            {medidaPts.length
+              ? ` · ${medidaPts.length} pts`
+              : ""}
+            {distanciaMedidaM != null
+              ? ` · ${distanciaMedidaM < 1000 ? `${distanciaMedidaM} m` : `${(distanciaMedidaM / 1000).toFixed(2)} km`}`
+              : ""}
+          </Text>
+          {medidaPts.length > 0 ? (
+            <TouchableOpacity
+              onPress={() => setMedidaPts([])}
+              accessibilityRole="button"
+              accessibilityLabel="Reiniciar medición"
+              style={styles.hintMedirReset}
+            >
+              <Text style={styles.hintMedirResetTxt}>Reiniciar</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
       ) : null}
       {ftueLongpress && !midiendo ? (
         <TouchableOpacity
@@ -1412,8 +1479,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             />
             );
           })}
-          {capas.misPuntos &&
-            sitiosPersonales.map((s) => {
+          {sitiosPersonales
+            .filter((s) => (s.tipo === "captura" ? capas.capturas : capas.misPuntos))
+            .map((s) => {
               const colorHex =
                 s.tipo === "captura"
                   ? s.color
@@ -1471,7 +1539,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               coordinate={p}
               pinColor={COLORS.primary}
               identifier="seleccion"
-              title={i === 0 ? "Origen" : "Destino"}
+              title={
+                i === 0
+                  ? "Origen"
+                  : i === medidaPts.length - 1
+                    ? "Fin"
+                    : `Punto ${i + 1}`
+              }
             />
           ))}
           {ancla ? (
@@ -1496,6 +1570,32 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           mostrarAncla={modoBarco}
           mostrarRuta
         />
+        {capas.radar && radarFrames.length > 1 ? (
+          <View style={styles.radarScrub} pointerEvents="box-none">
+            <TouchableOpacity
+              style={styles.radarScrubBtn}
+              onPress={() => setRadarIdx((i) => Math.max(0, i - 1))}
+              disabled={radarIdx <= 0}
+              accessibilityRole="button"
+              accessibilityLabel="Frame de radar anterior"
+            >
+              <Text style={styles.radarScrubBtnTxt}>‹</Text>
+            </TouchableOpacity>
+            <Text style={styles.radarScrubMeta} numberOfLines={1}>
+              {radarIdx + 1}/{radarFrames.length}
+              {radarHoraCorta ? ` · ${radarHoraCorta}` : ""}
+            </Text>
+            <TouchableOpacity
+              style={styles.radarScrubBtn}
+              onPress={() => setRadarIdx((i) => Math.min(radarFrames.length - 1, i + 1))}
+              disabled={radarIdx >= radarFrames.length - 1}
+              accessibilityRole="button"
+              accessibilityLabel="Frame de radar siguiente"
+            >
+              <Text style={styles.radarScrubBtnTxt}>›</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
         {capas.radar ? (
           <View style={styles.radarPlacaWrap} pointerEvents="none">
             <View
@@ -1762,6 +1862,40 @@ const styles = StyleSheet.create({
   modoTxt: { ...TYPE.mapChip, fontSize: 14, color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
   mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
+  radarScrub: {
+    position: "absolute",
+    top: 44,
+    left: 12,
+    right: 12,
+    zIndex: 21,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  radarScrubBtn: {
+    width: 36,
+    height: 32,
+    borderRadius: RADIUS.pill,
+    backgroundColor: "rgba(15, 40, 48, 0.82)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.22)",
+  },
+  radarScrubBtnTxt: { color: "#fff", fontSize: 22, fontWeight: "800", marginTop: -2 },
+  radarScrubMeta: {
+    minWidth: 110,
+    textAlign: "center",
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "800",
+    backgroundColor: "rgba(15, 40, 48, 0.72)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+    overflow: "hidden",
+  },
   radarPlacaWrap: {
     position: "absolute",
     top: 10,
@@ -1893,16 +2027,30 @@ const styles = StyleSheet.create({
   bannerAnadirTitulo: { color: "#fff", fontWeight: "700", fontSize: 13 },
   bannerAnadirTxt: { color: "#d7e8df", fontSize: 11.5, marginTop: 2, lineHeight: 15 },
   bannerAnadirCancel: { color: "#fff", fontWeight: "700", fontSize: 12 },
-  hintMedir: {
-    ...TYPE.caption,
-    textAlign: "center",
-    color: COLORS.primaryDark,
+  hintMedirRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
     backgroundColor: COLORS.primaryLight,
     paddingVertical: 6,
     paddingHorizontal: 12,
+  },
+  hintMedir: {
+    ...TYPE.caption,
+    flexShrink: 1,
+    textAlign: "center",
+    color: COLORS.primaryDark,
     fontFamily: FONTS.bold,
     fontWeight: "700",
   },
+  hintMedirReset: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.primaryDark,
+  },
+  hintMedirResetTxt: { color: "#fff", fontSize: 11, fontWeight: "800" },
   ftueLongpress: {
     backgroundColor: COLORS.primaryDark,
     paddingVertical: 10,

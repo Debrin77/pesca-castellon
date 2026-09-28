@@ -28,11 +28,13 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
   sitio queda en Inicio («Último · …»); no se mezcla un embalse con kayak/barco mar
   al cambiar de tab.
 - **Mapa estilo herramienta**: toca = consultar; **mantén pulsado** = guardar con
-  color e icono (16 iconos); FAB (+) para medir / ruta / ancla; Satélite/Híbrido;
-  capa **Normativa**; editar pin al tocarlo; FTUE long-press.
-- **Previsión scrubable**: gráfica horaria del índice (arrastrar franja).
-- **Capturas**: auto-condiciones (clima/índice/luna), búsqueda/orden/agrupación,
-  import KML/KMZ (archivo en web · pegar XML en nativo), «Llévame» al punto.
+  color e icono (**10 colores · 40+ iconos**); FAB (+) para medir (polilínea) /
+  ruta / ancla; satélite/híbrido; capas Sitios / Capturas / Normativa / radar con
+  scrubber; editar pin; compartir enlace; FTUE long-press.
+- **Previsión**: índice scrubable, precipitación mm↔% (toca el gráfico), ráfagas
+  e intensidad por hora, animación de viento, alertas meteo ampliadas.
+- **Capturas y sitios**: búsqueda por nombre/notas, orden y agrupación (día /
+  color / icono), import KML/KMZ, «Llévame» y compartir enlace del punto.
 - **Inicio**: hero una composición (marca · veredicto · ¿Pinta? · Salgo).
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico
   a pantalla completa al abrir o al volver de segundo plano.

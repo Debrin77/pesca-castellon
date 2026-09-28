@@ -132,6 +132,10 @@ must("src/data/iconosPunto.ts", [
   "hexColorPunto",
   "faro",
   "muelle",
+  "cian",
+  "lima",
+  "fondeo",
+  "boya",
 ]);
 must("src/components/GuardarPuntoSheet.tsx", [
   "Guardar punto",

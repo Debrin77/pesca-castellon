@@ -106,8 +106,9 @@ export function detectarAlertas(datos: {
   vientoMaxKmh?: number | null;
   rafagaMaxKmh?: number | null;
   probabilidadLluvia?: number | null;
-  tempMax?: number;
-  tempMin?: number;
+  precipitacionMm?: number | null;
+  tempMax?: number | null;
+  tempMin?: number | null;
 }): AlertaMeteo[] {
   const alertas: AlertaMeteo[] = [];
 
@@ -128,19 +129,36 @@ export function detectarAlertas(datos: {
     }
   }
 
-  if (datos.codigoTiempo !== undefined && [95, 96, 99].includes(datos.codigoTiempo)) {
-    alertas.push({ nivel: "peligro", icono: "⛈️", texto: "Tormenta prevista" });
+  const codigo = datos.codigoTiempo;
+  if (codigo !== undefined) {
+    if ([96, 99].includes(codigo)) {
+      alertas.push({ nivel: "peligro", icono: "⛈️", texto: "Tormenta fuerte / granizo" });
+    } else if (codigo === 95) {
+      alertas.push({ nivel: "peligro", icono: "⛈️", texto: "Tormenta prevista" });
+    } else if (codigo >= 80 && codigo < 90) {
+      alertas.push({ nivel: "aviso", icono: "🌦️", texto: "Chubascos intensos previstos" });
+    }
   }
 
-  if (datos.probabilidadLluvia !== undefined && datos.probabilidadLluvia !== null && datos.probabilidadLluvia > 80) {
+  if (datos.precipitacionMm != null && datos.precipitacionMm >= 25) {
+    alertas.push({
+      nivel: datos.precipitacionMm >= 40 ? "peligro" : "aviso",
+      icono: "🌧️",
+      texto: `Lluvia acumulada alta (${datos.precipitacionMm.toFixed(0)} mm)`,
+    });
+  } else if (
+    datos.probabilidadLluvia !== undefined &&
+    datos.probabilidadLluvia !== null &&
+    datos.probabilidadLluvia > 80
+  ) {
     alertas.push({ nivel: "aviso", icono: "🌧️", texto: "Alta probabilidad de lluvia intensa" });
   }
 
-  if (datos.tempMax !== undefined && datos.tempMax > 38) {
+  if (datos.tempMax != null && datos.tempMax > 38) {
     alertas.push({ nivel: "aviso", icono: "🌡️", texto: `Calor extremo (${Math.round(datos.tempMax)}°C)` });
   }
 
-  if (datos.tempMin !== undefined && datos.tempMin < 0) {
+  if (datos.tempMin != null && datos.tempMin < 0) {
     alertas.push({ nivel: "aviso", icono: "❄️", texto: "Riesgo de heladas" });
   }
 

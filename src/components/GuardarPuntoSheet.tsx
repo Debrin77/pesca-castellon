@@ -9,7 +9,9 @@ import {
   Pressable,
   Platform,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
+import { compartirUbicacion } from "../utils/abrirEnMaps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   COLORES_PUNTO,
@@ -119,8 +121,13 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
               ))}
             </View>
 
-            <Text style={styles.label}>Icono</Text>
-            <View style={styles.row}>
+            <Text style={styles.label}>Icono · {ICONOS_PUNTO.length}</Text>
+            <ScrollView
+              style={styles.iconScroll}
+              contentContainerStyle={styles.row}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+            >
               {ICONOS_PUNTO.map((i) => (
                 <TouchableOpacity
                   key={i.id}
@@ -135,7 +142,7 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
 
             <TouchableOpacity
               style={styles.cta}
@@ -157,6 +164,14 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
               <Text style={styles.ctaTxt}>
                 {editando ? "Guardar cambios" : "Guardar en mis sitios"}
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.shareBtn}
+              onPress={() => void compartirUbicacion(borrador.lat, borrador.lng, nombre.trim() || undefined)}
+              accessibilityRole="button"
+              accessibilityLabel="Compartir ubicación como enlace"
+            >
+              <Text style={styles.shareTxt}>Compartir enlace del punto</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancel} onPress={onCerrar} accessibilityRole="button">
               <Text style={styles.cancelTxt}>Cancelar</Text>
@@ -230,6 +245,22 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginBottom: 14,
+  },
+  iconScroll: { maxHeight: 168, marginBottom: 4 },
+  shareBtn: {
+    marginTop: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: RADIUS.md,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight,
+  },
+  shareTxt: {
+    fontFamily: FONTS.bold,
+    fontWeight: "800",
+    fontSize: 14,
+    color: COLORS.primaryDark,
   },
   swatch: {
     width: 34,
