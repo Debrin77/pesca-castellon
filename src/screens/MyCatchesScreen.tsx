@@ -128,6 +128,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [notas, setNotas] = useState("");
   const [fotoUri, setFotoUri] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  /** Sitio guardado elegido: la captura se enlaza a esas coordenadas (misma orilla, otra fecha). */
+  const [puntoSeleccionadoId, setPuntoSeleccionadoId] = useState<string | null>(null);
+  const [fechaCaptura, setFechaCaptura] = useState(() => new Date().toISOString().slice(0, 10));
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [cupoInfo, setCupoInfo] = useState<CupoEspecieInfo | null>(null);
   const [mostrarCoordsCaptura, setMostrarCoordsCaptura] = useState(false);
@@ -208,6 +211,40 @@ export default function MyCatchesScreen({ navigation }: Props) {
     // no al abrir captura rápida desde Inicio.
   }, [route.params, navigation]);
 
+  /** Abre el formulario de captura enlazado a un sitio ya guardado (misma orilla, otra fecha). */
+  const usarPuntoParaCaptura = useCallback((p: PuntoGuardado) => {
+    setTab("capturas");
+    setMostrarFormulario(true);
+    setPuntoSeleccionadoId(p.id);
+    setCoords({ lat: p.lat, lng: p.lng });
+    setNombreLugar(p.nombre);
+    setFechaCaptura(new Date().toISOString().slice(0, 10));
+    setMostrarCoordsCaptura(false);
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    });
+  }, []);
+
+  useEffect(() => {
+    const id = route.params?.capturaEnPuntoId as string | undefined;
+    if (!id) return;
+    navigation.setParams?.({ capturaEnPuntoId: undefined });
+    const p = puntos.find((x) => x.id === id);
+    if (p) {
+      usarPuntoParaCaptura(p);
+      return;
+    }
+    // Lista aún no cargada: recordar id y completar al llegar puntos.
+    setTab("capturas");
+    setMostrarFormulario(true);
+    setPuntoSeleccionadoId(id);
+  }, [route.params?.capturaEnPuntoId, puntos, navigation, usarPuntoParaCaptura]);
+
+  useEffect(() => {
+    if (!puntoSeleccionadoId || coords) return;
+    const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+    if (p) usarPuntoParaCaptura(p);
+  }, [puntos, puntoSeleccionadoId, coords, usarPuntoParaCaptura]);
 
   useEffect(() => {
     if (!especieId) {
@@ -377,8 +414,23 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert("Especie", "Elige primero la especie de la captura.");
       return;
     }
-    let puntoId: string | null = null;
-    if (coords) {
+    const fechaOk = /^\d{4}-\d{2}-\d{2}$/.test(fechaCaptura.trim());
+    if (!fechaOk) {
+      Alert.alert("Fecha", "Usa el formato AAAA-MM-DD (ej. 2026-09-28).");
+      return;
+    }
+    let puntoId: string | null = puntoSeleccionadoId;
+    let lat = coords?.lat ?? null;
+    let lng = coords?.lng ?? null;
+    if (puntoId) {
+      const p = puntos.find((x) => x.id === puntoId);
+      if (!p) {
+        Alert.alert("Sitio", "Ese punto ya no está en la lista. Elige otro o usa GPS/coords.");
+        return;
+      }
+      lat = p.lat;
+      lng = p.lng;
+    } else if (coords) {
       const sp = resolverEspecie(especieId, speciesCatalog);
       const nombre =
         nombreLugar.trim() ||
@@ -390,22 +442,25 @@ export default function MyCatchesScreen({ navigation }: Props) {
         notas: notas.trim() || undefined,
       });
       puntoId = punto.id;
+      lat = coords.lat;
+      lng = coords.lng;
     }
     let condiciones = null;
-    if (coords) {
-      condiciones = await capturarCondicionesDelMomento(coords.lat, coords.lng);
+    if (lat != null && lng != null) {
+      condiciones = await capturarCondicionesDelMomento(lat, lng);
     }
+    const pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
     await guardarCaptura({
       especieId,
-      fecha: new Date().toISOString().slice(0, 10),
+      fecha: fechaCaptura.trim(),
       puntoId,
-      nombreLugar: nombreLugar || undefined,
+      nombreLugar: nombreLugar.trim() || pSel?.nombre || undefined,
       tallaCm: tallaCm ? parseFloat(tallaCm) : null,
       pesoKg: pesoKg ? parseFloat(pesoKg) : null,
       notas: notas || undefined,
       fotoUri: fotoUri || null,
-      lat: coords?.lat ?? null,
-      lng: coords?.lng ?? null,
+      lat,
+      lng,
       modalidad,
       condiciones,
     });
@@ -415,6 +470,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setNotas("");
     setFotoUri(null);
     setCoords(null);
+    setPuntoSeleccionadoId(null);
+    setFechaCaptura(new Date().toISOString().slice(0, 10));
     setLatCaptura("");
     setLngCaptura("");
     setMostrarCoordsCaptura(false);
@@ -487,6 +544,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
+    setPuntoSeleccionadoId(null);
     setCoords(loc);
     setMostrarCoordsCaptura(false);
   }
@@ -505,11 +563,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
+    setPuntoSeleccionadoId(null);
     setCoords(r.coords);
     setMostrarCoordsCaptura(false);
   }
 
   function irAMapaParaCaptura() {
+    setPuntoSeleccionadoId(null);
     iniciarPickUbicacion("captura");
     navigation.navigate("Mapa", {
       screen: "ZonasLibresMain",
@@ -536,7 +596,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
-    await guardarPunto({
+    const nuevo = await guardarPunto({
       nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
       lat: loc.lat,
       lng: loc.lng,
@@ -545,8 +605,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setNombrePunto("");
     setNotasPunto("");
     setMostrarFormPunto(false);
-    cargar();
-    Alert.alert("Punto guardado", `GPS: ${formatearCoords(loc.lat, loc.lng)}`);
+    await cargar();
+    Alert.alert("Punto guardado", `GPS: ${formatearCoords(loc.lat, loc.lng)}`, [
+      { text: "Listo", style: "cancel" },
+      { text: "Añadir captura", onPress: () => usarPuntoParaCaptura(nuevo) },
+    ]);
   }
 
   async function handleGuardarPuntoCoords() {
@@ -563,7 +626,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
       Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
-    await guardarPunto({
+    const nuevo = await guardarPunto({
       nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
       lat: r.coords.lat,
       lng: r.coords.lng,
@@ -574,8 +637,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setLatPunto("");
     setLngPunto("");
     setMostrarFormPunto(false);
-    cargar();
-    Alert.alert("Punto guardado", formatearCoords(r.coords.lat, r.coords.lng));
+    await cargar();
+    Alert.alert("Punto guardado", formatearCoords(r.coords.lat, r.coords.lng), [
+      { text: "Listo", style: "cancel" },
+      { text: "Añadir captura", onPress: () => usarPuntoParaCaptura(nuevo) },
+    ]);
   }
 
   function irAMapaParaPunto() {
@@ -820,8 +886,71 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 )}
 
+                <Text style={styles.formLabel}>Sitio guardado</Text>
+                {puntos.length === 0 ? (
+                  <Text style={styles.hintMini}>
+                    Aún no hay sitios. Guárdalos en la pestaña Puntos (GPS, mapa o coords) y vuelve a
+                    enlazar capturas aquí.
+                  </Text>
+                ) : (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }}>
+                    <TouchableOpacity
+                      style={[styles.chip, !puntoSeleccionadoId && styles.chipActive]}
+                      onPress={() => {
+                        setPuntoSeleccionadoId(null);
+                        setCoords(null);
+                        setNombreLugar("");
+                      }}
+                      accessibilityRole="button"
+                      accessibilityLabel="Sin sitio guardado"
+                    >
+                      <Text style={[styles.chipText, !puntoSeleccionadoId && styles.chipTextActive]}>
+                        Sin sitio
+                      </Text>
+                    </TouchableOpacity>
+                    {puntos.map((p) => (
+                      <TouchableOpacity
+                        key={p.id}
+                        style={[styles.chip, puntoSeleccionadoId === p.id && styles.chipActive]}
+                        onPress={() => usarPuntoParaCaptura(p)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Usar sitio ${p.nombre}`}
+                        accessibilityState={{ selected: puntoSeleccionadoId === p.id }}
+                      >
+                        <Text
+                          style={[
+                            styles.chipText,
+                            puntoSeleccionadoId === p.id && styles.chipTextActive,
+                          ]}
+                        >
+                          {glyphIconoPunto(p.icono)} {p.nombre}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                )}
+
                 <Text style={styles.formLabel}>Lugar (opcional)</Text>
-                <TextInput style={styles.input} value={nombreLugar} onChangeText={setNombreLugar} placeholder="Ej. Embalse o tramo" />
+                <TextInput
+                  style={styles.input}
+                  value={nombreLugar}
+                  onChangeText={setNombreLugar}
+                  placeholder="Ej. Embalse o tramo"
+                />
+
+                <Text style={styles.formLabel}>Fecha de la captura</Text>
+                <TextInput
+                  style={styles.input}
+                  value={fechaCaptura}
+                  onChangeText={setFechaCaptura}
+                  placeholder="AAAA-MM-DD"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  accessibilityLabel="Fecha de la captura AAAA-MM-DD"
+                />
+                <Text style={styles.hintMini}>
+                  Misma orilla, otra salida: elige el sitio guardado y cambia solo la fecha.
+                </Text>
 
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>
@@ -852,13 +981,18 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     <Text style={styles.methodBtnTxt}>Coords</Text>
                   </TouchableOpacity>
                 </View>
-                {coords ? (
+                {puntoSeleccionadoId && coords ? (
                   <Text style={styles.coordsOk}>
-                    📍 {formatearCoords(coords.lat, coords.lng)} · se guardará también como punto
+                    📍 {nombreLugar || "Sitio"} · {formatearCoords(coords.lat, coords.lng)} · captura en este
+                    sitio guardado
+                  </Text>
+                ) : coords ? (
+                  <Text style={styles.coordsOk}>
+                    📍 {formatearCoords(coords.lat, coords.lng)} · se enlazará a un punto cercano o se creará uno
                   </Text>
                 ) : (
                   <Text style={styles.hintMini}>
-                    Sin ubicación · GPS, mapa o coords también crean un punto de pesca
+                    Elige un sitio guardado arriba, o usa GPS / mapa / coords
                   </Text>
                 )}
                 {mostrarCoordsCaptura && (
@@ -911,7 +1045,15 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 ) : null}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
-                  <TouchableOpacity style={styles.cancelButton} onPress={() => setMostrarFormulario(false)}>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                      setMostrarFormulario(false);
+                      setPuntoSeleccionadoId(null);
+                      setCoords(null);
+                      setFechaCaptura(new Date().toISOString().slice(0, 10));
+                    }}
+                  >
                     <Text style={styles.cancelButtonText}>Cancelar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.saveButton} onPress={handleGuardarCaptura}>
@@ -1164,6 +1306,18 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       </Text>
                       {p.notas ? <Text style={styles.cardNotas}>{p.notas}</Text> : null}
                       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 4 }}>
+                        <TouchableOpacity
+                          onPress={(e) => {
+                            e?.stopPropagation?.();
+                            usarPuntoParaCaptura(p);
+                          }}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Añadir captura en ${p.nombre}`}
+                        >
+                          <Text style={[styles.verMapaHint, styles.accionCapturaHint]}>
+                            Añadir captura →
+                          </Text>
+                        </TouchableOpacity>
                         <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
                         <TouchableOpacity
                           onPress={(e) => {
@@ -1458,6 +1612,7 @@ const styles = StyleSheet.create({
   cardMeta: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   cardNotas: { fontSize: 12, color: COLORS.textSecondary, marginTop: 4, fontStyle: "italic" },
   verMapaHint: { fontSize: 11.5, color: COLORS.primary, fontWeight: "600", marginTop: 6 },
+  accionCapturaHint: { color: COLORS.waterDark, fontWeight: "800" },
   deleteText: { fontSize: 12, color: COLORS.danger, fontWeight: "600" },
   photoBtn: {
     flex: 1,

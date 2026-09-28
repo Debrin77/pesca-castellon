@@ -93,6 +93,8 @@ for (const n of [
   "compartirUbicacion",
   "Compartir enlace",
   "etiquetaColorPunto",
+  "usarPuntoParaCaptura",
+  "Sitio guardado",
 ]) {
   if (!capturas.includes(n)) fail(`MyCatchesScreen sin ${n}`);
 }

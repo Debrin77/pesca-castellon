@@ -66,8 +66,19 @@ for (const needle of [
   "Fuera de ${provincia.nombre}",
   "asegurarPuntoParaCaptura",
   "puntoId",
+  "usarPuntoParaCaptura",
+  "puntoSeleccionadoId",
+  "capturaEnPuntoId",
+  "Añadir captura →",
+  "Fecha de la captura",
+  "Sitio guardado",
 ]) {
   if (!catches.includes(needle)) fail(`MyCatchesScreen no incluye ${needle}`);
+}
+
+const mapaPost = read("src/screens/ZonasLibresScreen.tsx");
+if (!mapaPost.includes("capturaEnPuntoId") || !mapaPost.includes("Añadir captura")) {
+  fail("Mapa debe ofrecer Añadir captura tras guardar un punto (capturaEnPuntoId)");
 }
 
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");

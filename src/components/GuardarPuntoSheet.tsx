@@ -50,12 +50,20 @@ type Props = {
     zonaRelacionadaId?: string | null;
     puntoId?: string | null;
   }) => void;
+  /** Si edita un punto existente: atajo a registrar captura en ese sitio. */
+  onAnadirCaptura?: (puntoId: string) => void;
 };
 
 /**
  * Sheet para guardar o editar un punto: nombre + color + icono.
  */
-export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuardar }: Props) {
+export default function GuardarPuntoSheet({
+  visible,
+  borrador,
+  onCerrar,
+  onGuardar,
+  onAnadirCaptura,
+}: Props) {
   const insets = useSafeAreaInsets();
   const [nombre, setNombre] = useState("");
   const [color, setColor] = useState<ColorPuntoId>(COLOR_PUNTO_DEFAULT);
@@ -165,6 +173,16 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
                 {editando ? "Guardar cambios" : "Guardar en mis sitios"}
               </Text>
             </TouchableOpacity>
+            {editando && borrador.puntoId && onAnadirCaptura ? (
+              <TouchableOpacity
+                style={styles.capturaBtn}
+                onPress={() => onAnadirCaptura(borrador.puntoId!)}
+                accessibilityRole="button"
+                accessibilityLabel="Añadir captura en este sitio"
+              >
+                <Text style={styles.capturaBtnTxt}>Añadir captura en este sitio</Text>
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity
               style={styles.shareBtn}
               onPress={() => void compartirUbicacion(borrador.lat, borrador.lng, nombre.trim() || undefined)}
@@ -247,6 +265,21 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   iconScroll: { maxHeight: 168, marginBottom: 4 },
+  capturaBtn: {
+    marginTop: 10,
+    paddingVertical: 13,
+    alignItems: "center",
+    borderRadius: RADIUS.md,
+    borderWidth: 1.5,
+    borderColor: COLORS.water,
+    backgroundColor: COLORS.waterLight,
+  },
+  capturaBtnTxt: {
+    fontFamily: FONTS.extrabold,
+    fontWeight: "800",
+    fontSize: 14,
+    color: COLORS.waterDark,
+  },
   shareBtn: {
     marginTop: 8,
     paddingVertical: 12,
