@@ -4,6 +4,9 @@
  * ImagePicker / cámara devuelven URIs temporales (blob:, file:// en caché, content://…).
  * Si se guardan tal cual en AsyncStorage, al reabrir la app la foto deja de verse.
  * Convertimos a data URI (base64) para que el diario funcione offline en web y nativo.
+ *
+ * En web/PWA el diálogo de archivo DEBE abrirse en el mismo turno del gesto del usuario
+ * (sin await antes de input.click()). Safari bloquea el picker si se pierde la activación.
  */
 
 import { Platform } from "react-native";
@@ -36,7 +39,6 @@ export async function persistirFotoCaptura(uri: string | null | undefined): Prom
       return dataUri;
     }
 
-    // Nativo: leer bytes con expo-file-system (viene con Expo).
     const FileSystem = await import("expo-file-system");
     const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
@@ -59,15 +61,72 @@ export async function fotoDesdeAsset(asset: {
   base64?: string | null;
   mimeType?: string | null;
 }): Promise<string | null> {
-  const mime = asset.mimeType && asset.mimeType.startsWith("image/")
-    ? asset.mimeType
-    : "image/jpeg";
+  const mime =
+    asset.mimeType && asset.mimeType.startsWith("image/") ? asset.mimeType : "image/jpeg";
   if (asset.base64) {
     const dataUri = `data:${mime};base64,${asset.base64}`;
     if (dataUri.length > MAX_DATA_URI_CHARS) return null;
     return dataUri;
   }
   return persistirFotoCaptura(asset.uri);
+}
+
+/** File (web) → data URI, sin pasar por blob: temporal. */
+export async function fotoDesdeFile(file: Blob & { type?: string }): Promise<string | null> {
+  try {
+    const dataUri = await blobADataUri(file);
+    if (!dataUri || dataUri.length > MAX_DATA_URI_CHARS) return null;
+    return dataUri;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Abre el selector de archivos en web SIN await previo (mantiene el gesto del usuario).
+ * `capture`: true → cámara (si el navegador lo permite); false → galería/archivos.
+ * Devuelve null si el usuario cancela.
+ */
+export function elegirFotoWebSync(opts?: { capture?: boolean }): Promise<File | null> {
+  return new Promise((resolve) => {
+    if (typeof document === "undefined") {
+      resolve(null);
+      return;
+    }
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    if (opts?.capture) {
+      input.setAttribute("capture", "environment");
+    }
+    // visibility:hidden (no display:none): iOS Safari a veces ignora click() en inputs ocultos.
+    input.style.cssText =
+      "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01;z-index:99999;";
+    let settled = false;
+    const finish = (file: File | null) => {
+      if (settled) return;
+      settled = true;
+      try {
+        input.remove();
+      } catch {
+        /* ignore */
+      }
+      resolve(file);
+    };
+    input.addEventListener("change", () => {
+      finish(input.files?.[0] ?? null);
+    });
+    // iOS / algunos Chromium no disparan change al cancelar: liberar al volver el foco.
+    const onFocus = () => {
+      window.setTimeout(() => {
+        if (!settled && (!input.files || input.files.length === 0)) finish(null);
+      }, 700);
+    };
+    window.addEventListener("focus", onFocus, { once: true });
+    document.body.appendChild(input);
+    // click() síncrono en el mismo turno del onPress — crítico en Safari/PWA.
+    input.click();
+  });
 }
 
 function mimeDesdeUri(uri: string): string {
