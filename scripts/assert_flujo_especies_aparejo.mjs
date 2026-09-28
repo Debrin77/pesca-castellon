@@ -37,6 +37,7 @@ for (const needle of [
   "Ver especies de este punto",
   "Punto ya elegido",
   "consumirAbrirConsultaEspecies",
+  "puntoElegido",
 ]) {
   if (!especies.includes(needle)) fail(`EspeciesScreen sin ${needle}`);
 }

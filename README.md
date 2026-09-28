@@ -21,9 +21,12 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ### Entrada y privacidad
 - **Presentación estilo App Store** al entrar (4 virtudes a pantalla completa:
   ¿Puedo?, Hoy pinta, Mis sitios, «Salgo a pescar»). Marca wordmark,
-  **fondos fotográficos** de orilla con Ken Burns, mockups de producto, elección
+  **fondos fotográficos** de orilla con Ken Burns visible (velo ligero), mockups de producto, elección
   de modalidad y CTA “Empezar a pescar”. Se cierra con la **✕**. Se puede volver
   a ver desde **Ajustes**.
+- **Punto de sesión**: al abrir, Mapa/Especies arrancan sin pin marcado. El último
+  sitio queda en Inicio («Último · …»); no se mezcla un embalse con kayak/barco mar
+  al cambiar de tab.
 - **Mapa estilo herramienta**: toca = consultar; **mantén pulsado** = guardar con
   color e icono (16 iconos); FAB (+) para medir / ruta / ancla; Satélite/Híbrido;
   capa **Normativa**; editar pin al tocarlo; FTUE long-press.

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions, Platform } from "react-native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import MapView, { Marker, Circle, Polyline } from "../components/map";
@@ -46,6 +46,7 @@ import SelectorModalidad from "../components/SelectorModalidad";
 import { consultarCosta, consultarToqueMapa, centroZona, todosLosPuertos, todosLosVedadosCosta, todasLasPlayas, aspectoMapaPlaya, aspectoMapaZonaCostaProhibida } from "../services/consultaCostaService";
 import {
   consultarEmbarcacion,
+  esMarConsultaEmbarcacion,
   todasLasRampas,
   todosLosVedadosMarinos,
 } from "../services/consultaEmbarcacionService";
@@ -178,9 +179,18 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   }, []);
 
   // Sincronizar mapa con el modo global (Inicio / Salgo) solo si ya hay elección.
+  // Al cambiar ríos ↔ costa, limpia la consulta local para no mezclar sitios.
+  const mapaModoRef = useRef(modo);
   useEffect(() => {
     if (!modoElegido) return;
     const mapa = modoAMapaModo(modoGlobal);
+    if (mapaModoRef.current !== mapa) {
+      setConsulta(null);
+      setMarcador(null);
+      setFichaAbierta(false);
+      setInfoNavegacion(null);
+    }
+    mapaModoRef.current = mapa;
     setModo(mapa);
     setModalidad(modalidadDesdeModoGlobal(modoGlobal));
   }, [modoGlobal, modoElegido]);
@@ -326,6 +336,14 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   useEffect(() => {
     if (!marcador || !mar) return;
     if (esModalidadEmbarcacionMar(modalidad)) {
+      // No reinterpretar un pin continental como «Fuera del mar (kayak)».
+      if (!esMarConsultaEmbarcacion(marcador.latitude, marcador.longitude)) {
+        setConsulta(null);
+        setMarcador(null);
+        setFichaAbierta(false);
+        setInfoNavegacion(null);
+        return;
+      }
       const r = consultarEmbarcacion(marcador.latitude, marcador.longitude, {
         variante: modalidad === "kayak" || modoGlobal === "kayak_mar" ? "kayak" : "barco",
       });
@@ -355,14 +373,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       if (!ok) return;
       const loc = await obtenerUbicacionActual();
       if (loc) {
-        const pos = { latitude: loc.lat, longitude: loc.lng };
-        setYo(pos);
-        if (puntoEnRegionMapa(loc.lat, loc.lng, provincia.regionMapa)) {
-          const c = consultarToqueMapa(loc.lat, loc.lng);
-          setConsulta(c);
-          if (!soloContinental && c.ambito === "maritimo") setModo("costa");
-          setMarcador(pos);
-        }
+        // Solo muestra «yo»: no marca consulta automática al arrancar
+        // (el usuario elige tocando el mapa o «Último» en Inicio).
+        setYo({ latitude: loc.lat, longitude: loc.lng });
       }
       cancelar = await suscribirseUbicacion((lat, lng) => {
         setYo({ latitude: lat, longitude: lng });
@@ -378,7 +391,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       });
     })();
     return () => cancelar?.();
-  }, [soloContinental, provincia.regionMapa]);
+  }, []);
 
   function toggleCapa(capa: keyof typeof capas) {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));

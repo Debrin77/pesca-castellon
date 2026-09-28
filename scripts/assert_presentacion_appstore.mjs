@@ -69,6 +69,8 @@ must("src/components/FondoCinePresentacion.tsx", [
   "FondoCinePresentacion",
   "Ken Burns",
   "crossfade",
+  "1.28",
+  "velo = 0.16",
 ]);
 
 must("src/components/MapaIgnPresentacion.tsx", [
@@ -110,7 +112,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v6",
+  "presentacion_virtudes_v7",
 ]);
 
 must("README.md", [
