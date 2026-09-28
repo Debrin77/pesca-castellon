@@ -32,6 +32,14 @@ const webBlurDark: ViewStyle =
       } as ViewStyle)
     : {};
 
+function esFondoTransparente(bg: ViewStyle["backgroundColor"]): boolean {
+  if (bg == null || bg === false) return false;
+  if (bg === "transparent") return true;
+  if (typeof bg !== "string") return false;
+  const n = bg.replace(/\s/g, "").toLowerCase();
+  return n === "rgba(0,0,0,0)" || n === "hsla(0,0%,0%,0)" || n === "#0000";
+}
+
 /** Layout va al contenedor de hijos; el resto (margen, borde…) al chrome. */
 function partirEstilo(style?: StyleProp<ViewStyle>): {
   chrome: ViewStyle;
@@ -63,8 +71,15 @@ function partirEstilo(style?: StyleProp<ViewStyle>): {
     flexBasis,
     width,
     height,
-    ...chrome
+    ...chromeRaw
   } = flat;
+
+  // `transparent` en el style del caller no debe anular el velo glass.
+  const chrome: ViewStyle = { ...chromeRaw };
+  if (esFondoTransparente(chrome.backgroundColor)) {
+    delete chrome.backgroundColor;
+  }
+
   return {
     chrome,
     contenido: {
@@ -120,7 +135,8 @@ export default function GlassCard({
           compacto && styles.compacto,
           oscuro ? styles.webOscuro : styles.webClaro,
           oscuro ? webBlurDark : webBlurLight,
-          style,
+          chrome,
+          contenido,
         ]}
       >
         {children}

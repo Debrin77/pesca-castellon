@@ -32,9 +32,15 @@ for (const n of [
   "compacto",
   "oscuro",
   "expo-blur",
+  "esFondoTransparente",
+  "partirEstilo",
 ]) {
   if (!glass.includes(n)) fail(`GlassCard sin ${n}`);
 }
+// El style del caller con backgroundColor transparent no debe pisar el velo glass.
+if (!/esFondoTransparente[\s\S]*delete chrome\.backgroundColor/.test(glass)) {
+  fail("GlassCard debe ignorar backgroundColor transparent del style");
+} else ok("GlassCard no anula velo con transparent");
 
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
@@ -45,6 +51,7 @@ for (const n of [
   "Aforos · caudal",
   "setAforoPanel",
   "<GlassCard",
+  "if (!aforosMeta.length && vivo) setAforoPanel([])",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
@@ -75,10 +82,11 @@ for (const n of [
   "NivelAforo",
   "aforoSimulado",
   "saih.chj.es/aforos",
+  "objetivo.length >= 8",
 ]) {
   if (!saih.includes(n)) fail(`saihService sin ${n}`);
 }
-ok("saihService aforos");
+ok("saihService aforos + match parcial acotado");
 
 const tipos = read("src/provincias/types.ts");
 if (!tipos.includes("AforoPanelMeta") || !tipos.includes("aforosPanel")) {
