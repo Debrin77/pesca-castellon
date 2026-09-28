@@ -342,15 +342,21 @@ function nivelDesdeUmbrales(
 function parsearAforoChj(html: string, nombreAforo: string): Partial<EstacionAforo> | null {
   const objetivo = normalizarNombre(nombreAforo);
   const filas = html.match(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi) ?? [];
+  let fallback: Partial<EstacionAforo> | null = null;
 
   for (const fila of filas) {
     const celdas = celdasDeFila(fila);
     if (celdas.length < 6) continue;
     const nombreFila = normalizarNombre(celdas[0] || "");
     if (!nombreFila || nombreFila === "PUNTO") continue;
-    if (nombreFila !== objetivo && !nombreFila.includes(objetivo) && !objetivo.includes(nombreFila)) {
-      continue;
-    }
+    // Exacto primero; includes solo si el objetivo es suficientemente largo
+    // (evita falsos positivos tipo "EA 5" dentro de otro código).
+    const exacto = nombreFila === objetivo;
+    const parcialMatch =
+      !exacto &&
+      objetivo.length >= 8 &&
+      (nombreFila.includes(objetivo) || objetivo.includes(nombreFila));
+    if (!exacto && !parcialMatch) continue;
 
     const caudalM3s = parseNum(celdas[2]);
     const umbralAmarillo = parseNum(celdas[3]);
@@ -360,7 +366,7 @@ function parsearAforoChj(html: string, nombreAforo: string): Partial<EstacionAfo
     const estado = celdas[7] || null;
     const rio = celdas[1] ? celdas[1].replace(/^CAUDAL\s+/i, "").trim() : null;
 
-    return {
+    const datos: Partial<EstacionAforo> = {
       rio,
       caudalM3s,
       umbralAmarillo,
@@ -371,8 +377,10 @@ function parsearAforoChj(html: string, nombreAforo: string): Partial<EstacionAfo
       nivel: nivelDesdeUmbrales(caudalM3s, umbralAmarillo, umbralNaranja, umbralRojo, estado),
       urlFicha: SAIH_CHJ_AFOROS_URL,
     };
+    if (exacto) return datos;
+    if (!fallback) fallback = datos;
   }
-  return null;
+  return fallback;
 }
 
 function aforoSimulado(nombre: string, rio?: string): EstacionAforo {

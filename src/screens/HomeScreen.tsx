@@ -335,6 +335,10 @@ export default function HomeScreen({ navigation }: Props) {
       }
 
       async function cargarSaih() {
+        // Vaciar aforos al instante si esta provincia no los tiene (CHG),
+        // sin esperar al fetch de embalses.
+        if (!aforosMeta.length && vivo) setAforoPanel([]);
+
         if (!tieneSaih || embalsesPanel.length === 0) {
           if (vivo) setSaihPanel([]);
         } else {
@@ -344,14 +348,15 @@ export default function HomeScreen({ navigation }: Props) {
             const panel: SaihChip[] = rows.map((r) => {
               const meta =
                 embalsesPanel.find((e) => e.nombre === r.nombre) ??
-                embalsesPanel.find((e) => e.etiqueta === r.etiqueta)!;
+                embalsesPanel.find((e) => e.etiqueta === r.etiqueta);
+              if (!meta) return null;
               return {
                 etiqueta: r.etiqueta,
                 zoneId: meta.zoneId,
                 pct: r.estacion.porcentajeLleno,
                 fuente: r.estacion.fuente,
               };
-            });
+            }).filter((x): x is SaihChip => x != null);
             setSaihPanel(panel);
             await guardarCacheOffline({ saih: panel });
           } catch {
@@ -362,10 +367,7 @@ export default function HomeScreen({ navigation }: Props) {
           }
         }
 
-        if (!aforosMeta.length) {
-          if (vivo) setAforoPanel([]);
-          return;
-        }
+        if (!aforosMeta.length) return;
         try {
           const rows = await getResumenAforos(aforosMeta);
           if (!vivo) return;
