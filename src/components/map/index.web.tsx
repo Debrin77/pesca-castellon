@@ -297,7 +297,7 @@ function eventoCoords(lat: number, lng: number) {
   return { nativeEvent: { coordinate: { latitude: lat, longitude: lng } } };
 }
 
-/** Click = consulta; long-press / contextmenu = guardar punto. */
+/** Click = consulta; long-press / contextmenu = guardar punto (ratón + táctil). */
 function ManejadorGestos({
   onPress,
   onLongPress,
@@ -307,6 +307,32 @@ function ManejadorGestos({
 }) {
   const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longFired = useRef(false);
+  const start = useRef<{ x: number; y: number } | null>(null);
+
+  function cancelHold() {
+    if (hold.current) clearTimeout(hold.current);
+    hold.current = null;
+    start.current = null;
+  }
+
+  function beginHold(lat: number, lng: number, clientX?: number, clientY?: number) {
+    longFired.current = false;
+    cancelHold();
+    start.current =
+      clientX != null && clientY != null ? { x: clientX, y: clientY } : null;
+    hold.current = setTimeout(() => {
+      longFired.current = true;
+      onLongPress?.(eventoCoords(lat, lng));
+      hold.current = null;
+    }, 480);
+  }
+
+  function maybeCancelPorMovimiento(clientX?: number, clientY?: number) {
+    if (!hold.current || !start.current || clientX == null || clientY == null) return;
+    const dx = clientX - start.current.x;
+    const dy = clientY - start.current.y;
+    if (dx * dx + dy * dy > 100) cancelHold();
+  }
 
   useMapEvents({
     click(e) {
@@ -321,22 +347,29 @@ function ManejadorGestos({
       onLongPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
     },
     mousedown(e) {
-      longFired.current = false;
-      if (hold.current) clearTimeout(hold.current);
-      hold.current = setTimeout(() => {
-        longFired.current = true;
-        onLongPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
-      }, 480);
+      const oe = e.originalEvent as MouseEvent | undefined;
+      beginHold(e.latlng.lat, e.latlng.lng, oe?.clientX, oe?.clientY);
     },
     mouseup() {
-      if (hold.current) clearTimeout(hold.current);
-      hold.current = null;
+      cancelHold();
     },
-    mousemove() {
-      if (hold.current) {
-        clearTimeout(hold.current);
-        hold.current = null;
-      }
+    mousemove(e) {
+      const oe = e.originalEvent as MouseEvent | undefined;
+      maybeCancelPorMovimiento(oe?.clientX, oe?.clientY);
+    },
+    touchstart(e) {
+      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+      beginHold(e.latlng.lat, e.latlng.lng, t?.clientX, t?.clientY);
+    },
+    touchend() {
+      cancelHold();
+    },
+    touchcancel() {
+      cancelHold();
+    },
+    touchmove(e) {
+      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+      maybeCancelPorMovimiento(t?.clientX, t?.clientY);
     },
   });
   return null;
@@ -352,10 +385,23 @@ function VolarA({ target }: { target?: { latitude: number; longitude: number; zo
   return null;
 }
 
-/** Fuerza basemap satélite / estándar desde el chip de la app (además del control Leaflet). */
-function CapaBaseForzada({ satelite }: { satelite: boolean }) {
-  if (satelite) {
+/** Fuerza basemap satélite / híbrido / estándar desde el chip de la app. */
+function CapaBaseForzada({ modo }: { modo: "standard" | "satellite" | "hybrid" }) {
+  if (modo === "standard") {
     return (
+      <TileLayer
+        key="base-std"
+        attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
+        url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
+        maxZoom={19}
+        maxNativeZoom={18}
+        errorTileUrl={PIXEL_TRANSPARENTE}
+        zIndex={1}
+      />
+    );
+  }
+  return (
+    <>
       <TileLayer
         key="base-sat"
         attribution="PNOA-MA © IGN-CNIG"
@@ -365,18 +411,19 @@ function CapaBaseForzada({ satelite }: { satelite: boolean }) {
         errorTileUrl={PIXEL_TRANSPARENTE}
         zIndex={1}
       />
-    );
-  }
-  return (
-    <TileLayer
-      key="base-std"
-      attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
-      url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
-      maxZoom={19}
-      maxNativeZoom={18}
-      errorTileUrl={PIXEL_TRANSPARENTE}
-      zIndex={1}
-    />
+      {modo === "hybrid" ? (
+        <TileLayer
+          key="base-hybrid-labels"
+          attribution="IGNBaseOrto © IGN-CNIG"
+          url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseOrto&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
+          maxZoom={19}
+          maxNativeZoom={18}
+          errorTileUrl={PIXEL_TRANSPARENTE}
+          zIndex={2}
+          opacity={0.95}
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -442,7 +489,8 @@ export default function MapView({
   inyectarCssMapa();
   // Sin fallback a Castellón: la pantalla debe pasar regionMapa de la provincia activa.
   const inicio = initialRegion || region || { latitude: 40, longitude: -3.5, latitudeDelta: 8, longitudeDelta: 8 };
-  const satelite = mapType === "satellite" || mapType === "hybrid";
+  const modoBase: "standard" | "satellite" | "hybrid" =
+    mapType === "hybrid" ? "hybrid" : mapType === "satellite" ? "satellite" : "standard";
 
   return (
     <View style={[{ flex: 1 }, style]}>
@@ -455,7 +503,7 @@ export default function MapView({
         zoomControl={false}
         attributionControl={true}
       >
-        <CapaBaseForzada satelite={satelite} />
+        <CapaBaseForzada modo={modoBase} />
         <LayersControl position="topright">
           {pescaWms === "icv" ? (
             <LayersControl.Overlay name="WMS ICV (ríos / cotos)">

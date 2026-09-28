@@ -24,8 +24,14 @@ import PulsePress from "../components/PulsePress";
 import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
 import LogoMarca from "../components/LogoMarca";
 import FondoCinePresentacion from "../components/FondoCinePresentacion";
+import SelectorModoPesca from "../components/SelectorModoPesca";
+import { useModoPesca } from "../context/ModoPescaContext";
 
-const { width: W, height: H } = Dimensions.get("window");
+const win = Dimensions.get("window");
+/** En web forzamos ancho tipo teléfono para no ver 2 slides a la vez. */
+const STAGE_W = Platform.OS === "web" ? Math.min(win.width, 420) : win.width;
+const W = STAGE_W;
+const H = win.height;
 /** Marco tipo captura App Store: domina el alto de la pantalla. */
 const PHONE_W = Math.min(W * 0.88, 372);
 const PHONE_H = Math.min(H * 0.56, 580);
@@ -55,6 +61,7 @@ type Slide = {
 export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx } = useProvincia();
+  const { modo, modoElegido, disponibles, setModo } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const nombreProv = provincia.nombre;
   const esCosta = !provincia.continentalOnly;
@@ -158,7 +165,8 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const esUltima = page === slides.length - 1;
 
   return (
-    <View style={styles.root}>
+    <View style={styles.rootOuter}>
+      <View style={[styles.root, Platform.OS === "web" && { width: STAGE_W, alignSelf: "center" }]}>
       <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.42} />
       <OndaAgua intensidad={0.35} tono={slide.tonoOnda} />
 
@@ -233,11 +241,25 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         ))}
       </ScrollView>
 
+      {esUltima ? (
+        <View style={styles.modoBlock}>
+          <Text style={styles.modoLabel}>¿Cómo vas a pescar?</Text>
+          <SelectorModoPesca
+            modo={modoElegido ? modo : null}
+            disponibles={disponibles}
+            onChange={(m) => void setModo(m)}
+            sobreOscuro
+          />
+        </View>
+      ) : null}
+
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         {!esUltima ? (
           <Text style={styles.hintSwipe}>Desliza para ver las virtudes →</Text>
         ) : (
-          <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
+          <Text style={styles.tipCierre}>
+            {modoElegido ? "Siguiente: el mapa con tu modalidad" : "Elige modalidad o entra y decide luego"}
+          </Text>
         )}
 
         <View style={styles.progressTrack}>
@@ -274,6 +296,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
             <Text style={styles.ctaArrow}>{page < slides.length - 1 ? "→" : "·"}</Text>
           </LinearGradient>
         </PulsePress>
+      </View>
       </View>
     </View>
   );
@@ -491,7 +514,20 @@ function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
 }
 
 const styles = StyleSheet.create({
+  rootOuter: { flex: 1, backgroundColor: COLORS.primaryDark },
   root: { flex: 1, overflow: "hidden", backgroundColor: COLORS.primaryDark },
+  modoBlock: {
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+    zIndex: 2,
+  },
+  modoLabel: {
+    color: "rgba(255,255,255,0.88)",
+    fontFamily: FONTS.semibold,
+    fontSize: 12,
+    marginBottom: 6,
+    textAlign: "center",
+  },
   closeBtn: {
     position: "absolute",
     right: 16,

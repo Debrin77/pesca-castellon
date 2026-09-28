@@ -23,7 +23,13 @@ export type IconoPuntoId =
   | "roca"
   | "rampa"
   | "secreto"
-  | "cebo";
+  | "cebo"
+  | "puente"
+  | "arbol"
+  | "pozo"
+  | "corriente"
+  | "muelle"
+  | "faro";
 
 export type ColorPunto = { id: ColorPuntoId; hex: string; label: string };
 export type IconoPunto = { id: IconoPuntoId; glyph: string; label: string };
@@ -50,6 +56,12 @@ export const ICONOS_PUNTO: IconoPunto[] = [
   { id: "rampa", glyph: "▶", label: "Rampa" },
   { id: "secreto", glyph: "★", label: "Secreto" },
   { id: "cebo", glyph: "◉", label: "Cebo" },
+  { id: "puente", glyph: "⊓", label: "Puente" },
+  { id: "arbol", glyph: "♣", label: "Árbol" },
+  { id: "pozo", glyph: "○", label: "Pozo" },
+  { id: "corriente", glyph: "»", label: "Corriente" },
+  { id: "muelle", glyph: "▤", label: "Muelle" },
+  { id: "faro", glyph: "✦", label: "Faro" },
 ];
 
 export const COLOR_PUNTO_DEFAULT: ColorPuntoId = "oro";

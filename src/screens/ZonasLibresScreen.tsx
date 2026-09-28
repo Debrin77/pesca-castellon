@@ -11,7 +11,18 @@ import {
   TramoOficial,
   tramoUsaRadioAnexo,
 } from "../services/consultaPescaService";
-import { obtenerPuntosGuardados, obtenerCapturas, guardarPunto, PuntoGuardado, Captura } from "../services/storageService";
+import {
+  obtenerPuntosGuardados,
+  obtenerCapturas,
+  guardarPunto,
+  actualizarPunto,
+  PuntoGuardado,
+  Captura,
+} from "../services/storageService";
+import {
+  ftueLongpressMapaVista,
+  marcarFtueLongpressMapaVista,
+} from "../services/offlineService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import { formatearCoords } from "../services/coordsUtils";
 import {
@@ -144,11 +155,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [waypoints, setWaypoints] = useState<WaypointMarino[]>([]);
   const [infoNavegacion, setInfoNavegacion] = useState<string | null>(null);
   const [basemapSatelite, setBasemapSatelite] = useState(false);
+  const [basemapHibrido, setBasemapHibrido] = useState(false);
   const [borradorGuardar, setBorradorGuardar] = useState<BorradorPunto | null>(null);
   const [sheetGuardar, setSheetGuardar] = useState(false);
   const [midiendo, setMidiendo] = useState(false);
   const [medidaPts, setMedidaPts] = useState<LatLng[]>([]);
   const [ancla, setAncla] = useState<(LatLng & { radioM: number }) | null>(null);
+  const [ftueLongpress, setFtueLongpress] = useState(false);
   const mar = !soloContinental && modo === "costa";
   const modoBarco = mar && (esModoEmbarcado(modoGlobal) || esModalidadEmbarcacionMar(modalidad));
   const modoKayak = esModoKayak(modoGlobal) || modalidad === "kayak" || modalidad === "kayak_embalse";
@@ -157,6 +170,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     medidaPts.length >= 2
       ? Math.round(distanciaKm(medidaPts[0].latitude, medidaPts[0].longitude, medidaPts[1].latitude, medidaPts[1].longitude) * 1000)
       : null;
+
+  useEffect(() => {
+    ftueLongpressMapaVista().then((visto) => {
+      if (!visto) setFtueLongpress(true);
+    });
+  }, []);
 
   // Sincronizar mapa con el modo global (Inicio / Salgo) solo si ya hay elección.
   useEffect(() => {
@@ -388,6 +407,31 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setSheetGuardar(true);
   }
 
+  function abrirEditarSitio(s: {
+    id: string;
+    titulo: string;
+    lat: number;
+    lng: number;
+    color?: string | null;
+    icono?: string | null;
+    tipo: string;
+  }) {
+    if (s.tipo !== "punto" || !s.id.startsWith("punto:")) {
+      evaluarPunto(s.lat, s.lng);
+      return;
+    }
+    const puntoId = s.id.slice("punto:".length);
+    setBorradorGuardar({
+      lat: s.lat,
+      lng: s.lng,
+      nombreSugerido: s.titulo,
+      puntoId,
+      color: s.color,
+      icono: s.icono,
+    });
+    setSheetGuardar(true);
+  }
+
   function alPulsarMapa(lat: number, lng: number) {
     if (midiendo) {
       setMedidaPts((prev) => {
@@ -403,6 +447,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     if (midiendo) {
       alPulsarMapa(lat, lng);
       return;
+    }
+    if (ftueLongpress) {
+      setFtueLongpress(false);
+      void marcarFtueLongpressMapaVista();
     }
     evaluarPunto(lat, lng);
     abrirSheetGuardar(lat, lng);
@@ -677,21 +725,30 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     lat: number;
     lng: number;
     zonaRelacionadaId?: string | null;
+    puntoId?: string | null;
   }) {
-    await guardarPunto({
-      nombre: datos.nombre,
-      lat: datos.lat,
-      lng: datos.lng,
-      zonaRelacionadaId: datos.zonaRelacionadaId ?? null,
-      color: datos.color,
-      icono: datos.icono,
-    });
+    if (datos.puntoId) {
+      await actualizarPunto(datos.puntoId, {
+        nombre: datos.nombre,
+        color: datos.color,
+        icono: datos.icono,
+      });
+    } else {
+      await guardarPunto({
+        nombre: datos.nombre,
+        lat: datos.lat,
+        lng: datos.lng,
+        zonaRelacionadaId: datos.zonaRelacionadaId ?? null,
+        color: datos.color,
+        icono: datos.icono,
+      });
+    }
     setPuntosPersonales(await obtenerPuntosGuardados());
     setCapas((prev) => ({ ...prev, misPuntos: true }));
     setSheetGuardar(false);
     setBorradorGuardar(null);
 
-    if (modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
+    if (!datos.puntoId && modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
       resolverPickUbicacion({ lat: datos.lat, lng: datos.lng, etiqueta: datos.nombre });
       setModoAnadir(false);
       setMotivoPick(null);
@@ -700,7 +757,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       return;
     }
 
-    Alert.alert("Punto guardado", `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`);
+    Alert.alert(
+      datos.puntoId ? "Punto actualizado" : "Punto guardado",
+      `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`
+    );
   }
 
   function usarUbicacionParaCaptura() {
@@ -950,13 +1010,34 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.layerChip, basemapSatelite && styles.layerChipActive]}
-          onPress={() => setBasemapSatelite((v) => !v)}
+          style={[styles.layerChip, (basemapSatelite || basemapHibrido) && styles.layerChipActive]}
+          onPress={() => {
+            // Ciclo: estándar → satélite → híbrido → estándar
+            if (!basemapSatelite && !basemapHibrido) {
+              setBasemapSatelite(true);
+              setBasemapHibrido(false);
+            } else if (basemapSatelite && !basemapHibrido) {
+              setBasemapSatelite(false);
+              setBasemapHibrido(true);
+            } else {
+              setBasemapSatelite(false);
+              setBasemapHibrido(false);
+            }
+          }}
           accessibilityRole="button"
-          accessibilityLabel="Mapa satélite"
-          accessibilityState={{ selected: basemapSatelite }}
+          accessibilityLabel={
+            basemapHibrido ? "Mapa híbrido" : basemapSatelite ? "Mapa satélite" : "Mapa estándar"
+          }
+          accessibilityState={{ selected: basemapSatelite || basemapHibrido }}
         >
-          <Text style={[styles.layerChipText, basemapSatelite && styles.layerChipTextActive]}>Satélite</Text>
+          <Text
+            style={[
+              styles.layerChipText,
+              (basemapSatelite || basemapHibrido) && styles.layerChipTextActive,
+            ]}
+          >
+            {basemapHibrido ? "Híbrido" : basemapSatelite ? "Satélite" : "Satélite"}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.layerChip, (capasExtra || capas.radar || capas.tracks || capas.batimetria) && styles.layerChipActive]}
@@ -1155,6 +1236,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             : ""}
         </Text>
       ) : null}
+      {ftueLongpress && !midiendo ? (
+        <TouchableOpacity
+          style={styles.ftueLongpress}
+          onPress={() => {
+            setFtueLongpress(false);
+            void marcarFtueLongpressMapaVista();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Mantén pulsado para guardar. Cerrar aviso"
+        >
+          <Text style={styles.ftueLongpressTxt}>
+            Mantén pulsado el mapa para guardar un punto · toca para cerrar
+          </Text>
+        </TouchableOpacity>
+      ) : null}
 
       <View style={[styles.mapWrap, { height: altoMapa }]}>
         <MapView
@@ -1163,7 +1259,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
-          mapType={basemapSatelite ? "satellite" : "standard"}
+          mapType={basemapHibrido ? "hybrid" : basemapSatelite ? "satellite" : "standard"}
           pescaWms={
             provincia.id === "sevilla" || provincia.id === "cordoba"
               ? "rediam"
@@ -1322,6 +1418,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                   }
                   title={s.titulo}
                   onPress={() => {
+                    if (s.tipo === "punto") {
+                      abrirEditarSitio(s);
+                      return;
+                    }
                     evaluarPunto(s.lat, s.lng);
                     void fijarPunto({ lat: s.lat, lng: s.lng, fuente: "mapa", etiqueta: s.titulo });
                   }}
@@ -1789,6 +1889,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontFamily: FONTS.bold,
     fontWeight: "700",
+  },
+  ftueLongpress: {
+    backgroundColor: COLORS.primaryDark,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  ftueLongpressTxt: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 12.5,
   },
   normativaDetalle: { marginTop: 8, marginBottom: 4 },
 });

@@ -10,6 +10,13 @@ export interface FranjaIndice {
   etiqueta: string;
 }
 
+/** Punto horario para gráfica scrubable (índice relativo 0–100). */
+export interface HoraIndice {
+  hora: string; // HH:mm
+  puntuacion: number;
+  solunar: "mayor" | "menor" | null;
+}
+
 export interface IndicePescaDia {
   fecha: string; // ISO yyyy-mm-dd
   puntuacion: number; // 0-100
@@ -30,6 +37,8 @@ export interface IndicePescaDia {
   mejorFranjaInicio?: string;
   mejorFranjaFin?: string;
   franjas?: FranjaIndice[];
+  /** Serie horaria completa para scrub (mismo día). */
+  horasIndice?: HoraIndice[];
 }
 
 /**
@@ -328,12 +337,17 @@ function construirFranjas(opts: {
   lat: number;
   sunriseIso?: string | null;
   sunsetIso?: string | null;
-}): { franjas: FranjaIndice[]; mejorInicio: string; mejorFin: string } {
+}): {
+  franjas: FranjaIndice[];
+  mejorInicio: string;
+  mejorFin: string;
+  horasIndice: HoraIndice[];
+} {
   const solunar = calcularSolunarDia(opts.fecha, opts.lat);
   const sunriseMin = opts.sunriseIso ? horaAMinutos(opts.sunriseIso.slice(11, 16)) : 7 * 60;
   const sunsetMin = opts.sunsetIso ? horaAMinutos(opts.sunsetIso.slice(11, 16)) : 20 * 60;
 
-  const porHora: { min: number; hora: string; score: number }[] = [];
+  const porHora: { min: number; hora: string; score: number; solunar: "mayor" | "menor" | null }[] = [];
   for (let i = 0; i < opts.horas.length; i++) {
     if (!opts.horas[i].startsWith(opts.fecha)) continue;
     const hora = opts.horas[i].slice(11, 16);
@@ -348,7 +362,7 @@ function construirFranjas(opts: {
       tipoSolunar: tipo,
       cercaOrtoOcaso,
     });
-    porHora.push({ min, hora, score });
+    porHora.push({ min, hora, score, solunar: tipo });
   }
 
   if (!porHora.length) {
@@ -356,6 +370,7 @@ function construirFranjas(opts: {
       franjas: [],
       mejorInicio: solunar.mejorHoraInicio,
       mejorFin: solunar.mejorHoraFin,
+      horasIndice: [],
     };
   }
 
@@ -396,7 +411,13 @@ function construirFranjas(opts: {
     };
   });
 
-  return { franjas, mejorInicio, mejorFin };
+  const horasIndice: HoraIndice[] = porHora.map((h) => ({
+    hora: h.hora,
+    puntuacion: h.score,
+    solunar: h.solunar,
+  }));
+
+  return { franjas, mejorInicio, mejorFin, horasIndice };
 }
 
 async function fetchJson(url: string, signal?: AbortSignal): Promise<any | null> {
@@ -519,7 +540,7 @@ export async function calcularIndicePesca(lat: number, lng: number, dias: number
           rLuna.puntos
       );
 
-      const { franjas, mejorInicio, mejorFin } = construirFranjas({
+      const { franjas, mejorInicio, mejorFin, horasIndice } = construirFranjas({
         fecha,
         horas: h.time,
         temps: h.temperature_2m,
@@ -560,6 +581,7 @@ export async function calcularIndicePesca(lat: number, lng: number, dias: number
         mejorFranjaInicio: mejorInicio,
         mejorFranjaFin: mejorFin,
         franjas,
+        horasIndice,
       });
     }
 

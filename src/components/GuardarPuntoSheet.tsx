@@ -18,6 +18,8 @@ import {
   ICONO_PUNTO_DEFAULT,
   type ColorPuntoId,
   type IconoPuntoId,
+  esColorPuntoId,
+  esIconoPuntoId,
 } from "../data/iconosPunto";
 import { COLORS, FONTS, RADIUS, SPACING } from "../theme";
 import { formatearCoords } from "../services/coordsUtils";
@@ -27,6 +29,10 @@ export type BorradorPunto = {
   lng: number;
   nombreSugerido?: string;
   zonaRelacionadaId?: string | null;
+  /** Si edita un punto existente. */
+  puntoId?: string | null;
+  color?: string | null;
+  icono?: string | null;
 };
 
 type Props = {
@@ -40,17 +46,19 @@ type Props = {
     lat: number;
     lng: number;
     zonaRelacionadaId?: string | null;
+    puntoId?: string | null;
   }) => void;
 };
 
 /**
- * Sheet para guardar un punto tras long-press: nombre + color + icono.
+ * Sheet para guardar o editar un punto: nombre + color + icono.
  */
 export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuardar }: Props) {
   const insets = useSafeAreaInsets();
   const [nombre, setNombre] = useState("");
   const [color, setColor] = useState<ColorPuntoId>(COLOR_PUNTO_DEFAULT);
   const [icono, setIcono] = useState<IconoPuntoId>(ICONO_PUNTO_DEFAULT);
+  const editando = !!borrador?.puntoId;
 
   useEffect(() => {
     if (!visible || !borrador) return;
@@ -58,8 +66,8 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
       borrador.nombreSugerido?.trim() ||
         `Punto del ${new Date().toLocaleDateString("es-ES")}`
     );
-    setColor(COLOR_PUNTO_DEFAULT);
-    setIcono(ICONO_PUNTO_DEFAULT);
+    setColor(esColorPuntoId(borrador.color) ? borrador.color : COLOR_PUNTO_DEFAULT);
+    setIcono(esIconoPuntoId(borrador.icono) ? borrador.icono : ICONO_PUNTO_DEFAULT);
   }, [visible, borrador]);
 
   if (!borrador) return null;
@@ -76,7 +84,7 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
             onPress={(e) => e.stopPropagation?.()}
           >
             <View style={styles.handle} />
-            <Text style={styles.titulo}>Guardar punto</Text>
+            <Text style={styles.titulo}>{editando ? "Editar punto" : "Guardar punto"}</Text>
             <Text style={styles.coords}>
               {formatearCoords(borrador.lat, borrador.lng)}
             </Text>
@@ -140,12 +148,15 @@ export default function GuardarPuntoSheet({ visible, borrador, onCerrar, onGuard
                   lat: borrador.lat,
                   lng: borrador.lng,
                   zonaRelacionadaId: borrador.zonaRelacionadaId ?? null,
+                  puntoId: borrador.puntoId ?? null,
                 });
               }}
               accessibilityRole="button"
-              accessibilityLabel="Confirmar guardar punto"
+              accessibilityLabel={editando ? "Guardar cambios del punto" : "Confirmar guardar punto"}
             >
-              <Text style={styles.ctaTxt}>Guardar en mis sitios</Text>
+              <Text style={styles.ctaTxt}>
+                {editando ? "Guardar cambios" : "Guardar en mis sitios"}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancel} onPress={onCerrar} accessibilityRole="button">
               <Text style={styles.cancelTxt}>Cancelar</Text>
@@ -170,6 +181,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: RADIUS.xl,
     paddingHorizontal: SPACING.lg,
     paddingTop: 10,
+    maxHeight: "92%",
   },
   handle: {
     alignSelf: "center",

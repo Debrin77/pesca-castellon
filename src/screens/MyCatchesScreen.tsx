@@ -8,6 +8,8 @@ import {
   TextInput,
   Alert,
   Image,
+  Platform,
+  Modal,
 } from "react-native";
 import { useFocusEffect, useRoute, useScrollToTop } from "@react-navigation/native";
 import { useProvincia } from "../context/ProvinciaContext";
@@ -47,8 +49,17 @@ import ListaAnimada from "../components/ListaAnimada";
 import IdentificarEspecie from "../components/IdentificarEspecie";
 import SelectorModalidad from "../components/SelectorModalidad";
 import { LinearGradient } from "expo-linear-gradient";
+import { capturarCondicionesDelMomento } from "../services/condicionesCapturaService";
+import {
+  importarKmlOKmzDesdeTextoOBytes,
+  placemarksAPuntos,
+} from "../services/kmlService";
+import { glyphIconoPunto, hexColorPunto } from "../data/iconosPunto";
+import LlevameAlPunto from "../components/LlevameAlPunto";
 
 type Tab = "favoritos" | "puntos" | "capturas";
+type OrdenLista = "fecha" | "especie" | "sitio";
+type GrupoLista = "ninguno" | "dia" | "sitio";
 
 interface Props {
   navigation: any;
@@ -97,6 +108,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [capturas, setCapturas] = useState<Captura[]>([]);
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
+  const [busquedaLista, setBusquedaLista] = useState("");
+  const [ordenLista, setOrdenLista] = useState<OrdenLista>("fecha");
+  const [grupoLista, setGrupoLista] = useState<GrupoLista>("ninguno");
+  const [llevame, setLlevame] = useState<{ nombre: string; lat: number; lng: number } | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarId, setMostrarId] = useState(false);
 
@@ -126,6 +141,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [notasPunto, setNotasPunto] = useState("");
   const [latPunto, setLatPunto] = useState("");
   const [lngPunto, setLngPunto] = useState("");
+  const [pegarKmlVisible, setPegarKmlVisible] = useState(false);
+  const [pegarKmlTexto, setPegarKmlTexto] = useState("");
+  const [pegandoKml, setPegandoKml] = useState(false);
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -220,6 +238,122 @@ export default function MyCatchesScreen({ navigation }: Props) {
     await exportarYCompartirGpx(`pesca-${provincia.id}-${new Date().toISOString().slice(0, 10)}.gpx`, gpx);
   }
 
+  async function aplicarPlacemarksImportados(places: Awaited<ReturnType<typeof importarKmlOKmzDesdeTextoOBytes>>) {
+    const payloads = placemarksAPuntos(places);
+    let guardados = 0;
+    for (const p of payloads) {
+      const enProvincia = asegurarCoordsEnProvincia(p.lat, p.lng, {
+        region: provincia.regionMapa,
+        nombre: provincia.nombre,
+      });
+      if (!enProvincia.ok) continue;
+      await guardarPunto(p);
+      guardados++;
+    }
+    await cargar();
+    Alert.alert(
+      "KML",
+      guardados
+        ? `Importados ${guardados} puntos en ${provincia.nombre}${
+            guardados < payloads.length ? ` (${payloads.length - guardados} fuera de provincia)` : ""
+          }.`
+        : `Ningún punto cayó en ${provincia.nombre} (${payloads.length} en el archivo).`
+    );
+  }
+
+  async function importarKml() {
+    try {
+      if (Platform.OS === "web" && typeof document !== "undefined") {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".kml,.kmz,application/vnd.google-earth.kml+xml";
+        input.onchange = async () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          try {
+            const buf = await file.arrayBuffer();
+            const places = await importarKmlOKmzDesdeTextoOBytes({
+              bytes: buf,
+              nombreArchivo: file.name,
+            });
+            await aplicarPlacemarksImportados(places);
+          } catch (err: any) {
+            Alert.alert("KML", err?.message || "No se pudo importar.");
+          }
+        };
+        input.click();
+        return;
+      }
+      setPegarKmlTexto("");
+      setPegarKmlVisible(true);
+    } catch (err: any) {
+      Alert.alert("KML", err?.message || "No se pudo importar.");
+    }
+  }
+
+  async function confirmarPegarKml() {
+    const texto = pegarKmlTexto.trim();
+    if (!texto) {
+      Alert.alert("KML", "Pega el contenido del archivo .kml (texto XML).");
+      return;
+    }
+    setPegandoKml(true);
+    try {
+      const places = await importarKmlOKmzDesdeTextoOBytes({ texto });
+      await aplicarPlacemarksImportados(places);
+      setPegarKmlVisible(false);
+      setPegarKmlTexto("");
+    } catch (err: any) {
+      Alert.alert("KML", err?.message || "No se pudo importar.");
+    } finally {
+      setPegandoKml(false);
+    }
+  }
+
+  const capturasFiltradas = useMemo(() => {
+    const q = busquedaLista.trim().toLowerCase();
+    let list = [...capturas];
+    if (q) {
+      list = list.filter((c) => {
+        const sp = resolverEspecie(c.especieId, speciesCatalog);
+        const blob = [sp?.nombre, c.especieId, c.nombreLugar, c.notas, c.fecha]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return blob.includes(q);
+      });
+    }
+    list.sort((a, b) => {
+      if (ordenLista === "especie") {
+        const na = resolverEspecie(a.especieId, speciesCatalog)?.nombre ?? a.especieId;
+        const nb = resolverEspecie(b.especieId, speciesCatalog)?.nombre ?? b.especieId;
+        return na.localeCompare(nb, "es");
+      }
+      if (ordenLista === "sitio") {
+        return (a.nombreLugar || "").localeCompare(b.nombreLugar || "", "es");
+      }
+      return (b.fecha || "").localeCompare(a.fecha || "");
+    });
+    return list;
+  }, [capturas, busquedaLista, ordenLista, speciesCatalog]);
+
+  const puntosFiltrados = useMemo(() => {
+    const q = busquedaLista.trim().toLowerCase();
+    let list = [...puntos];
+    if (q) {
+      list = list.filter((p) =>
+        [p.nombre, p.notas].filter(Boolean).join(" ").toLowerCase().includes(q)
+      );
+    }
+    list.sort((a, b) => {
+      if (ordenLista === "sitio" || ordenLista === "especie") {
+        return a.nombre.localeCompare(b.nombre, "es");
+      }
+      return (b.creadoEn || "").localeCompare(a.creadoEn || "");
+    });
+    return list;
+  }, [puntos, busquedaLista, ordenLista]);
+
   async function handleGuardarCaptura() {
     if (!especieId) {
       Alert.alert("Especie", "Elige primero la especie de la captura.");
@@ -239,6 +373,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
       });
       puntoId = punto.id;
     }
+    let condiciones = null;
+    if (coords) {
+      condiciones = await capturarCondicionesDelMomento(coords.lat, coords.lng);
+    }
     await guardarCaptura({
       especieId,
       fecha: new Date().toISOString().slice(0, 10),
@@ -251,6 +389,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
       lat: coords?.lat ?? null,
       lng: coords?.lng ?? null,
       modalidad,
+      condiciones,
     });
     setNombreLugar("");
     setTallaCm("");
@@ -487,6 +626,53 @@ export default function MyCatchesScreen({ navigation }: Props) {
             <Text style={styles.gpxBtnText}>Exportar GPX · {provincia.nombre}</Text>
             <Text style={styles.gpxSub}>Puntos + capturas con GPS + rutas (solo esta provincia)</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.gpxBtn, { marginTop: 8 }]}
+            onPress={() => void importarKml()}
+            accessibilityRole="button"
+            accessibilityLabel="Importar KML o KMZ"
+          >
+            <Text style={styles.gpxBtnText}>Importar KML / KMZ</Text>
+            <Text style={styles.gpxSub}>Placemarks → Mis sitios (privados, en esta provincia)</Text>
+          </TouchableOpacity>
+          {(tab === "capturas" || tab === "puntos") && (
+            <View style={styles.listaTools}>
+              <TextInput
+                style={styles.input}
+                value={busquedaLista}
+                onChangeText={setBusquedaLista}
+                placeholder={tab === "capturas" ? "Buscar especie, sitio, notas…" : "Buscar punto…"}
+                placeholderTextColor={COLORS.textMuted}
+                accessibilityLabel="Buscar en la lista"
+              />
+              <View style={styles.ordenRow}>
+                {(["fecha", "especie", "sitio"] as OrdenLista[]).map((o) => (
+                  <TouchableOpacity
+                    key={o}
+                    style={[styles.ordenChip, ordenLista === o && styles.ordenChipOn]}
+                    onPress={() => setOrdenLista(o)}
+                  >
+                    <Text style={[styles.ordenChipTxt, ordenLista === o && styles.ordenChipTxtOn]}>
+                      {o === "fecha" ? "Fecha" : o === "especie" ? "Especie" : "Sitio"}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+                {tab === "capturas"
+                  ? (["ninguno", "dia", "sitio"] as GrupoLista[]).map((g) => (
+                      <TouchableOpacity
+                        key={g}
+                        style={[styles.ordenChip, grupoLista === g && styles.ordenChipOn]}
+                        onPress={() => setGrupoLista(g)}
+                      >
+                        <Text style={[styles.ordenChipTxt, grupoLista === g && styles.ordenChipTxtOn]}>
+                          {g === "ninguno" ? "Sin grupo" : g === "dia" ? "Por día" : "Por sitio"}
+                        </Text>
+                      </TouchableOpacity>
+                    ))
+                  : null}
+              </View>
+            </View>
+          )}
           {cupoInfo ? (
             <View style={styles.cupoBox}>
               <Text style={styles.cupoTitle}>
@@ -701,51 +887,93 @@ export default function MyCatchesScreen({ navigation }: Props) {
               </View>
             )}
 
-            <Text style={styles.sectionTitle}>Historial ({capturas.length})</Text>
-            {capturas.length === 0 && <Text style={styles.emptyText}>Aún no has registrado ninguna captura.</Text>}
-            {capturas.map((c, i) => {
+            <Text style={styles.sectionTitle}>
+              Historial ({capturasFiltradas.length}
+              {busquedaLista.trim() ? ` · de ${capturas.length}` : ""})
+            </Text>
+            {capturasFiltradas.length === 0 && (
+              <Text style={styles.emptyText}>
+                {capturas.length ? "Ninguna captura coincide con la búsqueda." : "Aún no has registrado ninguna captura."}
+              </Text>
+            )}
+            {capturasFiltradas.map((c, i) => {
               const sp = especieInfo(c.especieId);
               const cara = caraDeEspecie(sp);
+              const prev = capturasFiltradas[i - 1];
+              const showGrupo =
+                grupoLista === "dia"
+                  ? !prev || prev.fecha !== c.fecha
+                  : grupoLista === "sitio"
+                    ? !prev || (prev.nombreLugar || "") !== (c.nombreLugar || "")
+                    : false;
+              const grupoLabel =
+                grupoLista === "dia" ? c.fecha : c.nombreLugar?.trim() || "Sin sitio";
               return (
                 <ListaAnimada key={c.id} index={i}>
-                  <View style={styles.card}>
-                    {c.fotoUri ? (
-                      <Image source={{ uri: c.fotoUri }} style={styles.fotoCard} />
-                    ) : (
-                      <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
-                        <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
-                      </LinearGradient>
-                    )}
-                    <View style={{ padding: 12 }}>
-                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                        <Text style={styles.cardTitle}>
-                          {sp?.icono} {sp?.nombre ?? c.especieId}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            eliminarCaptura(c.id).then(cargar);
-                          }}
-                        >
-                          <Text style={styles.deleteText}>Eliminar</Text>
-                        </TouchableOpacity>
-                      </View>
-                      <Text style={styles.cardMeta}>
-                        {c.fecha} {c.nombreLugar ? `· ${c.nombreLugar}` : ""}
-                        {c.lat != null && c.lng != null ? ` · ${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}` : ""}
-                      </Text>
-                      {(c.tallaCm || c.pesoKg) && (
-                        <Text style={styles.cardMeta}>
-                          {c.tallaCm ? `${c.tallaCm} cm` : ""} {c.pesoKg ? `· ${c.pesoKg} kg` : ""}
-                        </Text>
+                  <>
+                    {showGrupo ? <Text style={styles.grupoTitulo}>{grupoLabel}</Text> : null}
+                    <View style={styles.card}>
+                      {c.fotoUri ? (
+                        <Image source={{ uri: c.fotoUri }} style={styles.fotoCard} />
+                      ) : (
+                        <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
+                          <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
+                        </LinearGradient>
                       )}
-                      {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
-                      {c.lat != null && c.lng != null ? (
-                        <TouchableOpacity onPress={() => verCapturaEnMapa(c)}>
-                          <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
-                        </TouchableOpacity>
-                      ) : null}
+                      <View style={{ padding: 12 }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                          <Text style={styles.cardTitle}>
+                            {sp?.icono} {sp?.nombre ?? c.especieId}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              eliminarCaptura(c.id).then(cargar);
+                            }}
+                          >
+                            <Text style={styles.deleteText}>Eliminar</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.cardMeta}>
+                          {c.fecha} {c.nombreLugar ? `· ${c.nombreLugar}` : ""}
+                          {c.lat != null && c.lng != null ? ` · ${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}` : ""}
+                        </Text>
+                        {(c.tallaCm || c.pesoKg) && (
+                          <Text style={styles.cardMeta}>
+                            {c.tallaCm ? `${c.tallaCm} cm` : ""} {c.pesoKg ? `· ${c.pesoKg} kg` : ""}
+                          </Text>
+                        )}
+                        {c.condiciones ? (
+                          <Text style={styles.cardMeta}>
+                            Condiciones
+                            {c.condiciones.indice != null ? ` · índice ${c.condiciones.indice}` : ""}
+                            {c.condiciones.tempAireC != null
+                              ? ` · aire ${Math.round(c.condiciones.tempAireC)}°`
+                              : ""}
+                            {c.condiciones.faseLunar ? ` · ${c.condiciones.faseLunar}` : ""}
+                          </Text>
+                        ) : null}
+                        {c.notas && <Text style={styles.cardNotas}>{c.notas}</Text>}
+                        {c.lat != null && c.lng != null ? (
+                          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 4 }}>
+                            <TouchableOpacity onPress={() => verCapturaEnMapa(c)}>
+                              <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() =>
+                                setLlevame({
+                                  nombre: c.nombreLugar || sp?.nombre || "Captura",
+                                  lat: c.lat!,
+                                  lng: c.lng!,
+                                })
+                              }
+                            >
+                              <Text style={styles.verMapaHint}>Llévame →</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ) : null}
+                      </View>
                     </View>
-                  </View>
+                  </>
                 </ListaAnimada>
               );
             })}
@@ -843,17 +1071,32 @@ export default function MyCatchesScreen({ navigation }: Props) {
               </View>
             )}
 
-            <Text style={styles.sectionTitle}>Puntos guardados ({puntos.length})</Text>
-            {puntos.length === 0 && (
+            <Text style={styles.sectionTitle}>
+              Puntos guardados ({puntosFiltrados.length}
+              {busquedaLista.trim() ? ` · de ${puntos.length}` : ""})
+            </Text>
+            {puntosFiltrados.length === 0 && (
               <Text style={styles.emptyText}>
-                Aún no has guardado ningún punto en {provincia.nombre}. Usa GPS, el mapa o las coordenadas.
+                {puntos.length
+                  ? "Ningún punto coincide con la búsqueda."
+                  : `Aún no has guardado ningún punto en ${provincia.nombre}. Usa GPS, el mapa o las coordenadas.`}
               </Text>
             )}
-            {puntos.map((p, i) => (
+            {puntosFiltrados.map((p, i) => (
               <ListaAnimada key={p.id} index={i}>
                 <TouchableOpacity style={styles.cardPad} onPress={() => verPuntoEnMapa(p)}>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text style={styles.cardTitle}>{p.nombre}</Text>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
+                      <View
+                        style={[
+                          styles.puntoGlyph,
+                          { backgroundColor: hexColorPunto(p.color) },
+                        ]}
+                      >
+                        <Text style={styles.puntoGlyphTxt}>{glyphIconoPunto(p.icono)}</Text>
+                      </View>
+                      <Text style={styles.cardTitle}>{p.nombre}</Text>
+                    </View>
                     <TouchableOpacity
                       onPress={() => {
                         eliminarPunto(p.id).then(cargar);
@@ -866,13 +1109,74 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     {p.lat.toFixed(4)}, {p.lng.toFixed(4)}
                   </Text>
                   {p.notas ? <Text style={styles.cardNotas}>{p.notas}</Text> : null}
-                  <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                  <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
+                    <Text style={styles.verMapaHint}>Ver en el mapa →</Text>
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e?.stopPropagation?.();
+                        setLlevame({ nombre: p.nombre, lat: p.lat, lng: p.lng });
+                      }}
+                    >
+                      <Text style={styles.verMapaHint}>Llévame →</Text>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
               </ListaAnimada>
             ))}
           </>
         )}
       </ScrollView>
+
+      <LlevameAlPunto
+        visible={!!llevame}
+        destino={llevame}
+        onCerrar={() => setLlevame(null)}
+      />
+
+      <Modal
+        visible={pegarKmlVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setPegarKmlVisible(false)}
+      >
+        <View style={styles.pegarKmlBackdrop}>
+          <View style={styles.pegarKmlSheet}>
+            <Text style={styles.pegarKmlTitulo}>Importar KML</Text>
+            <Text style={styles.pegarKmlHint}>
+              Abre el .kml (o el .kml dentro del KMZ) y pega aquí el XML. Los waypoints se
+              filtrarán a {provincia.nombre}.
+            </Text>
+            <TextInput
+              style={styles.pegarKmlInput}
+              value={pegarKmlTexto}
+              onChangeText={setPegarKmlTexto}
+              multiline
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder={'<?xml version="1.0"?>… <kml>…'}
+              accessibilityLabel="Pegar contenido KML"
+            />
+            <View style={styles.pegarKmlAcciones}>
+              <TouchableOpacity
+                style={styles.pegarKmlCancelar}
+                onPress={() => setPegarKmlVisible(false)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.pegarKmlCancelarTxt}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.pegarKmlOk}
+                onPress={() => void confirmarPegarKml()}
+                disabled={pegandoKml}
+                accessibilityRole="button"
+                accessibilityLabel="Importar puntos del KML"
+              >
+                <Text style={styles.pegarKmlOkTxt}>{pegandoKml ? "Importando…" : "Importar"}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {!mostrarFormulario ? (
         <TouchableOpacity
@@ -918,6 +1222,50 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
   },
   fabCapturaTxt: { color: '#fff', fontSize: 28, fontWeight: '700', marginTop: -2 },
+  pegarKmlBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(8,18,14,0.45)",
+    justifyContent: "flex-end",
+  },
+  pegarKmlSheet: {
+    backgroundColor: COLORS.surface,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    padding: 18,
+    paddingBottom: 28,
+  },
+  pegarKmlTitulo: { fontSize: 20, fontWeight: "800", color: COLORS.primaryDark },
+  pegarKmlHint: { marginTop: 8, fontSize: 13, color: COLORS.textSecondary, lineHeight: 18 },
+  pegarKmlInput: {
+    marginTop: 14,
+    minHeight: 160,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    textAlignVertical: "top",
+    fontSize: 12,
+    color: COLORS.textPrimary,
+    backgroundColor: COLORS.background,
+  },
+  pegarKmlAcciones: { flexDirection: "row", gap: 10, marginTop: 14 },
+  pegarKmlCancelar: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  pegarKmlCancelarTxt: { fontWeight: "700", color: COLORS.textSecondary },
+  pegarKmlOk: {
+    flex: 1,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.water,
+  },
+  pegarKmlOkTxt: { fontWeight: "800", color: "#fff" },
 
   container: { flex: 1, backgroundColor: COLORS.background },
   tabBar: {
@@ -1092,4 +1440,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  listaTools: { marginTop: 12 },
+  ordenRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 },
+  ordenChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  ordenChipOn: { backgroundColor: COLORS.primaryLight, borderColor: COLORS.primary },
+  ordenChipTxt: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
+  ordenChipTxtOn: { color: COLORS.primaryDark },
+  grupoTitulo: {
+    marginTop: 12,
+    marginBottom: 4,
+    fontWeight: "800",
+    fontSize: 13,
+    color: COLORS.primaryDark,
+  },
+  puntoGlyph: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  puntoGlyphTxt: { color: "#fff", fontWeight: "800", fontSize: 12 },
 });

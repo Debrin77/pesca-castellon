@@ -110,7 +110,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v5",
+  "presentacion_virtudes_v6",
 ]);
 
 must("README.md", [
@@ -124,9 +124,33 @@ must("README.md", [
   "fondos fotográficos",
 ]);
 
-must("src/data/iconosPunto.ts", ["COLORES_PUNTO", "ICONOS_PUNTO", "hexColorPunto"]);
-must("src/components/GuardarPuntoSheet.tsx", ["Guardar punto", "Guardar en mis sitios"]);
+must("src/data/iconosPunto.ts", [
+  "COLORES_PUNTO",
+  "ICONOS_PUNTO",
+  "hexColorPunto",
+  "faro",
+  "muelle",
+]);
+must("src/components/GuardarPuntoSheet.tsx", [
+  "Guardar punto",
+  "Guardar en mis sitios",
+  "Editar punto",
+]);
 must("src/components/MapaFabHerramientas.tsx", ["Herramientas del mapa", "Medir", "Guardar"]);
+must("src/components/GraficoIndiceScrubable.tsx", ["Arrastra", "horas", "puntuacion"]);
+must("src/components/LlevameAlPunto.tsx", ["Llévame al punto", "rumboGrados"]);
+must("src/services/kmlService.ts", [
+  "parsearKml",
+  "importarKmlOKmzDesdeTextoOBytes",
+  "extraerKmlDeKmz",
+]);
+must("src/services/condicionesCapturaService.ts", ["capturarCondicionesDelMomento"]);
+must("src/components/map/index.web.tsx", [
+  "touchstart",
+  "CapaBaseForzada",
+  "IGNBaseOrto",
+  "hybrid",
+]);
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
 for (const n of [
@@ -134,11 +158,38 @@ for (const n of [
   "GuardarPuntoSheet",
   "MapaFabHerramientas",
   "basemapSatelite",
+  "basemapHibrido",
   "Normativa",
   "PinPuntoPersonal",
   "mapType",
+  "ftueLongpress",
+  "abrirEditarSitio",
+  "actualizarPunto",
 ]) {
   if (!mapa.includes(n)) fail(`ZonasLibresScreen sin «${n}»`);
+}
+
+const home = read("src/screens/HomeScreen.tsx");
+for (const n of ["pintaHeroLine", "modoBajoHero", "GraficoIndiceScrubable"]) {
+  if (!home.includes(n)) fail(`HomeScreen sin «${n}»`);
+}
+
+const catches = read("src/screens/MyCatchesScreen.tsx");
+for (const n of [
+  "capturarCondicionesDelMomento",
+  "importarKml",
+  "busquedaLista",
+  "LlevameAlPunto",
+  "condiciones",
+  "pegarKmlVisible",
+  "confirmarPegarKml",
+]) {
+  if (!catches.includes(n)) fail(`MyCatchesScreen sin «${n}»`);
+}
+
+const onb = read("src/screens/OnboardingScreen.tsx");
+if (!onb.includes("SelectorModoPesca") || !onb.includes("STAGE_W")) {
+  fail("Onboarding debe personalizar modalidad y limitar ancho web");
 }
 
 const pkg = read("package.json");
