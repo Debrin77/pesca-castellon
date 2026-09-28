@@ -86,7 +86,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 - Ficha por embalse (`PanelKayakEmbalse`) + documentación kayak en Licencia.
 
 ### Capturas (diario íntimo)
-- Favoritos, puntos guardados y capturas con foto/GPS.
+- Favoritos, puntos guardados y capturas con foto/GPS (la foto se guarda en el
+  dispositivo como imagen persistente, no como enlace temporal de la cámara/galería).
 - Al volver al mismo sitio: elige el punto guardado y cambia solo la fecha.
 - Cupos, filtro por ámbito, exportar **GPX** (compartir es una acción, no un feed).
 

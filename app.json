@@ -19,7 +19,9 @@
       "bundleIdentifier": "com.tuusuario.pescacastellon",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para avisarte si te acercas o estás dentro de un coto o zona vedada, y para mostrarte las zonas libres más cercanas.",
-        "NSFaceIDUsageDescription": "Usamos Face ID para desbloquear la app de forma rápida y segura."
+        "NSFaceIDUsageDescription": "Usamos Face ID para desbloquear la app de forma rápida y segura.",
+        "NSCameraUsageDescription": "Para fotografiar tus capturas en el diario.",
+        "NSPhotoLibraryUsageDescription": "Para adjuntar una foto a tus capturas en el diario."
       }
     },
     "android": {
@@ -30,7 +32,10 @@
       },
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "READ_EXTERNAL_STORAGE"
       ],
       "config": {
         "googleMaps": {
@@ -70,7 +75,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Para adjuntar una foto a tus capturas en el diario."
+          "photosPermission": "Para adjuntar una foto a tus capturas en el diario.",
+          "cameraPermission": "Para fotografiar tus capturas en el diario."
         }
       ]
     ]
