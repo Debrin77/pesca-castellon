@@ -108,8 +108,9 @@ export const SHADOW_SOFT = {
 export const SPACING = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 /**
- * Source Sans 3 (cuerpo) + Fraunces (titulares UI) + Syne (marca / vámonos).
+ * Source Sans 3 (UI/formulario) + Fraunces (titulares + relato de orilla) + Syne (marca).
  * Syne: sans geométrica moderna; contraste con el parche bordado y curiosidad.
+ * Fraunces regular/italic: voz de cuaderno de pesca (no de ficha administrativa).
  */
 export const FONTS = {
   regular: "SourceSans3_400Regular",
@@ -120,6 +121,9 @@ export const FONTS = {
   display: "Fraunces_700Bold",
   displaySemi: "Fraunces_600SemiBold",
   displayItalic: "Fraunces_600SemiBold_Italic",
+  /** Cuerpo narrativo: orilla, tiempo, bitácora (presentación). */
+  story: "Fraunces_400Regular",
+  storyItalic: "Fraunces_400Regular_Italic",
   /** Wordmark «Vámonos de pesca» (splash / puerta). */
   brand: "Syne_800ExtraBold",
   brandSemi: "Syne_600SemiBold",
@@ -128,8 +132,8 @@ export const FONTS = {
 /**
  * Escala tipográfica de producto (pesca de campo).
  * Syne = wordmark de marca (vámonos de pesca).
- * Fraunces = veredicto / títulos de sheet.
- * Source Sans = UI, chips de mapa, cuerpo y meta.
+ * Fraunces = veredicto / títulos / relato de presentación.
+ * Source Sans = UI, chips de mapa, formularios y meta.
  */
 export const TYPE = {
   /** Wordmark splash / puerta. */
@@ -168,6 +172,43 @@ export const TYPE = {
     lineHeight: 38,
     letterSpacing: 0.4,
     fontWeight: "700" as const,
+  },
+  /**
+   * Presentación App Store: virtud a pantalla completa.
+   * Serifa orgánica (no Source Sans de formulario).
+   */
+  storyTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 36,
+    lineHeight: 40,
+    letterSpacing: -0.6,
+    fontWeight: "700" as const,
+  },
+  /** Eyebrow de orilla / atmósfera. */
+  storyEyebrow: {
+    fontFamily: FONTS.displayItalic,
+    fontSize: 14,
+    lineHeight: 18,
+    letterSpacing: 0.35,
+    fontStyle: "italic" as const,
+    fontWeight: "600" as const,
+  },
+  /** Párrafo breve bajo el título de virtud. */
+  storyLead: {
+    fontFamily: FONTS.story,
+    fontSize: 16.5,
+    lineHeight: 24,
+    letterSpacing: 0.15,
+    fontWeight: "400" as const,
+  },
+  /** Hints, provincias, pie de presentación. */
+  storyCaption: {
+    fontFamily: FONTS.storyItalic,
+    fontSize: 13.5,
+    lineHeight: 18,
+    letterSpacing: 0.2,
+    fontStyle: "italic" as const,
+    fontWeight: "400" as const,
   },
   title: {
     fontFamily: FONTS.bold,

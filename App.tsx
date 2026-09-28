@@ -7,6 +7,8 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts, SourceSans3_400Regular, SourceSans3_600SemiBold, SourceSans3_700Bold, SourceSans3_800ExtraBold } from "@expo-google-fonts/source-sans-3";
 import {
+  Fraunces_400Regular,
+  Fraunces_400Regular_Italic,
   Fraunces_600SemiBold,
   Fraunces_600SemiBold_Italic,
   Fraunces_700Bold,
@@ -306,6 +308,8 @@ export default function App() {
     SourceSans3_600SemiBold,
     SourceSans3_700Bold,
     SourceSans3_800ExtraBold,
+    Fraunces_400Regular,
+    Fraunces_400Regular_Italic,
     Fraunces_600SemiBold,
     Fraunces_600SemiBold_Italic,
     Fraunces_700Bold,

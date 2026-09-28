@@ -21,7 +21,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ### Entrada y privacidad
 - **Presentación estilo App Store** al entrar (4 virtudes a pantalla completa:
   ¿Puedo?, Hoy pinta, Mis sitios, «Salgo a pescar»). Marca wordmark,
-  **fondos fotográficos** de orilla con Ken Burns visible (velo ligero), mockups de producto, elección
+  **tipografía Fraunces de orilla** (relato, no formulario), **fondos fotográficos**
+  de orilla con Ken Burns visible (velo ligero), mockups de producto, elección
   de modalidad y CTA “Empezar a pescar”. Se cierra con la **✕**. Se puede volver
   a ver desde **Ajustes**.
 - **Punto de sesión**: al abrir, Mapa/Especies arrancan sin pin marcado. El último

@@ -22,11 +22,18 @@ for (const k of [
   "displaySheet",
   "displayHero",
   "displayTitle",
+  "storyLead",
+  "storyTitle",
+  "storyCaption",
+  "storyEyebrow",
   "mapChip",
   "mapLegend",
   "overline",
 ]) {
   if (!theme.includes(k)) fail("theme TYPE falta " + k);
+}
+if (!theme.includes("Fraunces_400Regular") || !theme.includes("story:")) {
+  fail("theme debe definir FONTS.story con Fraunces regular (relato de orilla)");
 }
 if (!theme.includes("a84828")) {
   fail("PIN.captura debe ser terracota distinguible (#a84828)");
