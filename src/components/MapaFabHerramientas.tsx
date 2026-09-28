@@ -88,9 +88,11 @@ const styles = StyleSheet.create({
   root: {
     position: "absolute",
     right: 14,
-    bottom: 18,
+    /** Por encima del zoom de Leaflet (bottom-right) y del botón «Ir a mí». */
+    bottom: 88,
     alignItems: "flex-end",
-    zIndex: 20,
+    zIndex: 1200,
+    elevation: 12,
   },
   menu: {
     marginBottom: 10,
