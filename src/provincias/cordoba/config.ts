@@ -43,6 +43,8 @@ export const cordobaConfig: ProvinciaConfig = {
   species: construirSpeciesCordoba(),
   tieneIcv: true,
   tieneSaih: true,
+  /** CHG no publica HTML estable de aforos; solo embalses. */
+  aforosPanel: [],
   embalsesPanel: [
     {
       nombre: "E05 Iznájar",

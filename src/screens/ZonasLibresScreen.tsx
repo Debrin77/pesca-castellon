@@ -96,6 +96,7 @@ import { glyphIconoPunto, hexColorPunto } from "../data/iconosPunto";
 import GuardarPuntoSheet, { type BorradorPunto } from "../components/GuardarPuntoSheet";
 import MapaFabHerramientas, { type AccionFabMapa } from "../components/MapaFabHerramientas";
 import PinPuntoPersonal from "../components/PinPuntoPersonal";
+import GlassCard from "../components/GlassCard";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -910,9 +911,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled
       >
-      <View style={[styles.searchBox, mar && styles.searchBoxMar]}>
+      <GlassCard
+        compacto
+        oscuro={mar}
+        style={[styles.searchBox, mar && styles.searchBoxMar]}
+      >
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, mar && styles.searchInputMar]}
           placeholder={
             mar
               ? "Busca playa o municipio (Benicàssim, Grao, Nules…)"
@@ -920,7 +925,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 ? "Busca embalse, río o tus puntos"
                 : "Busca tramo, municipio o tus puntos"
           }
-          placeholderTextColor={COLORS.textMuted}
+          placeholderTextColor={mar ? "rgba(255,255,255,0.55)" : COLORS.textMuted}
           value={busqueda}
           onChangeText={(t) => {
             setBusqueda(t);
@@ -979,14 +984,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             ))}
           </View>
         )}
-      </View>
+      </GlassCard>
 
       {modosDisp.length > 1 ? (
-        <View
+        <GlassCard
+          compacto
+          oscuro={mar}
           style={[
             styles.modoBar,
             mar && styles.modoBarMar,
-            modoKayak && !mar && { backgroundColor: COLORS.kayakLight },
+            modoKayak && !mar && styles.modoBarKayak,
           ]}
         >
           <SelectorModoPesca
@@ -1013,10 +1020,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               }
             }}
           />
-        </View>
+        </GlassCard>
       ) : null}
 
-      <View style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
+      <GlassCard compacto oscuro={mar} style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
         <TouchableOpacity
           style={[styles.mapaModoBtn, mapaSimple && styles.mapaModoBtnOn]}
           onPress={() => {
@@ -1038,11 +1045,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         >
           <Text style={[styles.mapaModoTxt, !mapaSimple && styles.mapaModoTxtOn]}>Capas avanzadas</Text>
         </TouchableOpacity>
-      </View>
+      </GlassCard>
 
       {!mapaSimple ? (
       <>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center" }}>
+      <GlassCard compacto oscuro={mar} style={[styles.layerBar, mar && styles.modoBarMar]}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center", minHeight: 44 }}>
         <TouchableOpacity
           style={[styles.layerChip, normativaOn && styles.layerChipActive]}
           onPress={toggleNormativa}
@@ -1139,9 +1147,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </TouchableOpacity>
         ) : null}
       </ScrollView>
+      </GlassCard>
 
       {capasExtra ? (
-        <View style={[styles.capasExtraPanel, mar && styles.modoBarMar]}>
+        <GlassCard compacto oscuro={mar} style={[styles.capasExtraPanel, mar && styles.modoBarMar]}>
           <View style={styles.capasExtraCabecera}>
             <Text style={styles.capasExtraTitulo}>Más capas</Text>
             <TouchableOpacity
@@ -1254,7 +1263,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               <Text style={styles.layerChipText}>● Grabar ruta</Text>
             </TouchableOpacity>
           )}
-        </View>
+        </GlassCard>
       ) : grabandoId ? (
         <View style={[styles.rutaBtns, { paddingHorizontal: 12, paddingBottom: 6 }]}>
           <TouchableOpacity
@@ -1757,8 +1766,16 @@ const styles = StyleSheet.create({
   containerMar: { backgroundColor: COLORS.waterLight },
   scrollMapa: { flex: 1 },
   scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
-  searchBox: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8, backgroundColor: COLORS.surface, zIndex: 10 },
-  searchBoxMar: { backgroundColor: COLORS.waterLight },
+  searchBox: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 8,
+    backgroundColor: "transparent",
+    zIndex: 10,
+    marginHorizontal: 8,
+    marginTop: 6,
+  },
+  searchBoxMar: { backgroundColor: "transparent" },
   searchInput: {
     backgroundColor: COLORS.background,
     borderRadius: RADIUS.md,
@@ -1768,6 +1785,11 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     borderWidth: 1,
     borderColor: COLORS.border,
+  },
+  searchInputMar: {
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderColor: "rgba(255,255,255,0.28)",
+    color: "#fff",
   },
   sitiosChip: {
     alignSelf: "flex-start",
@@ -1817,14 +1839,28 @@ const styles = StyleSheet.create({
   cuencaChipOn: { backgroundColor: COLORS.primaryDark, borderColor: COLORS.primaryDark },
   cuencaTxt: { fontSize: 11.5, fontWeight: "700", color: COLORS.textPrimary },
   cuencaTxtOn: { color: "#fff" },
-  modoBar: { paddingHorizontal: 12, paddingBottom: 6, backgroundColor: COLORS.surface },
-  modoBarMar: { backgroundColor: COLORS.waterLight },
+  modoBar: {
+    paddingHorizontal: 12,
+    paddingBottom: 6,
+    paddingTop: 4,
+    backgroundColor: "transparent",
+    marginHorizontal: 8,
+    marginTop: 4,
+  },
+  modoBarMar: { backgroundColor: "transparent" },
+  modoBarKayak: {
+    backgroundColor: "rgba(180, 230, 200, 0.22)",
+    borderColor: "rgba(46, 125, 90, 0.35)",
+  },
   mapaModoRow: {
     flexDirection: "row",
     gap: 8,
     paddingHorizontal: 12,
     paddingBottom: 8,
-    backgroundColor: COLORS.surface,
+    paddingTop: 4,
+    backgroundColor: "transparent",
+    marginHorizontal: 8,
+    marginTop: 4,
   },
   mapaModoBtn: {
     flex: 1,
@@ -1939,7 +1975,12 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
   },
-  layerBar: { maxHeight: 44, backgroundColor: COLORS.surface },
+  layerBar: {
+    maxHeight: 52,
+    backgroundColor: "transparent",
+    marginHorizontal: 8,
+    marginTop: 4,
+  },
   layerChip: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -1959,9 +2000,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 4,
     paddingBottom: 8,
-    backgroundColor: COLORS.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    backgroundColor: "transparent",
+    marginHorizontal: 8,
+    marginTop: 4,
   },
   capasExtraCabecera: {
     flexDirection: "row",

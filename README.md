@@ -54,6 +54,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ### Inicio y salida
 - Veredicto rápido: **¿Puedo?** (norma) vs **¿Pinta?** (meteo).
 - Índice de pesca 0–100 (presión, temp. aire/agua, nubes, viento, lluvia, luna/solunar + franjas), clima Open-Meteo, hidrología SAIH (CHJ / CHG).
+- **Aforos fluviales** (caudal m³/s + umbrales) en Castellón y Cuenca vía SAIH Júcar; Sevilla/Córdoba sin fuente HTML estable (CHG).
+- Liquid Glass ligero en Inicio y Mapa (blur + velo translúcido).
 - Flujo **«Salgo a pescar»** y **primera salida** para principiantes.
 - Checklist, avisos de seguridad, recomendaciones del día.
 

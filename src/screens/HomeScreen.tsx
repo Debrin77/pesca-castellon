@@ -16,7 +16,8 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
-import { getResumenEmbalses } from "../services/saihService";
+import { getResumenEmbalses, getResumenAforos, type NivelAforo } from "../services/saihService";
+import GlassCard from "../components/GlassCard";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
 import BannerLicenciaPendiente from "../components/BannerLicenciaPendiente";
@@ -83,6 +84,14 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
+type AforoChip = {
+  etiqueta: string;
+  nombre: string;
+  rio: string | null;
+  caudalM3s: number | null;
+  nivel: NivelAforo;
+  fuente: string;
+};
 
 interface Props {
   navigation: any;
@@ -102,14 +111,26 @@ function aplicarCache(cache: CacheOffline, setters: {
   setClima: (v: ClimaActual | null) => void;
   setIndiceHoy: (v: IndicePescaDia | null) => void;
   setSaihPanel: (v: SaihChip[]) => void;
+  setAforoPanel?: (v: AforoChip[]) => void;
   setAvisosSeguridad: (v: AvisoSeguridad[]) => void;
   setUbicacion: (v: { lat: number; lng: number } | null) => void;
 }) {
   if (cache.clima) setters.setClima(cache.clima as ClimaActual);
   if (cache.indiceHoy) setters.setIndiceHoy(cache.indiceHoy as IndicePescaDia);
   if (Array.isArray(cache.saih)) setters.setSaihPanel(cache.saih as SaihChip[]);
+  if (Array.isArray(cache.saihAforos) && setters.setAforoPanel) {
+    setters.setAforoPanel(cache.saihAforos as AforoChip[]);
+  }
   if (Array.isArray(cache.avisos)) setters.setAvisosSeguridad(cache.avisos as AvisoSeguridad[]);
   if (cache.ubicacion) setters.setUbicacion(cache.ubicacion);
+}
+
+function colorNivelAforo(nivel: NivelAforo): string {
+  if (nivel === "rojo") return "#b33a3a";
+  if (nivel === "naranja") return "#c46a1a";
+  if (nivel === "amarillo") return "#c4a01a";
+  if (nivel === "fallo" || nivel === "sin_dato") return COLORS.textMuted;
+  return COLORS.waterDark;
 }
 
 export default function HomeScreen({ navigation }: Props) {
@@ -141,6 +162,7 @@ export default function HomeScreen({ navigation }: Props) {
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [saihPanel, setSaihPanel] = useState<SaihChip[]>([]);
+  const [aforoPanel, setAforoPanel] = useState<AforoChip[]>([]);
   const [avisosSeguridad, setAvisosSeguridad] = useState<AvisoSeguridad[]>([]);
   const [avisosCargando, setAvisosCargando] = useState(true);
   const [avisosError, setAvisosError] = useState<string | null>(null);
@@ -236,6 +258,7 @@ export default function HomeScreen({ navigation }: Props) {
           setClima,
           setIndiceHoy,
           setSaihPanel,
+          setAforoPanel,
           setAvisosSeguridad,
           setUbicacion,
         });
@@ -252,6 +275,7 @@ export default function HomeScreen({ navigation }: Props) {
     if (!puntoListo) return;
     let vivo = true;
     const embalsesPanel = provincia.embalsesPanel;
+    const aforosMeta = provincia.aforosPanel ?? [];
     const tieneSaih = provincia.tieneSaih;
 
     async function bootstrap() {
@@ -267,6 +291,7 @@ export default function HomeScreen({ navigation }: Props) {
           setClima,
           setIndiceHoy,
           setSaihPanel,
+          setAforoPanel,
           setAvisosSeguridad,
           setUbicacion,
         });
@@ -312,28 +337,52 @@ export default function HomeScreen({ navigation }: Props) {
       async function cargarSaih() {
         if (!tieneSaih || embalsesPanel.length === 0) {
           if (vivo) setSaihPanel([]);
+        } else {
+          try {
+            const rows = await getResumenEmbalses(embalsesPanel);
+            if (!vivo) return;
+            const panel: SaihChip[] = rows.map((r) => {
+              const meta =
+                embalsesPanel.find((e) => e.nombre === r.nombre) ??
+                embalsesPanel.find((e) => e.etiqueta === r.etiqueta)!;
+              return {
+                etiqueta: r.etiqueta,
+                zoneId: meta.zoneId,
+                pct: r.estacion.porcentajeLleno,
+                fuente: r.estacion.fuente,
+              };
+            });
+            setSaihPanel(panel);
+            await guardarCacheOffline({ saih: panel });
+          } catch {
+            if (!vivo) return;
+            if (cacheLocal && Array.isArray(cacheLocal.saih)) {
+              setSaihPanel(cacheLocal.saih as SaihChip[]);
+            }
+          }
+        }
+
+        if (!aforosMeta.length) {
+          if (vivo) setAforoPanel([]);
           return;
         }
         try {
-          const rows = await getResumenEmbalses(embalsesPanel);
+          const rows = await getResumenAforos(aforosMeta);
           if (!vivo) return;
-          const panel: SaihChip[] = rows.map((r) => {
-            const meta =
-              embalsesPanel.find((e) => e.nombre === r.nombre) ??
-              embalsesPanel.find((e) => e.etiqueta === r.etiqueta)!;
-            return {
-              etiqueta: r.etiqueta,
-              zoneId: meta.zoneId,
-              pct: r.estacion.porcentajeLleno,
-              fuente: r.estacion.fuente,
-            };
-          });
-          setSaihPanel(panel);
-          await guardarCacheOffline({ saih: panel });
+          const panel: AforoChip[] = rows.map((r) => ({
+            etiqueta: r.etiqueta,
+            nombre: r.nombre,
+            rio: r.estacion.rio,
+            caudalM3s: r.estacion.caudalM3s,
+            nivel: r.estacion.nivel,
+            fuente: r.estacion.fuente,
+          }));
+          setAforoPanel(panel);
+          await guardarCacheOffline({ saihAforos: panel });
         } catch {
           if (!vivo) return;
-          if (cacheLocal && Array.isArray(cacheLocal.saih)) {
-            setSaihPanel(cacheLocal.saih as SaihChip[]);
+          if (cacheLocal && Array.isArray(cacheLocal.saihAforos)) {
+            setAforoPanel(cacheLocal.saihAforos as AforoChip[]);
           }
         }
       }
@@ -351,7 +400,16 @@ export default function HomeScreen({ navigation }: Props) {
     return () => {
       vivo = false;
     };
-  }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, punto?.lat, punto?.lng, punto?.actualizadoEn, puntoListo]);
+  }, [
+    provincia.id,
+    provincia.tieneSaih,
+    provincia.embalsesPanel,
+    provincia.aforosPanel,
+    punto?.lat,
+    punto?.lng,
+    punto?.actualizadoEn,
+    puntoListo,
+  ]);
 
   async function cargar(
     conectadoParam?: boolean,
@@ -374,6 +432,7 @@ export default function HomeScreen({ navigation }: Props) {
           setClima,
           setIndiceHoy,
           setSaihPanel,
+          setAforoPanel,
           setAvisosSeguridad,
           setUbicacion,
         });
@@ -819,7 +878,7 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
 
-        <View style={styles.modoBajoHero}>
+        <GlassCard style={styles.modoBajoHero} compacto>
           <SelectorModoPesca
             modo={modoElegido ? modo : null}
             disponibles={disponibles}
@@ -876,7 +935,7 @@ export default function HomeScreen({ navigation }: Props) {
               </TouchableOpacity>
             </View>
           ) : null}
-        </View>
+        </GlassCard>
 
         {avisoSesionVisible ? (
           <View
@@ -963,7 +1022,7 @@ export default function HomeScreen({ navigation }: Props) {
           />
         ) : null}
 
-        <View style={styles.pulsoCard} accessibilityLabel="Pulso del día">
+        <GlassCard style={styles.pulsoCard} accessibilityLabel="Pulso del día">
           <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
           <Text style={styles.pulsoCardSub}>
             {modoElegido
@@ -1059,7 +1118,7 @@ export default function HomeScreen({ navigation }: Props) {
               ))}
             </View>
           ) : null}
-        </View>
+        </GlassCard>
 
         <View>
                     <SiguientePasoCard
@@ -1339,14 +1398,19 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ListaAnimada>
 
-        {/* Sitios personales / embalses */}
-        {(saihPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
+        {/* Sitios personales / embalses / aforos */}
+        {(saihPanel.length > 0 || aforoPanel.length > 0 || favoritos.length > 0 || puntos.length > 0) && (
           <ListaAnimada index={4}>
-            <View style={styles.bloque}>
+            <GlassCard style={styles.bloque}>
               <Text style={styles.bloqueTitulo}>Tus sitios</Text>
 
               {saihPanel.length > 0 && (
-                <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
+                <View
+                  style={{
+                    marginBottom:
+                      aforoPanel.length > 0 || favoritos.length > 0 || puntos.length > 0 ? 12 : 0,
+                  }}
+                >
                   <View style={styles.sectionRow}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                       <Text style={styles.sectionTitle}>Embalses</Text>
@@ -1374,6 +1438,46 @@ export default function HomeScreen({ navigation }: Props) {
                           {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
                         </Text>
                       </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+
+              {aforoPanel.length > 0 && (
+                <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
+                  <View style={styles.sectionRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={styles.sectionTitle}>Aforos · caudal</Text>
+                      <TerminoAyuda id="aforo" />
+                    </View>
+                    <Text style={styles.sectionMeta}>
+                      {aforoPanel.some((s) => s.fuente === "saih_chj") ? "SAIH Júcar" : "ejemplo"}
+                    </Text>
+                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                  >
+                    {aforoPanel.map((s) => (
+                      <View
+                        key={s.nombre}
+                        style={[styles.aforoChip, { borderColor: colorNivelAforo(s.nivel) }]}
+                        accessibilityLabel={`${s.etiqueta}${s.rio ? `, ${s.rio}` : ""}, ${
+                          s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo` : "sin dato"
+                        }`}
+                      >
+                        <Text style={styles.saihName}>{s.etiqueta}</Text>
+                        <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
+                          {s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)}` : "—"}
+                          <Text style={styles.aforoUnidad}> m³/s</Text>
+                        </Text>
+                        {s.rio ? (
+                          <Text style={styles.aforoRio} numberOfLines={1}>
+                            {s.rio}
+                          </Text>
+                        ) : null}
+                      </View>
                     ))}
                   </ScrollView>
                 </View>
@@ -1429,7 +1533,7 @@ export default function HomeScreen({ navigation }: Props) {
                   </ScrollView>
                 </View>
               )}
-            </View>
+            </GlassCard>
           </ListaAnimada>
         )}
 
@@ -1540,8 +1644,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   modoBajoHero: {
+    marginHorizontal: SPACING.md,
+    marginTop: 10,
+    marginBottom: 4,
     paddingHorizontal: SPACING.md,
     paddingTop: 12,
+    paddingBottom: 12,
     gap: 8,
   },
   gpsChip: {
@@ -1883,13 +1991,8 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.extrabold,
   },
   pulsoCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
     padding: 14,
     marginBottom: SPACING.sm,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    ...SHADOW_SOFT,
   },
   pulsoCardTitle: {
     fontSize: 17,
@@ -2100,6 +2203,9 @@ const styles = StyleSheet.create({
   },
   bloque: {
     marginBottom: SPACING.xl,
+    paddingHorizontal: SPACING.md,
+    paddingTop: 10,
+    paddingBottom: 14,
   },
   bloqueCabecera: {
     flexDirection: "row",
@@ -2132,17 +2238,29 @@ const styles = StyleSheet.create({
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
   linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
   saihChip: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: "rgba(255,255,255,0.72)",
     borderRadius: RADIUS.md,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: "rgba(255,255,255,0.85)",
     minWidth: 88,
     ...SHADOW_SOFT,
   },
   saihName: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
   saihPct: { fontSize: 18, fontWeight: "800", color: COLORS.waterDark, marginTop: 2 },
+  aforoChip: {
+    backgroundColor: "rgba(255,255,255,0.72)",
+    borderRadius: RADIUS.md,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 1.5,
+    minWidth: 104,
+    ...SHADOW_SOFT,
+  },
+  aforoCaudal: { fontSize: 18, fontWeight: "800", marginTop: 2 },
+  aforoUnidad: { fontSize: 11, fontWeight: "700" },
+  aforoRio: { fontSize: 10, fontWeight: "600", color: COLORS.textMuted, marginTop: 2 },
   favChip: {
     width: 130,
     backgroundColor: COLORS.surface,

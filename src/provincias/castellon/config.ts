@@ -25,8 +25,15 @@ export const castellonConfig: ProvinciaConfig = {
   embalsesPanel: [
     { nombre: "EMBALSE DE ARENÓS", etiqueta: "Arenós", zoneId: "embalse_arenos" },
     { nombre: "EMBALSE DE SICHAR", etiqueta: "Sichar", zoneId: "embalse_sichar" },
-    { nombre: "EMBALSE DE Mª CRISTINA", etiqueta: "Mª Cristina", zoneId: "embalse_maria_cristina" },
+    { nombre: "EMBALSE DE MARÍA CRISTINA", etiqueta: "Mª Cristina", zoneId: "embalse_maria_cristina" },
     { nombre: "EMBALSE DE ULLDECONA", etiqueta: "Ulldecona", zoneId: "embalse_ulldecona" },
+  ],
+  aforosPanel: [
+    { nombre: "EA 145 SALIDA DE ARENÓS", etiqueta: "Salida Arenós", rio: "Mijares" },
+    { nombre: "EA 5 LA PRESA DE VILA-REAL", etiqueta: "Vila-real", rio: "Mijares" },
+    { nombre: "EA 148 JÉRICA", etiqueta: "Jérica", rio: "Palancia" },
+    { nombre: "EA 99 SALIDA ULLDECONA", etiqueta: "Salida Ulldecona", rio: "Cenia" },
+    { nombre: "MC LA SÈNIA", etiqueta: "La Sénia", rio: "Cenia" },
   ],
   fuenteNormativa: FUENTE_NORMATIVA,
   checklistAntesDePescar: CHECKLIST_ANTES_DE_PESCAR,
