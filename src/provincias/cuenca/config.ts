@@ -56,6 +56,18 @@ export const cuencaConfig: ProvinciaConfig = {
       zoneId: "embalse_de_contreras",
       red: "chj",
     },
+    {
+      nombre: "EMBALSE DE LA TOBA",
+      etiqueta: "La Toba",
+      zoneId: "embalse_de_la_toba",
+      red: "chj",
+    },
+  ],
+  aforosPanel: [
+    { nombre: "EA 32 CUENCA", etiqueta: "Cuenca ciudad", rio: "Júcar" },
+    { nombre: "EA 107 SALIDA ALARCÓN", etiqueta: "Salida Alarcón", rio: "Júcar" },
+    { nombre: "EA 130 SALIDA CONTRERAS", etiqueta: "Salida Contreras", rio: "Cabriel" },
+    { nombre: "EA 91 SAN LORENZO DE LA PARRILLA", etiqueta: "S. Lorenzo", rio: "Júcar" },
   ],
   fuenteNormativa: {
     titulo: FUENTE_NORMATIVA_CLM.titulo,

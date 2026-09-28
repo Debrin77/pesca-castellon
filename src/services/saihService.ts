@@ -11,6 +11,7 @@ import { Platform } from "react-native";
 
 export type FuenteSaih = "saih_chj" | "saih_chg" | "simulado";
 export type RedSaih = "chj" | "chg";
+export type NivelAforo = "ok" | "amarillo" | "naranja" | "rojo" | "fallo" | "sin_dato";
 
 export interface EstacionHidrologica {
   id: string;
@@ -26,6 +27,22 @@ export interface EstacionHidrologica {
   urlFicha?: string;
 }
 
+/** Estación de aforo fluvial (caudal en río). */
+export interface EstacionAforo {
+  id: string;
+  nombre: string;
+  rio: string | null;
+  caudalM3s: number | null;
+  umbralAmarillo: number | null;
+  umbralNaranja: number | null;
+  umbralRojo: number | null;
+  fechaDato: string | null;
+  estado: string | null;
+  nivel: NivelAforo;
+  fuente: FuenteSaih;
+  urlFicha?: string;
+}
+
 export interface ConsultaSaih {
   nombre: string;
   fichaId?: number;
@@ -34,6 +51,7 @@ export interface ConsultaSaih {
 }
 
 const SAIH_CHJ_URL = "https://saih.chj.es/embalses";
+const SAIH_CHJ_AFOROS_URL = "https://saih.chj.es/aforos";
 const SAIH_CHG_SE_URL = "https://www.chguadalquivir.es/saih/EmbalSE.aspx";
 const SAIH_CHG_CO_URL = "https://www.chguadalquivir.es/saih/EmbalCO.aspx";
 const CACHE_MS = 5 * 60 * 1000;
@@ -299,6 +317,160 @@ async function obtenerPagina(url: string, debeContener: string): Promise<string>
     }
   }
   throw ultimoError ?? new Error(`Sin respuesta de ${url}`);
+}
+
+function nivelDesdeUmbrales(
+  caudal: number | null,
+  ama: number | null,
+  nar: number | null,
+  rojo: number | null,
+  estado: string | null
+): NivelAforo {
+  const est = (estado || "").toUpperCase();
+  if (est.includes("FALLO") || est.includes("SIN DATO")) return "fallo";
+  if (caudal == null) return "sin_dato";
+  if (rojo != null && caudal >= rojo) return "rojo";
+  if (nar != null && caudal >= nar) return "naranja";
+  if (ama != null && caudal >= ama) return "amarillo";
+  return "ok";
+}
+
+/**
+ * Tabla saih.chj.es/aforos:
+ * Punto | Variable | Último valor | Umbral amarillo/naranja/rojo | Fecha | Estado
+ */
+function parsearAforoChj(html: string, nombreAforo: string): Partial<EstacionAforo> | null {
+  const objetivo = normalizarNombre(nombreAforo);
+  const filas = html.match(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi) ?? [];
+
+  for (const fila of filas) {
+    const celdas = celdasDeFila(fila);
+    if (celdas.length < 6) continue;
+    const nombreFila = normalizarNombre(celdas[0] || "");
+    if (!nombreFila || nombreFila === "PUNTO") continue;
+    if (nombreFila !== objetivo && !nombreFila.includes(objetivo) && !objetivo.includes(nombreFila)) {
+      continue;
+    }
+
+    const caudalM3s = parseNum(celdas[2]);
+    const umbralAmarillo = parseNum(celdas[3]);
+    const umbralNaranja = parseNum(celdas[4]);
+    const umbralRojo = parseNum(celdas[5]);
+    const fechaDato = celdas[6] || null;
+    const estado = celdas[7] || null;
+    const rio = celdas[1] ? celdas[1].replace(/^CAUDAL\s+/i, "").trim() : null;
+
+    return {
+      rio,
+      caudalM3s,
+      umbralAmarillo,
+      umbralNaranja,
+      umbralRojo,
+      fechaDato,
+      estado,
+      nivel: nivelDesdeUmbrales(caudalM3s, umbralAmarillo, umbralNaranja, umbralRojo, estado),
+      urlFicha: SAIH_CHJ_AFOROS_URL,
+    };
+  }
+  return null;
+}
+
+function aforoSimulado(nombre: string, rio?: string): EstacionAforo {
+  const seed = nombre.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const caudalM3s = Number(((seed % 40) / 10).toFixed(2));
+  return {
+    id: nombre,
+    nombre,
+    rio: rio ?? null,
+    caudalM3s,
+    umbralAmarillo: 20,
+    umbralNaranja: 50,
+    umbralRojo: 100,
+    fechaDato: null,
+    estado: null,
+    nivel: "ok",
+    fuente: "simulado",
+    urlFicha: SAIH_CHJ_AFOROS_URL,
+  };
+}
+
+export async function getEstadoAforo(
+  nombreAforo: string,
+  rio?: string
+): Promise<EstacionAforo | null> {
+  if (!nombreAforo) return null;
+  try {
+    const html = await obtenerPagina(SAIH_CHJ_AFOROS_URL, "CAUDAL");
+    const datos = parsearAforoChj(html, nombreAforo);
+    if (!datos || (datos.caudalM3s == null && !datos.estado)) {
+      throw new Error("No se encontró el aforo en SAIH CHJ");
+    }
+    return {
+      id: nombreAforo,
+      nombre: nombreAforo,
+      rio: datos.rio ?? rio ?? null,
+      caudalM3s: datos.caudalM3s ?? null,
+      umbralAmarillo: datos.umbralAmarillo ?? null,
+      umbralNaranja: datos.umbralNaranja ?? null,
+      umbralRojo: datos.umbralRojo ?? null,
+      fechaDato: datos.fechaDato ?? null,
+      estado: datos.estado ?? null,
+      nivel: datos.nivel ?? "sin_dato",
+      fuente: "saih_chj",
+      urlFicha: SAIH_CHJ_AFOROS_URL,
+    };
+  } catch (err) {
+    console.warn("No se pudo consultar aforo SAIH, usando ejemplo:", err);
+    return aforoSimulado(nombreAforo, rio);
+  }
+}
+
+/** Resumen de aforos fluviales para el panel de Inicio (CHJ). */
+export async function getResumenAforos(
+  estaciones: { nombre: string; etiqueta: string; rio?: string }[]
+): Promise<{ etiqueta: string; nombre: string; estacion: EstacionAforo }[]> {
+  if (!estaciones.length) return [];
+  // Una sola descarga HTML para todos los aforos.
+  let html: string | null = null;
+  try {
+    html = await obtenerPagina(SAIH_CHJ_AFOROS_URL, "CAUDAL");
+  } catch (err) {
+    console.warn("SAIH aforos no disponible:", err);
+  }
+
+  const out: { etiqueta: string; nombre: string; estacion: EstacionAforo }[] = [];
+  for (const e of estaciones) {
+    if (html) {
+      const datos = parsearAforoChj(html, e.nombre);
+      if (datos && (datos.caudalM3s != null || datos.estado)) {
+        out.push({
+          etiqueta: e.etiqueta,
+          nombre: e.nombre,
+          estacion: {
+            id: e.nombre,
+            nombre: e.nombre,
+            rio: datos.rio ?? e.rio ?? null,
+            caudalM3s: datos.caudalM3s ?? null,
+            umbralAmarillo: datos.umbralAmarillo ?? null,
+            umbralNaranja: datos.umbralNaranja ?? null,
+            umbralRojo: datos.umbralRojo ?? null,
+            fechaDato: datos.fechaDato ?? null,
+            estado: datos.estado ?? null,
+            nivel: datos.nivel ?? "sin_dato",
+            fuente: "saih_chj",
+            urlFicha: SAIH_CHJ_AFOROS_URL,
+          },
+        });
+        continue;
+      }
+    }
+    out.push({
+      etiqueta: e.etiqueta,
+      nombre: e.nombre,
+      estacion: aforoSimulado(e.nombre, e.rio),
+    });
+  }
+  return out;
 }
 
 function urlsChgPara(nombre: string, urlPagina?: string): string[] {

@@ -32,6 +32,16 @@ export interface EmbalsePanelMeta {
   urlPagina?: string;
 }
 
+/** Estación de aforo fluvial (SAIH CHJ · saih.chj.es/aforos). */
+export interface AforoPanelMeta {
+  /** Nombre exacto de la fila en la tabla de aforos CHJ. */
+  nombre: string;
+  etiqueta: string;
+  /** Río / cauce (etiqueta corta UI). */
+  rio?: string;
+  red?: "chj";
+}
+
 export interface FuenteNormativaProvincia {
   titulo: string;
   vigenciaNota: string;
@@ -88,6 +98,11 @@ export interface ProvinciaConfig {
   tieneIcv: boolean;
   tieneSaih: boolean;
   embalsesPanel: EmbalsePanelMeta[];
+  /**
+   * Aforos fluviales (caudal m³/s) del SAIH CHJ.
+   * Vacío en provincias CHG hasta que haya fuente HTML estable.
+   */
+  aforosPanel?: AforoPanelMeta[];
   fuenteNormativa: FuenteNormativaProvincia;
   checklistAntesDePescar: string[];
   etiquetaLicenciaContinental: string;

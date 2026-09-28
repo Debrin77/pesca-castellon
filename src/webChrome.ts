@@ -110,6 +110,19 @@ export function aplicarEstilosWeb() {
       -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
       backdrop-filter: blur(22px) saturate(180%) !important;
     }
+    /* Liquid Glass ligero (Inicio / Mapa) */
+    .pesca-glass {
+      -webkit-backdrop-filter: blur(18px) saturate(170%);
+      backdrop-filter: blur(18px) saturate(170%);
+      background: rgba(255, 255, 255, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+    }
+    .pesca-glass--oscuro {
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+      background: rgba(12, 36, 42, 0.42);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
   `;
   document.head.appendChild(style);
 }

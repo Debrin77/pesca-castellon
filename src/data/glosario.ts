@@ -41,7 +41,15 @@ export const GLOSARIO: Record<string, TerminoGlosario> = {
     etiqueta: "SAIH",
     resumen: "Sistema Automático de Información Hidrológica (embalses y caudales).",
     detalle:
-      "En fichas de embalse verás el % de llenado cuando la consulta funciona (CHJ / CHG según provincia).",
+      "Embalses: % de llenado (CHJ / CHG). En Castellón y Cuenca también aforos fluviales con caudal m³/s y umbrales de aviso del SAIH Júcar.",
+    consejoId: "voc-saih",
+  },
+  aforo: {
+    id: "aforo",
+    etiqueta: "Aforo",
+    resumen: "Estación que mide el caudal de un río (m³/s) en tiempo casi real.",
+    detalle:
+      "Datos del SAIH Júcar. Colores según umbrales oficiales (amarillo / naranja / rojo). Orientativo: no sustituye avisos de Protección Civil.",
     consejoId: "voc-saih",
   },
   zpl: {

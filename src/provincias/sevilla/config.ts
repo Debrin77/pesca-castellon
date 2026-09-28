@@ -43,6 +43,8 @@ export const sevillaConfig: ProvinciaConfig = {
   species: construirSpeciesSevilla(),
   tieneIcv: true,
   tieneSaih: true,
+  /** CHG no publica HTML estable de aforos; solo embalses. */
+  aforosPanel: [],
   embalsesPanel: [
     {
       nombre: "E64 Cala",

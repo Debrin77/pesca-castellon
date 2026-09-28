@@ -21,6 +21,8 @@ export interface CacheOffline {
   /** Etiqueta de la última salida (rampa / GPS) asociada al índice barco. */
   etiquetaBarco?: string | null;
   saih?: any;
+  /** Aforos fluviales CHJ (caudal m³/s) del panel Inicio. */
+  saihAforos?: any;
   avisos?: any;
   ubicacion?: { lat: number; lng: number };
 }
