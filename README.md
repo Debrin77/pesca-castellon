@@ -19,12 +19,13 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 ## Estado actual (v0.7)
 
 ### Entrada y privacidad
-- **Presentación estilo App Store** al entrar (pantallas a pantalla completa con
-  virtudes claras: ¿Puedo?, ¿Pinta?, **Río · Embalse · Kayak · Mar**, **Cómo medir**
-  (placa propia por especie), privacidad, PIN y «Salgo a pescar»). Marca wordmark,
-  **fondos fotográficos** con transición Ken Burns, mockups vivos con carrusel de
-  fotos y CTA “Empezar a pescar”.
-  Se cierra con la **✕** arriba a la derecha. Se puede volver a ver desde **Ajustes**.
+- **Presentación estilo App Store** al entrar (4 virtudes a pantalla completa:
+  ¿Puedo?, Hoy pinta, Mis sitios, «Salgo a pescar»). Marca wordmark,
+  **fondos fotográficos** de orilla con Ken Burns, mockups de producto y CTA
+  “Empezar a pescar”. Se cierra con la **✕**. Se puede volver a ver desde **Ajustes**.
+- **Mapa estilo herramienta**: toca = consultar; **mantén pulsado** = guardar con
+  color e icono; FAB (+) para medir / ruta / ancla; chip **Satélite** y capa
+  **Normativa** unificada.
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico
   a pantalla completa al abrir o al volver de segundo plano.
 - **Biometría** (Face ID / huella) opcional una vez activo el PIN.

@@ -14,6 +14,8 @@ export type SitioPersonal = {
   meta: string;
   lat: number;
   lng: number;
+  color?: string | null;
+  icono?: string | null;
 };
 
 function capturaConCoords(
@@ -50,6 +52,8 @@ export function listarSitiosPersonales(
       meta: formatearCoords(p.lat, p.lng, 4),
       lat: p.lat,
       lng: p.lng,
+      color: p.color ?? null,
+      icono: p.icono ?? null,
     });
   }
 

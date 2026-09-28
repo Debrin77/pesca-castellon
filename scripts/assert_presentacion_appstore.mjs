@@ -1,5 +1,5 @@
 /**
- * Assert: presentación estilo App Store al entrar (pantallas + ✕ + PIN).
+ * Assert: presentación estilo App Store al entrar (4 virtudes + ✕ + PIN).
  */
 import fs from "fs";
 import path from "path";
@@ -46,7 +46,7 @@ must("src/screens/OnboardingScreen.tsx", [
   "primera salida",
   "¿Puedo aquí?",
   "Hoy pinta",
-  "Solo en este móvil",
+  "Mis sitios",
   "Salgo a pescar",
   "Vámonos de pesca",
   "Río · Embalse · Kayak · Mar",
@@ -55,28 +55,19 @@ must("src/screens/OnboardingScreen.tsx", [
   "Desliza para ver",
   'id: "legal"',
   'id: "pinta"',
-  'id: "intima"',
-  'id: "modos"',
-  'id: "medir"',
-  "MockModos",
-  "MockMedir",
-  "Cómo medir · placa propia",
-  "Particularidad · ficha de especie",
-  "Una placa por especie",
+  'id: "sitios"',
+  'id: "campo"',
   "Solunar",
   "FondoCinePresentacion",
-  "CarruselFotosPresentacion",
   "Castellón · Sevilla · Córdoba · Cuenca",
+  "surfcasting-orilla",
+  "rockfishing-roca",
+  "Long-press",
 ]);
 
 must("src/components/FondoCinePresentacion.tsx", [
   "FondoCinePresentacion",
   "Ken Burns",
-  "crossfade",
-]);
-
-must("src/components/CarruselFotosPresentacion.tsx", [
-  "CarruselFotosPresentacion",
   "crossfade",
 ]);
 
@@ -119,7 +110,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v4",
+  "presentacion_virtudes_v5",
 ]);
 
 must("README.md", [
@@ -132,6 +123,23 @@ must("README.md", [
   "Kayak es modalidad propia",
   "fondos fotográficos",
 ]);
+
+must("src/data/iconosPunto.ts", ["COLORES_PUNTO", "ICONOS_PUNTO", "hexColorPunto"]);
+must("src/components/GuardarPuntoSheet.tsx", ["Guardar punto", "Guardar en mis sitios"]);
+must("src/components/MapaFabHerramientas.tsx", ["Herramientas del mapa", "Medir", "Guardar"]);
+
+const mapa = read("src/screens/ZonasLibresScreen.tsx");
+for (const n of [
+  "alLongPressMapa",
+  "GuardarPuntoSheet",
+  "MapaFabHerramientas",
+  "basemapSatelite",
+  "Normativa",
+  "PinPuntoPersonal",
+  "mapType",
+]) {
+  if (!mapa.includes(n)) fail(`ZonasLibresScreen sin «${n}»`);
+}
 
 const pkg = read("package.json");
 if (!pkg.includes("assert_presentacion_appstore.mjs")) {

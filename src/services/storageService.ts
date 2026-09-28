@@ -11,6 +11,10 @@ export interface PuntoGuardado {
   creadoEn: string; // ISO
   zonaRelacionadaId?: string | null;
   provinciaId?: ProvinciaId;
+  /** Color del pin (catálogo iconosPunto). */
+  color?: string | null;
+  /** Icono del pin (catálogo iconosPunto). */
+  icono?: string | null;
 }
 
 export interface Captura {
