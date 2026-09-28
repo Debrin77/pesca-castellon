@@ -123,6 +123,35 @@ function inyectarCssMapa() {
       transform: scale(1.15);
       filter: drop-shadow(0 2px 5px rgba(91,45,142,0.5));
     }
+    .pesca-pin-personal {
+      position: relative;
+      width: 28px;
+      height: 36px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.28));
+    }
+    .pesca-pin-personal b {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--pin, #c4921a);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      border: 2px solid #fff;
+      line-height: 1;
+    }
+    .pesca-pin-personal i {
+      display: block;
+      width: 0;
+      height: 0;
+      margin: -2px auto 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid var(--pin, #c4921a);
+    }
     .pesca-pin {
       position: relative;
       width: 22px;
@@ -201,9 +230,10 @@ function zoomDesdeDelta(delta?: number): number {
   return 13;
 }
 
-function tipoMarcador(identifier?: string, pinColor?: string, title?: string): "user" | "spot" | "seleccion" | "pin" {
+function tipoMarcador(identifier?: string, pinColor?: string, title?: string): "user" | "spot" | "seleccion" | "pin" | "personal" {
   if (identifier === "user" || title === "Tú") return "user";
   if (identifier === "seleccion" || title === "Punto consultado" || title === "Consulta") return "seleccion";
+  if (identifier?.startsWith("personal:")) return "personal";
   if (identifier === "spot" || pinColor === "#c4921a" || pinColor === "#f9a825") return "spot";
   return "pin";
 }
@@ -217,6 +247,16 @@ function iconoMarcador(pinColor: string, identifier?: string, title?: string) {
       iconSize: [28, 28],
       iconAnchor: [14, 14],
       popupAnchor: [0, -12],
+    });
+  }
+  if (tipo === "personal") {
+    const glyph = (identifier?.split(":")[1] || "●").slice(0, 2);
+    return L.divIcon({
+      className: "pesca-pin-wrap",
+      html: `<div class="pesca-pin-personal" style="--pin:${pinColor}"><b>${glyph}</b><i></i></div>`,
+      iconSize: [28, 36],
+      iconAnchor: [14, 34],
+      popupAnchor: [0, -30],
     });
   }
   return L.divIcon({
@@ -253,10 +293,83 @@ function EncajarCoordenadas({ coords }: { coords?: { latitude: number; longitude
   return null;
 }
 
-function ManejadorClick({ onLongPress }: { onLongPress?: (e: any) => void }) {
+function eventoCoords(lat: number, lng: number) {
+  return { nativeEvent: { coordinate: { latitude: lat, longitude: lng } } };
+}
+
+/** Click = consulta; long-press / contextmenu = guardar punto (ratón + táctil). */
+function ManejadorGestos({
+  onPress,
+  onLongPress,
+}: {
+  onPress?: (e: any) => void;
+  onLongPress?: (e: any) => void;
+}) {
+  const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longFired = useRef(false);
+  const start = useRef<{ x: number; y: number } | null>(null);
+
+  function cancelHold() {
+    if (hold.current) clearTimeout(hold.current);
+    hold.current = null;
+    start.current = null;
+  }
+
+  function beginHold(lat: number, lng: number, clientX?: number, clientY?: number) {
+    longFired.current = false;
+    cancelHold();
+    start.current =
+      clientX != null && clientY != null ? { x: clientX, y: clientY } : null;
+    hold.current = setTimeout(() => {
+      longFired.current = true;
+      onLongPress?.(eventoCoords(lat, lng));
+      hold.current = null;
+    }, 480);
+  }
+
+  function maybeCancelPorMovimiento(clientX?: number, clientY?: number) {
+    if (!hold.current || !start.current || clientX == null || clientY == null) return;
+    const dx = clientX - start.current.x;
+    const dy = clientY - start.current.y;
+    if (dx * dx + dy * dy > 100) cancelHold();
+  }
+
   useMapEvents({
     click(e) {
-      onLongPress?.({ nativeEvent: { coordinate: { latitude: e.latlng.lat, longitude: e.latlng.lng } } });
+      if (longFired.current) {
+        longFired.current = false;
+        return;
+      }
+      onPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
+    },
+    contextmenu(e) {
+      e.originalEvent?.preventDefault?.();
+      onLongPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
+    },
+    mousedown(e) {
+      const oe = e.originalEvent as MouseEvent | undefined;
+      beginHold(e.latlng.lat, e.latlng.lng, oe?.clientX, oe?.clientY);
+    },
+    mouseup() {
+      cancelHold();
+    },
+    mousemove(e) {
+      const oe = e.originalEvent as MouseEvent | undefined;
+      maybeCancelPorMovimiento(oe?.clientX, oe?.clientY);
+    },
+    touchstart(e) {
+      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+      beginHold(e.latlng.lat, e.latlng.lng, t?.clientX, t?.clientY);
+    },
+    touchend() {
+      cancelHold();
+    },
+    touchcancel() {
+      cancelHold();
+    },
+    touchmove(e) {
+      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+      maybeCancelPorMovimiento(t?.clientX, t?.clientY);
     },
   });
   return null;
@@ -270,6 +383,48 @@ function VolarA({ target }: { target?: { latitude: number; longitude: number; zo
     map.flyTo([target.latitude, target.longitude], zoom, { duration: 0.7 });
   }, [map, target?.nonce]);
   return null;
+}
+
+/** Fuerza basemap satélite / híbrido / estándar desde el chip de la app. */
+function CapaBaseForzada({ modo }: { modo: "standard" | "satellite" | "hybrid" }) {
+  if (modo === "standard") {
+    return (
+      <TileLayer
+        key="base-std"
+        attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
+        url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
+        maxZoom={19}
+        maxNativeZoom={18}
+        errorTileUrl={PIXEL_TRANSPARENTE}
+        zIndex={1}
+      />
+    );
+  }
+  return (
+    <>
+      <TileLayer
+        key="base-sat"
+        attribution="PNOA-MA © IGN-CNIG"
+        url="https://www.ign.es/wmts/pnoa-ma?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=OI.OrthoimageCoverage&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
+        maxZoom={19}
+        maxNativeZoom={18}
+        errorTileUrl={PIXEL_TRANSPARENTE}
+        zIndex={1}
+      />
+      {modo === "hybrid" ? (
+        <TileLayer
+          key="base-hybrid-labels"
+          attribution="IGNBaseOrto © IGN-CNIG"
+          url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseOrto&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
+          maxZoom={19}
+          maxNativeZoom={18}
+          errorTileUrl={PIXEL_TRANSPARENTE}
+          zIndex={2}
+          opacity={0.95}
+        />
+      ) : null}
+    </>
+  );
 }
 
 /** Título y aria-label del botón de capas (el cuadrado vacío de Leaflet no se entiende solo). */
@@ -311,6 +466,8 @@ interface MapViewProps {
   showRadar?: boolean;
   /** Forzar capa batimetría EMODnet visible. */
   showBathymetry?: boolean;
+  /** Basemap programático (chip Satélite del mapa). */
+  mapType?: "standard" | "satellite" | "hybrid" | "terrain" | "mutedStandard" | "none" | string;
 }
 
 export default function MapView({
@@ -327,10 +484,13 @@ export default function MapView({
   radarUrl = null,
   showRadar = false,
   showBathymetry = false,
+  mapType = "standard",
 }: MapViewProps) {
   inyectarCssMapa();
   // Sin fallback a Castellón: la pantalla debe pasar regionMapa de la provincia activa.
   const inicio = initialRegion || region || { latitude: 40, longitude: -3.5, latitudeDelta: 8, longitudeDelta: 8 };
+  const modoBase: "standard" | "satellite" | "hybrid" =
+    mapType === "hybrid" ? "hybrid" : mapType === "satellite" ? "satellite" : "standard";
 
   return (
     <View style={[{ flex: 1 }, style]}>
@@ -343,43 +503,8 @@ export default function MapView({
         zoomControl={false}
         attributionControl={true}
       >
+        <CapaBaseForzada modo={modoBase} />
         <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Mapa IGN">
-            <TileLayer
-              attribution='CC BY 4.0 scne.es · <a href="https://www.ign.es">IGN</a>'
-              url="https://www.ign.es/wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&FORMAT=image/png&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
-              maxZoom={19}
-              maxNativeZoom={18}
-              errorTileUrl={PIXEL_TRANSPARENTE}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Mapa">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              maxZoom={18}
-              maxNativeZoom={18}
-              errorTileUrl={PIXEL_TRANSPARENTE}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Relieve">
-            <TileLayer
-              attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-              maxZoom={17}
-              maxNativeZoom={15}
-              errorTileUrl={PIXEL_TRANSPARENTE}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Satélite IGN">
-            <TileLayer
-              attribution="PNOA-MA © IGN-CNIG"
-              url="https://www.ign.es/wmts/pnoa-ma?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=OI.OrthoimageCoverage&STYLE=default&FORMAT=image/jpeg&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}"
-              maxZoom={19}
-              maxNativeZoom={18}
-              errorTileUrl={PIXEL_TRANSPARENTE}
-            />
-          </LayersControl.BaseLayer>
           {pescaWms === "icv" ? (
             <LayersControl.Overlay name="WMS ICV (ríos / cotos)">
               <WMSTileLayer
@@ -447,7 +572,9 @@ export default function MapView({
         <SincronizarRegion region={region} disabled={!!fitCoordinates?.length || !!cameraTarget} />
         <EncajarCoordenadas coords={fitCoordinates} />
         <VolarA target={cameraTarget} />
-        {(onPress || onLongPress) && <ManejadorClick onLongPress={onPress || onLongPress} />}
+        {(onPress || onLongPress) && (
+          <ManejadorGestos onPress={onPress} onLongPress={onLongPress || onPress} />
+        )}
         {children}
       </MapContainer>
     </View>

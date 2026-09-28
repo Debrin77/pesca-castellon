@@ -11,6 +11,25 @@ export interface PuntoGuardado {
   creadoEn: string; // ISO
   zonaRelacionadaId?: string | null;
   provinciaId?: ProvinciaId;
+  /** Color del pin (catálogo iconosPunto). */
+  color?: string | null;
+  /** Icono del pin (catálogo iconosPunto). */
+  icono?: string | null;
+}
+
+/** Snapshot de condiciones al guardar la captura (bitácora). */
+export interface CondicionesCaptura {
+  indice?: number | null;
+  categoriaIndice?: string | null;
+  tempAireC?: number | null;
+  tempAguaC?: number | null;
+  vientoKmh?: number | null;
+  presionHPa?: number | null;
+  faseLunar?: string | null;
+  solunarNota?: string | null;
+  mareaNota?: string | null;
+  saihNota?: string | null;
+  capturadoEn?: string; // ISO datetime
 }
 
 export interface Captura {
@@ -30,6 +49,8 @@ export interface Captura {
   provinciaId?: ProvinciaId;
   /** Modalidad de la jornada (orilla, kayak…). */
   modalidad?: string;
+  /** Condiciones del lance (auto). */
+  condiciones?: CondicionesCaptura | null;
 }
 
 export interface FavoritoZona {
@@ -104,6 +125,20 @@ export async function eliminarPunto(id: string): Promise<void> {
     "puntos_guardados",
     puntos.filter((p) => p.id !== id)
   );
+}
+
+export async function actualizarPunto(
+  id: string,
+  parcial: Partial<Omit<PuntoGuardado, "id" | "creadoEn" | "provinciaId">>
+): Promise<PuntoGuardado | null> {
+  const puntos = await obtenerPuntosGuardados();
+  const i = puntos.findIndex((p) => p.id === id);
+  if (i < 0) return null;
+  const next = { ...puntos[i], ...parcial };
+  const lista = [...puntos];
+  lista[i] = next;
+  await escribirLista("puntos_guardados", lista);
+  return next;
 }
 
 // --- Registro de capturas ---

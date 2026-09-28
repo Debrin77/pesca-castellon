@@ -24,24 +24,24 @@ import PulsePress from "../components/PulsePress";
 import MapaIgnPresentacion from "../components/MapaIgnPresentacion";
 import LogoMarca from "../components/LogoMarca";
 import FondoCinePresentacion from "../components/FondoCinePresentacion";
-import CarruselFotosPresentacion from "../components/CarruselFotosPresentacion";
+import SelectorModoPesca from "../components/SelectorModoPesca";
+import { useModoPesca } from "../context/ModoPescaContext";
 
-const { width: W, height: H } = Dimensions.get("window");
+const win = Dimensions.get("window");
+/** En web forzamos ancho tipo teléfono para no ver 2 slides a la vez. */
+const STAGE_W = Platform.OS === "web" ? Math.min(win.width, 420) : win.width;
+const W = STAGE_W;
+const H = win.height;
 /** Marco tipo captura App Store: domina el alto de la pantalla. */
-const PHONE_W = Math.min(W * 0.86, 360);
-const PHONE_H = Math.min(H * 0.52, 540);
+const PHONE_W = Math.min(W * 0.88, 372);
+const PHONE_H = Math.min(H * 0.56, 580);
 const nativo = Platform.OS !== "web";
 
-/** Atmósferas fotográficas por virtud (Wikimedia empaquetadas). */
-const FOTO_LEGAL = require("../../assets/especies/black_bass.jpg") as ImageSourcePropType;
-const FOTO_PINTA = require("../../assets/especies/dorada.jpg") as ImageSourcePropType;
-const FOTO_MODOS = require("../../assets/especies/lubina.jpg") as ImageSourcePropType;
-const FOTO_MEDIR = require("../../assets/especies/corvina.jpg") as ImageSourcePropType;
-const FOTO_INTIMA = require("../../assets/especies/trucha_arcoiris.jpg") as ImageSourcePropType;
-const FOTO_PIN = require("../../assets/especies/carpa.jpg") as ImageSourcePropType;
-const FOTO_CAMPO = require("../../assets/especies/sargo.jpg") as ImageSourcePropType;
+/** Atmósferas de orilla / paisaje (no macros de pez). */
+const FOTO_ORILLA = require("../../assets/consejos/aparejos/surfcasting-orilla.jpg") as ImageSourcePropType;
+const FOTO_ROCA = require("../../assets/consejos/aparejos/rockfishing-roca.jpg") as ImageSourcePropType;
 
-type SlideId = "legal" | "pinta" | "modos" | "medir" | "intima" | "pin" | "campo";
+type SlideId = "legal" | "pinta" | "sitios" | "campo";
 
 type Slide = {
   id: SlideId;
@@ -54,12 +54,14 @@ type Slide = {
 };
 
 /**
- * Presentación estilo App Store: pantallas a pantalla completa con
- * “capturas” de virtudes. Se puede cerrar con la X (arriba derecha).
+ * Presentación estilo App Store: 4 virtudes a pantalla completa
+ * con capturas de producto (no brochure genérico).
+ * Se puede cerrar con la X (arriba derecha).
  */
 export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx } = useProvincia();
+  const { modo, modoElegido, disponibles, setModo } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const nombreProv = provincia.nombre;
   const esCosta = !provincia.continentalOnly;
@@ -72,79 +74,44 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
     () => [
       {
         id: "legal",
-        eyebrow: "Antes de lanzar la caña",
+        eyebrow: "Antes de lanzar",
         titulo: "¿Puedo aquí?",
         texto: provincia.continentalOnly
-          ? `Semáforo claro: verde sí, rojo no. Si sale «SIN TRAMO», no es veda: mira el cartel en tu primera salida en ${nombreProv}.`
-          : provincia.tieneIcv
-            ? "Verde: hoy sí. Rojo: veda. Ámbar: coto. Gris «SIN TRAMO»: no es veda — confirma el cartel."
-            : `Verde, rojo o ámbar. En ${nombreProv} es orientativo: confirma siempre en la fuente oficial.`,
+          ? `Semáforo claro. Si sale «SIN TRAMO», no es veda: mira el cartel en tu primera salida en ${nombreProv}.`
+          : "Verde hoy sí · rojo veda · ámbar coto. «SIN TRAMO» no es veda — confirma el cartel.",
         accent: ["#0f5c6e", "#0a3d48", "#062830"],
         tonoOnda: "agua",
-        foto: FOTO_LEGAL,
+        foto: FOTO_ORILLA,
       },
       {
         id: "pinta",
         eyebrow: "La norma autoriza · el tiempo orienta",
         titulo: "Hoy pinta",
-        texto:
-          "Índice 0–100 con aire, agua, presión, solunar y franjas. «¿Pinta?» no autoriza: solo ayuda a elegir hora.",
+        texto: "Índice 0–100 con aire, agua, solunar y franjas. Orientativo: nunca sustituye al semáforo.",
         accent: ["#156a82", "#0e4a5c", "#083240"],
         tonoOnda: "agua",
-        foto: FOTO_PINTA,
+        foto: FOTO_ROCA,
       },
       {
-        id: "modos",
-        eyebrow: esCosta ? "Un gesto · toda la app" : "Tu ámbito de pesca",
-        titulo: esCosta ? "Río · Embalse · Kayak · Mar" : "Río · Embalse · Kayak",
-        texto: esCosta
-          ? "Elige cómo vas a pescar: orilla de río o embalse, kayak (¡a remar!) o, en costa, orilla / kayak / barco. Se alinean mapa, especies, aparejos y el ritual."
-          : `En ${nombreProv}: elige río, embalse o kayak. Mapa de tramos, especies, montajes y «Salgo a pescar» paso a paso.`,
-        accent: ["#125066", "#0c3646", "#072430"],
-        tonoOnda: "agua",
-        foto: FOTO_MODOS,
-      },
-      {
-        id: "medir",
-        eyebrow: "Particularidad · ficha de especie",
-        titulo: "Cómo medir · placa propia",
-        texto:
-          "Cada especie tiene su gráfico: longitud total, manto o peso. Sin reutilizar siluetas ni confundir lubina con corvina.",
-        accent: ["#146050", "#0e3f36", "#082822"],
-        tonoOnda: "agua",
-        foto: FOTO_MEDIR,
-      },
-      {
-        id: "intima",
-        eyebrow: "Sin feed · sin nube obligatoria",
-        titulo: "Personal e íntima",
-        texto:
-          "Sitios, capturas y notas en tu móvil. Exporta GPX si quieres — compartir es opcional, nunca el motivo.",
+        id: "sitios",
+        eyebrow: "Personal e íntima · PIN + biometría",
+        titulo: "Mis sitios",
+        texto: "Long-press, color e icono. Solo en este móvil — exporta GPX cuando tú quieras.",
         accent: ["#16523a", "#0f3528", "#081c16"],
         tonoOnda: "claro",
-        foto: FOTO_INTIMA,
-      },
-      {
-        id: "pin",
-        eyebrow: "Cerrada para los demás",
-        titulo: "PIN + biometría",
-        texto: "PIN de 4–8 dígitos y Face ID / huella. Al abrir o al volver, solo tú entras.",
-        accent: ["#123028", "#0b1e18", "#061210"],
-        tonoOnda: "claro",
-        foto: FOTO_PIN,
+        foto: FOTO_ORILLA,
       },
       {
         id: "campo",
-        eyebrow: "De la duda a la orilla",
+        eyebrow: esCosta ? "Río · Embalse · Kayak · Mar" : "Río · Embalse · Kayak",
         titulo: "Salgo a pescar",
-        texto:
-          "Ritual corto para tu primera salida: sitio → ¿Puedo? → ¿Pinta? → montaje → qué llevar. Consejos con fotos cuando haga falta.",
+        texto: "Ritual corto: sitio → ¿Puedo? → ¿Pinta? → montaje. Tu primera salida, paso a paso.",
         accent: ["#1c3830", "#122620", "#0a1612"],
         tonoOnda: "claro",
-        foto: FOTO_CAMPO,
+        foto: FOTO_ROCA,
       },
     ],
-    [provincia.continentalOnly, provincia.tieneIcv, nombreProv, esCosta]
+    [provincia.continentalOnly, nombreProv, esCosta]
   );
 
   useEffect(() => {
@@ -190,17 +157,18 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   const topPad = Math.max(insets.top, Platform.OS === "web" ? 16 : 12);
   const slide = slides[page];
-  const phoneLift = floatY.interpolate({ inputRange: [0, 1], outputRange: [0, -10] });
-  const phoneScale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] });
-  const phoneOpacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] });
+  const phoneLift = floatY.interpolate({ inputRange: [0, 1], outputRange: [0, -8] });
+  const phoneScale = enter.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] });
+  const phoneOpacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] });
   const textOpacity = enter.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
-  const textY = enter.interpolate({ inputRange: [0, 1], outputRange: [14, 0] });
+  const textY = enter.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
   const esUltima = page === slides.length - 1;
 
   return (
-    <View style={styles.root}>
-      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.32} />
-      <OndaAgua intensidad={0.4} tono={slide.tonoOnda} />
+    <View style={styles.rootOuter}>
+      <View style={[styles.root, Platform.OS === "web" && { width: STAGE_W, alignSelf: "center" }]}>
+      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.42} />
+      <OndaAgua intensidad={0.35} tono={slide.tonoOnda} />
 
       <TouchableOpacity
         style={[styles.closeBtn, { top: topPad + 4 }]}
@@ -212,8 +180,8 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         <Text style={styles.closeTxt}>✕</Text>
       </TouchableOpacity>
 
-      <Animated.View style={[styles.brandBlock, { marginTop: topPad + 20, opacity: textOpacity }]}>
-        <LogoMarca size={96} hiRes accessibilityLabel="Logo Vámonos de pesca" />
+      <Animated.View style={[styles.brandBlock, { marginTop: topPad + 14, opacity: textOpacity }]}>
+        <LogoMarca size={84} hiRes accessibilityLabel="Logo Vámonos de pesca" />
         <Text style={styles.provinciasLine}>Castellón · Sevilla · Córdoba · Cuenca</Text>
       </Animated.View>
 
@@ -235,7 +203,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
                 transform: [{ translateY: idx === page ? textY : 0 }],
                 alignItems: "center",
                 width: "100%",
-                paddingHorizontal: 10,
+                paddingHorizontal: 14,
               }}
             >
               <Text style={styles.eyebrow}>{s.eyebrow}</Text>
@@ -273,11 +241,25 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
         ))}
       </ScrollView>
 
+      {esUltima ? (
+        <View style={styles.modoBlock}>
+          <Text style={styles.modoLabel}>¿Cómo vas a pescar?</Text>
+          <SelectorModoPesca
+            modo={modoElegido ? modo : null}
+            disponibles={disponibles}
+            onChange={(m) => void setModo(m)}
+            sobreOscuro
+          />
+        </View>
+      ) : null}
+
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         {!esUltima ? (
           <Text style={styles.hintSwipe}>Desliza para ver las virtudes →</Text>
         ) : (
-          <Text style={styles.tipCierre}>Siguiente: prueba «Salgo a pescar»</Text>
+          <Text style={styles.tipCierre}>
+            {modoElegido ? "Siguiente: el mapa con tu modalidad" : "Elige modalidad o entra y decide luego"}
+          </Text>
         )}
 
         <View style={styles.progressTrack}>
@@ -315,11 +297,12 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
           </LinearGradient>
         </PulsePress>
       </View>
+      </View>
     </View>
   );
 }
 
-/* ——— Mock UIs ——— */
+/* ——— Mock UIs (aspecto de producto real) ——— */
 
 function MockUI({
   id,
@@ -332,12 +315,9 @@ function MockUI({
   esCosta: boolean;
   activo: boolean;
 }) {
-  if (id === "intima") return <MockIntima nombreProv={nombreProv} activo={activo} />;
-  if (id === "pin") return <MockPin activo={activo} />;
   if (id === "legal") return <MockLegal nombreProv={nombreProv} activo={activo} />;
   if (id === "pinta") return <MockPinta nombreProv={nombreProv} activo={activo} />;
-  if (id === "modos") return <MockModos nombreProv={nombreProv} esCosta={esCosta} activo={activo} />;
-  if (id === "medir") return <MockMedir activo={activo} />;
+  if (id === "sitios") return <MockSitios nombreProv={nombreProv} activo={activo} />;
   return <MockCampo activo={activo} esCosta={esCosta} />;
 }
 
@@ -346,7 +326,7 @@ function useReveal(activo: boolean) {
   useEffect(() => {
     Animated.timing(v, {
       toValue: activo ? 1 : 0,
-      duration: activo ? 560 : 160,
+      duration: activo ? 520 : 140,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: nativo,
     }).start();
@@ -354,37 +334,126 @@ function useReveal(activo: boolean) {
   return v;
 }
 
-function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolean }) {
+function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean }) {
   const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
-  const sitiosDemo =
+  const y = v.interpolate({ inputRange: [0, 1], outputRange: [14, 0] });
+  return (
+    <View style={[m.fill, { backgroundColor: "#eef2ee" }]}>
+      <MapaIgnPresentacion
+        titulo={`Consulta · ${nombreProv}`}
+        subtitulo="Toca el mapa · semáforo"
+        animar={activo}
+        compacto
+        marcadores={[
+          { x: 42, y: 48, color: SEMAFORO.si, etiqueta: "Libre", tipo: "libre" },
+          { x: 68, y: 34, color: SEMAFORO.coto, etiqueta: "Coto", tipo: "coto" },
+          { x: 30, y: 62, color: SEMAFORO.neutro, etiqueta: "Sin tramo", tipo: "neutro" },
+        ]}
+      />
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], padding: 12, gap: 8 }}>
+        <View style={[m.semaforo, { backgroundColor: SEMAFORO.si }]}>
+          <Text style={m.semaforoKicker}>¿Puedo?</Text>
+          <Text style={m.semaforoBig}>HOY SÍ</Text>
+          <Text style={m.semaforoSub}>Zona libre · con licencia</Text>
+        </View>
+        <View style={m.chipRow}>
+          <View style={[m.chip, { backgroundColor: COLORS.warningLight }]}>
+            <Text style={[m.chipTxt, { color: COLORS.warning }]}>SIN TRAMO ≠ veda</Text>
+          </View>
+          <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
+            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Oficial / orientativo</Text>
+          </View>
+        </View>
+      </Animated.View>
+    </View>
+  );
+}
+
+function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv: string }) {
+  const v = useReveal(activo);
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!activo) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 1500, useNativeDriver: nativo }),
+        Animated.timing(pulse, { toValue: 0, duration: 1500, useNativeDriver: nativo }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [activo, pulse]);
+  const ring = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.04] });
+
+  const barras = [42, 58, 71, 88, 76, 64, 55, 68, 82, 74, 60, 48];
+
+  return (
+    <LinearGradient colors={["#0e4456", "#1a6f8a"]} style={[m.fill, { paddingHorizontal: 12 }]}>
+      <Text style={m.navDisplay}>Hoy en el agua</Text>
+      <Text style={m.navSub}>{nombreProv} · ¿Pinta? · no autoriza</Text>
+      <Animated.View style={{ opacity: v, transform: [{ scale: ring }], marginTop: 8, alignItems: "center" }}>
+        <View style={m.gaugeOuter}>
+          <View style={m.gauge}>
+            <Text style={m.gaugeNum}>78</Text>
+            <Text style={m.gaugeLabel}>Buena</Text>
+          </View>
+        </View>
+      </Animated.View>
+      <View style={m.chartRow}>
+        {barras.map((h, i) => (
+          <View key={i} style={m.chartCol}>
+            <View style={[m.chartBar, { height: 8 + h * 0.55, opacity: i === 3 ? 1 : 0.55 }]} />
+          </View>
+        ))}
+      </View>
+      <Text style={m.chartHint}>Arrastra la franja · mayor 07:00–10:00</Text>
+      <View style={m.meteoRow}>
+        {[
+          { k: "Aire", v: "18 °C" },
+          { k: "Agua", v: "16 °C" },
+          { k: "Solunar", v: "Mayor" },
+        ].map((x) => (
+          <View key={x.k} style={m.meteoCard}>
+            <Text style={m.meteoK}>{x.k}</Text>
+            <Text style={m.meteoV}>{x.v}</Text>
+          </View>
+        ))}
+      </View>
+    </LinearGradient>
+  );
+}
+
+function MockSitios({ nombreProv, activo }: { nombreProv: string; activo: boolean }) {
+  const v = useReveal(activo);
+  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+  const sitios =
     nombreProv === "Castellón"
       ? [
-          { t: "Embalse de María Cristina", s: "Favorito · 12 km", c: COLORS.gold, mx: 28, my: 38, me: "María Cristina" },
-          { t: "Orilla que solo yo conozco", s: "Punto privado · GPS", c: COLORS.water, mx: 58, my: 52, me: "Orilla secreta" },
+          { t: "Embalse de María Cristina", s: "★ Oro · favorito", c: COLORS.gold },
+          { t: "Orilla que solo yo conozco", s: "≈ Agua · privado", c: COLORS.water },
         ]
       : [
-          { t: `Embalse favorito · ${nombreProv}`, s: "Favorito · en este móvil", c: COLORS.gold, mx: 32, my: 40, me: "Favorito" },
-          { t: "Punto privado · GPS", s: "Solo tú lo ves", c: COLORS.water, mx: 62, my: 54, me: "Privado" },
+          { t: `Embalse favorito · ${nombreProv}`, s: "★ Oro · en este móvil", c: COLORS.gold },
+          { t: "Punto privado · GPS", s: "● Bosque · PIN", c: COLORS.primary },
         ];
   return (
     <View style={[m.fill, { backgroundColor: "#f3f6f2" }]}>
       <View style={m.privBar}>
-        <Text style={m.privBarTxt}>Solo en este móvil · Sin feed · Sin nube</Text>
+        <Text style={m.privBarTxt}>Solo en este móvil · PIN + biometría</Text>
       </View>
       <MapaIgnPresentacion
         titulo={`Mis sitios · ${nombreProv}`}
-        subtitulo="Privados · sin feed"
+        subtitulo="Long-press · color · icono"
         animar={activo}
         compacto
         marcadores={[
-          { x: sitiosDemo[0].mx, y: sitiosDemo[0].my, color: sitiosDemo[0].c, etiqueta: sitiosDemo[0].me, tipo: "privado" },
-          { x: sitiosDemo[1].mx, y: sitiosDemo[1].my, color: sitiosDemo[1].c, etiqueta: sitiosDemo[1].me, tipo: "privado" },
-          { x: 72, y: 28, color: COLORS.success, etiqueta: "Atardecer", tipo: "libre" },
+          { x: 28, y: 38, color: sitios[0].c, etiqueta: "Favorito", tipo: "privado" },
+          { x: 58, y: 52, color: sitios[1].c, etiqueta: "Privado", tipo: "privado" },
+          { x: 72, y: 28, color: COLORS.success, etiqueta: "Libre", tipo: "libre" },
         ]}
       />
       <Animated.View style={{ opacity: v, transform: [{ translateY: y }], padding: 10, gap: 7 }}>
-        {sitiosDemo.map((row) => (
+        {sitios.map((row) => (
           <View key={row.t} style={m.listRow}>
             <View style={[m.listDot, { backgroundColor: row.c }]} />
             <View style={{ flex: 1 }}>
@@ -404,271 +473,32 @@ function MockIntima({ nombreProv, activo }: { nombreProv: string; activo: boolea
   );
 }
 
-function MockPin({ activo }: { activo: boolean }) {
-  const v = useReveal(activo);
-  const scale = v.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] });
-  return (
-    <LinearGradient colors={["#0c2c20", "#164a36"]} style={[m.fill, { alignItems: "center" }]}>
-      <Text style={m.navDisplay}>App bloqueada</Text>
-      <Text style={m.navSub}>Introduce tu PIN</Text>
-      <Animated.View style={{ opacity: v, transform: [{ scale }], alignItems: "center", marginTop: 16 }}>
-        <View style={m.pinDots}>
-          {[0, 1, 2, 3].map((i) => (
-            <View key={i} style={[m.pinDot, i < 3 && m.pinDotOn]} />
-          ))}
-        </View>
-        <View style={m.pad}>
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"].map((k, i) => (
-            <View key={`${k}-${i}`} style={[m.key, !k && m.keyEmpty]}>
-              <Text style={m.keyTxt}>{k}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={m.bioPill}>
-          <Text style={m.bioPillTxt}>Usar Face ID / huella</Text>
-        </View>
-      </Animated.View>
-    </LinearGradient>
-  );
-}
-
-function MockLegal({ nombreProv, activo }: { nombreProv: string; activo: boolean }) {
-  const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
-  return (
-    <View style={[m.fill, { backgroundColor: "#eef2ee" }]}>
-      <MapaIgnPresentacion
-        titulo={`Consulta · ${nombreProv}`}
-        subtitulo="Mapa tipo IGN · indicadores"
-        animar={activo}
-        compacto
-        marcadores={[
-          { x: 42, y: 48, color: SEMAFORO.si, etiqueta: "Libre", tipo: "libre" },
-          { x: 68, y: 34, color: SEMAFORO.coto, etiqueta: "Coto", tipo: "coto" },
-          { x: 30, y: 62, color: SEMAFORO.neutro, etiqueta: "Sin tramo", tipo: "neutro" },
-        ]}
-      />
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], padding: 10, gap: 8 }}>
-        <View style={[m.semaforo, { backgroundColor: SEMAFORO.si }]}>
-          <Text style={m.semaforoKicker}>¿Puedo?</Text>
-          <Text style={m.semaforoBig}>HOY SÍ</Text>
-          <Text style={m.semaforoSub}>Zona libre · con licencia</Text>
-        </View>
-        <View style={m.chipRow}>
-          <View style={[m.chip, { backgroundColor: COLORS.warningLight }]}>
-            <Text style={[m.chipTxt, { color: COLORS.warning }]}>SIN TRAMO ≠ veda</Text>
-          </View>
-          <View style={[m.chip, { backgroundColor: COLORS.primaryLight }]}>
-            <Text style={[m.chipTxt, { color: COLORS.primary }]}>Oficial / orientativo</Text>
-          </View>
-          <View style={[m.chip, { backgroundColor: COLORS.waterLight }]}>
-            <Text style={[m.chipTxt, { color: COLORS.waterDark }]}>Mira el cartel</Text>
-          </View>
-        </View>
-      </Animated.View>
-    </View>
-  );
-}
-
-function MockPinta({ activo, nombreProv }: { activo: boolean; nombreProv?: string }) {
-  const v = useReveal(activo);
-  const pulse = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (!activo) return;
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 1500, useNativeDriver: nativo }),
-        Animated.timing(pulse, { toValue: 0, duration: 1500, useNativeDriver: nativo }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [activo, pulse]);
-  const ring = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] });
-  return (
-    <LinearGradient colors={["#0e4456", "#1a6f8a"]} style={[m.fill, { alignItems: "center" }]}>
-      <Text style={m.navDisplay}>Hoy en el agua</Text>
-      <Text style={m.navSub}>
-        {nombreProv ? `${nombreProv} · ¿Pinta? · no autoriza` : "¿Pinta? · no autoriza"}
-      </Text>
-      <Animated.View style={{ opacity: v, transform: [{ scale: ring }], marginTop: 10, alignItems: "center" }}>
-        <View style={m.gaugeOuter}>
-          <View style={m.gauge}>
-            <Text style={m.gaugeNum}>78</Text>
-            <Text style={m.gaugeLabel}>Buena</Text>
-          </View>
-        </View>
-      </Animated.View>
-      <View style={m.meteoRow}>
-        {[
-          { k: "Aire", v: "18 °C" },
-          { k: "Agua", v: "16 °C" },
-          { k: "Solunar", v: "Mayor" },
-        ].map((x) => (
-          <View key={x.k} style={m.meteoCard}>
-            <Text style={m.meteoK}>{x.k}</Text>
-            <Text style={m.meteoV}>{x.v}</Text>
-          </View>
-        ))}
-      </View>
-      <View style={m.windowBar}>
-        <Text style={m.windowTxt}>Mejor franja 07:00–10:00</Text>
-      </View>
-      <Text style={m.pintaDisclaimer}>La norma manda · esto solo orienta</Text>
-    </LinearGradient>
-  );
-}
-
-function MockModos({
-  nombreProv,
-  esCosta,
-  activo,
-}: {
-  nombreProv: string;
-  esCosta: boolean;
-  activo: boolean;
-}) {
-  const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
-  const modos = esCosta
-    ? [
-        { id: "rio", label: "Río", on: false },
-        { id: "embalse", label: "Embalse", on: false },
-        { id: "kayak", label: "Kayak", on: true },
-        { id: "orilla", label: "Orilla", on: false },
-        { id: "barco", label: "Barco", on: false },
-      ]
-    : [
-        { id: "rio", label: "Río", on: false },
-        { id: "embalse", label: "Embalse", on: false },
-        { id: "kayak", label: "Kayak", on: true },
-      ];
-
-  return (
-    <LinearGradient colors={["#f4f8f6", "#e4eef2"]} style={m.fill}>
-      <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>¿Cómo vas a pescar?</Text>
-      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>
-        {nombreProv}
-        {esCosta ? " · mapa + ritual alineados" : " · continental"}
-      </Text>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 14, paddingHorizontal: 12 }}>
-        <View style={m.modoRow}>
-          {modos.map((x) => (
-            <View key={x.id} style={[m.modoChip, x.on && (x.id === "kayak" ? m.modoChipOnKayak : x.id === "rio" || x.id === "embalse" ? m.modoChipOnRio : m.modoChipOnMar)]}>
-              <Text style={[m.modoChipTxt, x.on && m.modoChipTxtOn]}>{x.label}</Text>
-            </View>
-          ))}
-        </View>
-        {esCosta ? (
-          <View style={m.barcoCard}>
-            <Text style={m.barcoTitle}>Kayak · modalidad propia</Text>
-            <Text style={m.barcoSub}>¡A remar! · embalse o mar · docs por provincia</Text>
-            <View style={m.barcoTags}>
-              {["Kayak", "Rampas", "Barco"].map((t) => (
-                <View key={t} style={m.barcoTag}>
-                  <Text style={m.barcoTagTxt}>{t}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : (
-          <View style={m.barcoCard}>
-            <Text style={m.barcoTitle}>Kayak en embalse</Text>
-            <Text style={m.barcoSub}>Semáforo + SAIH + qué pedir para remar</Text>
-            <View style={m.barcoTags}>
-              {["Río", "Embalse", "Kayak"].map((t) => (
-                <View key={t} style={m.barcoTag}>
-                  <Text style={m.barcoTagTxt}>{t}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-        <View style={m.alineadoBox}>
-          <Text style={m.alineadoTxt}>
-            {esCosta
-              ? "Un modo fija especies, aparejos y salida"
-              : "Todo el flujo apunta a tu primera salida"}
-          </Text>
-        </View>
-      </Animated.View>
-    </LinearGradient>
-  );
-}
-
-function MockMedir({ activo }: { activo: boolean }) {
-  const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
-  const fichas = [
-    { nombre: "Lubina", cota: "Longitud total · hocico → cola", patron: "cm" },
-    { nombre: "Corvina", cota: "Placa propia · no reutiliza lubina", patron: "cm" },
-    { nombre: "Pulpo", cota: "Peso del ejemplar entero", patron: "kg" },
-    { nombre: "Sepia", cota: "Longitud del manto", patron: "cm" },
-  ];
-  const fotosPlaca = [
-    { source: require("../../assets/especies/lubina.jpg"), caption: "Lubina · longitud total" },
-    { source: require("../../assets/especies/corvina.jpg"), caption: "Corvina · placa propia" },
-    { source: require("../../assets/especies/pulpo.jpg"), caption: "Pulpo · peso entero" },
-    { source: require("../../assets/especies/sepia.jpg"), caption: "Sepia · manto" },
-  ];
-  return (
-    <LinearGradient colors={["#f4faf8", "#e2efea"]} style={m.fill}>
-      <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Ficha · especie</Text>
-      <Text style={[m.navSub, { color: COLORS.textSecondary }]}>Cómo medir · gráfica única</Text>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 8, gap: 7 }}>
-        <CarruselFotosPresentacion fotos={fotosPlaca} activo={activo} height={104} intervaloMs={2400} />
-        <View style={[m.medirHero, { marginHorizontal: 10 }]}>
-          <Text style={m.medirHeroKicker}>Particularidad</Text>
-          <Text style={m.medirHeroTitle}>Una placa por especie</Text>
-          <View style={m.medirCota}>
-            <Text style={m.medirCotaLbl}>Hocico</Text>
-            <View style={m.medirCotaLine} />
-            <Text style={m.medirCotaMid}>Longitud total</Text>
-            <View style={m.medirCotaLine} />
-            <Text style={m.medirCotaLbl}>Cola</Text>
-          </View>
-          <Text style={m.medirHeroPie}>Norma UE / RD 560 · sin siluetas repetidas</Text>
-        </View>
-        {fichas.slice(0, 2).map((f) => (
-          <View key={f.nombre} style={[m.medirRow, { marginHorizontal: 10 }]}>
-            <View style={m.medirDot} />
-            <View style={{ flex: 1 }}>
-              <Text style={m.medirNombre}>{f.nombre}</Text>
-              <Text style={m.medirCotaTxt}>{f.cota}</Text>
-            </View>
-            <View style={m.medirBadge}>
-              <Text style={m.medirBadgeTxt}>{f.patron}</Text>
-            </View>
-          </View>
-        ))}
-      </Animated.View>
-    </LinearGradient>
-  );
-}
-
 function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
   const v = useReveal(activo);
-  const y = v.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
+  const y = v.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
   const steps = [
     { n: "1", t: "Dónde voy", done: true },
     { n: "2", t: "¿Puedo? + ¿Pinta?", done: true },
     { n: "3", t: "Montaje de la especie", done: false },
     { n: "4", t: "Equipo a llevar", done: false },
   ];
-  const fotosCampo = [
-    { source: require("../../assets/especies/black_bass.jpg"), caption: "Montaje · black bass" },
-    { source: require("../../assets/consejos/aparejos/cucharilla-giratoria.jpg"), caption: "Cucharilla · orilla" },
-    { source: require("../../assets/consejos/aparejos/montaje-texas.jpg"), caption: "Texas · embalse" },
-    { source: require("../../assets/especies/lubina.jpg"), caption: "Costa · lubina" },
-  ];
+  const modos = esCosta
+    ? ["Río", "Embalse", "Kayak", "Mar"]
+    : ["Río", "Embalse", "Kayak"];
   return (
     <LinearGradient colors={["#f7faf7", "#e6efe8"]} style={m.fill}>
       <Text style={[m.navDisplay, { color: COLORS.primaryDark }]}>Salgo a pescar</Text>
       <Text style={[m.navSub, { color: COLORS.textSecondary }]}>
-        Tu primera salida · paso a paso{esCosta ? " · kayak o barco" : " · o en kayak"}
+        Tu primera salida · paso a paso
       </Text>
-      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 8, gap: 7 }}>
-        <CarruselFotosPresentacion fotos={fotosCampo} activo={activo} height={96} intervaloMs={2200} />
+      <Animated.View style={{ opacity: v, transform: [{ translateY: y }], marginTop: 10, gap: 8 }}>
+        <View style={m.modoRow}>
+          {modos.map((x, i) => (
+            <View key={x} style={[m.modoChip, i === 2 && m.modoChipOn]}>
+              <Text style={[m.modoChipTxt, i === 2 && m.modoChipTxtOn]}>{x}</Text>
+            </View>
+          ))}
+        </View>
         {steps.map((s, i) => (
           <View key={s.n} style={[m.stepRow, s.done && m.stepDone]}>
             <View style={[m.stepNum, s.done && m.stepNumDone]}>
@@ -679,22 +509,25 @@ function MockCampo({ activo, esCosta }: { activo: boolean; esCosta: boolean }) {
           </View>
         ))}
       </Animated.View>
-      <View style={m.montajePreview}>
-        <Text style={m.montajeTitle}>Consejos con fotos · guía de caña y carrete</Text>
-        <View style={m.montajeDots}>
-          {["Caña", "Línea", "Señuelo"].map((x) => (
-            <View key={x} style={m.montajeChip}>
-              <Text style={m.montajeChipTxt}>{x}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  rootOuter: { flex: 1, backgroundColor: COLORS.primaryDark },
   root: { flex: 1, overflow: "hidden", backgroundColor: COLORS.primaryDark },
+  modoBlock: {
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+    zIndex: 2,
+  },
+  modoLabel: {
+    color: "rgba(255,255,255,0.88)",
+    fontFamily: FONTS.semibold,
+    fontSize: 12,
+    marginBottom: 6,
+    textAlign: "center",
+  },
   closeBtn: {
     position: "absolute",
     right: 16,
@@ -715,7 +548,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   provinciasLine: {
-    marginTop: 6,
+    marginTop: 4,
     color: "rgba(255,255,255,0.78)",
     fontFamily: FONTS.semibold,
     fontSize: 12,
@@ -728,8 +561,8 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   eyebrow: {
-    color: "rgba(255,255,255,0.88)",
-    fontSize: 13.5,
+    color: "rgba(255,255,255,0.9)",
+    fontSize: 13,
     fontFamily: FONTS.displayItalic,
     fontStyle: "italic",
     letterSpacing: 0.2,
@@ -738,12 +571,12 @@ const styles = StyleSheet.create({
   },
   titulo: {
     color: "#fff",
-    fontSize: 32,
+    fontSize: 34,
     fontFamily: FONTS.display,
     textAlign: "center",
-    letterSpacing: -0.7,
-    marginBottom: 5,
-    lineHeight: 36,
+    letterSpacing: -0.8,
+    marginBottom: 4,
+    lineHeight: 38,
     textShadowColor: "rgba(0,0,0,0.35)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
@@ -755,7 +588,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: FONTS.regular,
     maxWidth: 340,
-    marginBottom: 6,
+    marginBottom: 8,
     minHeight: 40,
     paddingHorizontal: 4,
   },
@@ -946,42 +779,6 @@ const m = StyleSheet.create({
     fontWeight: "700",
     fontSize: 12,
   },
-  pinDots: { flexDirection: "row", gap: 14, marginBottom: 16 },
-  pinDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.55)",
-  },
-  pinDotOn: { backgroundColor: "#fff", borderColor: "#fff" },
-  pad: {
-    width: 228,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 8,
-  },
-  key: {
-    width: 62,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
-  keyEmpty: { backgroundColor: "transparent", borderColor: "transparent" },
-  keyTxt: { color: "#fff", fontSize: 18, fontFamily: FONTS.bold, fontWeight: "700" },
-  bioPill: {
-    marginTop: 14,
-    backgroundColor: "rgba(255,255,255,0.16)",
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-  },
-  bioPillTxt: { color: "#fff", fontFamily: FONTS.extrabold, fontWeight: "800", fontSize: 13 },
   semaforo: { borderRadius: RADIUS.md, padding: 12 },
   semaforoKicker: {
     color: "rgba(255,255,255,0.85)",
@@ -1011,9 +808,9 @@ const m = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.25)",
   },
   gauge: {
-    width: 118,
-    height: 118,
-    borderRadius: 59,
+    width: 112,
+    height: 112,
+    borderRadius: 56,
     borderWidth: 8,
     borderColor: "rgba(255,255,255,0.38)",
     backgroundColor: "rgba(255,255,255,0.12)",
@@ -1022,7 +819,7 @@ const m = StyleSheet.create({
   },
   gaugeNum: {
     color: "#fff",
-    fontSize: 42,
+    fontSize: 40,
     fontFamily: FONTS.display,
     letterSpacing: -1,
   },
@@ -1032,7 +829,28 @@ const m = StyleSheet.create({
     fontWeight: "700",
     fontSize: 13,
   },
-  meteoRow: { flexDirection: "row", gap: 6, marginTop: 12, paddingHorizontal: 10 },
+  chartRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    height: 72,
+    marginTop: 14,
+    gap: 3,
+    paddingHorizontal: 4,
+  },
+  chartCol: { flex: 1, alignItems: "center", justifyContent: "flex-end" },
+  chartBar: {
+    width: "100%",
+    borderRadius: 3,
+    backgroundColor: "rgba(255,255,255,0.85)",
+  },
+  chartHint: {
+    marginTop: 8,
+    textAlign: "center",
+    color: "rgba(255,255,255,0.78)",
+    fontFamily: FONTS.semibold,
+    fontSize: 11,
+  },
+  meteoRow: { flexDirection: "row", gap: 6, marginTop: 12 },
   meteoCard: {
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.14)",
@@ -1049,100 +867,36 @@ const m = StyleSheet.create({
     fontWeight: "700",
     marginTop: 2,
   },
-  windowBar: {
-    marginTop: 10,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  modoRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    marginHorizontal: 10,
+    marginBottom: 4,
   },
-  windowTxt: { color: "#fff", fontFamily: FONTS.bold, fontWeight: "700", fontSize: 12 },
-  pintaDisclaimer: {
-    marginTop: 8,
-    color: "rgba(255,255,255,0.7)",
-    fontFamily: FONTS.semibold,
-    fontSize: 11,
-    textAlign: "center",
-    paddingHorizontal: 16,
-  },
-  modoRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
   modoChip: {
     flexGrow: 1,
-    minWidth: "28%",
+    minWidth: "22%",
     backgroundColor: "#fff",
     borderRadius: RADIUS.md,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     alignItems: "center",
     borderWidth: 1.5,
     borderColor: COLORS.border,
   },
-  modoChipOnRio: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  modoChipOnKayak: {
+  modoChipOn: {
     backgroundColor: "#0a3f38",
     borderColor: "#c45f12",
     borderWidth: 2,
   },
-  modoChipOnMar: {
-    backgroundColor: COLORS.water,
-    borderColor: COLORS.water,
-  },
   modoChipTxt: {
     fontFamily: FONTS.extrabold,
     fontWeight: "800",
-    fontSize: 13,
+    fontSize: 12,
     color: COLORS.textPrimary,
   },
   modoChipTxtOn: { color: "#fff" },
-  barcoCard: {
-    backgroundColor: "#fff",
-    borderRadius: RADIUS.md,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  barcoTitle: {
-    fontFamily: FONTS.display,
-    fontSize: 17,
-    color: COLORS.primaryDark,
-    letterSpacing: -0.3,
-  },
-  barcoSub: {
-    fontFamily: FONTS.semibold,
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    marginTop: 4,
-  },
-  barcoTags: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10 },
-  barcoTag: {
-    backgroundColor: COLORS.waterLight,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  barcoTagTxt: {
-    color: COLORS.waterDark,
-    fontFamily: FONTS.bold,
-    fontWeight: "700",
-    fontSize: 11,
-  },
-  alineadoBox: {
-    marginTop: 10,
-    backgroundColor: COLORS.primaryLight,
-    borderRadius: RADIUS.sm,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  alineadoTxt: {
-    textAlign: "center",
-    color: COLORS.primaryDark,
-    fontFamily: FONTS.bold,
-    fontWeight: "700",
-    fontSize: 12,
-  },
   stepRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -1179,135 +933,6 @@ const m = StyleSheet.create({
     fontFamily: FONTS.extrabold,
     fontWeight: "800",
     color: COLORS.water,
-    textTransform: "uppercase",
-  },
-  montajePreview: {
-    marginTop: 10,
-    marginHorizontal: 10,
-    backgroundColor: "#fff",
-    borderRadius: RADIUS.md,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  montajeTitle: {
-    fontFamily: FONTS.displaySemi,
-    color: COLORS.primaryDark,
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  montajeDots: { flexDirection: "row", gap: 6 },
-  montajeChip: {
-    backgroundColor: COLORS.waterLight,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  montajeChipTxt: {
-    color: COLORS.waterDark,
-    fontFamily: FONTS.bold,
-    fontWeight: "700",
-    fontSize: 11,
-  },
-  montajeHint: {
-    marginTop: 8,
-    color: COLORS.textMuted,
-    fontFamily: FONTS.semibold,
-    fontSize: 11,
-  },
-  medirHero: {
-    backgroundColor: "#fff",
-    borderRadius: RADIUS.md,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: 2,
-  },
-  medirHeroKicker: {
-    fontSize: 10,
-    fontFamily: FONTS.extrabold,
-    fontWeight: "800",
-    color: COLORS.water,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-  },
-  medirHeroTitle: {
-    marginTop: 2,
-    fontFamily: FONTS.display,
-    fontSize: 18,
-    color: COLORS.primaryDark,
-    letterSpacing: -0.3,
-  },
-  medirCota: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  medirCotaLbl: {
-    fontSize: 10,
-    fontFamily: FONTS.bold,
-    fontWeight: "700",
-    color: COLORS.textSecondary,
-  },
-  medirCotaMid: {
-    fontSize: 11,
-    fontFamily: FONTS.extrabold,
-    fontWeight: "800",
-    color: COLORS.primary,
-  },
-  medirCotaLine: {
-    flex: 1,
-    height: 2,
-    backgroundColor: COLORS.primary,
-    borderRadius: 1,
-  },
-  medirHeroPie: {
-    marginTop: 8,
-    fontSize: 11,
-    fontFamily: FONTS.semibold,
-    color: COLORS.textMuted,
-  },
-  medirRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: RADIUS.md,
-    paddingVertical: 9,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    gap: 8,
-  },
-  medirDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLORS.water,
-  },
-  medirNombre: {
-    fontFamily: FONTS.bold,
-    fontWeight: "700",
-    fontSize: 13,
-    color: COLORS.textPrimary,
-  },
-  medirCotaTxt: {
-    marginTop: 1,
-    fontFamily: FONTS.semibold,
-    fontSize: 11,
-    color: COLORS.textSecondary,
-  },
-  medirBadge: {
-    backgroundColor: COLORS.primaryLight,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  medirBadgeTxt: {
-    fontSize: 10,
-    fontFamily: FONTS.extrabold,
-    fontWeight: "800",
-    color: COLORS.primaryDark,
     textTransform: "uppercase",
   },
 });

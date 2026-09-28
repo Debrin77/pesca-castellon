@@ -37,6 +37,7 @@ import ListaAnimada from "../components/ListaAnimada";
 import IconoMeteo from "../components/IconoMeteo";
 import { cieloDeCodigo } from "../components/meteoSky";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
+import GraficoIndiceScrubable from "../components/GraficoIndiceScrubable";
 
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const DIAS_CORTOS = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -429,6 +430,14 @@ export default function PrevisionScreen() {
               ))}
             </View>
           )}
+
+          {ind?.horasIndice?.length ? (
+            <GraficoIndiceScrubable
+              horas={ind.horasIndice}
+              puntuacionDia={ind.puntuacion}
+              titulo="Actividad · arrastra la franja"
+            />
+          ) : null}
 
           {horasDia.length > 0 && (
             <View style={{ marginTop: 8 }}>

@@ -5,7 +5,8 @@ import { getProvinciaIdActiva } from "../provincias/runtime";
 const CLAVE_CACHE_LEGACY = "@pesca_castellon/cache_offline_v1";
 const CLAVE_ONBOARDING = "@pesca_castellon/onboarding_visto";
 /** Presentación estilo App Store (virtudes). Versionada para poder mostrarla de nuevo tras rediseños. */
-const CLAVE_PRESENTACION_VIRTUDES = "@pesca_castellon/presentacion_virtudes_v4";
+const CLAVE_PRESENTACION_VIRTUDES = "@pesca_castellon/presentacion_virtudes_v6";
+const CLAVE_FTUE_LONGPRESS_MAPA = "@pesca_castellon/ftue_longpress_mapa_v1";
 
 function claveCache(): string {
   return `@pesca_app/${getProvinciaIdActiva()}/cache_offline_v1`;
@@ -85,6 +86,14 @@ export async function marcarPresentacionVirtudesVista(): Promise<void> {
 
 export async function reiniciarPresentacionVirtudes(): Promise<void> {
   await AsyncStorage.removeItem(CLAVE_PRESENTACION_VIRTUDES);
+}
+
+export async function ftueLongpressMapaVista(): Promise<boolean> {
+  return (await AsyncStorage.getItem(CLAVE_FTUE_LONGPRESS_MAPA)) === "1";
+}
+
+export async function marcarFtueLongpressMapaVista(): Promise<void> {
+  await AsyncStorage.setItem(CLAVE_FTUE_LONGPRESS_MAPA, "1");
 }
 
 /** Datos locales siempre disponibles sin red (normativa, zonas, especies van en el bundle). */

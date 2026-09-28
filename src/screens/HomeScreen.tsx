@@ -77,6 +77,7 @@ import OndaAgua from "../components/OndaAgua";
 import SiguientePasoCard from "../components/SiguientePasoCard";
 import type { SiguientePasoAccion } from "../components/SiguientePasoCard";
 import { LogoMarcaEstatico } from "../components/LogoMarca";
+import GraficoIndiceScrubable from "../components/GraficoIndiceScrubable";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -640,23 +641,6 @@ export default function HomeScreen({ navigation }: Props) {
           </Text>
         ) : null}
 
-        <SelectorModoPesca
-          modo={modoElegido ? modo : null}
-          disponibles={disponibles}
-          /* Si hay Continuar (modo+punto), el chip ¿Seguir en…? sobra. */
-          modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}
-          onChange={(m) => void setModo(m)}
-          sobreOscuro
-        />
-
-        {modoElegido && esModoKayak(modo) ? (
-          <BannerKayakDestacado
-            modo={modo}
-            provinciaId={provincia.id}
-            onVerDocumentacion={() => navigation.navigate("License")}
-          />
-        ) : null}
-
         {cargando && !clima && !indiceHoy && !consultaViva ? (
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
@@ -758,15 +742,11 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         ) : null}
 
-        {!puntoExplicito ? (
-          <TouchableOpacity
-            style={styles.gpsChip}
-            onPress={() => void usarMiUbicacion()}
-            accessibilityRole="button"
-            accessibilityLabel="Usar mi ubicación"
-          >
-            <Text style={styles.gpsChipTxt}>Usar mi ubicación</Text>
-          </TouchableOpacity>
+        {indiceHoy && catInfo ? (
+          <Text style={styles.pintaHeroLine} numberOfLines={1}>
+            ¿Pinta? · {indiceHoy.puntuacion} · {catInfo.texto}
+            {indiceHoy.mejorFranjaInicio ? ` · ${indiceHoy.mejorFranjaInicio}` : ""}
+          </Text>
         ) : null}
 
         <PulsePress
@@ -833,44 +813,69 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
           </LinearGradient>
         </PulsePress>
-
-        {modoElegido && consultaViva ? (
-          <View style={styles.atajosPunto}>
-            <TouchableOpacity
-              style={styles.atajoChip}
-              onPress={() =>
-                navigation.navigate("Aparejos", {
-                  ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
-                  ambitoModo: modo,
-                })
-              }
-              accessibilityRole="button"
-              accessibilityLabel="Ver aparejos"
-            >
-              <Text style={styles.atajoChipTxt}>Aparejos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.atajoChip}
-              onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
-              accessibilityRole="button"
-              accessibilityLabel="Ver consejos y montajes"
-            >
-              <Text style={styles.atajoChipTxt}>Consejos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.atajoChip}
-              onPress={() => irAEspeciesDelPunto(navigation)}
-              accessibilityRole="button"
-              accessibilityLabel="Ver especies del punto"
-            >
-              <Text style={styles.atajoChipTxt}>Especies</Text>
-            </TouchableOpacity>
-          </View>
-        ) : null}
       </LinearGradient>
 
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
+
+        <View style={styles.modoBajoHero}>
+          <SelectorModoPesca
+            modo={modoElegido ? modo : null}
+            disponibles={disponibles}
+            modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}
+            onChange={(m) => void setModo(m)}
+          />
+          {modoElegido && esModoKayak(modo) ? (
+            <BannerKayakDestacado
+              modo={modo}
+              provinciaId={provincia.id}
+              onVerDocumentacion={() => navigation.navigate("License")}
+            />
+          ) : null}
+          {!puntoExplicito ? (
+            <TouchableOpacity
+              style={styles.gpsChipClaro}
+              onPress={() => void usarMiUbicacion()}
+              accessibilityRole="button"
+              accessibilityLabel="Usar mi ubicación"
+            >
+              <Text style={styles.gpsChipClaroTxt}>Usar mi ubicación</Text>
+            </TouchableOpacity>
+          ) : null}
+          {modoElegido && consultaViva ? (
+            <View style={styles.atajosPunto}>
+              <TouchableOpacity
+                style={styles.atajoChipClaro}
+                onPress={() =>
+                  navigation.navigate("Aparejos", {
+                    ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
+                    ambitoModo: modo,
+                  })
+                }
+                accessibilityRole="button"
+                accessibilityLabel="Ver aparejos"
+              >
+                <Text style={styles.atajoChipClaroTxt}>Aparejos</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.atajoChipClaro}
+                onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
+                accessibilityRole="button"
+                accessibilityLabel="Ver consejos y montajes"
+              >
+                <Text style={styles.atajoChipClaroTxt}>Consejos</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.atajoChipClaro}
+                onPress={() => irAEspeciesDelPunto(navigation)}
+                accessibilityRole="button"
+                accessibilityLabel="Ver especies del punto"
+              >
+                <Text style={styles.atajoChipClaroTxt}>Especies</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
 
         {avisoSesionVisible ? (
           <View
@@ -1023,6 +1028,13 @@ export default function HomeScreen({ navigation }: Props) {
               Activa la ubicación o toca un tramo en el mapa
             </Text>
           )}
+          {indiceHoy?.horasIndice?.length ? (
+            <GraficoIndiceScrubable
+              horas={indiceHoy.horasIndice}
+              puntuacionDia={indiceHoy.puntuacion}
+              titulo="Arrastra el día · ¿Pinta?"
+            />
+          ) : null}
           {clima ? (
             <Text style={styles.pulsoMeta} numberOfLines={1}>
               Viento {Math.round(clima.velocidadVientoKmh)} km/h
@@ -1518,6 +1530,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
   },
+  pintaHeroLine: {
+    marginTop: 8,
+    marginBottom: 2,
+    textAlign: "center",
+    color: "rgba(255,255,255,0.9)",
+    fontFamily: FONTS.semibold,
+    fontSize: 13,
+    zIndex: 1,
+  },
+  modoBajoHero: {
+    paddingHorizontal: SPACING.md,
+    paddingTop: 12,
+    gap: 8,
+  },
   gpsChip: {
     alignSelf: "center",
     marginTop: 8,
@@ -1527,6 +1553,22 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.35)",
+  },
+  gpsChipClaro: {
+    alignSelf: "flex-start",
+    marginTop: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.primaryLight,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  gpsChipClaroTxt: {
+    color: COLORS.primaryDark,
+    fontSize: 12.5,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
   },
   gpsChipTxt: {
     color: "#fff",
@@ -1819,6 +1861,20 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.35)",
+  },
+  atajoChipClaro: {
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  atajoChipClaroTxt: {
+    color: COLORS.primaryDark,
+    fontSize: 13,
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
   },
   atajoChipTxt: {
     color: "#fff",

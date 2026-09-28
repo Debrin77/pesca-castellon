@@ -1,5 +1,5 @@
 /**
- * Assert: presentación estilo App Store al entrar (pantallas + ✕ + PIN).
+ * Assert: presentación estilo App Store al entrar (4 virtudes + ✕ + PIN).
  */
 import fs from "fs";
 import path from "path";
@@ -46,7 +46,7 @@ must("src/screens/OnboardingScreen.tsx", [
   "primera salida",
   "¿Puedo aquí?",
   "Hoy pinta",
-  "Solo en este móvil",
+  "Mis sitios",
   "Salgo a pescar",
   "Vámonos de pesca",
   "Río · Embalse · Kayak · Mar",
@@ -55,28 +55,19 @@ must("src/screens/OnboardingScreen.tsx", [
   "Desliza para ver",
   'id: "legal"',
   'id: "pinta"',
-  'id: "intima"',
-  'id: "modos"',
-  'id: "medir"',
-  "MockModos",
-  "MockMedir",
-  "Cómo medir · placa propia",
-  "Particularidad · ficha de especie",
-  "Una placa por especie",
+  'id: "sitios"',
+  'id: "campo"',
   "Solunar",
   "FondoCinePresentacion",
-  "CarruselFotosPresentacion",
   "Castellón · Sevilla · Córdoba · Cuenca",
+  "surfcasting-orilla",
+  "rockfishing-roca",
+  "Long-press",
 ]);
 
 must("src/components/FondoCinePresentacion.tsx", [
   "FondoCinePresentacion",
   "Ken Burns",
-  "crossfade",
-]);
-
-must("src/components/CarruselFotosPresentacion.tsx", [
-  "CarruselFotosPresentacion",
   "crossfade",
 ]);
 
@@ -119,7 +110,7 @@ must("src/services/offlineService.ts", [
   "presentacionVirtudesVista",
   "marcarPresentacionVirtudesVista",
   "reiniciarPresentacionVirtudes",
-  "presentacion_virtudes_v4",
+  "presentacion_virtudes_v6",
 ]);
 
 must("README.md", [
@@ -132,6 +123,74 @@ must("README.md", [
   "Kayak es modalidad propia",
   "fondos fotográficos",
 ]);
+
+must("src/data/iconosPunto.ts", [
+  "COLORES_PUNTO",
+  "ICONOS_PUNTO",
+  "hexColorPunto",
+  "faro",
+  "muelle",
+]);
+must("src/components/GuardarPuntoSheet.tsx", [
+  "Guardar punto",
+  "Guardar en mis sitios",
+  "Editar punto",
+]);
+must("src/components/MapaFabHerramientas.tsx", ["Herramientas del mapa", "Medir", "Guardar"]);
+must("src/components/GraficoIndiceScrubable.tsx", ["Arrastra", "horas", "puntuacion"]);
+must("src/components/LlevameAlPunto.tsx", ["Llévame al punto", "rumboGrados"]);
+must("src/services/kmlService.ts", [
+  "parsearKml",
+  "importarKmlOKmzDesdeTextoOBytes",
+  "extraerKmlDeKmz",
+]);
+must("src/services/condicionesCapturaService.ts", ["capturarCondicionesDelMomento"]);
+must("src/components/map/index.web.tsx", [
+  "touchstart",
+  "CapaBaseForzada",
+  "IGNBaseOrto",
+  "hybrid",
+]);
+
+const mapa = read("src/screens/ZonasLibresScreen.tsx");
+for (const n of [
+  "alLongPressMapa",
+  "GuardarPuntoSheet",
+  "MapaFabHerramientas",
+  "basemapSatelite",
+  "basemapHibrido",
+  "Normativa",
+  "PinPuntoPersonal",
+  "mapType",
+  "ftueLongpress",
+  "abrirEditarSitio",
+  "actualizarPunto",
+]) {
+  if (!mapa.includes(n)) fail(`ZonasLibresScreen sin «${n}»`);
+}
+
+const home = read("src/screens/HomeScreen.tsx");
+for (const n of ["pintaHeroLine", "modoBajoHero", "GraficoIndiceScrubable"]) {
+  if (!home.includes(n)) fail(`HomeScreen sin «${n}»`);
+}
+
+const catches = read("src/screens/MyCatchesScreen.tsx");
+for (const n of [
+  "capturarCondicionesDelMomento",
+  "importarKml",
+  "busquedaLista",
+  "LlevameAlPunto",
+  "condiciones",
+  "pegarKmlVisible",
+  "confirmarPegarKml",
+]) {
+  if (!catches.includes(n)) fail(`MyCatchesScreen sin «${n}»`);
+}
+
+const onb = read("src/screens/OnboardingScreen.tsx");
+if (!onb.includes("SelectorModoPesca") || !onb.includes("STAGE_W")) {
+  fail("Onboarding debe personalizar modalidad y limitar ancho web");
+}
 
 const pkg = read("package.json");
 if (!pkg.includes("assert_presentacion_appstore.mjs")) {

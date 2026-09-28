@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect, useLayoutEffect } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions, Platform } from "react-native";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import MapView, { Marker, Circle, Polyline } from "../components/map";
 import {
@@ -11,7 +11,18 @@ import {
   TramoOficial,
   tramoUsaRadioAnexo,
 } from "../services/consultaPescaService";
-import { obtenerPuntosGuardados, obtenerCapturas, guardarPunto, PuntoGuardado, Captura } from "../services/storageService";
+import {
+  obtenerPuntosGuardados,
+  obtenerCapturas,
+  guardarPunto,
+  actualizarPunto,
+  PuntoGuardado,
+  Captura,
+} from "../services/storageService";
+import {
+  ftueLongpressMapaVista,
+  marcarFtueLongpressMapaVista,
+} from "../services/offlineService";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion, suscribirseUbicacion } from "../services/locationService";
 import { formatearCoords } from "../services/coordsUtils";
 import {
@@ -47,7 +58,7 @@ import {
 } from "../services/navegacionEmbarcacionService";
 import { esModalidadEmbarcacionMar, modalidadDesdeModoGlobal } from "../data/modalidades";
 import { buscarZonas, cuencasProvincia, SugerenciaBusqueda } from "../services/busquedaService";
-import { asegurarCoordsEnProvincia, puntoEnRegionMapa } from "../services/geoService";
+import { asegurarCoordsEnProvincia, distanciaKm, puntoEnRegionMapa } from "../services/geoService";
 import { listarSitiosPersonales } from "../services/sitiosPersonalesService";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
 import {
@@ -77,6 +88,10 @@ import { getProvinciaActiva } from "../provincias/runtime";
 import { resolverEspecie } from "../services/catalogoEspeciesService";
 import { irAEspeciesDelPunto } from "../navigation/irATab";
 import { COLORS, PIN, RADIUS, SHADOW, FONTS, TYPE } from "../theme";
+import { glyphIconoPunto, hexColorPunto } from "../data/iconosPunto";
+import GuardarPuntoSheet, { type BorradorPunto } from "../components/GuardarPuntoSheet";
+import MapaFabHerramientas, { type AccionFabMapa } from "../components/MapaFabHerramientas";
+import PinPuntoPersonal from "../components/PinPuntoPersonal";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -139,9 +154,28 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const [capasExtra, setCapasExtra] = useState(false);
   const [waypoints, setWaypoints] = useState<WaypointMarino[]>([]);
   const [infoNavegacion, setInfoNavegacion] = useState<string | null>(null);
+  const [basemapSatelite, setBasemapSatelite] = useState(false);
+  const [basemapHibrido, setBasemapHibrido] = useState(false);
+  const [borradorGuardar, setBorradorGuardar] = useState<BorradorPunto | null>(null);
+  const [sheetGuardar, setSheetGuardar] = useState(false);
+  const [midiendo, setMidiendo] = useState(false);
+  const [medidaPts, setMedidaPts] = useState<LatLng[]>([]);
+  const [ancla, setAncla] = useState<(LatLng & { radioM: number }) | null>(null);
+  const [ftueLongpress, setFtueLongpress] = useState(false);
   const mar = !soloContinental && modo === "costa";
   const modoBarco = mar && (esModoEmbarcado(modoGlobal) || esModalidadEmbarcacionMar(modalidad));
   const modoKayak = esModoKayak(modoGlobal) || modalidad === "kayak" || modalidad === "kayak_embalse";
+  const normativaOn = capas.zpl || capas.zpc || capas.vedado;
+  const distanciaMedidaM =
+    medidaPts.length >= 2
+      ? Math.round(distanciaKm(medidaPts[0].latitude, medidaPts[0].longitude, medidaPts[1].latitude, medidaPts[1].longitude) * 1000)
+      : null;
+
+  useEffect(() => {
+    ftueLongpressMapaVista().then((visto) => {
+      if (!visto) setFtueLongpress(true);
+    });
+  }, []);
 
   // Sincronizar mapa con el modo global (Inicio / Salgo) solo si ya hay elección.
   useEffect(() => {
@@ -332,6 +366,15 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       }
       cancelar = await suscribirseUbicacion((lat, lng) => {
         setYo({ latitude: lat, longitude: lng });
+        setAncla((a) => {
+          if (!a) return a;
+          const dM = distanciaKm(a.latitude, a.longitude, lat, lng) * 1000;
+          if (dM > a.radioM) {
+            Alert.alert("Ancla", `Te has alejado ${Math.round(dM)} m del punto de ancla (radio ${a.radioM} m).`);
+            return null;
+          }
+          return a;
+        });
       });
     })();
     return () => cancelar?.();
@@ -339,6 +382,127 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
   function toggleCapa(capa: keyof typeof capas) {
     setCapas((prev) => ({ ...prev, [capa]: !prev[capa] }));
+  }
+
+  function toggleNormativa() {
+    const next = !normativaOn;
+    setCapas((prev) => ({ ...prev, zpl: next, zpc: next, vedado: next }));
+  }
+
+  function abrirSheetGuardar(lat: number, lng: number, nombreSugerido?: string) {
+    const enProvincia = asegurarCoordsEnProvincia(lat, lng, {
+      region: provincia.regionMapa,
+      nombre: provincia.nombre,
+    });
+    if (!enProvincia.ok) {
+      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
+      return;
+    }
+    setBorradorGuardar({
+      lat,
+      lng,
+      nombreSugerido: nombreSugerido || consulta?.titulo?.trim() || undefined,
+      zonaRelacionadaId: consulta?.tramo?.fichaId ?? consulta?.tramo?.id ?? null,
+    });
+    setSheetGuardar(true);
+  }
+
+  function abrirEditarSitio(s: {
+    id: string;
+    titulo: string;
+    lat: number;
+    lng: number;
+    color?: string | null;
+    icono?: string | null;
+    tipo: string;
+  }) {
+    if (s.tipo !== "punto" || !s.id.startsWith("punto:")) {
+      evaluarPunto(s.lat, s.lng);
+      return;
+    }
+    const puntoId = s.id.slice("punto:".length);
+    setBorradorGuardar({
+      lat: s.lat,
+      lng: s.lng,
+      nombreSugerido: s.titulo,
+      puntoId,
+      color: s.color,
+      icono: s.icono,
+    });
+    setSheetGuardar(true);
+  }
+
+  function alPulsarMapa(lat: number, lng: number) {
+    if (midiendo) {
+      setMedidaPts((prev) => {
+        if (prev.length >= 2) return [{ latitude: lat, longitude: lng }];
+        return [...prev, { latitude: lat, longitude: lng }];
+      });
+      return;
+    }
+    evaluarPunto(lat, lng);
+  }
+
+  function alLongPressMapa(lat: number, lng: number) {
+    if (midiendo) {
+      alPulsarMapa(lat, lng);
+      return;
+    }
+    if (ftueLongpress) {
+      setFtueLongpress(false);
+      void marcarFtueLongpressMapaVista();
+    }
+    evaluarPunto(lat, lng);
+    abrirSheetGuardar(lat, lng);
+  }
+
+  async function onAccionFab(accion: AccionFabMapa) {
+    if (accion === "guardar") {
+      if (marcador) {
+        abrirSheetGuardar(marcador.latitude, marcador.longitude, consulta?.titulo?.trim());
+      } else {
+        Alert.alert("Guardar punto", "Mantén pulsado el mapa (o toca un sitio y usa + → Guardar).");
+      }
+      return;
+    }
+    if (accion === "medir") {
+      setMidiendo((v) => !v);
+      setMedidaPts([]);
+      return;
+    }
+    if (accion === "ruta") {
+      if (grabandoId) {
+        await finalizarTrack(grabandoId);
+        setGrabandoId(null);
+        setTracks(await obtenerTracks());
+        setCapas((prev) => ({ ...prev, tracks: true }));
+        Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
+      } else {
+        setMapaSimple(false);
+        const t = await iniciarTrack();
+        setGrabandoId(t.id);
+        setTracks(await obtenerTracks());
+        setCapas((prev) => ({ ...prev, tracks: true }));
+      }
+      return;
+    }
+    if (accion === "ancla") {
+      if (!marcador) {
+        Alert.alert("Ancla", "Toca primero un punto en el mapa.");
+        return;
+      }
+      if (ancla) {
+        setAncla(null);
+        Alert.alert("Ancla", "Alarma de ancla desactivada.");
+        return;
+      }
+      setAncla({
+        latitude: marcador.latitude,
+        longitude: marcador.longitude,
+        radioM: 40,
+      });
+      Alert.alert("Ancla", "Radio de 40 m. Te avisamos si te alejas (al actualizar tu GPS).");
+    }
   }
 
   const tramosVisibles = useMemo(() => {
@@ -546,33 +710,46 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setMotivoPick(null);
   }
 
-  async function guardarMarcadorComoPunto() {
+  function guardarMarcadorComoPunto() {
     if (!marcador) {
       Alert.alert("Mapa", "Pulsa primero un sitio en el mapa.");
       return;
     }
-    const lat = marcador.latitude;
-    const lng = marcador.longitude;
-    const enProvincia = asegurarCoordsEnProvincia(lat, lng, {
-      region: provincia.regionMapa,
-      nombre: provincia.nombre,
-    });
-    if (!enProvincia.ok) {
-      Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
-      return;
+    abrirSheetGuardar(marcador.latitude, marcador.longitude, consulta?.titulo?.trim());
+  }
+
+  async function confirmarGuardarDesdeSheet(datos: {
+    nombre: string;
+    color: string;
+    icono: string;
+    lat: number;
+    lng: number;
+    zonaRelacionadaId?: string | null;
+    puntoId?: string | null;
+  }) {
+    if (datos.puntoId) {
+      await actualizarPunto(datos.puntoId, {
+        nombre: datos.nombre,
+        color: datos.color,
+        icono: datos.icono,
+      });
+    } else {
+      await guardarPunto({
+        nombre: datos.nombre,
+        lat: datos.lat,
+        lng: datos.lng,
+        zonaRelacionadaId: datos.zonaRelacionadaId ?? null,
+        color: datos.color,
+        icono: datos.icono,
+      });
     }
-    const nombre = consulta?.titulo?.trim() || `Punto del ${new Date().toLocaleDateString("es-ES")}`;
-    await guardarPunto({
-      nombre,
-      lat,
-      lng,
-      zonaRelacionadaId: consulta?.tramo?.fichaId ?? consulta?.tramo?.id ?? null,
-    });
     setPuntosPersonales(await obtenerPuntosGuardados());
     setCapas((prev) => ({ ...prev, misPuntos: true }));
+    setSheetGuardar(false);
+    setBorradorGuardar(null);
 
-    if (modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
-      resolverPickUbicacion({ lat, lng, etiqueta: nombre });
+    if (!datos.puntoId && modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
+      resolverPickUbicacion({ lat: datos.lat, lng: datos.lng, etiqueta: datos.nombre });
       setModoAnadir(false);
       setMotivoPick(null);
       setFichaAbierta(false);
@@ -580,7 +757,10 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       return;
     }
 
-    Alert.alert("Punto guardado", `${nombre}\n${formatearCoords(lat, lng)}`);
+    Alert.alert(
+      datos.puntoId ? "Punto actualizado" : "Punto guardado",
+      `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`
+    );
   }
 
   function usarUbicacionParaCaptura() {
@@ -815,34 +995,48 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       {!mapaSimple ? (
       <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.layerBar, mar && styles.modoBarMar]} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center" }}>
-        {mar ? (
-          <>
-            <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipMar]} onPress={() => toggleCapa("zpl")}>
-              <Text style={[styles.layerChipText, capas.zpl && { color: PIN.playa }]}>Playa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
-              <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
-              <Text style={[styles.layerChipText, capas.zpc && { color: PIN.puerto }]}>Puerto</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipActive]} onPress={() => toggleCapa("zpl")}>
-              <Text style={[styles.layerChipText, capas.zpl && { color: PIN.libre }]}>Libre</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
-              <Text style={[styles.layerChipText, capas.zpc && { color: PIN.coto }]}>Coto</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
-              <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
-            </TouchableOpacity>
-          </>
-        )}
+        <TouchableOpacity
+          style={[styles.layerChip, normativaOn && styles.layerChipActive]}
+          onPress={toggleNormativa}
+          accessibilityRole="button"
+          accessibilityLabel="Capa normativa"
+          accessibilityState={{ selected: normativaOn }}
+        >
+          <Text style={[styles.layerChipText, normativaOn && styles.layerChipTextActive]}>Normativa</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.layerChip, capas.misPuntos && styles.layerChipActive]} onPress={() => toggleCapa("misPuntos")}>
           <Text style={[styles.layerChipText, capas.misPuntos && styles.layerChipTextActive]}>
             Mis puntos{sitiosPersonales.length ? ` (${sitiosPersonales.length})` : ""}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.layerChip, (basemapSatelite || basemapHibrido) && styles.layerChipActive]}
+          onPress={() => {
+            // Ciclo: estándar → satélite → híbrido → estándar
+            if (!basemapSatelite && !basemapHibrido) {
+              setBasemapSatelite(true);
+              setBasemapHibrido(false);
+            } else if (basemapSatelite && !basemapHibrido) {
+              setBasemapSatelite(false);
+              setBasemapHibrido(true);
+            } else {
+              setBasemapSatelite(false);
+              setBasemapHibrido(false);
+            }
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={
+            basemapHibrido ? "Mapa híbrido" : basemapSatelite ? "Mapa satélite" : "Mapa estándar"
+          }
+          accessibilityState={{ selected: basemapSatelite || basemapHibrido }}
+        >
+          <Text
+            style={[
+              styles.layerChipText,
+              (basemapSatelite || basemapHibrido) && styles.layerChipTextActive,
+            ]}
+          >
+            {basemapHibrido ? "Híbrido" : basemapSatelite ? "Satélite" : "Satélite"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -899,6 +1093,36 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             onChange={setModalidad}
             filtroAmbito={mar ? "maritimo" : "continental"}
           />
+          <View style={styles.normativaDetalle}>
+            <Text style={styles.capasExtraTitulo}>Detalle normativa</Text>
+            <View style={styles.rutaBtns}>
+              {mar ? (
+                <>
+                  <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipMar]} onPress={() => toggleCapa("zpl")}>
+                    <Text style={[styles.layerChipText, capas.zpl && { color: PIN.playa }]}>Playa</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
+                    <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
+                    <Text style={[styles.layerChipText, capas.zpc && { color: PIN.puerto }]}>Puerto</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <TouchableOpacity style={[styles.layerChip, capas.zpl && styles.layerChipActive]} onPress={() => toggleCapa("zpl")}>
+                    <Text style={[styles.layerChipText, capas.zpl && { color: PIN.libre }]}>Libre</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.layerChip, capas.zpc && styles.layerChipActive]} onPress={() => toggleCapa("zpc")}>
+                    <Text style={[styles.layerChipText, capas.zpc && { color: PIN.coto }]}>Coto</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.layerChip, capas.vedado && styles.layerChipActive]} onPress={() => toggleCapa("vedado")}>
+                    <Text style={[styles.layerChipText, capas.vedado && { color: PIN.vedado }]}>Vedado</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          </View>
           {modoBarco && marcador ? (
             <TouchableOpacity
               style={[styles.layerChip, { alignSelf: "flex-start", marginTop: 6 }]}
@@ -1001,8 +1225,31 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       {mapaSimple ? (
         <Text style={styles.hintSimple}>
-          Toca el mapa para consultar. Activa «Capas avanzadas» para cotos, radar y rutas.
+          Toca para consultar · mantén pulsado para guardar. «Capas avanzadas» añade normativa, satélite y radar.
         </Text>
+      ) : null}
+      {midiendo ? (
+        <Text style={styles.hintMedir}>
+          Medir: toca origen y destino
+          {distanciaMedidaM != null
+            ? ` · ${distanciaMedidaM < 1000 ? `${distanciaMedidaM} m` : `${(distanciaMedidaM / 1000).toFixed(2)} km`}`
+            : ""}
+        </Text>
+      ) : null}
+      {ftueLongpress && !midiendo ? (
+        <TouchableOpacity
+          style={styles.ftueLongpress}
+          onPress={() => {
+            setFtueLongpress(false);
+            void marcarFtueLongpressMapaVista();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Mantén pulsado para guardar. Cerrar aviso"
+        >
+          <Text style={styles.ftueLongpressTxt}>
+            Mantén pulsado el mapa para guardar un punto · toca para cerrar
+          </Text>
+        </TouchableOpacity>
       ) : null}
 
       <View style={[styles.mapWrap, { height: altoMapa }]}>
@@ -1012,6 +1259,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           initialRegion={provincia.regionMapa}
           cameraTarget={camara}
           accent={mar ? "mar" : "bosque"}
+          mapType={basemapHibrido ? "hybrid" : basemapSatelite ? "satellite" : "standard"}
           pescaWms={
             provincia.id === "sevilla" || provincia.id === "cordoba"
               ? "rediam"
@@ -1022,8 +1270,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           showRadar={capas.radar}
           radarUrl={radarUrl}
           showBathymetry={mar && capas.batimetria}
-          onPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
-          onLongPress={(e) => evaluarPunto(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
+          onPress={(e) =>
+            alPulsarMapa(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)
+          }
+          onLongPress={(e) =>
+            alLongPressMapa(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)
+          }
         >
           {provincia.tieneIcv ? (
             <CapaPoligonosIcv
@@ -1148,19 +1400,42 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             );
           })}
           {capas.misPuntos &&
-            sitiosPersonales.map((s) => (
-              <Marker
-                key={s.id}
-                coordinate={{ latitude: s.lat, longitude: s.lng }}
-                pinColor={s.tipo === "captura" ? PIN.captura : PIN.spot}
-                identifier={s.tipo === "captura" ? "captura" : "spot"}
-                title={s.titulo}
-                onPress={() => {
-                  evaluarPunto(s.lat, s.lng);
-                  void fijarPunto({ lat: s.lat, lng: s.lng, fuente: "mapa", etiqueta: s.titulo });
-                }}
-              />
-            ))}
+            sitiosPersonales.map((s) => {
+              const colorHex =
+                s.tipo === "captura"
+                  ? s.color
+                    ? hexColorPunto(s.color)
+                    : PIN.captura
+                  : hexColorPunto(s.color);
+              const glyph = glyphIconoPunto(s.icono);
+              return (
+                <Marker
+                  key={s.id}
+                  coordinate={{ latitude: s.lat, longitude: s.lng }}
+                  pinColor={colorHex}
+                  identifier={
+                    s.tipo === "captura" ? "captura" : `personal:${glyph}`
+                  }
+                  title={s.titulo}
+                  onPress={() => {
+                    if (s.tipo === "punto") {
+                      abrirEditarSitio(s);
+                      return;
+                    }
+                    evaluarPunto(s.lat, s.lng);
+                    void fijarPunto({ lat: s.lat, lng: s.lng, fuente: "mapa", etiqueta: s.titulo });
+                  }}
+                >
+                  {Platform.OS !== "web" ? (
+                    <PinPuntoPersonal
+                      color={s.color}
+                      icono={s.icono}
+                      captura={s.tipo === "captura"}
+                    />
+                  ) : null}
+                </Marker>
+              );
+            })}
           {capas.tracks &&
             tracks.map((t) => (
               <Polyline
@@ -1170,6 +1445,30 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 strokeWidth={t.id === grabandoId ? 5 : 3}
               />
             ))}
+          {medidaPts.length >= 2 ? (
+            <Polyline
+              coordinates={medidaPts}
+              strokeColor={COLORS.primaryDark}
+              strokeWidth={3}
+            />
+          ) : null}
+          {medidaPts.map((p, i) => (
+            <Marker
+              key={`medida-${i}`}
+              coordinate={p}
+              pinColor={COLORS.primary}
+              identifier="seleccion"
+              title={i === 0 ? "Origen" : "Destino"}
+            />
+          ))}
+          {ancla ? (
+            <Circle
+              center={{ latitude: ancla.latitude, longitude: ancla.longitude }}
+              radius={ancla.radioM}
+              strokeColor={COLORS.water}
+              fillColor={COLORS.water + "22"}
+            />
+          ) : null}
           {yo && (
             <Marker coordinate={yo} pinColor={PIN.yo} identifier="user" title="Tú" />
           )}
@@ -1177,6 +1476,13 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             <Marker coordinate={marcador} pinColor={PIN.seleccion} identifier="seleccion" title="Punto consultado" />
           )}
         </MapView>
+        <MapaFabHerramientas
+          onAccion={onAccionFab}
+          midiendo={midiendo}
+          grabando={!!grabandoId}
+          mostrarAncla={modoBarco}
+          mostrarRuta
+        />
         {capas.radar ? (
           <View style={styles.radarPlacaWrap} pointerEvents="none">
             <View
@@ -1222,8 +1528,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               ? "Pulsa el mapa · confirma con «Usar esta ubicación»."
               : "Pulsa el mapa · en la ficha elige «Guardar este punto»."
             : mar
-              ? "Verde = hoy sí en orilla. Rojo = hoy no (veda o puerto). La ficha se abre a pantalla completa."
-              : "Verde = hoy sí. Ámbar = coto. Rojo = hoy no. Pulsa el mapa para consultar o guardar un punto."}
+              ? "Toca = consultar · mantén = guardar. Verde = hoy sí en orilla. Rojo = hoy no (veda o puerto)."
+              : "Toca = consultar · mantén = guardar. Verde = hoy sí. Ámbar = coto. Rojo = hoy no."}
         </Text>
         {pickConfirmar && marcador ? (
           <TouchableOpacity
@@ -1319,6 +1625,16 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </>
         ) : null}
       </VentanaConsulta>
+
+      <GuardarPuntoSheet
+        visible={sheetGuardar}
+        borrador={borradorGuardar}
+        onCerrar={() => {
+          setSheetGuardar(false);
+          setBorradorGuardar(null);
+        }}
+        onGuardar={confirmarGuardarDesdeSheet}
+      />
     </View>
   );
 }
@@ -1564,4 +1880,27 @@ const styles = StyleSheet.create({
   bannerAnadirTitulo: { color: "#fff", fontWeight: "700", fontSize: 13 },
   bannerAnadirTxt: { color: "#d7e8df", fontSize: 11.5, marginTop: 2, lineHeight: 15 },
   bannerAnadirCancel: { color: "#fff", fontWeight: "700", fontSize: 12 },
+  hintMedir: {
+    ...TYPE.caption,
+    textAlign: "center",
+    color: COLORS.primaryDark,
+    backgroundColor: COLORS.primaryLight,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+  },
+  ftueLongpress: {
+    backgroundColor: COLORS.primaryDark,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  ftueLongpressTxt: {
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: FONTS.bold,
+    fontWeight: "700",
+    fontSize: 12.5,
+  },
+  normativaDetalle: { marginTop: 8, marginBottom: 4 },
 });
