@@ -24,16 +24,16 @@ type Props = {
   foto: ImageSourcePropType;
   /** Degradado de marca encima de la foto. */
   accent: readonly [string, string, string];
-  /** Intensidad del velo oscuro (0–1). */
+  /** Intensidad del velo oscuro (0–1). Por defecto bajo para que la foto se note. */
   velo?: number;
 };
 
 /**
  * Fondo cinematográfico para la presentación App Store:
- * foto a sangrado + Ken Burns suave + crossfade al cambiar de slide
- * + degradado de marca. Evita fondos planos y da atmósfera de orilla.
+ * foto a sangrado + Ken Burns visible + crossfade al cambiar de slide
+ * + degradado de marca ligero. La foto debe leerse como protagonista.
  */
-export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Props) {
+export default function FondoCinePresentacion({ foto, accent, velo = 0.16 }: Props) {
   const [capaA, setCapaA] = useState(foto);
   const [capaB, setCapaB] = useState(foto);
   const [frenteEsB, setFrenteEsB] = useState(false);
@@ -51,7 +51,7 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
       setCapaA(foto);
       Animated.timing(opacidadB, {
         toValue: 0,
-        duration: 720,
+        duration: 560,
         easing: Easing.inOut(Easing.cubic),
         useNativeDriver: nativo,
       }).start(({ finished }) => {
@@ -61,7 +61,7 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
       setCapaB(foto);
       Animated.timing(opacidadB, {
         toValue: 1,
-        duration: 720,
+        duration: 560,
         easing: Easing.inOut(Easing.cubic),
         useNativeDriver: nativo,
       }).start(({ finished }) => {
@@ -77,13 +77,13 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
       Animated.sequence([
         Animated.timing(ken, {
           toValue: 1,
-          duration: 9200,
+          duration: 6200,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: nativo,
         }),
         Animated.timing(ken, {
           toValue: 0,
-          duration: 9200,
+          duration: 6200,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: nativo,
         }),
@@ -93,9 +93,10 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
     return () => loop.stop();
   }, [ken, foto]);
 
-  const scale = ken.interpolate({ inputRange: [0, 1], outputRange: [1.1, 1.22] });
-  const tx = ken.interpolate({ inputRange: [0, 1], outputRange: [-18, 20] });
-  const ty = ken.interpolate({ inputRange: [0, 1], outputRange: [-10, 14] });
+  // Ken Burns más marcado: se nota el movimiento al cambiar de slide.
+  const scale = ken.interpolate({ inputRange: [0, 1], outputRange: [1.06, 1.28] });
+  const tx = ken.interpolate({ inputRange: [0, 1], outputRange: [-28, 32] });
+  const ty = ken.interpolate({ inputRange: [0, 1], outputRange: [-16, 22] });
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -111,23 +112,23 @@ export default function FondoCinePresentacion({ foto, accent, velo = 0.38 }: Pro
         </Animated.View>
       </Animated.View>
 
-      {/* Velo + tinte de marca: deja leer el copy sin aplastar la foto */}
+      {/* Velo ligero: la foto de orilla se lee; el texto sigue contrastado abajo */}
       <View style={[styles.velo, { backgroundColor: `rgba(4,14,12,${velo})` }]} />
       <LinearGradient
-        colors={[hexToRgba(accent[0], 0.55), hexToRgba(accent[1], 0.35), hexToRgba(accent[2], 0.72)]}
-        locations={[0, 0.42, 1]}
+        colors={[hexToRgba(accent[0], 0.28), hexToRgba(accent[1], 0.12), hexToRgba(accent[2], 0.62)]}
+        locations={[0, 0.45, 1]}
         style={StyleSheet.absoluteFill}
       />
       <LinearGradient
-        colors={["rgba(255,232,190,0.18)", "transparent", "rgba(0,0,0,0.5)"]}
-        locations={[0, 0.35, 1]}
+        colors={["rgba(255,232,190,0.1)", "transparent", "rgba(0,0,0,0.55)"]}
+        locations={[0, 0.4, 1]}
         start={{ x: 0.15, y: 0 }}
         end={{ x: 0.85, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-      {/* Viñeta lateral: la foto respira más en el centro */}
+      {/* Viñeta suave: centra la foto sin aplastarla */}
       <LinearGradient
-        colors={["rgba(0,0,0,0.28)", "transparent", "rgba(0,0,0,0.28)"]}
+        colors={["rgba(0,0,0,0.14)", "transparent", "rgba(0,0,0,0.14)"]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={StyleSheet.absoluteFill}

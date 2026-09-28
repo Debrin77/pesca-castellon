@@ -167,7 +167,7 @@ export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
   return (
     <View style={styles.rootOuter}>
       <View style={[styles.root, Platform.OS === "web" && { width: STAGE_W, alignSelf: "center" }]}>
-      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.42} />
+      <FondoCinePresentacion foto={slide.foto} accent={slide.accent} velo={0.14} />
       <OndaAgua intensidad={0.35} tono={slide.tonoOnda} />
 
       <TouchableOpacity
