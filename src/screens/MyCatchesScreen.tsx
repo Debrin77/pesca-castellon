@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Image,
   Platform,
   Modal,
 } from "react-native";
@@ -86,6 +85,11 @@ import {
   nombreSitioDesdeCoords,
 } from "../services/nombreSitioMapaService";
 import FotoPreviewCaptura from "../components/FotoPreviewCaptura";
+import VisorFotoCaptura from "../components/VisorFotoCaptura";
+import {
+  exportarCapturasCsv,
+  exportarCopiaSeguridadCapturas,
+} from "../services/backupCapturasService";
 
 type Tab = "favoritos" | "puntos" | "capturas";
 type OrdenLista = "fecha" | "especie" | "sitio" | "color";
@@ -189,6 +193,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [pegandoKml, setPegandoKml] = useState(false);
   const [editarPunto, setEditarPunto] = useState<PuntoGuardado | null>(null);
   const [editarNombrePunto, setEditarNombrePunto] = useState("");
+  const [visorFoto, setVisorFoto] = useState<{ uri: string; titulo?: string } | null>(null);
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -878,6 +883,26 @@ export default function MyCatchesScreen({ navigation }: Props) {
             <Text style={styles.gpxBtnText}>Importar KML / KMZ</Text>
             <Text style={styles.gpxSub}>Placemarks → Mis sitios (privados, en esta provincia)</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.gpxBtn, styles.backupBtn]}
+            onPress={() => void exportarCopiaSeguridadCapturas()}
+            accessibilityRole="button"
+            accessibilityLabel="Copia de seguridad de capturas al móvil"
+          >
+            <Text style={styles.gpxBtnText}>Copia de seguridad · Capturas</Text>
+            <Text style={styles.gpxSub}>
+              JSON con datos y fotos · guárdalo en el móvil o en la nube
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.gpxBtn, styles.exportCsvBtn]}
+            onPress={() => void exportarCapturasCsv()}
+            accessibilityRole="button"
+            accessibilityLabel="Exportar capturas a CSV"
+          >
+            <Text style={styles.gpxBtnText}>Exportar CSV · Capturas</Text>
+            <Text style={styles.gpxSub}>Hoja de cálculo sin fotos (comprobar / archivar)</Text>
+          </TouchableOpacity>
           {(tab === "capturas" || tab === "puntos") && (
             <View style={styles.listaTools}>
               <TextInput
@@ -1241,14 +1266,27 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <FotoPreviewCaptura
-                    uri={fotoUri}
-                    onBroken={() => {
-                      setErrorForm(
-                        "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
-                      );
-                    }}
-                  />
+                  <TouchableOpacity
+                    onPress={() =>
+                      setVisorFoto({
+                        uri: fotoUri,
+                        titulo: nombreLugar.trim() || "Vista previa de la captura",
+                      })
+                    }
+                    accessibilityRole="button"
+                    accessibilityLabel="Ver foto a pantalla completa con zoom"
+                    activeOpacity={0.9}
+                  >
+                    <FotoPreviewCaptura
+                      uri={fotoUri}
+                      onBroken={() => {
+                        setErrorForm(
+                          "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
+                        );
+                      }}
+                    />
+                    <Text style={styles.hintMini}>Toca la foto para verla completa y con zoom</Text>
+                  </TouchableOpacity>
                 ) : null}
 
                 {errorForm ? (
@@ -1304,7 +1342,26 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     {showGrupo ? <Text style={styles.grupoTitulo}>{grupoLabel}</Text> : null}
                     <View style={styles.card}>
                       {c.fotoUri ? (
-                        <Image source={{ uri: c.fotoUri }} style={styles.fotoCard} />
+                        <TouchableOpacity
+                          onPress={() =>
+                            setVisorFoto({
+                              uri: c.fotoUri!,
+                              titulo: [
+                                sp?.nombre ?? c.especieId,
+                                c.fecha,
+                                c.nombreLugar,
+                              ]
+                                .filter(Boolean)
+                                .join(" · "),
+                            })
+                          }
+                          accessibilityRole="button"
+                          accessibilityLabel={`Ver foto de ${sp?.nombre ?? "captura"} a pantalla completa`}
+                          activeOpacity={0.9}
+                        >
+                          <FotoPreviewCaptura uri={c.fotoUri} style={styles.fotoCardPreview} />
+                          <Text style={styles.fotoVerHint}>Ver foto · zoom →</Text>
+                        </TouchableOpacity>
                       ) : (
                         <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
                           <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
@@ -1583,6 +1640,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
         visible={!!llevame}
         destino={llevame}
         onCerrar={() => setLlevame(null)}
+      />
+
+      <VisorFotoCaptura
+        uri={visorFoto?.uri ?? null}
+        titulo={visorFoto?.titulo}
+        onCerrar={() => setVisorFoto(null)}
       />
 
       <Modal
@@ -1914,8 +1977,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: "center",
   },
+  backupBtn: {
+    marginTop: 8,
+    backgroundColor: COLORS.primary,
+  },
+  exportCsvBtn: {
+    marginTop: 8,
+    backgroundColor: COLORS.primaryDark,
+  },
   gpxBtnText: { color: "#fff", fontWeight: "800", fontSize: 14 },
   gpxSub: { color: "rgba(255,255,255,0.9)", fontSize: 11, marginTop: 4, textAlign: "center" },
+  fotoCardPreview: {
+    width: "100%",
+    height: 160,
+    marginTop: 0,
+    borderRadius: 0,
+  },
+  fotoVerHint: {
+    position: "absolute",
+    right: 8,
+    bottom: 8,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    overflow: "hidden",
+  },
   toolsBox: {
     marginBottom: 14,
     gap: 8,
