@@ -1,5 +1,5 @@
 /**
- * Assert: las fotos de capturas se persisten (no URIs temporales del picker).
+ * Assert: fotos de capturas persistentes + picker web fiable (label/input).
  */
 import fs from "fs";
 import path from "path";
@@ -34,6 +34,28 @@ if (!fs.existsSync(svcPath)) {
   } else {
     ok("fotoCapturaService usa data URI");
   }
+  if (!svc.includes("elegirFotoWebSync") || !svc.includes("input.click()")) {
+    fail("fotoCapturaService debe abrir el file picker con click() síncrono");
+  } else {
+    ok("picker web síncrono (FAB)");
+  }
+  if (!svc.includes("fotoDesdeFile")) {
+    fail("fotoCapturaService sin fotoDesdeFile");
+  } else {
+    ok("fotoDesdeFile");
+  }
+}
+
+const btnPath = path.join(root, "src/components/BotonFotoCaptura.tsx");
+if (!fs.existsSync(btnPath)) {
+  fail("falta BotonFotoCaptura.tsx");
+} else {
+  const btn = read("src/components/BotonFotoCaptura.tsx");
+  if (!btn.includes('type: "file"') || !btn.includes('"label"')) {
+    fail("BotonFotoCaptura web debe usar label + input type=file");
+  } else {
+    ok("BotonFotoCaptura con label/input (Safari/PWA)");
+  }
 }
 
 const catches = read("src/screens/MyCatchesScreen.tsx");
@@ -42,15 +64,35 @@ if (!catches.includes("fotoDesdeAsset") || !catches.includes("persistirFotoCaptu
 } else {
   ok("MyCatchesScreen persiste fotos al elegir/guardar");
 }
-if (!catches.includes("base64: true")) {
-  fail("ImagePicker debe pedir base64: true para persistir en web/nativo");
+if (!catches.includes("BotonFotoCaptura")) {
+  fail("Capturas debe usar BotonFotoCaptura (gesto web fiable)");
 } else {
-  ok("ImagePicker con base64");
+  ok("usa BotonFotoCaptura");
 }
-if (!catches.includes("elegirFotoWebFallback")) {
-  fail("Capturas debe tener fallback web para elegir foto");
+if (!catches.includes('import * as ImagePicker from "expo-image-picker"')) {
+  fail("ImagePicker debe importarse estático");
 } else {
-  ok("fallback web de galería");
+  ok("ImagePicker import estático");
+}
+if (/await import\(["']expo-image-picker["']\)/.test(catches)) {
+  fail("No usar dynamic import de expo-image-picker en el handler del botón");
+} else {
+  ok("sin dynamic import de image-picker");
+}
+if (!catches.includes("esNombrePuntoFechaPorDefecto")) {
+  fail("Al enlazar sitio guardado no debe volcar «Punto del fecha» en Lugar");
+} else {
+  ok("Lugar no recibe nombre-fecha por defecto del punto");
+}
+if (!catches.includes("actualizarPunto") || !catches.includes("Nombre del sitio")) {
+  fail("Al elegir sitio debe poder editar/guardar el nombre del punto");
+} else {
+  ok("nombre del sitio editable al enlazar punto");
+}
+if (!catches.includes("base64: true")) {
+  fail("ImagePicker nativo debe pedir base64: true");
+} else {
+  ok("ImagePicker nativo con base64");
 }
 
 const app = read("app.json");

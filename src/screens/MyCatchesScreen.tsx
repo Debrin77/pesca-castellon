@@ -20,6 +20,7 @@ import {
   FavoritoZona,
   obtenerPuntosGuardados,
   guardarPunto,
+  actualizarPunto,
   eliminarPunto,
   obtenerCapturas,
   guardarCaptura,
@@ -49,8 +50,14 @@ import ListaAnimada from "../components/ListaAnimada";
 import IdentificarEspecie from "../components/IdentificarEspecie";
 import SelectorModalidad from "../components/SelectorModalidad";
 import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
 import { capturarCondicionesDelMomento } from "../services/condicionesCapturaService";
-import { fotoDesdeAsset, persistirFotoCaptura } from "../services/fotoCapturaService";
+import {
+  elegirFotoWebSync,
+  fotoDesdeAsset,
+  fotoDesdeFile,
+  persistirFotoCaptura,
+} from "../services/fotoCapturaService";
 import {
   importarKmlOKmzDesdeTextoOBytes,
   placemarksAPuntos,
@@ -61,6 +68,7 @@ import {
   etiquetaColorPunto,
   etiquetaIconoPunto,
 } from "../data/iconosPunto";
+import BotonFotoCaptura from "../components/BotonFotoCaptura";
 import LlevameAlPunto from "../components/LlevameAlPunto";
 import { compartirUbicacion } from "../utils/abrirEnMaps";
 
@@ -74,6 +82,11 @@ interface Props {
 
 function nombrePuntoPorDefecto(): string {
   return `Punto del ${new Date().toLocaleDateString("es-ES")}`;
+}
+
+/** Nombre auto tipo «Punto del 28/9/2026» — no debe rellenar Lugar (opcional). */
+function esNombrePuntoFechaPorDefecto(nombre: string): boolean {
+  return /^Punto del \d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(nombre.trim());
 }
 
 /** ~75 m: reutilizar un punto cercano al registrar otra captura en el mismo sitio. */
@@ -218,7 +231,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setMostrarFormulario(true);
     setPuntoSeleccionadoId(p.id);
     setCoords({ lat: p.lat, lng: p.lng });
-    setNombreLugar(p.nombre);
+    // Sitio ya elegido arriba: no volcar en Lugar el nombre auto con fecha («Punto del …»).
+    setNombreLugar(esNombrePuntoFechaPorDefecto(p.nombre) ? "" : p.nombre);
     setFechaCaptura(new Date().toISOString().slice(0, 10));
     setMostrarCoordsCaptura(false);
     requestAnimationFrame(() => {
@@ -450,7 +464,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
     if (lat != null && lng != null) {
       condiciones = await capturarCondicionesDelMomento(lat, lng);
     }
-    const pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
+    let pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
+    // Si el usuario escribe/edita el nombre del sitio, actualizar el punto guardado.
+    const nombreEditado = nombreLugar.trim();
+    if (puntoId && pSel && nombreEditado && nombreEditado !== pSel.nombre) {
+      const actualizado = await actualizarPunto(puntoId, { nombre: nombreEditado });
+      if (actualizado) pSel = actualizado;
+    }
     // Asegura data URI durable: las URIs temporales del picker se invalidan al cerrar.
     const fotoPersistida = await persistirFotoCaptura(fotoUri);
     if (fotoUri && !fotoPersistida) {
@@ -464,7 +484,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
         especieId,
         fecha: fechaCaptura.trim(),
         puntoId,
-        nombreLugar: nombreLugar.trim() || pSel?.nombre || undefined,
+        nombreLugar: nombreEditado || pSel?.nombre || undefined,
         tallaCm: tallaCm ? parseFloat(tallaCm) : null,
         pesoKg: pesoKg ? parseFloat(pesoKg) : null,
         notas: notas || undefined,
@@ -498,105 +518,74 @@ export default function MyCatchesScreen({ navigation }: Props) {
     cargar();
   }
 
-  async function elegirFoto() {
+  function aplicarFotoElegida(durable: string | null, contexto: "Foto" | "Cámara") {
+    if (!durable) {
+      Alert.alert(contexto, "No se pudo guardar la foto (demasiado grande o formato no válido).");
+      return;
+    }
+    setFotoUri(durable);
+  }
+
+  async function onFotoWeb(file: File, contexto: "Foto" | "Cámara") {
     try {
-      const ImagePicker = await import("expo-image-picker");
-      // En web el permiso es siempre granted; en nativo pedimos acceso a la galería.
-      if (Platform.OS !== "web") {
-        const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!perm.granted) {
-          Alert.alert("Permiso", "Necesitas permitir acceso a la galería para añadir foto.");
-          return;
-        }
+      aplicarFotoElegida(await fotoDesdeFile(file), contexto);
+    } catch {
+      Alert.alert(contexto, "No se pudo guardar la foto en este entorno.");
+    }
+  }
+
+  async function elegirFotoNativo() {
+    try {
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Permiso", "Necesitas permitir acceso a la galería para añadir foto.");
+        return;
       }
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.55,
-        allowsEditing: Platform.OS !== "web",
+        allowsEditing: true,
         aspect: [4, 3],
         base64: true,
         exif: false,
       });
       if (res.canceled || !res.assets?.[0]) return;
-      const durable = await fotoDesdeAsset(res.assets[0]);
-      if (!durable) {
-        Alert.alert("Foto", "No se pudo guardar la foto (demasiado grande o formato no válido).");
-        return;
-      }
-      setFotoUri(durable);
+      aplicarFotoElegida(await fotoDesdeAsset(res.assets[0]), "Foto");
     } catch {
-      // Fallback web: input file nativo si expo-image-picker falla en PWA.
-      if (Platform.OS === "web" && typeof document !== "undefined") {
-        try {
-          await elegirFotoWebFallback();
-          return;
-        } catch {
-          /* fall through */
-        }
-      }
       Alert.alert("Foto", "No se pudo abrir la galería en este entorno.");
     }
   }
 
-  function elegirFotoWebFallback(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.onchange = async () => {
-        try {
-          const file = input.files?.[0];
-          if (!file) {
-            resolve();
-            return;
-          }
-          const durable = await fotoDesdeAsset({
-            uri: URL.createObjectURL(file),
-            mimeType: file.type || "image/jpeg",
-          });
-          if (!durable) {
-            Alert.alert("Foto", "No se pudo guardar la foto (demasiado grande o formato no válido).");
-            resolve();
-            return;
-          }
-          setFotoUri(durable);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      };
-      input.oncancel = () => resolve();
-      input.click();
-    });
-  }
-
-  async function tomarFotoCamara() {
+  async function tomarFotoCamaraNativo() {
     try {
-      const ImagePicker = await import("expo-image-picker");
-      if (Platform.OS !== "web") {
-        const perm = await ImagePicker.requestCameraPermissionsAsync();
-        if (!perm.granted) {
-          Alert.alert("Cámara", "Necesitas permitir la cámara para la captura rápida.");
-          return;
-        }
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Cámara", "Necesitas permitir la cámara para la captura rápida.");
+        return;
       }
       const res = await ImagePicker.launchCameraAsync({
         quality: 0.55,
-        allowsEditing: Platform.OS !== "web",
+        allowsEditing: true,
         aspect: [4, 3],
         base64: true,
         exif: false,
       });
       if (res.canceled || !res.assets?.[0]) return;
-      const durable = await fotoDesdeAsset(res.assets[0]);
-      if (!durable) {
-        Alert.alert("Cámara", "No se pudo guardar la foto (demasiado grande o formato no válido).");
-        return;
-      }
-      setFotoUri(durable);
+      aplicarFotoElegida(await fotoDesdeAsset(res.assets[0]), "Cámara");
     } catch {
       Alert.alert("Cámara", "No se pudo abrir la cámara en este entorno.");
     }
+  }
+
+  /** FAB captura rápida: en web click síncrono; en nativo ImagePicker. */
+  function tomarFotoCamara() {
+    if (Platform.OS === "web") {
+      void elegirFotoWebSync({ capture: true }).then((file) => {
+        if (file) void onFotoWeb(file, "Cámara");
+      });
+      return;
+    }
+    void tomarFotoCamaraNativo();
   }
 
 
@@ -1005,13 +994,37 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   </ScrollView>
                 )}
 
-                <Text style={styles.formLabel}>Lugar (opcional)</Text>
+                <Text style={styles.formLabel}>
+                  {puntoSeleccionadoId ? "Nombre del sitio" : "Lugar (opcional)"}
+                </Text>
                 <TextInput
                   style={styles.input}
                   value={nombreLugar}
                   onChangeText={setNombreLugar}
-                  placeholder="Ej. Embalse o tramo"
+                  placeholder={
+                    puntoSeleccionadoId
+                      ? (() => {
+                          const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+                          if (p && !esNombrePuntoFechaPorDefecto(p.nombre)) return p.nombre;
+                          return "Ej. Embalse, orilla norte…";
+                        })()
+                      : "Ej. Embalse o tramo"
+                  }
+                  accessibilityLabel={
+                    puntoSeleccionadoId ? "Nombre del sitio seleccionado" : "Lugar opcional"
+                  }
                 />
+                {puntoSeleccionadoId ? (
+                  <Text style={styles.hintMini}>
+                    {(() => {
+                      const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+                      if (p && esNombrePuntoFechaPorDefecto(p.nombre)) {
+                        return "Este sitio aún no tiene nombre propio: escribe uno aquí (se guardará en el punto).";
+                      }
+                      return "Puedes editar el nombre del sitio; la ubicación ya viene del punto guardado.";
+                    })()}
+                  </Text>
+                ) : null}
 
                 <Text style={styles.formLabel}>Fecha de la captura</Text>
                 <TextInput
@@ -1058,8 +1071,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 </View>
                 {puntoSeleccionadoId && coords ? (
                   <Text style={styles.coordsOk}>
-                    📍 {nombreLugar || "Sitio"} · {formatearCoords(coords.lat, coords.lng)} · captura en este
-                    sitio guardado
+                    📍{" "}
+                    {nombreLugar.trim() ||
+                      puntos.find((x) => x.id === puntoSeleccionadoId)?.nombre ||
+                      "Sitio"}{" "}
+                    · {formatearCoords(coords.lat, coords.lng)} · captura en este sitio guardado
                   </Text>
                 ) : coords ? (
                   <Text style={styles.coordsOk}>
@@ -1108,15 +1124,27 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 )}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
-                  <TouchableOpacity style={styles.photoBtn} onPress={tomarFotoCamara}>
-                    <Text style={styles.photoBtnTxt}>{fotoUri ? "Nueva foto (cámara)" : "Foto con cámara"}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.photoBtn} onPress={elegirFoto}>
-                    <Text style={styles.photoBtnTxt}>{fotoUri ? "Cambiar foto" : "Añadir foto"}</Text>
-                  </TouchableOpacity>
+                  <BotonFotoCaptura
+                    label={fotoUri ? "Nueva foto (cámara)" : "Foto con cámara"}
+                    capture
+                    onPressNative={() => void tomarFotoCamaraNativo()}
+                    onFileWeb={(file) => void onFotoWeb(file, "Cámara")}
+                    accessibilityLabel="Foto con cámara"
+                  />
+                  <BotonFotoCaptura
+                    label={fotoUri ? "Cambiar foto" : "Añadir foto"}
+                    onPressNative={() => void elegirFotoNativo()}
+                    onFileWeb={(file) => void onFotoWeb(file, "Foto")}
+                    accessibilityLabel="Añadir foto de la galería"
+                  />
                 </View>
                 {fotoUri ? (
-                  <Image source={{ uri: fotoUri }} style={styles.fotoPreview} />
+                  <Image
+                    source={{ uri: fotoUri }}
+                    style={styles.fotoPreview}
+                    onError={() => setFotoUri(null)}
+                    accessibilityLabel="Vista previa de la foto de la captura"
+                  />
                 ) : null}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
