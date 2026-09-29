@@ -84,6 +84,11 @@ if (!catches.includes("esNombrePuntoFechaPorDefecto")) {
 } else {
   ok("Lugar no recibe nombre-fecha por defecto del punto");
 }
+if (!catches.includes("actualizarPunto") || !catches.includes("Nombre del sitio")) {
+  fail("Al elegir sitio debe poder editar/guardar el nombre del punto");
+} else {
+  ok("nombre del sitio editable al enlazar punto");
+}
 if (!catches.includes("base64: true")) {
   fail("ImagePicker nativo debe pedir base64: true");
 } else {

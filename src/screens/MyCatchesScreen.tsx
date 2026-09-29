@@ -20,6 +20,7 @@ import {
   FavoritoZona,
   obtenerPuntosGuardados,
   guardarPunto,
+  actualizarPunto,
   eliminarPunto,
   obtenerCapturas,
   guardarCaptura,
@@ -463,7 +464,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
     if (lat != null && lng != null) {
       condiciones = await capturarCondicionesDelMomento(lat, lng);
     }
-    const pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
+    let pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
+    // Si el usuario escribe/edita el nombre del sitio, actualizar el punto guardado.
+    const nombreEditado = nombreLugar.trim();
+    if (puntoId && pSel && nombreEditado && nombreEditado !== pSel.nombre) {
+      const actualizado = await actualizarPunto(puntoId, { nombre: nombreEditado });
+      if (actualizado) pSel = actualizado;
+    }
     // Asegura data URI durable: las URIs temporales del picker se invalidan al cerrar.
     const fotoPersistida = await persistirFotoCaptura(fotoUri);
     if (fotoUri && !fotoPersistida) {
@@ -477,7 +484,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
         especieId,
         fecha: fechaCaptura.trim(),
         puntoId,
-        nombreLugar: nombreLugar.trim() || pSel?.nombre || undefined,
+        nombreLugar: nombreEditado || pSel?.nombre || undefined,
         tallaCm: tallaCm ? parseFloat(tallaCm) : null,
         pesoKg: pesoKg ? parseFloat(pesoKg) : null,
         notas: notas || undefined,
@@ -987,20 +994,35 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   </ScrollView>
                 )}
 
-                <Text style={styles.formLabel}>Lugar (opcional)</Text>
+                <Text style={styles.formLabel}>
+                  {puntoSeleccionadoId ? "Nombre del sitio" : "Lugar (opcional)"}
+                </Text>
                 <TextInput
                   style={styles.input}
                   value={nombreLugar}
                   onChangeText={setNombreLugar}
                   placeholder={
                     puntoSeleccionadoId
-                      ? "Alias opcional (ej. orilla norte)"
+                      ? (() => {
+                          const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+                          if (p && !esNombrePuntoFechaPorDefecto(p.nombre)) return p.nombre;
+                          return "Ej. Embalse, orilla norte…";
+                        })()
                       : "Ej. Embalse o tramo"
+                  }
+                  accessibilityLabel={
+                    puntoSeleccionadoId ? "Nombre del sitio seleccionado" : "Lugar opcional"
                   }
                 />
                 {puntoSeleccionadoId ? (
                   <Text style={styles.hintMini}>
-                    El sitio guardado ya fija la ubicación; aquí solo un alias si quieres.
+                    {(() => {
+                      const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+                      if (p && esNombrePuntoFechaPorDefecto(p.nombre)) {
+                        return "Este sitio aún no tiene nombre propio: escribe uno aquí (se guardará en el punto).";
+                      }
+                      return "Puedes editar el nombre del sitio; la ubicación ya viene del punto guardado.";
+                    })()}
                   </Text>
                 ) : null}
 
@@ -1049,8 +1071,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 </View>
                 {puntoSeleccionadoId && coords ? (
                   <Text style={styles.coordsOk}>
-                    📍 {nombreLugar || "Sitio"} · {formatearCoords(coords.lat, coords.lng)} · captura en este
-                    sitio guardado
+                    📍{" "}
+                    {nombreLugar.trim() ||
+                      puntos.find((x) => x.id === puntoSeleccionadoId)?.nombre ||
+                      "Sitio"}{" "}
+                    · {formatearCoords(coords.lat, coords.lng)} · captura en este sitio guardado
                   </Text>
                 ) : coords ? (
                   <Text style={styles.coordsOk}>
@@ -1114,7 +1139,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <Image source={{ uri: fotoUri }} style={styles.fotoPreview} />
+                  <Image
+                    source={{ uri: fotoUri }}
+                    style={styles.fotoPreview}
+                    onError={() => setFotoUri(null)}
+                    accessibilityLabel="Vista previa de la foto de la captura"
+                  />
                 ) : null}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
