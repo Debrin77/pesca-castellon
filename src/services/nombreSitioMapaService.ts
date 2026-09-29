@@ -39,6 +39,28 @@ export function nombreSitioDesdeCoords(lat: number, lng: number): string {
  * Nombre definitivo al guardar un punto.
  * Prioridad: sugerido usable → mapa → coords (nunca fecha).
  */
+/** Texto en chips/listas: nunca muestra una fecha cruda como nombre. */
+export function etiquetaPuntoEnUi(p: { nombre: string; lat: number; lng: number }): string {
+  if (!esNombrePuntoSoloFecha(p.nombre)) return p.nombre;
+  return nombreSitioDesdeCoords(p.lat, p.lng) || "Sitio sin nombre";
+}
+
+/** Valor inicial del campo editable al registrar captura en un punto. */
+export function nombreInicialEdicionCaptura(p: { nombre: string; lat: number; lng: number }): string {
+  if (esNombrePuntoSoloFecha(p.nombre)) {
+    return nombreSitioDesdeCoords(p.lat, p.lng);
+  }
+  return p.nombre;
+}
+
+export function esNombreSitioEditableValido(nombre: string): boolean {
+  const n = nombre.trim();
+  if (!n) return false;
+  if (esNombrePuntoSoloFecha(n)) return false;
+  if (/^Punto del\s+/i.test(n)) return false;
+  return true;
+}
+
 export function nombreParaPuntoGuardado(opts: {
   lat: number;
   lng: number;

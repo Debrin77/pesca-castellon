@@ -79,6 +79,9 @@ import {
   normalizarFechaCapturaAIso,
 } from "../services/fechaCapturaUtils";
 import {
+  esNombreSitioEditableValido,
+  etiquetaPuntoEnUi,
+  nombreInicialEdicionCaptura,
   nombreParaPuntoGuardado,
   nombreSitioDesdeCoords,
 } from "../services/nombreSitioMapaService";
@@ -102,8 +105,7 @@ function nombreLugarDesdeMapa(lat: number, lng: number): string {
 }
 
 function etiquetaChipPunto(p: PuntoGuardado): string {
-  if (!esNombrePuntoSoloFecha(p.nombre)) return p.nombre;
-  return nombreSitioDesdeCoords(p.lat, p.lng) || "Sitio sin nombre";
+  return etiquetaPuntoEnUi(p);
 }
 
 /** ~75 m: reutilizar un punto cercano al registrar otra captura en el mismo sitio. */
@@ -185,6 +187,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [pegarKmlVisible, setPegarKmlVisible] = useState(false);
   const [pegarKmlTexto, setPegarKmlTexto] = useState("");
   const [pegandoKml, setPegandoKml] = useState(false);
+  const [editarPunto, setEditarPunto] = useState<PuntoGuardado | null>(null);
+  const [editarNombrePunto, setEditarNombrePunto] = useState("");
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -250,13 +254,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setPuntoSeleccionadoId(p.id);
     setCoords({ lat: p.lat, lng: p.lng });
     setErrorForm(null);
-    // Lugar = nombre real o ubicación del mapa; nunca la fecha del chip (26/08/2026).
+    // Nombre editable: mapa o nombre guardado; nunca la fecha cruda del punto antiguo.
+    setNombreLugar(nombreInicialEdicionCaptura(p));
     if (esNombrePuntoSoloFecha(p.nombre)) {
-      setNombreLugar(nombreLugarDesdeMapa(p.lat, p.lng));
       const isoDesdeNombre = fechaIsoDesdeNombrePunto(p.nombre);
       setFechaCaptura(isoDesdeNombre ? isoAFechaUi(isoDesdeNombre) : hoyFechaUi());
     } else {
-      setNombreLugar(p.nombre);
       setFechaCaptura(hoyFechaUi());
     }
     setMostrarCoordsCaptura(false);
@@ -501,11 +504,21 @@ export default function MyCatchesScreen({ navigation }: Props) {
       condiciones = await capturarCondicionesDelMomento(lat, lng);
     }
     let pSel = puntoId ? puntos.find((x) => x.id === puntoId) : null;
-    // Si el usuario escribe/edita el nombre del sitio, actualizar el punto guardado.
     const nombreEditado = nombreLugar.trim();
-    if (puntoId && pSel && nombreEditado && nombreEditado !== pSel.nombre) {
-      const actualizado = await actualizarPunto(puntoId, { nombre: nombreEditado });
-      if (actualizado) pSel = actualizado;
+    if (puntoId && pSel && esNombrePuntoSoloFecha(pSel.nombre) && !esNombreSitioEditableValido(nombreEditado)) {
+      const msg =
+        "Escribe un nombre para el sitio (no uses la fecha). Se propone el del mapa; puedes cambiarlo.";
+      setErrorForm(msg);
+      Alert.alert("Nombre del sitio", msg);
+      return;
+    }
+    if (puntoId && pSel && esNombreSitioEditableValido(nombreEditado)) {
+      const debeActualizar =
+        esNombrePuntoSoloFecha(pSel.nombre) || nombreEditado !== pSel.nombre;
+      if (debeActualizar) {
+        const actualizado = await actualizarPunto(puntoId, { nombre: nombreEditado });
+        if (actualizado) pSel = actualizado;
+      }
     }
     // Asegura data URI durable: las URIs temporales del picker se invalidan al cerrar.
     const fotoPersistida = await persistirFotoCaptura(fotoUri);
@@ -556,6 +569,31 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setMostrarFormulario(false);
     setMostrarId(false);
     cargar();
+  }
+
+  function abrirEditarNombrePunto(p: PuntoGuardado) {
+    setEditarPunto(p);
+    setEditarNombrePunto(nombreInicialEdicionCaptura(p));
+  }
+
+  async function confirmarEditarNombrePunto() {
+    if (!editarPunto) return;
+    const n = editarNombrePunto.trim();
+    if (!esNombreSitioEditableValido(n)) {
+      const msg = "Escribe un nombre para el sitio (no uses la fecha ni «Punto del…»).";
+      Alert.alert("Nombre del sitio", msg);
+      return;
+    }
+    const id = editarPunto.id;
+    const actualizado = await actualizarPunto(id, { nombre: n });
+    if (!actualizado) {
+      Alert.alert("Nombre del sitio", "No se pudo guardar el nombre.");
+      return;
+    }
+    setEditarPunto(null);
+    setEditarNombrePunto("");
+    if (puntoSeleccionadoId === id) setNombreLugar(n);
+    await cargar();
   }
 
   function aplicarFotoElegida(durable: string | null, contexto: "Foto" | "Cámara") {
@@ -1052,7 +1090,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 )}
 
                 <Text style={styles.formLabel}>
-                  {puntoSeleccionadoId ? "Lugar (según mapa)" : "Lugar (opcional)"}
+                  {puntoSeleccionadoId ? "Nombre del sitio (editable)" : "Lugar (opcional)"}
                 </Text>
                 <TextInput
                   style={styles.input}
@@ -1066,15 +1104,22 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       ? "Ej. Guadalquivir, embalse, orilla…"
                       : "Ej. Embalse o tramo"
                   }
+                  autoCorrect={false}
                   accessibilityLabel={
-                    puntoSeleccionadoId ? "Lugar según mapa del sitio seleccionado" : "Lugar opcional"
+                    puntoSeleccionadoId
+                      ? "Nombre del sitio editable al registrar captura"
+                      : "Lugar opcional"
                   }
                 />
                 {puntoSeleccionadoId ? (
                   <Text style={styles.hintMini}>
-                    {nombreLugar.trim()
-                      ? "Puedes editar el nombre; al guardar se actualiza también el punto."
-                      : "Escribe el nombre del sitio del mapa (se guardará en el punto)."}
+                    {esNombrePuntoSoloFecha(
+                      puntos.find((x) => x.id === puntoSeleccionadoId)?.nombre || "",
+                    )
+                      ? "Este punto tenía una fecha como nombre: edítalo aquí; al guardar la captura se actualiza el sitio."
+                      : nombreLugar.trim()
+                        ? "Puedes cambiar el nombre; al guardar se actualiza también el punto guardado."
+                        : "Escribe el nombre del sitio (se guardará en el punto)."}
                   </Text>
                 ) : null}
 
@@ -1461,7 +1506,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           >
                             <Text style={styles.puntoGlyphTxt}>{glyphIconoPunto(p.icono)}</Text>
                           </View>
-                          <Text style={styles.cardTitle}>{p.nombre}</Text>
+                          <View style={{ flex: 1 }}>
+                            <Text style={styles.cardTitle}>{etiquetaChipPunto(p)}</Text>
+                            {esNombrePuntoSoloFecha(p.nombre) ? (
+                              <Text style={styles.hintMini}>
+                                Nombre guardado como fecha — edítalo abajo.
+                              </Text>
+                            ) : null}
+                          </View>
                         </View>
                         <TouchableOpacity
                           onPress={() => {
@@ -1479,10 +1531,20 @@ export default function MyCatchesScreen({ navigation }: Props) {
                         <TouchableOpacity
                           onPress={(e) => {
                             e?.stopPropagation?.();
+                            abrirEditarNombrePunto(p);
+                          }}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Editar nombre de ${etiquetaChipPunto(p)}`}
+                        >
+                          <Text style={styles.verMapaHint}>Editar nombre →</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={(e) => {
+                            e?.stopPropagation?.();
                             usarPuntoParaCaptura(p);
                           }}
                           accessibilityRole="button"
-                          accessibilityLabel={`Añadir captura en ${p.nombre}`}
+                          accessibilityLabel={`Añadir captura en ${etiquetaChipPunto(p)}`}
                         >
                           <Text style={[styles.verMapaHint, styles.accionCapturaHint]}>
                             Añadir captura →
@@ -1522,6 +1584,50 @@ export default function MyCatchesScreen({ navigation }: Props) {
         destino={llevame}
         onCerrar={() => setLlevame(null)}
       />
+
+      <Modal
+        visible={!!editarPunto}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setEditarPunto(null)}
+      >
+        <View style={styles.pegarKmlBackdrop}>
+          <View style={styles.pegarKmlSheet}>
+            <Text style={styles.pegarKmlTitulo}>Nombre del sitio</Text>
+            <Text style={styles.pegarKmlHint}>
+              Evita usar la fecha como nombre. Se propone el del mapa; puedes cambiarlo.
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={editarNombrePunto}
+              onChangeText={setEditarNombrePunto}
+              placeholder="Ej. Guadalquivir, embalse…"
+              autoCorrect={false}
+              accessibilityLabel="Editar nombre del sitio guardado"
+            />
+            <View style={styles.pegarKmlAcciones}>
+              <TouchableOpacity
+                style={styles.pegarKmlCancelar}
+                onPress={() => {
+                  setEditarPunto(null);
+                  setEditarNombrePunto("");
+                }}
+                accessibilityRole="button"
+              >
+                <Text style={styles.pegarKmlCancelarTxt}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.pegarKmlOk}
+                onPress={() => void confirmarEditarNombrePunto()}
+                accessibilityRole="button"
+                accessibilityLabel="Guardar nombre del sitio"
+              >
+                <Text style={styles.pegarKmlOkTxt}>Guardar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         visible={pegarKmlVisible}
