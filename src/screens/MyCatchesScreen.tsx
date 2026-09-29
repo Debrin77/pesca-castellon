@@ -71,7 +71,6 @@ import {
 import BotonFotoCaptura from "../components/BotonFotoCaptura";
 import LlevameAlPunto from "../components/LlevameAlPunto";
 import { compartirUbicacion } from "../utils/abrirEnMaps";
-import { consultarToqueMapa } from "../services/consultaCostaService";
 import {
   esNombrePuntoSoloFecha,
   fechaIsoDesdeNombrePunto,
@@ -79,6 +78,11 @@ import {
   isoAFechaUi,
   normalizarFechaCapturaAIso,
 } from "../services/fechaCapturaUtils";
+import {
+  nombreParaPuntoGuardado,
+  nombreSitioDesdeCoords,
+} from "../services/nombreSitioMapaService";
+import FotoPreviewCaptura from "../components/FotoPreviewCaptura";
 
 type Tab = "favoritos" | "puntos" | "capturas";
 type OrdenLista = "fecha" | "especie" | "sitio" | "color";
@@ -88,33 +92,18 @@ interface Props {
   navigation: any;
 }
 
-function nombrePuntoPorDefecto(): string {
-  return `Punto del ${new Date().toLocaleDateString("es-ES")}`;
-}
-
 /** Compat assert / nombre auto con fecha. */
 function esNombrePuntoFechaPorDefecto(nombre: string): boolean {
   return esNombrePuntoSoloFecha(nombre);
 }
 
-/** Nombre de sitio según mapa/catálogo (p. ej. Guadalquivir), no la fecha del punto. */
 function nombreLugarDesdeMapa(lat: number, lng: number): string {
-  try {
-    const c = consultarToqueMapa(lat, lng);
-    const tramo = c.tramo?.nombre?.trim();
-    if (tramo) return tramo;
-    const titulo = (c.titulo || "").trim();
-    if (!titulo || /^Sin tramo/i.test(titulo)) return "";
-    const partes = titulo.split("·").map((p) => p.trim()).filter(Boolean);
-    return partes[partes.length - 1] || titulo;
-  } catch {
-    return "";
-  }
+  return nombreSitioDesdeCoords(lat, lng);
 }
 
 function etiquetaChipPunto(p: PuntoGuardado): string {
   if (!esNombrePuntoSoloFecha(p.nombre)) return p.nombre;
-  return nombreLugarDesdeMapa(p.lat, p.lng) || "Sitio sin nombre";
+  return nombreSitioDesdeCoords(p.lat, p.lng) || "Sitio sin nombre";
 }
 
 /** ~75 m: reutilizar un punto cercano al registrar otra captura en el mismo sitio. */
@@ -492,10 +481,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
       lng = p.lng;
     } else if (coords) {
       const sp = resolverEspecie(especieId, speciesCatalog);
-      const nombre =
-        nombreLugar.trim() ||
-        nombreLugarDesdeMapa(coords.lat, coords.lng) ||
-        (sp?.nombre ? `Captura · ${sp.nombre}` : nombrePuntoPorDefecto());
+      const nombre = nombreParaPuntoGuardado({
+        lat: coords.lat,
+        lng: coords.lng,
+        sugerido: nombreLugar.trim() || (sp?.nombre ? `Captura · ${sp.nombre}` : null),
+      });
       const punto = await asegurarPuntoParaCaptura({
         lat: coords.lat,
         lng: coords.lng,
@@ -600,12 +590,15 @@ export default function MyCatchesScreen({ navigation }: Props) {
       }
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.55,
-        allowsEditing: true,
-        aspect: [4, 3],
+        quality: 0.5,
+        allowsEditing: false,
         base64: true,
         exif: false,
-      });
+        // iOS: evita HEIC que no se previsualiza (JPEG compatible).
+        preferredAssetRepresentationMode:
+          (ImagePicker as any).UIImagePickerPreferredAssetRepresentationMode?.Compatible ??
+          "compatible",
+      } as any);
       if (res.canceled || !res.assets?.[0]) return;
       aplicarFotoElegida(await fotoDesdeAsset(res.assets[0]), "Foto");
     } catch {
@@ -621,9 +614,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
         return;
       }
       const res = await ImagePicker.launchCameraAsync({
-        quality: 0.55,
-        allowsEditing: true,
-        aspect: [4, 3],
+        quality: 0.5,
+        allowsEditing: false,
         base64: true,
         exif: false,
       });
@@ -718,7 +710,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
       return;
     }
     const nuevo = await guardarPunto({
-      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      nombre: nombreParaPuntoGuardado({
+        lat: loc.lat,
+        lng: loc.lng,
+        sugerido: nombrePunto.trim() || null,
+      }),
       lat: loc.lat,
       lng: loc.lng,
       notas: notasPunto.trim() || undefined,
@@ -748,7 +744,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
       return;
     }
     const nuevo = await guardarPunto({
-      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      nombre: nombreParaPuntoGuardado({
+        lat: r.coords.lat,
+        lng: r.coords.lng,
+        sugerido: nombrePunto.trim() || null,
+      }),
       lat: r.coords.lat,
       lng: r.coords.lng,
       notas: notasPunto.trim() || undefined,
@@ -1196,14 +1196,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <Image
-                    source={{ uri: fotoUri }}
-                    style={styles.fotoPreview}
-                    onError={() => {
-                      setFotoUri(null);
-                      setErrorForm("La foto no se pudo mostrar. Elige otra (JPEG/PNG).");
+                  <FotoPreviewCaptura
+                    uri={fotoUri}
+                    onBroken={() => {
+                      setErrorForm(
+                        "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
+                      );
                     }}
-                    accessibilityLabel="Vista previa de la foto de la captura"
                   />
                 ) : null}
 
@@ -1353,12 +1352,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
 
             {mostrarFormPunto && (
               <View style={styles.formCard}>
-                <Text style={styles.formLabel}>Nombre</Text>
+                <Text style={styles.formLabel}>Nombre del lugar (mapa)</Text>
                 <TextInput
                   style={styles.input}
                   value={nombrePunto}
                   onChangeText={setNombrePunto}
-                  placeholder={nombrePuntoPorDefecto()}
+                  placeholder="Ej. Guadalquivir, embalse…"
+                  accessibilityLabel="Nombre del lugar del mapa"
                 />
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>

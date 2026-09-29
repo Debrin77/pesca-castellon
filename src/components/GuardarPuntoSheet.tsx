@@ -25,6 +25,7 @@ import {
 } from "../data/iconosPunto";
 import { COLORS, FONTS, RADIUS, SPACING } from "../theme";
 import { formatearCoords } from "../services/coordsUtils";
+import { nombreParaPuntoGuardado } from "../services/nombreSitioMapaService";
 
 export type BorradorPunto = {
   lat: number;
@@ -72,9 +73,13 @@ export default function GuardarPuntoSheet({
 
   useEffect(() => {
     if (!visible || !borrador) return;
+    // Nombre = lugar del mapa (nunca fecha automática).
     setNombre(
-      borrador.nombreSugerido?.trim() ||
-        `Punto del ${new Date().toLocaleDateString("es-ES")}`
+      nombreParaPuntoGuardado({
+        lat: borrador.lat,
+        lng: borrador.lng,
+        sugerido: borrador.nombreSugerido,
+      })
     );
     setColor(esColorPuntoId(borrador.color) ? borrador.color : COLOR_PUNTO_DEFAULT);
     setIcono(esIconoPuntoId(borrador.icono) ? borrador.icono : ICONO_PUNTO_DEFAULT);
@@ -99,17 +104,20 @@ export default function GuardarPuntoSheet({
               {formatearCoords(borrador.lat, borrador.lng)}
             </Text>
 
-            <Text style={styles.label}>Nombre</Text>
+            <Text style={styles.label}>Nombre del lugar (mapa)</Text>
             <TextInput
               style={styles.input}
               value={nombre}
               onChangeText={setNombre}
-              placeholder="Ej. Orilla del atardecer"
+              placeholder="Ej. Guadalquivir, orilla norte…"
               placeholderTextColor={COLORS.textMuted}
               maxLength={60}
               autoFocus={Platform.OS !== "web"}
-              accessibilityLabel="Nombre del punto"
+              accessibilityLabel="Nombre del lugar del mapa"
             />
+            <Text style={styles.hintNombre}>
+              Se propone el nombre del mapa; puedes editarlo. No uses una fecha como nombre.
+            </Text>
 
             <Text style={styles.label}>Color</Text>
             <View style={styles.row}>
@@ -155,7 +163,13 @@ export default function GuardarPuntoSheet({
             <TouchableOpacity
               style={styles.cta}
               onPress={() => {
-                const n = nombre.trim() || `Punto del ${new Date().toLocaleDateString("es-ES")}`;
+                const n =
+                  nombre.trim() ||
+                  nombreParaPuntoGuardado({
+                    lat: borrador.lat,
+                    lng: borrador.lng,
+                    sugerido: borrador.nombreSugerido,
+                  });
                 onGuardar({
                   nombre: n,
                   color,
@@ -256,6 +270,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.textPrimary,
     backgroundColor: COLORS.background,
+    marginBottom: 6,
+  },
+  hintNombre: {
+    fontFamily: FONTS.regular,
+    fontSize: 11.5,
+    color: COLORS.textMuted,
+    lineHeight: 15,
     marginBottom: 14,
   },
   row: {

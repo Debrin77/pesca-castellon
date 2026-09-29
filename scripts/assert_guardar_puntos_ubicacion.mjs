@@ -99,8 +99,12 @@ for (const needle of [
   "Guardar este punto",
   "Usar esta ubicación",
   "bannerAnadir",
+  "nombreParaPuntoGuardado",
 ]) {
   if (!mapa.includes(needle)) fail(`ZonasLibresScreen no incluye ${needle}`);
+}
+if (/Punto del \$\{/.test(mapa)) {
+  fail("ZonasLibresScreen no debe proponer fecha como nombre de punto");
 }
 
 // Debe poder guardar aunque no haya tramo (cualquier marcador)

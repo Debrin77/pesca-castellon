@@ -83,16 +83,17 @@ export async function fotoDesdeFile(file: Blob & { type?: string }): Promise<str
   try {
     const type = (file.type || "").toLowerCase();
     if (type && !type.startsWith("image/")) return null;
-    // Preferir canvas: normaliza HEIC→JPEG cuando el navegador decodifica, y limita tamaño.
+    // Siempre intentar canvas→JPEG (Safari/HEIC/PNG grandes → preview estable).
     const fromCanvas = await blobAJpegComprimido(file);
-    if (fromCanvas) return fromCanvas;
+    if (fromCanvas && fromCanvas.startsWith("data:image/jpeg")) return fromCanvas;
+    // Fallback: solo si ya es un formato web seguro y cabe.
     const dataUri = await blobADataUri(file);
     if (!dataUri) return null;
+    if (/heic|heif/i.test(dataUri.slice(0, 40)) || /heic|heif/i.test(type)) return null;
+    if (!/^data:image\/(jpeg|jpg|png|webp|gif);/i.test(dataUri)) return null;
     if (dataUri.length > MAX_DATA_URI_CHARS) {
       return comprimirDataUriSiHaceFalta(dataUri);
     }
-    // Solo JPEG/PNG/WebP/GIF son previsualizables de forma fiable.
-    if (!/^data:image\/(jpeg|jpg|png|webp|gif);/i.test(dataUri)) return null;
     return dataUri;
   } catch {
     return null;

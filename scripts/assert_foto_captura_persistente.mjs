@@ -91,10 +91,51 @@ if (!catches.includes("esNombrePuntoFechaPorDefecto") && !catches.includes("esNo
 } else {
   ok("Lugar no recibe nombre-fecha por defecto del punto");
 }
-if (!catches.includes("nombreLugarDesdeMapa") || !catches.includes("consultarToqueMapa")) {
+if (!catches.includes("nombreSitioDesdeCoords") && !catches.includes("nombreLugarDesdeMapa")) {
   fail("Lugar debe rellenarse con el nombre del mapa (no la fecha del chip)");
 } else {
   ok("Lugar desde mapa al elegir punto");
+}
+if (!catches.includes("FotoPreviewCaptura")) {
+  fail("Capturas debe usar FotoPreviewCaptura (preview web sin icono rojo)");
+} else {
+  ok("FotoPreviewCaptura");
+}
+if (!catches.includes("nombreParaPuntoGuardado")) {
+  fail("Al guardar punto desde Capturas no debe usarse fecha como nombre");
+} else {
+  ok("guardar punto con nombre de mapa");
+}
+
+const nombreMapa = path.join(root, "src/services/nombreSitioMapaService.ts");
+if (!fs.existsSync(nombreMapa)) {
+  fail("falta nombreSitioMapaService.ts");
+} else {
+  const nm = read("src/services/nombreSitioMapaService.ts");
+  if (!nm.includes("nombreParaPuntoGuardado") || nm.includes("toLocaleDateString")) {
+    fail("nombreSitioMapaService no debe usar fecha como nombre de punto");
+  } else {
+    ok("nombreSitioMapaService sin fecha");
+  }
+}
+
+const sheet = read("src/components/GuardarPuntoSheet.tsx");
+if (!sheet.includes("nombreParaPuntoGuardado") || /Punto del \$\{/.test(sheet)) {
+  fail("GuardarPuntoSheet debe guardar nombre del mapa, no fecha");
+} else {
+  ok("GuardarPuntoSheet nombre del mapa");
+}
+
+const preview = path.join(root, "src/components/FotoPreviewCaptura.tsx");
+if (!fs.existsSync(preview)) {
+  fail("falta FotoPreviewCaptura.tsx");
+} else {
+  const pv = read("src/components/FotoPreviewCaptura.tsx");
+  if (!pv.includes("createObjectURL") || !pv.includes('"img"')) {
+    fail("FotoPreviewCaptura web debe usar img + blob URL");
+  } else {
+    ok("FotoPreviewCaptura blob URL");
+  }
 }
 if (!catches.includes("actualizarPunto")) {
   fail("Al elegir sitio debe poder editar/guardar el nombre del punto");

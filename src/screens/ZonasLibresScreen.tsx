@@ -97,6 +97,7 @@ import GuardarPuntoSheet, { type BorradorPunto } from "../components/GuardarPunt
 import MapaFabHerramientas, { type AccionFabMapa } from "../components/MapaFabHerramientas";
 import PinPuntoPersonal from "../components/PinPuntoPersonal";
 import GlassCard from "../components/GlassCard";
+import { nombreParaPuntoGuardado } from "../services/nombreSitioMapaService";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -449,10 +450,17 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       Alert.alert(`Fuera de ${provincia.nombre}`, enProvincia.error);
       return;
     }
+    // Siempre proponer el nombre del mapa (nunca fecha). En long-press consulta
+    // puede no haberse actualizado aún → resolver por coords.
+    const sugerido =
+      nombreSugerido?.trim() ||
+      consulta?.tramo?.nombre?.trim() ||
+      consulta?.titulo?.trim() ||
+      undefined;
     setBorradorGuardar({
       lat,
       lng,
-      nombreSugerido: nombreSugerido || consulta?.titulo?.trim() || undefined,
+      nombreSugerido: nombreParaPuntoGuardado({ lat, lng, sugerido }),
       zonaRelacionadaId: consulta?.tramo?.fichaId ?? consulta?.tramo?.id ?? null,
     });
     setSheetGuardar(true);
@@ -776,16 +784,21 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     zonaRelacionadaId?: string | null;
     puntoId?: string | null;
   }) {
+    const nombreFinal = nombreParaPuntoGuardado({
+      lat: datos.lat,
+      lng: datos.lng,
+      sugerido: datos.nombre,
+    });
     let puntoIdGuardado = datos.puntoId ?? null;
     if (datos.puntoId) {
       await actualizarPunto(datos.puntoId, {
-        nombre: datos.nombre,
+        nombre: nombreFinal,
         color: datos.color,
         icono: datos.icono,
       });
     } else {
       const nuevo = await guardarPunto({
-        nombre: datos.nombre,
+        nombre: nombreFinal,
         lat: datos.lat,
         lng: datos.lng,
         zonaRelacionadaId: datos.zonaRelacionadaId ?? null,
@@ -800,7 +813,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setBorradorGuardar(null);
 
     if (!datos.puntoId && modoAnadir && (motivoPick === "punto" || hayPickUbicacion("punto"))) {
-      resolverPickUbicacion({ lat: datos.lat, lng: datos.lng, etiqueta: datos.nombre });
+      resolverPickUbicacion({ lat: datos.lat, lng: datos.lng, etiqueta: nombreFinal });
       setModoAnadir(false);
       setMotivoPick(null);
       setFichaAbierta(false);
@@ -813,7 +826,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
     Alert.alert(
       datos.puntoId ? "Punto actualizado" : "Punto guardado",
-      `${datos.nombre}\n${formatearCoords(datos.lat, datos.lng)}`,
+      `${nombreFinal}\n${formatearCoords(datos.lat, datos.lng)}`,
       puntoIdGuardado
         ? [
             { text: "Listo", style: "cancel" },
