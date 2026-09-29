@@ -12,6 +12,7 @@
 import { Platform } from "react-native";
 
 const MAX_DATA_URI_CHARS = 900_000; // ~0.7 MB: deja margen en localStorage / AsyncStorage
+const MAX_LADO_PX = 1280;
 
 /** True si la URI ya es durable (data:) o remota estable. */
 export function esFotoPersistente(uri: string | null | undefined): boolean {
@@ -26,7 +27,9 @@ export function esFotoPersistente(uri: string | null | undefined): boolean {
 export async function persistirFotoCaptura(uri: string | null | undefined): Promise<string | null> {
   if (!uri) return null;
   if (esFotoPersistente(uri)) {
-    if (uri.startsWith("data:") && uri.length > MAX_DATA_URI_CHARS) return null;
+    if (uri.startsWith("data:") && uri.length > MAX_DATA_URI_CHARS) {
+      return comprimirDataUriSiHaceFalta(uri);
+    }
     return uri;
   }
 
@@ -34,9 +37,7 @@ export async function persistirFotoCaptura(uri: string | null | undefined): Prom
     if (Platform.OS === "web" && typeof fetch === "function") {
       const res = await fetch(uri);
       const blob = await res.blob();
-      const dataUri = await blobADataUri(blob);
-      if (!dataUri || dataUri.length > MAX_DATA_URI_CHARS) return null;
-      return dataUri;
+      return fotoDesdeFile(blob);
     }
 
     const FileSystem = await import("expo-file-system");
@@ -45,7 +46,9 @@ export async function persistirFotoCaptura(uri: string | null | undefined): Prom
     });
     const mime = mimeDesdeUri(uri);
     const dataUri = `data:${mime};base64,${base64}`;
-    if (dataUri.length > MAX_DATA_URI_CHARS) return null;
+    if (dataUri.length > MAX_DATA_URI_CHARS) {
+      return comprimirDataUriSiHaceFalta(dataUri);
+    }
     return dataUri;
   } catch {
     return null;
@@ -63,19 +66,33 @@ export async function fotoDesdeAsset(asset: {
 }): Promise<string | null> {
   const mime =
     asset.mimeType && asset.mimeType.startsWith("image/") ? asset.mimeType : "image/jpeg";
-  if (asset.base64) {
+  // HEIC/HEIF no se previsualiza bien en web/PWA → forzar conversión vía uri si hay.
+  const esHeic = /heic|heif/i.test(mime) || /heic|heif/i.test(asset.uri || "");
+  if (asset.base64 && !esHeic) {
     const dataUri = `data:${mime};base64,${asset.base64}`;
-    if (dataUri.length > MAX_DATA_URI_CHARS) return null;
+    if (dataUri.length > MAX_DATA_URI_CHARS) {
+      return comprimirDataUriSiHaceFalta(dataUri);
+    }
     return dataUri;
   }
   return persistirFotoCaptura(asset.uri);
 }
 
-/** File (web) → data URI, sin pasar por blob: temporal. */
+/** File (web) → data URI JPEG comprimido (evita blob: temporal e icono rojo). */
 export async function fotoDesdeFile(file: Blob & { type?: string }): Promise<string | null> {
   try {
+    const type = (file.type || "").toLowerCase();
+    if (type && !type.startsWith("image/")) return null;
+    // Preferir canvas: normaliza HEIC→JPEG cuando el navegador decodifica, y limita tamaño.
+    const fromCanvas = await blobAJpegComprimido(file);
+    if (fromCanvas) return fromCanvas;
     const dataUri = await blobADataUri(file);
-    if (!dataUri || dataUri.length > MAX_DATA_URI_CHARS) return null;
+    if (!dataUri) return null;
+    if (dataUri.length > MAX_DATA_URI_CHARS) {
+      return comprimirDataUriSiHaceFalta(dataUri);
+    }
+    // Solo JPEG/PNG/WebP/GIF son previsualizables de forma fiable.
+    if (!/^data:image\/(jpeg|jpg|png|webp|gif);/i.test(dataUri)) return null;
     return dataUri;
   } catch {
     return null;
@@ -95,11 +112,11 @@ export function elegirFotoWebSync(opts?: { capture?: boolean }): Promise<File | 
     }
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "image/*";
+    input.accept = "image/*,image/jpeg,image/png,image/webp";
     if (opts?.capture) {
       input.setAttribute("capture", "environment");
     }
-    // visibility:hidden (no display:none): iOS Safari a veces ignora click() en inputs ocultos.
+    // visibility/opacity (no display:none): iOS Safari a veces ignora click() en inputs ocultos.
     input.style.cssText =
       "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01;z-index:99999;";
     let settled = false;
@@ -116,7 +133,6 @@ export function elegirFotoWebSync(opts?: { capture?: boolean }): Promise<File | 
     input.addEventListener("change", () => {
       finish(input.files?.[0] ?? null);
     });
-    // iOS / algunos Chromium no disparan change al cancelar: liberar al volver el foco.
     const onFocus = () => {
       window.setTimeout(() => {
         if (!settled && (!input.files || input.files.length === 0)) finish(null);
@@ -124,7 +140,6 @@ export function elegirFotoWebSync(opts?: { capture?: boolean }): Promise<File | 
     };
     window.addEventListener("focus", onFocus, { once: true });
     document.body.appendChild(input);
-    // click() síncrono en el mismo turno del onPress — crítico en Safari/PWA.
     input.click();
   });
 }
@@ -151,4 +166,81 @@ function blobADataUri(blob: Blob): Promise<string | null> {
     reader.onerror = () => resolve(null);
     reader.readAsDataURL(blob);
   });
+}
+
+async function comprimirDataUriSiHaceFalta(dataUri: string): Promise<string | null> {
+  if (dataUri.length <= MAX_DATA_URI_CHARS) return dataUri;
+  if (typeof document === "undefined") return null;
+  try {
+    const img = await cargarImagen(dataUri);
+    return canvasAJpeg(img, 0.55);
+  } catch {
+    return null;
+  }
+}
+
+async function blobAJpegComprimido(blob: Blob): Promise<string | null> {
+  if (typeof document === "undefined" || typeof createImageBitmap === "undefined") {
+    // Fallback sin createImageBitmap: object URL + Image
+    if (typeof document === "undefined" || typeof URL === "undefined") return null;
+    const url = URL.createObjectURL(blob);
+    try {
+      const img = await cargarImagen(url);
+      return canvasAJpeg(img, 0.7);
+    } catch {
+      return null;
+    } finally {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  try {
+    const bmp = await createImageBitmap(blob);
+    try {
+      return canvasAJpeg(bmp, 0.7);
+    } finally {
+      bmp.close?.();
+    }
+  } catch {
+    return null;
+  }
+}
+
+function cargarImagen(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("img"));
+    img.src = src;
+  });
+}
+
+function canvasAJpeg(
+  source: { width: number; height: number; close?: () => void } | HTMLImageElement,
+  quality: number
+): string | null {
+  if (typeof document === "undefined") return null;
+  let w = source.width;
+  let h = source.height;
+  if (!w || !h) return null;
+  const scale = Math.min(1, MAX_LADO_PX / Math.max(w, h));
+  w = Math.max(1, Math.round(w * scale));
+  h = Math.max(1, Math.round(h * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.drawImage(source as CanvasImageSource, 0, 0, w, h);
+  let q = quality;
+  let out = canvas.toDataURL("image/jpeg", q);
+  while (out.length > MAX_DATA_URI_CHARS && q > 0.35) {
+    q -= 0.1;
+    out = canvas.toDataURL("image/jpeg", q);
+  }
+  if (out.length > MAX_DATA_URI_CHARS) return null;
+  return out;
 }

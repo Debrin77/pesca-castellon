@@ -56,6 +56,13 @@ if (!fs.existsSync(btnPath)) {
   } else {
     ok("BotonFotoCaptura con label/input (Safari/PWA)");
   }
+  if (/style:\s*\{\s*display:\s*["']none["']/.test(btn) || /display:\s*["']none["']/.test(btn.replace(/\/\/.*/g, ""))) {
+    fail("BotonFotoCaptura no debe usar display none en el input (Safari)");
+  } else if (!btn.includes("opacity: 0.01")) {
+    fail("BotonFotoCaptura web debe usar opacity en el input file");
+  } else {
+    ok("input file visible para Safari (opacity)");
+  }
 }
 
 const catches = read("src/screens/MyCatchesScreen.tsx");
@@ -79,20 +86,42 @@ if (/await import\(["']expo-image-picker["']\)/.test(catches)) {
 } else {
   ok("sin dynamic import de image-picker");
 }
-if (!catches.includes("esNombrePuntoFechaPorDefecto")) {
-  fail("Al enlazar sitio guardado no debe volcar «Punto del fecha» en Lugar");
+if (!catches.includes("esNombrePuntoFechaPorDefecto") && !catches.includes("esNombrePuntoSoloFecha")) {
+  fail("Al enlazar sitio guardado no debe volcar fecha en Lugar");
 } else {
   ok("Lugar no recibe nombre-fecha por defecto del punto");
 }
-if (!catches.includes("actualizarPunto") || !catches.includes("Nombre del sitio")) {
+if (!catches.includes("nombreLugarDesdeMapa") || !catches.includes("consultarToqueMapa")) {
+  fail("Lugar debe rellenarse con el nombre del mapa (no la fecha del chip)");
+} else {
+  ok("Lugar desde mapa al elegir punto");
+}
+if (!catches.includes("actualizarPunto")) {
   fail("Al elegir sitio debe poder editar/guardar el nombre del punto");
 } else {
   ok("nombre del sitio editable al enlazar punto");
+}
+if (!catches.includes("AAAA/MM/DD") || !catches.includes("normalizarFechaCapturaAIso")) {
+  fail("Fecha de captura debe usar formato AAAA/MM/DD");
+} else {
+  ok("fecha captura AAAA/MM/DD");
 }
 if (!catches.includes("base64: true")) {
   fail("ImagePicker nativo debe pedir base64: true");
 } else {
   ok("ImagePicker nativo con base64");
+}
+
+const fechaUtils = path.join(root, "src/services/fechaCapturaUtils.ts");
+if (!fs.existsSync(fechaUtils)) {
+  fail("falta fechaCapturaUtils.ts");
+} else {
+  const fu = read("src/services/fechaCapturaUtils.ts");
+  if (!fu.includes("hoyFechaUi") || !fu.includes("normalizarFechaCapturaAIso")) {
+    fail("fechaCapturaUtils incompleto");
+  } else {
+    ok("fechaCapturaUtils");
+  }
 }
 
 const app = read("app.json");

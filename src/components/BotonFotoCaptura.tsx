@@ -36,6 +36,7 @@ export default function BotonFotoCaptura({
       minHeight: 40,
       cursor: "pointer",
       margin: 0,
+      position: "relative",
     };
     const textStyle: Record<string, string | number> = {
       fontWeight: 700,
@@ -46,6 +47,19 @@ export default function BotonFotoCaptura({
       paddingRight: 8,
       paddingTop: 10,
       paddingBottom: 10,
+    };
+    // Evitar ocultar el input con display none: iOS Safari a veces no abre el picker.
+    const inputStyle: Record<string, string | number> = {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      opacity: 0.01,
+      cursor: "pointer",
+      border: 0,
+      padding: 0,
+      margin: 0,
     };
     return (
       <View
@@ -58,9 +72,9 @@ export default function BotonFotoCaptura({
           { style: labelStyle },
           React.createElement("input", {
             type: "file",
-            accept: "image/*",
+            accept: "image/*,image/jpeg,image/png,image/webp",
             ...(capture ? { capture: "environment" } : {}),
-            style: { display: "none" },
+            style: inputStyle,
             onChange: (e: { target: { files: FileList | null; value: string } }) => {
               const file = e.target.files?.[0];
               e.target.value = "";
