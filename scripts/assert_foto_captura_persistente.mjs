@@ -56,6 +56,13 @@ if (!fs.existsSync(btnPath)) {
   } else {
     ok("BotonFotoCaptura con label/input (Safari/PWA)");
   }
+  if (/style:\s*\{\s*display:\s*["']none["']/.test(btn) || /display:\s*["']none["']/.test(btn.replace(/\/\/.*/g, ""))) {
+    fail("BotonFotoCaptura no debe usar display none en el input (Safari)");
+  } else if (!btn.includes("opacity: 0.01")) {
+    fail("BotonFotoCaptura web debe usar opacity en el input file");
+  } else {
+    ok("input file visible para Safari (opacity)");
+  }
 }
 
 const catches = read("src/screens/MyCatchesScreen.tsx");
@@ -79,20 +86,83 @@ if (/await import\(["']expo-image-picker["']\)/.test(catches)) {
 } else {
   ok("sin dynamic import de image-picker");
 }
-if (!catches.includes("esNombrePuntoFechaPorDefecto")) {
-  fail("Al enlazar sitio guardado no debe volcar «Punto del fecha» en Lugar");
+if (!catches.includes("esNombrePuntoFechaPorDefecto") && !catches.includes("esNombrePuntoSoloFecha")) {
+  fail("Al enlazar sitio guardado no debe volcar fecha en Lugar");
 } else {
   ok("Lugar no recibe nombre-fecha por defecto del punto");
 }
-if (!catches.includes("actualizarPunto") || !catches.includes("Nombre del sitio")) {
+if (!catches.includes("nombreSitioDesdeCoords") && !catches.includes("nombreLugarDesdeMapa")) {
+  fail("Lugar debe rellenarse con el nombre del mapa (no la fecha del chip)");
+} else {
+  ok("Lugar desde mapa al elegir punto");
+}
+if (!catches.includes("FotoPreviewCaptura")) {
+  fail("Capturas debe usar FotoPreviewCaptura (preview web sin icono rojo)");
+} else {
+  ok("FotoPreviewCaptura");
+}
+if (!catches.includes("nombreParaPuntoGuardado")) {
+  fail("Al guardar punto desde Capturas no debe usarse fecha como nombre");
+} else {
+  ok("guardar punto con nombre de mapa");
+}
+
+const nombreMapa = path.join(root, "src/services/nombreSitioMapaService.ts");
+if (!fs.existsSync(nombreMapa)) {
+  fail("falta nombreSitioMapaService.ts");
+} else {
+  const nm = read("src/services/nombreSitioMapaService.ts");
+  if (!nm.includes("nombreParaPuntoGuardado") || nm.includes("toLocaleDateString")) {
+    fail("nombreSitioMapaService no debe usar fecha como nombre de punto");
+  } else {
+    ok("nombreSitioMapaService sin fecha");
+  }
+}
+
+const sheet = read("src/components/GuardarPuntoSheet.tsx");
+if (!sheet.includes("nombreParaPuntoGuardado") || /Punto del \$\{/.test(sheet)) {
+  fail("GuardarPuntoSheet debe guardar nombre del mapa, no fecha");
+} else {
+  ok("GuardarPuntoSheet nombre del mapa");
+}
+
+const preview = path.join(root, "src/components/FotoPreviewCaptura.tsx");
+if (!fs.existsSync(preview)) {
+  fail("falta FotoPreviewCaptura.tsx");
+} else {
+  const pv = read("src/components/FotoPreviewCaptura.tsx");
+  if (!pv.includes("createObjectURL") || !pv.includes('"img"')) {
+    fail("FotoPreviewCaptura web debe usar img + blob URL");
+  } else {
+    ok("FotoPreviewCaptura blob URL");
+  }
+}
+if (!catches.includes("actualizarPunto")) {
   fail("Al elegir sitio debe poder editar/guardar el nombre del punto");
 } else {
   ok("nombre del sitio editable al enlazar punto");
+}
+if (!catches.includes("AAAA/MM/DD") || !catches.includes("normalizarFechaCapturaAIso")) {
+  fail("Fecha de captura debe usar formato AAAA/MM/DD");
+} else {
+  ok("fecha captura AAAA/MM/DD");
 }
 if (!catches.includes("base64: true")) {
   fail("ImagePicker nativo debe pedir base64: true");
 } else {
   ok("ImagePicker nativo con base64");
+}
+
+const fechaUtils = path.join(root, "src/services/fechaCapturaUtils.ts");
+if (!fs.existsSync(fechaUtils)) {
+  fail("falta fechaCapturaUtils.ts");
+} else {
+  const fu = read("src/services/fechaCapturaUtils.ts");
+  if (!fu.includes("hoyFechaUi") || !fu.includes("normalizarFechaCapturaAIso")) {
+    fail("fechaCapturaUtils incompleto");
+  } else {
+    ok("fechaCapturaUtils");
+  }
 }
 
 const app = read("app.json");

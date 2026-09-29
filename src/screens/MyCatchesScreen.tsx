@@ -71,6 +71,18 @@ import {
 import BotonFotoCaptura from "../components/BotonFotoCaptura";
 import LlevameAlPunto from "../components/LlevameAlPunto";
 import { compartirUbicacion } from "../utils/abrirEnMaps";
+import {
+  esNombrePuntoSoloFecha,
+  fechaIsoDesdeNombrePunto,
+  hoyFechaUi,
+  isoAFechaUi,
+  normalizarFechaCapturaAIso,
+} from "../services/fechaCapturaUtils";
+import {
+  nombreParaPuntoGuardado,
+  nombreSitioDesdeCoords,
+} from "../services/nombreSitioMapaService";
+import FotoPreviewCaptura from "../components/FotoPreviewCaptura";
 
 type Tab = "favoritos" | "puntos" | "capturas";
 type OrdenLista = "fecha" | "especie" | "sitio" | "color";
@@ -80,13 +92,18 @@ interface Props {
   navigation: any;
 }
 
-function nombrePuntoPorDefecto(): string {
-  return `Punto del ${new Date().toLocaleDateString("es-ES")}`;
+/** Compat assert / nombre auto con fecha. */
+function esNombrePuntoFechaPorDefecto(nombre: string): boolean {
+  return esNombrePuntoSoloFecha(nombre);
 }
 
-/** Nombre auto tipo «Punto del 28/9/2026» — no debe rellenar Lugar (opcional). */
-function esNombrePuntoFechaPorDefecto(nombre: string): boolean {
-  return /^Punto del \d{1,2}\/\d{1,2}\/\d{2,4}$/i.test(nombre.trim());
+function nombreLugarDesdeMapa(lat: number, lng: number): string {
+  return nombreSitioDesdeCoords(lat, lng);
+}
+
+function etiquetaChipPunto(p: PuntoGuardado): string {
+  if (!esNombrePuntoSoloFecha(p.nombre)) return p.nombre;
+  return nombreSitioDesdeCoords(p.lat, p.lng) || "Sitio sin nombre";
 }
 
 /** ~75 m: reutilizar un punto cercano al registrar otra captura en el mismo sitio. */
@@ -144,12 +161,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   /** Sitio guardado elegido: la captura se enlaza a esas coordenadas (misma orilla, otra fecha). */
   const [puntoSeleccionadoId, setPuntoSeleccionadoId] = useState<string | null>(null);
-  const [fechaCaptura, setFechaCaptura] = useState(() => new Date().toISOString().slice(0, 10));
+  const [fechaCaptura, setFechaCaptura] = useState(() => hoyFechaUi());
   const [modalidad, setModalidad] = useState<ModalidadPesca>("orilla_continental");
   const [cupoInfo, setCupoInfo] = useState<CupoEspecieInfo | null>(null);
   const [mostrarCoordsCaptura, setMostrarCoordsCaptura] = useState(false);
   const [latCaptura, setLatCaptura] = useState("");
   const [lngCaptura, setLngCaptura] = useState("");
+  const [errorForm, setErrorForm] = useState<string | null>(null);
 
   const catalogoSeleccion = useMemo(
     () =>
@@ -231,9 +249,16 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setMostrarFormulario(true);
     setPuntoSeleccionadoId(p.id);
     setCoords({ lat: p.lat, lng: p.lng });
-    // Sitio ya elegido arriba: no volcar en Lugar el nombre auto con fecha («Punto del …»).
-    setNombreLugar(esNombrePuntoFechaPorDefecto(p.nombre) ? "" : p.nombre);
-    setFechaCaptura(new Date().toISOString().slice(0, 10));
+    setErrorForm(null);
+    // Lugar = nombre real o ubicación del mapa; nunca la fecha del chip (26/08/2026).
+    if (esNombrePuntoSoloFecha(p.nombre)) {
+      setNombreLugar(nombreLugarDesdeMapa(p.lat, p.lng));
+      const isoDesdeNombre = fechaIsoDesdeNombrePunto(p.nombre);
+      setFechaCaptura(isoDesdeNombre ? isoAFechaUi(isoDesdeNombre) : hoyFechaUi());
+    } else {
+      setNombreLugar(p.nombre);
+      setFechaCaptura(hoyFechaUi());
+    }
     setMostrarCoordsCaptura(false);
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ y: 0, animated: true });
@@ -425,31 +450,42 @@ export default function MyCatchesScreen({ navigation }: Props) {
   }, [puntos, busquedaLista, ordenLista, grupoLista]);
 
   async function handleGuardarCaptura() {
+    setErrorForm(null);
     if (!especieId) {
-      Alert.alert("Especie", "Elige primero la especie de la captura.");
+      const msg = "Elige primero la especie de la captura.";
+      setErrorForm(msg);
+      Alert.alert("Especie", msg);
       return;
     }
-    const fechaOk = /^\d{4}-\d{2}-\d{2}$/.test(fechaCaptura.trim());
-    if (!fechaOk) {
-      Alert.alert("Fecha", "Usa el formato AAAA-MM-DD (ej. 2026-09-28).");
+    const fechaIso = normalizarFechaCapturaAIso(fechaCaptura);
+    if (!fechaIso) {
+      const msg = "Fecha: usa AAAA/MM/DD (ej. 2026/08/26).";
+      setErrorForm(msg);
+      Alert.alert("Fecha", msg);
       return;
     }
+    // Mostrar ya normalizada en UI.
+    setFechaCaptura(isoAFechaUi(fechaIso));
     let puntoId: string | null = puntoSeleccionadoId;
     let lat = coords?.lat ?? null;
     let lng = coords?.lng ?? null;
     if (puntoId) {
       const p = puntos.find((x) => x.id === puntoId);
       if (!p) {
-        Alert.alert("Sitio", "Ese punto ya no está en la lista. Elige otro o usa GPS/coords.");
+        const msg = "Ese punto ya no está en la lista. Elige otro o usa GPS/coords.";
+        setErrorForm(msg);
+        Alert.alert("Sitio", msg);
         return;
       }
       lat = p.lat;
       lng = p.lng;
     } else if (coords) {
       const sp = resolverEspecie(especieId, speciesCatalog);
-      const nombre =
-        nombreLugar.trim() ||
-        (sp?.nombre ? `Captura · ${sp.nombre}` : nombrePuntoPorDefecto());
+      const nombre = nombreParaPuntoGuardado({
+        lat: coords.lat,
+        lng: coords.lng,
+        sugerido: nombreLugar.trim() || (sp?.nombre ? `Captura · ${sp.nombre}` : null),
+      });
       const punto = await asegurarPuntoParaCaptura({
         lat: coords.lat,
         lng: coords.lng,
@@ -474,17 +510,21 @@ export default function MyCatchesScreen({ navigation }: Props) {
     // Asegura data URI durable: las URIs temporales del picker se invalidan al cerrar.
     const fotoPersistida = await persistirFotoCaptura(fotoUri);
     if (fotoUri && !fotoPersistida) {
-      Alert.alert(
-        "Foto",
-        "La foto es demasiado grande o no se pudo guardar. La captura se guardará sin foto."
-      );
+      const msg =
+        "La foto es demasiado grande o no se pudo guardar. Prueba otra imagen (JPEG/PNG) o guarda sin foto.";
+      setErrorForm(msg);
+      Alert.alert("Foto", msg);
+      return;
     }
     try {
       await guardarCaptura({
         especieId,
-        fecha: fechaCaptura.trim(),
+        fecha: fechaIso,
         puntoId,
-        nombreLugar: nombreEditado || pSel?.nombre || undefined,
+        nombreLugar:
+          nombreEditado ||
+          (pSel && !esNombrePuntoSoloFecha(pSel.nombre) ? pSel.nombre : undefined) ||
+          undefined,
         tallaCm: tallaCm ? parseFloat(tallaCm) : null,
         pesoKg: pesoKg ? parseFloat(pesoKg) : null,
         notas: notas || undefined,
@@ -495,10 +535,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
         condiciones,
       });
     } catch {
-      Alert.alert(
-        "Captura",
-        "No se pudo guardar. Si la foto es muy grande, quítala e inténtalo de nuevo."
-      );
+      const msg = "No se pudo guardar. Si la foto es muy grande, quítala e inténtalo de nuevo.";
+      setErrorForm(msg);
+      Alert.alert("Captura", msg);
       return;
     }
     setNombreLugar("");
@@ -508,11 +547,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
     setFotoUri(null);
     setCoords(null);
     setPuntoSeleccionadoId(null);
-    setFechaCaptura(new Date().toISOString().slice(0, 10));
+    setFechaCaptura(hoyFechaUi());
     setLatCaptura("");
     setLngCaptura("");
     setMostrarCoordsCaptura(false);
     setEspecieId("");
+    setErrorForm(null);
     setMostrarFormulario(false);
     setMostrarId(false);
     cargar();
@@ -520,9 +560,14 @@ export default function MyCatchesScreen({ navigation }: Props) {
 
   function aplicarFotoElegida(durable: string | null, contexto: "Foto" | "Cámara") {
     if (!durable) {
-      Alert.alert(contexto, "No se pudo guardar la foto (demasiado grande o formato no válido).");
+      const msg =
+        "No se pudo cargar la foto (formato no válido, HEIC o demasiado grande). Prueba JPEG/PNG.";
+      setErrorForm(msg);
+      Alert.alert(contexto, msg);
+      setFotoUri(null);
       return;
     }
+    setErrorForm(null);
     setFotoUri(durable);
   }
 
@@ -530,7 +575,9 @@ export default function MyCatchesScreen({ navigation }: Props) {
     try {
       aplicarFotoElegida(await fotoDesdeFile(file), contexto);
     } catch {
-      Alert.alert(contexto, "No se pudo guardar la foto en este entorno.");
+      const msg = "No se pudo guardar la foto en este entorno.";
+      setErrorForm(msg);
+      Alert.alert(contexto, msg);
     }
   }
 
@@ -543,12 +590,15 @@ export default function MyCatchesScreen({ navigation }: Props) {
       }
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.55,
-        allowsEditing: true,
-        aspect: [4, 3],
+        quality: 0.5,
+        allowsEditing: false,
         base64: true,
         exif: false,
-      });
+        // iOS: evita HEIC que no se previsualiza (JPEG compatible).
+        preferredAssetRepresentationMode:
+          (ImagePicker as any).UIImagePickerPreferredAssetRepresentationMode?.Compatible ??
+          "compatible",
+      } as any);
       if (res.canceled || !res.assets?.[0]) return;
       aplicarFotoElegida(await fotoDesdeAsset(res.assets[0]), "Foto");
     } catch {
@@ -564,9 +614,8 @@ export default function MyCatchesScreen({ navigation }: Props) {
         return;
       }
       const res = await ImagePicker.launchCameraAsync({
-        quality: 0.55,
-        allowsEditing: true,
-        aspect: [4, 3],
+        quality: 0.5,
+        allowsEditing: false,
         base64: true,
         exif: false,
       });
@@ -661,7 +710,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
       return;
     }
     const nuevo = await guardarPunto({
-      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      nombre: nombreParaPuntoGuardado({
+        lat: loc.lat,
+        lng: loc.lng,
+        sugerido: nombrePunto.trim() || null,
+      }),
       lat: loc.lat,
       lng: loc.lng,
       notas: notasPunto.trim() || undefined,
@@ -691,7 +744,11 @@ export default function MyCatchesScreen({ navigation }: Props) {
       return;
     }
     const nuevo = await guardarPunto({
-      nombre: nombrePunto.trim() || nombrePuntoPorDefecto(),
+      nombre: nombreParaPuntoGuardado({
+        lat: r.coords.lat,
+        lng: r.coords.lng,
+        sugerido: nombrePunto.trim() || null,
+      }),
       lat: r.coords.lat,
       lng: r.coords.lng,
       notas: notasPunto.trim() || undefined,
@@ -978,7 +1035,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                         style={[styles.chip, puntoSeleccionadoId === p.id && styles.chipActive]}
                         onPress={() => usarPuntoParaCaptura(p)}
                         accessibilityRole="button"
-                        accessibilityLabel={`Usar sitio ${p.nombre}`}
+                        accessibilityLabel={`Usar sitio ${etiquetaChipPunto(p)}`}
                         accessibilityState={{ selected: puntoSeleccionadoId === p.id }}
                       >
                         <Text
@@ -987,7 +1044,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                             puntoSeleccionadoId === p.id && styles.chipTextActive,
                           ]}
                         >
-                          {glyphIconoPunto(p.icono)} {p.nombre}
+                          {glyphIconoPunto(p.icono)} {etiquetaChipPunto(p)}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -995,34 +1052,29 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 )}
 
                 <Text style={styles.formLabel}>
-                  {puntoSeleccionadoId ? "Nombre del sitio" : "Lugar (opcional)"}
+                  {puntoSeleccionadoId ? "Lugar (según mapa)" : "Lugar (opcional)"}
                 </Text>
                 <TextInput
                   style={styles.input}
                   value={nombreLugar}
-                  onChangeText={setNombreLugar}
+                  onChangeText={(t) => {
+                    setNombreLugar(t);
+                    setErrorForm(null);
+                  }}
                   placeholder={
                     puntoSeleccionadoId
-                      ? (() => {
-                          const p = puntos.find((x) => x.id === puntoSeleccionadoId);
-                          if (p && !esNombrePuntoFechaPorDefecto(p.nombre)) return p.nombre;
-                          return "Ej. Embalse, orilla norte…";
-                        })()
+                      ? "Ej. Guadalquivir, embalse, orilla…"
                       : "Ej. Embalse o tramo"
                   }
                   accessibilityLabel={
-                    puntoSeleccionadoId ? "Nombre del sitio seleccionado" : "Lugar opcional"
+                    puntoSeleccionadoId ? "Lugar según mapa del sitio seleccionado" : "Lugar opcional"
                   }
                 />
                 {puntoSeleccionadoId ? (
                   <Text style={styles.hintMini}>
-                    {(() => {
-                      const p = puntos.find((x) => x.id === puntoSeleccionadoId);
-                      if (p && esNombrePuntoFechaPorDefecto(p.nombre)) {
-                        return "Este sitio aún no tiene nombre propio: escribe uno aquí (se guardará en el punto).";
-                      }
-                      return "Puedes editar el nombre del sitio; la ubicación ya viene del punto guardado.";
-                    })()}
+                    {nombreLugar.trim()
+                      ? "Puedes editar el nombre; al guardar se actualiza también el punto."
+                      : "Escribe el nombre del sitio del mapa (se guardará en el punto)."}
                   </Text>
                 ) : null}
 
@@ -1030,14 +1082,17 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 <TextInput
                   style={styles.input}
                   value={fechaCaptura}
-                  onChangeText={setFechaCaptura}
-                  placeholder="AAAA-MM-DD"
+                  onChangeText={(t) => {
+                    setFechaCaptura(t);
+                    setErrorForm(null);
+                  }}
+                  placeholder="AAAA/MM/DD"
                   autoCapitalize="none"
                   autoCorrect={false}
-                  accessibilityLabel="Fecha de la captura AAAA-MM-DD"
+                  accessibilityLabel="Fecha de la captura AAAA/MM/DD"
                 />
                 <Text style={styles.hintMini}>
-                  Misma orilla, otra salida: elige el sitio guardado y cambia solo la fecha.
+                  Formato AAAA/MM/DD. Misma orilla, otra salida: elige el sitio y cambia solo la fecha.
                 </Text>
 
                 <View style={{ flexDirection: "row", gap: 10 }}>
@@ -1073,8 +1128,10 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   <Text style={styles.coordsOk}>
                     📍{" "}
                     {nombreLugar.trim() ||
-                      puntos.find((x) => x.id === puntoSeleccionadoId)?.nombre ||
-                      "Sitio"}{" "}
+                      (() => {
+                        const p = puntos.find((x) => x.id === puntoSeleccionadoId);
+                        return p ? etiquetaChipPunto(p) : "Sitio";
+                      })()}{" "}
                     · {formatearCoords(coords.lat, coords.lng)} · captura en este sitio guardado
                   </Text>
                 ) : coords ? (
@@ -1139,12 +1196,20 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <Image
-                    source={{ uri: fotoUri }}
-                    style={styles.fotoPreview}
-                    onError={() => setFotoUri(null)}
-                    accessibilityLabel="Vista previa de la foto de la captura"
+                  <FotoPreviewCaptura
+                    uri={fotoUri}
+                    onBroken={() => {
+                      setErrorForm(
+                        "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
+                      );
+                    }}
                   />
+                ) : null}
+
+                {errorForm ? (
+                  <Text style={styles.errorForm} accessibilityLiveRegion="polite">
+                    {errorForm}
+                  </Text>
                 ) : null}
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
@@ -1154,12 +1219,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       setMostrarFormulario(false);
                       setPuntoSeleccionadoId(null);
                       setCoords(null);
-                      setFechaCaptura(new Date().toISOString().slice(0, 10));
+                      setErrorForm(null);
+                      setFechaCaptura(hoyFechaUi());
                     }}
                   >
                     <Text style={styles.cancelButtonText}>Cancelar</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.saveButton} onPress={handleGuardarCaptura}>
+                  <TouchableOpacity style={styles.saveButton} onPress={() => void handleGuardarCaptura()}>
                     <Text style={styles.saveButtonText}>Guardar captura</Text>
                   </TouchableOpacity>
                 </View>
@@ -1286,12 +1352,13 @@ export default function MyCatchesScreen({ navigation }: Props) {
 
             {mostrarFormPunto && (
               <View style={styles.formCard}>
-                <Text style={styles.formLabel}>Nombre</Text>
+                <Text style={styles.formLabel}>Nombre del lugar (mapa)</Text>
                 <TextInput
                   style={styles.input}
                   value={nombrePunto}
                   onChangeText={setNombrePunto}
-                  placeholder={nombrePuntoPorDefecto()}
+                  placeholder="Ej. Guadalquivir, embalse…"
+                  accessibilityLabel="Nombre del lugar del mapa"
                 />
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>
@@ -1633,6 +1700,13 @@ const styles = StyleSheet.create({
   },
   methodBtnTxt: { fontWeight: "700", color: COLORS.textSecondary, fontSize: 12 },
   hintMini: { fontSize: 11.5, color: COLORS.textMuted, marginBottom: 12, lineHeight: 16 },
+  errorForm: {
+    marginTop: 10,
+    color: COLORS.danger,
+    fontSize: 13,
+    fontWeight: "600",
+    lineHeight: 18,
+  },
   coordsOk: { fontSize: 12.5, color: COLORS.success, fontWeight: "600", marginTop: 8 },
   coordsBox: { marginTop: 8 },
   secondaryBtn: {
