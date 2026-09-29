@@ -35,10 +35,6 @@ export function nombreSitioDesdeCoords(lat: number, lng: number): string {
   }
 }
 
-/**
- * Nombre definitivo al guardar un punto.
- * Prioridad: sugerido usable → mapa → coords (nunca fecha).
- */
 /** Texto en chips/listas: nunca muestra una fecha cruda como nombre. */
 export function etiquetaPuntoEnUi(p: { nombre: string; lat: number; lng: number }): string {
   if (!esNombrePuntoSoloFecha(p.nombre)) return p.nombre;
@@ -61,6 +57,10 @@ export function esNombreSitioEditableValido(nombre: string): boolean {
   return true;
 }
 
+/**
+ * Nombre definitivo al guardar un punto.
+ * Prioridad: sugerido usable → mapa → coords (nunca fecha).
+ */
 export function nombreParaPuntoGuardado(opts: {
   lat: number;
   lng: number;
