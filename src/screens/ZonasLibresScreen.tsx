@@ -536,7 +536,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         Alert.alert("Ruta", "Track guardado. Puedes exportarlo en Capturas → GPX.");
       } else {
         setMapaSimple(false);
-        const t = await iniciarTrack();
+        const t = await iniciarTrack(`Ruta ${new Date().toLocaleString("es-ES")}`, modalidad);
         setGrabandoId(t.id);
         setTracks(await obtenerTracks());
         setCapas((prev) => ({ ...prev, tracks: true }));
@@ -942,9 +942,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled
       >
+      {/* Glass claro siempre: el fondo del mapa es waterLight; oscuro+texto blanco dejaba la búsqueda ilegible. */}
       <GlassCard
         compacto
-        oscuro={mar}
         style={[styles.searchBox, mar && styles.searchBoxMar]}
       >
         <TextInput
@@ -956,7 +956,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
                 ? "Busca embalse, río o tus puntos"
                 : "Busca tramo, municipio o tus puntos"
           }
-          placeholderTextColor={mar ? "rgba(255,255,255,0.55)" : COLORS.textMuted}
+          placeholderTextColor={mar ? COLORS.waterDark : COLORS.textMuted}
           value={busqueda}
           onChangeText={(t) => {
             setBusqueda(t);
@@ -1020,7 +1020,6 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       {modosDisp.length > 1 ? (
         <GlassCard
           compacto
-          oscuro={mar}
           style={[
             styles.modoBar,
             mar && styles.modoBarMar,
@@ -1054,7 +1053,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         </GlassCard>
       ) : null}
 
-      <GlassCard compacto oscuro={mar} style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
+      <GlassCard compacto style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
         <TouchableOpacity
           style={[styles.mapaModoBtn, mapaSimple && styles.mapaModoBtnOn]}
           onPress={() => {
@@ -1080,7 +1079,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
 
       {!mapaSimple ? (
       <>
-      <GlassCard compacto oscuro={mar} style={[styles.layerBar, mar && styles.modoBarMar]}>
+      <GlassCard compacto style={[styles.layerBar, mar && styles.modoBarMar]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, alignItems: "center", minHeight: 44 }}>
         <TouchableOpacity
           style={[styles.layerChip, normativaOn && styles.layerChipActive]}
@@ -1140,7 +1139,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
               (basemapSatelite || basemapHibrido) && styles.layerChipTextActive,
             ]}
           >
-            {basemapHibrido ? "Híbrido" : basemapSatelite ? "Satélite" : "Satélite"}
+            {basemapHibrido ? "Híbrido" : basemapSatelite ? "Satélite" : "Estándar"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -1181,7 +1180,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
       </GlassCard>
 
       {capasExtra ? (
-        <GlassCard compacto oscuro={mar} style={[styles.capasExtraPanel, mar && styles.modoBarMar]}>
+        <GlassCard compacto style={[styles.capasExtraPanel, mar && styles.modoBarMar]}>
           <View style={styles.capasExtraCabecera}>
             <Text style={styles.capasExtraTitulo}>Más capas</Text>
             <TouchableOpacity
@@ -1817,10 +1816,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  /** Costa/barco: superficie clara con texto oscuro (el fondo del mapa es waterLight). */
   searchInputMar: {
-    backgroundColor: "rgba(255,255,255,0.12)",
-    borderColor: "rgba(255,255,255,0.28)",
-    color: "#fff",
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.water,
+    color: COLORS.waterDark,
   },
   sitiosChip: {
     alignSelf: "flex-start",

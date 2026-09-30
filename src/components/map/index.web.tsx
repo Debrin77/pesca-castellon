@@ -585,6 +585,8 @@ interface MarkerProps {
   coordinate: { latitude: number; longitude: number };
   pinColor?: string;
   title?: string;
+  /** Nota secundaria (nativo: callout; web: popup bajo el título). */
+  description?: string;
   onPress?: () => void;
   children?: React.ReactNode;
   identifier?: string;
@@ -594,6 +596,7 @@ export function Marker({
   coordinate,
   pinColor = "#164a36",
   title,
+  description,
   onPress,
   children,
   identifier,
@@ -604,7 +607,21 @@ export function Marker({
       icon={iconoMarcador(pinColor, identifier, title)}
       eventHandlers={{ click: () => onPress?.() }}
     >
-      {(title || children) && <Popup>{children ?? title}</Popup>}
+      {(title || description || children) && (
+        <Popup>
+          {children ?? (
+            <>
+              {title ? <strong>{title}</strong> : null}
+              {description ? (
+                <>
+                  {title ? <br /> : null}
+                  {description}
+                </>
+              ) : null}
+            </>
+          )}
+        </Popup>
+      )}
     </LeafletMarker>
   );
 }
