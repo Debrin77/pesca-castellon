@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Image,
   Platform,
   Modal,
 } from "react-native";
@@ -86,6 +85,11 @@ import {
   nombreSitioDesdeCoords,
 } from "../services/nombreSitioMapaService";
 import FotoPreviewCaptura from "../components/FotoPreviewCaptura";
+import VisorFotoCaptura from "../components/VisorFotoCaptura";
+import {
+  exportarCapturasCsv,
+  exportarCopiaSeguridadCapturas,
+} from "../services/backupCapturasService";
 
 type Tab = "favoritos" | "puntos" | "capturas";
 type OrdenLista = "fecha" | "especie" | "sitio" | "color";
@@ -189,6 +193,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
   const [pegandoKml, setPegandoKml] = useState(false);
   const [editarPunto, setEditarPunto] = useState<PuntoGuardado | null>(null);
   const [editarNombrePunto, setEditarNombrePunto] = useState("");
+  const [visorFoto, setVisorFoto] = useState<{ uri: string; titulo?: string } | null>(null);
+
+  const abrirVisorFoto = useCallback((uri: string, titulo?: string) => {
+    if (!uri) return;
+    setVisorFoto({ uri, titulo });
+  }, []);
 
   const cargar = useCallback(async () => {
     setPuntos(await obtenerPuntosGuardados());
@@ -878,6 +888,26 @@ export default function MyCatchesScreen({ navigation }: Props) {
             <Text style={styles.gpxBtnText}>Importar KML / KMZ</Text>
             <Text style={styles.gpxSub}>Placemarks → Mis sitios (privados, en esta provincia)</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.gpxBtn, styles.backupBtn]}
+            onPress={() => void exportarCopiaSeguridadCapturas()}
+            accessibilityRole="button"
+            accessibilityLabel="Copia de seguridad de capturas al móvil"
+          >
+            <Text style={styles.gpxBtnText}>Copia de seguridad · Capturas</Text>
+            <Text style={styles.gpxSub}>
+              JSON con datos y fotos · guárdalo en el móvil o en la nube
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.gpxBtn, styles.exportCsvBtn]}
+            onPress={() => void exportarCapturasCsv()}
+            accessibilityRole="button"
+            accessibilityLabel="Exportar capturas a CSV"
+          >
+            <Text style={styles.gpxBtnText}>Exportar CSV · Capturas</Text>
+            <Text style={styles.gpxSub}>Hoja de cálculo sin fotos (comprobar / archivar)</Text>
+          </TouchableOpacity>
           {(tab === "capturas" || tab === "puntos") && (
             <View style={styles.listaTools}>
               <TextInput
@@ -1241,14 +1271,36 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <FotoPreviewCaptura
-                    uri={fotoUri}
-                    onBroken={() => {
-                      setErrorForm(
-                        "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
-                      );
-                    }}
-                  />
+                  <View>
+                    <FotoPreviewCaptura
+                      uri={fotoUri}
+                      onPress={() =>
+                        abrirVisorFoto(
+                          fotoUri,
+                          nombreLugar.trim() || "Vista previa de la captura",
+                        )
+                      }
+                      accessibilityLabel="Ver foto a pantalla completa con zoom"
+                      onBroken={() => {
+                        setErrorForm(
+                          "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
+                        );
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={styles.verFotoBtn}
+                      onPress={() =>
+                        abrirVisorFoto(
+                          fotoUri,
+                          nombreLugar.trim() || "Vista previa de la captura",
+                        )
+                      }
+                      accessibilityRole="button"
+                      accessibilityLabel="Abrir visor de foto con zoom"
+                    >
+                      <Text style={styles.verFotoBtnTxt}>Ver foto completa · zoom</Text>
+                    </TouchableOpacity>
+                  </View>
                 ) : null}
 
                 {errorForm ? (
@@ -1304,7 +1356,36 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     {showGrupo ? <Text style={styles.grupoTitulo}>{grupoLabel}</Text> : null}
                     <View style={styles.card}>
                       {c.fotoUri ? (
-                        <Image source={{ uri: c.fotoUri }} style={styles.fotoCard} />
+                        <View>
+                          <FotoPreviewCaptura
+                            uri={c.fotoUri}
+                            style={styles.fotoCardPreview}
+                            onPress={() =>
+                              abrirVisorFoto(
+                                c.fotoUri!,
+                                [sp?.nombre ?? c.especieId, c.fecha, c.nombreLugar]
+                                  .filter(Boolean)
+                                  .join(" · "),
+                              )
+                            }
+                            accessibilityLabel={`Ver foto de ${sp?.nombre ?? "captura"} a pantalla completa`}
+                          />
+                          <TouchableOpacity
+                            style={styles.verFotoBtnCard}
+                            onPress={() =>
+                              abrirVisorFoto(
+                                c.fotoUri!,
+                                [sp?.nombre ?? c.especieId, c.fecha, c.nombreLugar]
+                                  .filter(Boolean)
+                                  .join(" · "),
+                              )
+                            }
+                            accessibilityRole="button"
+                            accessibilityLabel={`Abrir visor de foto de ${sp?.nombre ?? "captura"}`}
+                          >
+                            <Text style={styles.verFotoBtnTxt}>Ver foto completa · zoom →</Text>
+                          </TouchableOpacity>
+                        </View>
                       ) : (
                         <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
                           <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
@@ -1583,6 +1664,12 @@ export default function MyCatchesScreen({ navigation }: Props) {
         visible={!!llevame}
         destino={llevame}
         onCerrar={() => setLlevame(null)}
+      />
+
+      <VisorFotoCaptura
+        uri={visorFoto?.uri ?? null}
+        titulo={visorFoto?.titulo}
+        onCerrar={() => setVisorFoto(null)}
       />
 
       <Modal
@@ -1914,8 +2001,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: "center",
   },
+  backupBtn: {
+    marginTop: 8,
+    backgroundColor: COLORS.primary,
+  },
+  exportCsvBtn: {
+    marginTop: 8,
+    backgroundColor: COLORS.primaryDark,
+  },
   gpxBtnText: { color: "#fff", fontWeight: "800", fontSize: 14 },
   gpxSub: { color: "rgba(255,255,255,0.9)", fontSize: 11, marginTop: 4, textAlign: "center" },
+  fotoCardPreview: {
+    width: "100%",
+    height: 160,
+    marginTop: 0,
+    borderRadius: 0,
+  },
+  verFotoBtn: {
+    marginTop: 8,
+    marginBottom: 4,
+    alignSelf: "stretch",
+    backgroundColor: COLORS.waterDark,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: RADIUS.sm,
+    alignItems: "center",
+    zIndex: 2,
+  },
+  verFotoBtnCard: {
+    backgroundColor: COLORS.waterDark,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    zIndex: 2,
+  },
+  verFotoBtnTxt: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "800",
+  },
   toolsBox: {
     marginBottom: 14,
     gap: 8,
