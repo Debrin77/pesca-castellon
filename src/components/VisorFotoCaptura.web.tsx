@@ -88,13 +88,12 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
   }, [uri, onCerrar]);
 
   const imgStyle = useMemo(() => {
-    // A 1× la foto llena el área útil (casi pantalla completa); el zoom escala desde ahí.
-    const w = window.innerWidth * 0.98 * zoom;
-    const h = window.innerHeight * 0.82 * zoom;
+    // A 1×: la foto crece hasta el área útil (casi pantalla). El zoom multiplica ese tope.
     return {
-      width: `${w}px`,
-      height: `${h}px`,
-      maxWidth: "none" as const,
+      maxWidth: `${Math.round(98 * zoom)}vw`,
+      maxHeight: `${Math.round(78 * zoom)}dvh`,
+      width: "auto",
+      height: "auto",
       objectFit: "contain" as const,
       display: "block" as const,
       background: "#000",

@@ -30,8 +30,9 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
   const visible = !!uri;
   const [zoom, setZoom] = useState(MIN_ZOOM);
   const { width: sw, height: sh } = Dimensions.get("window");
+  // Área útil: casi toda la pantalla; Image resizeMode="contain" respeta la proporción.
   const imgW = useMemo(() => Math.max(120, sw * 0.98 * zoom), [sw, zoom]);
-  const imgH = useMemo(() => Math.max(120, sh * 0.82 * zoom), [sh, zoom]);
+  const imgH = useMemo(() => Math.max(120, sh * 0.78 * zoom), [sh, zoom]);
 
   useEffect(() => {
     setZoom(MIN_ZOOM);
