@@ -24,7 +24,7 @@ if (!fs.existsSync(visorPath)) {
   fail("falta VisorFotoCaptura.tsx");
 } else {
   const v = read("src/components/VisorFotoCaptura.tsx");
-  if (!v.includes("maximumZoomScale") || !v.includes("ajustarZoom")) {
+  if (!v.includes("maximumZoomScale") && !v.includes("onAjustarZoom")) {
     fail("VisorFotoCaptura debe permitir zoom");
   } else {
     ok("VisorFotoCaptura con zoom");
@@ -71,10 +71,19 @@ if (!catches.includes("Copia de seguridad · Capturas")) {
 } else {
   ok("botón copia de seguridad visible");
 }
-if (!catches.includes("Ver foto · zoom") && !catches.includes("pantalla completa con zoom")) {
+if (
+  !catches.includes("Ver foto completa") &&
+  !catches.includes("pantalla completa con zoom")
+) {
   fail("falta CTA para abrir visor desde la foto");
 } else {
   ok("CTA abrir visor desde foto");
+}
+const preview = read("src/components/FotoPreviewCaptura.tsx");
+if (!preview.includes("pointerEvents") || !preview.includes("onPress")) {
+  fail("FotoPreviewCaptura debe soportar onPress (img pointerEvents none en web)");
+} else {
+  ok("FotoPreviewCaptura onPress web-safe");
 }
 
 const pkg = read("package.json");

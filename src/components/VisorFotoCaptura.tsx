@@ -1,6 +1,5 @@
 /**
- * Visor a pantalla completa de la foto de una captura: ver completa + zoom
- * (botones +/−, rueda en web, pinch en iOS vía ScrollView).
+ * Visor a pantalla completa de la foto de una captura: ver completa + zoom.
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 type Props = {
   uri: string | null;
   titulo?: string;
@@ -82,8 +82,17 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
     };
   }, [uri]);
 
-  const imgW = useMemo(() => sw * zoom, [sw, zoom]);
-  const imgH = useMemo(() => sh * 0.78 * zoom, [sh, zoom]);
+  useEffect(() => {
+    if (Platform.OS !== "web" || !visible || typeof document === "undefined") return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [visible]);
+
+  const imgW = useMemo(() => Math.max(120, sw * zoom), [sw, zoom]);
+  const imgH = useMemo(() => Math.max(120, sh * 0.72 * zoom), [sh, zoom]);
 
   function ajustarZoom(delta: number) {
     setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round((z + delta) * 10) / 10)));
@@ -96,8 +105,15 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
       animationType="fade"
       onRequestClose={onCerrar}
       statusBarTranslucent
+      presentationStyle="overFullScreen"
+      // @ts-expect-error web: asegura apilar encima del layout RN
+      style={Platform.OS === "web" ? { zIndex: 2147483000 } : undefined}
     >
-      <View style={styles.root} accessibilityViewIsModal>
+      <View
+        style={styles.root}
+        accessibilityViewIsModal
+        accessibilityLabel="Visor de foto de captura"
+      >
         <View style={styles.topBar}>
           <Text style={styles.titulo} numberOfLines={1}>
             {titulo?.trim() || "Foto de la captura"}
@@ -107,6 +123,7 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
             accessibilityRole="button"
             accessibilityLabel="Cerrar visor de foto"
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            style={styles.cerrarBtn}
           >
             <Text style={styles.cerrar}>Cerrar</Text>
           </TouchableOpacity>
@@ -121,7 +138,7 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
                 maximumZoomScale={MAX_ZOOM}
                 minimumZoomScale={MIN_ZOOM}
                 centerContent
-                // @ts-expect-error web wheel zoom helper
+                // @ts-expect-error web wheel
                 onWheel={(e: { deltaY?: number; preventDefault?: () => void }) => {
                   if (!e?.deltaY) return;
                   e.preventDefault?.();
@@ -139,17 +156,14 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
                     display: "block",
                     touchAction: "pinch-zoom",
                     userSelect: "none",
-                    backgroundColor: "#000",
+                    backgroundColor: "#111",
                   },
                 })}
               </ScrollView>
             ) : (
               <ScrollView
                 style={styles.scroll}
-                contentContainerStyle={[
-                  styles.scrollContent,
-                  { minWidth: imgW, minHeight: imgH },
-                ]}
+                contentContainerStyle={[styles.scrollContent, { minWidth: imgW, minHeight: imgH }]}
                 maximumZoomScale={MAX_ZOOM}
                 minimumZoomScale={MIN_ZOOM}
                 centerContent
@@ -157,7 +171,7 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
               >
-                <Pressable onPress={() => { /* evita cerrar al tocar la foto */ }}>
+                <Pressable>
                   <Image
                     source={{ uri: displayUri }}
                     style={{ width: imgW, height: imgH }}
@@ -168,7 +182,7 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
               </ScrollView>
             )
           ) : (
-            <Text style={styles.vacio}>No hay foto</Text>
+            <Text style={styles.vacio}>Cargando foto…</Text>
           )}
         </View>
 
@@ -230,6 +244,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
+  cerrarBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderRadius: 8,
+  },
   cerrar: {
     color: "#9ad4e8",
     fontSize: 16,
@@ -256,10 +276,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   zoomBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.14)",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.18)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -276,7 +296,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 15,
   },
-  resetBtn: { width: 48 },
+  resetBtn: { width: 52 },
   resetTxt: { color: "#fff", fontWeight: "800", fontSize: 14 },
   hint: {
     color: "rgba(255,255,255,0.55)",
