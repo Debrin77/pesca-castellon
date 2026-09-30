@@ -2023,17 +2023,20 @@ const styles = StyleSheet.create({
   verFotoBtn: {
     marginTop: 8,
     marginBottom: 4,
-    alignSelf: "flex-start",
+    alignSelf: "stretch",
     backgroundColor: COLORS.waterDark,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderRadius: RADIUS.sm,
+    alignItems: "center",
+    zIndex: 2,
   },
   verFotoBtnCard: {
     backgroundColor: COLORS.waterDark,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     alignItems: "center",
+    zIndex: 2,
   },
   verFotoBtnTxt: {
     color: "#fff",

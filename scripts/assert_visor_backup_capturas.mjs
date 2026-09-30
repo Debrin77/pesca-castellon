@@ -29,12 +29,8 @@ if (!fs.existsSync(visorPath)) {
   } else {
     ok("VisorFotoCaptura con zoom");
   }
-  if (!v.includes("Modal") && !v.includes("createPortal")) fail("VisorFotoCaptura sin Modal/portal");
-  else ok("VisorFotoCaptura Modal/portal");
-  if (!v.includes("createPortal") && !v.includes("position") ) {
-    /* optional */
-  }
-  if (v.includes("createPortal")) ok("VisorFotoCaptura portal web");
+  if (!v.includes("Modal")) fail("VisorFotoCaptura sin Modal");
+  else ok("VisorFotoCaptura Modal");
 }
 
 const backupPath = path.join(root, "src/services/backupCapturasService.ts");
