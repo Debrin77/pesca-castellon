@@ -67,6 +67,20 @@ for (const n of [
 ]) {
   if (!mapa.includes(n)) fail(`ZonasLibres sin ${n}`);
 }
+// Contraste costa/barco: el input no puede ser texto blanco sobre glass semitransparente.
+if (/searchInputMar:\s*\{[^}]*color:\s*["']#fff["']/s.test(mapa)) {
+  fail("searchInputMar no debe usar color #fff (ilegible sobre waterLight)");
+}
+if (mapa.includes('placeholderTextColor={mar ? "rgba(255,255,255')) {
+  fail("placeholder del buscador en mar no debe ser blanco semitransparente");
+}
+if (/oscuro=\{mar\}/.test(mapa)) {
+  fail("GlassCard del mapa no debe usar oscuro={mar} sobre fondo waterLight");
+}
+if (!mapa.includes("COLORS.waterDark") || !/searchInputMar:[\s\S]*?color:\s*COLORS\.waterDark/.test(mapa)) {
+  fail("searchInputMar debe usar color oscuro legible (COLORS.waterDark)");
+}
+ok("ZonasLibres contraste buscador mar");
 // No debe quedar el searchBox abierto como View sin cerrar GlassCard correctamente
 const openGlass = (mapa.match(/<GlassCard\b/g) || []).length;
 const closeGlass = (mapa.match(/<\/GlassCard>/g) || []).length;
