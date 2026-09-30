@@ -102,10 +102,23 @@ for (const n of [
   "aforoSimulado",
   "saih.chj.es/aforos",
   "objetivo.length >= 8",
+  'fuente: "cache"',
+  "guardarUltimoEmbalse",
+  "guardarUltimoAforo",
+  "leerUltimoEmbalse",
+  "leerUltimoAforo",
+  "etiquetaFuenteSaih",
+  "esFuenteSaihReal",
 ]) {
   if (!saih.includes(n)) fail(`saihService sin ${n}`);
 }
-ok("saihService aforos + match parcial acotado");
+ok("saihService aforos + último dato cacheado");
+
+const explorarUi = read("src/components/PanelExplorarSitios.tsx");
+for (const n of ["metaFuentePanel", "etiquetaFuenteSaih", "esFuenteSaihReal", "fechaDato"]) {
+  if (!explorarUi.includes(n)) fail(`PanelExplorarSitios sin ${n}`);
+}
+ok("PanelExplorarSitios muestra último/fecha");
 
 const tipos = read("src/provincias/types.ts");
 if (!tipos.includes("AforoPanelMeta") || !tipos.includes("aforosPanel")) {

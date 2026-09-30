@@ -221,7 +221,11 @@ export default function ZoneDetailScreen({ route, navigation }: Props) {
             <Text style={styles.cardNote}>
               {hidro.fuente === "simulado"
                 ? "No se pudo consultar el SAIH ahora — dato de ejemplo. En web puede fallar por CORS."
-                : "La lectura de pesca (oficial + hábitat) está arriba. Aquí el detalle de la estación."}
+                : hidro.fuente === "cache"
+                  ? `Sin conexión SAIH ahora — mostrando el último dato correcto${
+                      hidro.fechaDato ? ` (${hidro.fechaDato})` : ""
+                    }.`
+                  : "La lectura de pesca (oficial + hábitat) está arriba. Aquí el detalle de la estación."}
             </Text>
             {hidro.urlFicha && (
               <Text style={styles.linkText} onPress={() => Linking.openURL(hidro.urlFicha!)}>

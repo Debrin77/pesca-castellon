@@ -22,6 +22,9 @@ function colorSello(sello: SelloDato): { bg: string; fg: string; border: string 
   if (sello === "oficial") {
     return { bg: "#e8f5ee", fg: COLORS.success, border: COLORS.success };
   }
+  if (sello === "ultimo") {
+    return { bg: "#e8f1f7", fg: COLORS.waterDark, border: COLORS.water };
+  }
   if (sello === "ejemplo") {
     return { bg: "#fff6e8", fg: COLORS.warning, border: COLORS.warning };
   }
