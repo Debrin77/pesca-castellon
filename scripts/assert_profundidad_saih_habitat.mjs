@@ -32,9 +32,11 @@ for (const n of [
   "consejoPescaPorNivel",
   "oficial",
   "orientativo",
+  "ultimo",
   "etiquetaSello",
   "muy_bajo",
   "Orillas de nivel alto al descubierto",
+  "último dato SAIH",
 ]) {
   if (!util.includes(n)) fail(`profundidadEmbalseHoy sin ${n}`);
 }

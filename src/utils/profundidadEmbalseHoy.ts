@@ -8,7 +8,7 @@ import type { EstacionHidrologica } from "../services/saihService";
 
 export type BandaNivelEmbalse = "muy_bajo" | "bajo" | "medio" | "alto" | "muy_alto";
 
-export type SelloDato = "oficial" | "orientativo" | "ejemplo";
+export type SelloDato = "oficial" | "orientativo" | "ultimo" | "ejemplo";
 
 export type BloqueSello = {
   sello: SelloDato;
@@ -96,13 +96,21 @@ export function lecturaProfundidadHoy(opts: {
   let oficial: BloqueSello | null = null;
   if (hidro && (hidro.porcentajeLleno != null || hidro.cotaM != null || hidro.volumenEmbalsadoHm3 != null)) {
     const esEjemplo = hidro.fuente === "simulado";
+    const esUltimo = hidro.fuente === "cache";
     const lineas = lineasOficiales(hidro);
     if (banda) {
       lineas.unshift(`${etiquetaBandaNivel(banda)} · lectura para pescar`);
     }
+    if (esUltimo && !hidro.fechaDato) {
+      lineas.push("Última lectura correcta guardada en este dispositivo");
+    }
     oficial = {
-      sello: esEjemplo ? "ejemplo" : "oficial",
-      titulo: esEjemplo ? "Nivel del embalse (dato de ejemplo)" : "Nivel del embalse (SAIH)",
+      sello: esEjemplo ? "ejemplo" : esUltimo ? "ultimo" : "oficial",
+      titulo: esEjemplo
+        ? "Nivel del embalse (dato de ejemplo)"
+        : esUltimo
+          ? "Nivel del embalse (último dato SAIH)"
+          : "Nivel del embalse (SAIH)",
       lineas,
     };
   }
@@ -141,6 +149,7 @@ export function lecturaProfundidadHoy(opts: {
 
 export function etiquetaSello(sello: SelloDato): string {
   if (sello === "oficial") return "Oficial";
+  if (sello === "ultimo") return "Último";
   if (sello === "ejemplo") return "Ejemplo";
   return "Orientativo";
 }

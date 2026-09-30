@@ -5,11 +5,13 @@
  *
  * Ninguna confederación publica API JSON estable: leemos HTML público.
  * En web, si CORS bloquea, usamos proxies de solo lectura.
- * Si todo falla, devolvemos datos simulados claramente marcados.
+ * Si falla la consulta, preferimos el último dato correcto persistido
+ * (fuente «cache», con fecha) frente a un ejemplo simulado.
  */
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
-export type FuenteSaih = "saih_chj" | "saih_chg" | "simulado";
+export type FuenteSaih = "saih_chj" | "saih_chg" | "cache" | "simulado";
 export type RedSaih = "chj" | "chg";
 export type NivelAforo = "ok" | "amarillo" | "naranja" | "rojo" | "fallo" | "sin_dato";
 
@@ -41,6 +43,132 @@ export interface EstacionAforo {
   nivel: NivelAforo;
   fuente: FuenteSaih;
   urlFicha?: string;
+}
+
+const CLAVE_ULTIMO_EMBALSE = "@pesca_app/saih_ultimo_embalse_v1";
+const CLAVE_ULTIMO_AFORO = "@pesca_app/saih_ultimo_aforo_v1";
+
+type EmbalsePersistido = EstacionHidrologica & { guardadoEn: string };
+type AforoPersistido = EstacionAforo & { guardadoEn: string };
+
+function formatearGuardadoEn(iso: string): string {
+  try {
+    const t = new Date(iso);
+    if (!Number.isFinite(t.getTime())) return iso;
+    return t.toLocaleString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+/** Etiqueta corta de procedencia para chips/UI. */
+export function etiquetaFuenteSaih(
+  fuente: FuenteSaih | string | null | undefined,
+  fechaDato?: string | null
+): string {
+  if (fuente === "saih_chj" || fuente === "saih_chg") return "en vivo";
+  if (fuente === "cache") {
+    return fechaDato ? `último · ${fechaDato}` : "último dato";
+  }
+  return "ejemplo / reintentar";
+}
+
+export function esFuenteSaihReal(fuente: FuenteSaih | string | null | undefined): boolean {
+  return fuente === "saih_chj" || fuente === "saih_chg" || fuente === "cache";
+}
+
+async function leerMapaStorage<T>(clave: string): Promise<Record<string, T>> {
+  try {
+    const raw = await AsyncStorage.getItem(clave);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+async function guardarUltimoEmbalse(est: EstacionHidrologica): Promise<void> {
+  if (est.fuente !== "saih_chj" && est.fuente !== "saih_chg") return;
+  if (est.porcentajeLleno == null && est.volumenEmbalsadoHm3 == null && est.cotaM == null) return;
+  try {
+    const map = await leerMapaStorage<EmbalsePersistido>(CLAVE_ULTIMO_EMBALSE);
+    map[est.id] = { ...est, guardadoEn: new Date().toISOString() };
+    await AsyncStorage.setItem(CLAVE_ULTIMO_EMBALSE, JSON.stringify(map));
+  } catch {
+    /* almacenamiento opcional */
+  }
+}
+
+async function leerUltimoEmbalse(
+  id: string,
+  urlFicha?: string
+): Promise<EstacionHidrologica | null> {
+  try {
+    const map = await leerMapaStorage<EmbalsePersistido>(CLAVE_ULTIMO_EMBALSE);
+    const prev = map[id];
+    if (!prev) return null;
+    if (prev.porcentajeLleno == null && prev.volumenEmbalsadoHm3 == null && prev.cotaM == null) {
+      return null;
+    }
+    return {
+      id: prev.id || id,
+      nombre: prev.nombre || id,
+      volumenEmbalsadoHm3: prev.volumenEmbalsadoHm3 ?? null,
+      volumenMaximoHm3: prev.volumenMaximoHm3 ?? null,
+      porcentajeLleno: prev.porcentajeLleno ?? null,
+      caudalRecibido: prev.caudalRecibido ?? null,
+      caudalSalida: prev.caudalSalida ?? null,
+      cotaM: prev.cotaM ?? null,
+      fechaDato: prev.fechaDato || (prev.guardadoEn ? formatearGuardadoEn(prev.guardadoEn) : null),
+      fuente: "cache",
+      urlFicha: prev.urlFicha ?? urlFicha,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function guardarUltimoAforo(est: EstacionAforo): Promise<void> {
+  if (est.fuente !== "saih_chj" && est.fuente !== "saih_chg") return;
+  if (est.caudalM3s == null && !est.estado) return;
+  try {
+    const map = await leerMapaStorage<AforoPersistido>(CLAVE_ULTIMO_AFORO);
+    map[est.id] = { ...est, guardadoEn: new Date().toISOString() };
+    await AsyncStorage.setItem(CLAVE_ULTIMO_AFORO, JSON.stringify(map));
+  } catch {
+    /* almacenamiento opcional */
+  }
+}
+
+async function leerUltimoAforo(id: string, rio?: string): Promise<EstacionAforo | null> {
+  try {
+    const map = await leerMapaStorage<AforoPersistido>(CLAVE_ULTIMO_AFORO);
+    const prev = map[id];
+    if (!prev) return null;
+    if (prev.caudalM3s == null && !prev.estado) return null;
+    return {
+      id: prev.id || id,
+      nombre: prev.nombre || id,
+      rio: prev.rio ?? rio ?? null,
+      caudalM3s: prev.caudalM3s ?? null,
+      umbralAmarillo: prev.umbralAmarillo ?? null,
+      umbralNaranja: prev.umbralNaranja ?? null,
+      umbralRojo: prev.umbralRojo ?? null,
+      fechaDato: prev.fechaDato || (prev.guardadoEn ? formatearGuardadoEn(prev.guardadoEn) : null),
+      estado: prev.estado ?? null,
+      nivel: prev.nivel ?? "sin_dato",
+      fuente: "cache",
+      urlFicha: prev.urlFicha ?? SAIH_CHJ_AFOROS_URL,
+    };
+  } catch {
+    return null;
+  }
 }
 
 export interface ConsultaSaih {
@@ -402,6 +530,12 @@ function aforoSimulado(nombre: string, rio?: string): EstacionAforo {
   };
 }
 
+async function aforoOCacheOEjemplo(nombreAforo: string, rio?: string): Promise<EstacionAforo> {
+  const cached = await leerUltimoAforo(nombreAforo, rio);
+  if (cached) return cached;
+  return aforoSimulado(nombreAforo, rio);
+}
+
 export async function getEstadoAforo(
   nombreAforo: string,
   rio?: string
@@ -413,7 +547,7 @@ export async function getEstadoAforo(
     if (!datos || (datos.caudalM3s == null && !datos.estado)) {
       throw new Error("No se encontró el aforo en SAIH CHJ");
     }
-    return {
+    const vivo: EstacionAforo = {
       id: nombreAforo,
       nombre: nombreAforo,
       rio: datos.rio ?? rio ?? null,
@@ -427,9 +561,11 @@ export async function getEstadoAforo(
       fuente: "saih_chj",
       urlFicha: SAIH_CHJ_AFOROS_URL,
     };
+    await guardarUltimoAforo(vivo);
+    return vivo;
   } catch (err) {
-    console.warn("No se pudo consultar aforo SAIH, usando ejemplo:", err);
-    return aforoSimulado(nombreAforo, rio);
+    console.warn("No se pudo consultar aforo SAIH; último dato o ejemplo:", err);
+    return aforoOCacheOEjemplo(nombreAforo, rio);
   }
 }
 
@@ -451,23 +587,25 @@ export async function getResumenAforos(
     if (html) {
       const datos = parsearAforoChj(html, e.nombre);
       if (datos && (datos.caudalM3s != null || datos.estado)) {
+        const vivo: EstacionAforo = {
+          id: e.nombre,
+          nombre: e.nombre,
+          rio: datos.rio ?? e.rio ?? null,
+          caudalM3s: datos.caudalM3s ?? null,
+          umbralAmarillo: datos.umbralAmarillo ?? null,
+          umbralNaranja: datos.umbralNaranja ?? null,
+          umbralRojo: datos.umbralRojo ?? null,
+          fechaDato: datos.fechaDato ?? null,
+          estado: datos.estado ?? null,
+          nivel: datos.nivel ?? "sin_dato",
+          fuente: "saih_chj",
+          urlFicha: SAIH_CHJ_AFOROS_URL,
+        };
+        await guardarUltimoAforo(vivo);
         out.push({
           etiqueta: e.etiqueta,
           nombre: e.nombre,
-          estacion: {
-            id: e.nombre,
-            nombre: e.nombre,
-            rio: datos.rio ?? e.rio ?? null,
-            caudalM3s: datos.caudalM3s ?? null,
-            umbralAmarillo: datos.umbralAmarillo ?? null,
-            umbralNaranja: datos.umbralNaranja ?? null,
-            umbralRojo: datos.umbralRojo ?? null,
-            fechaDato: datos.fechaDato ?? null,
-            estado: datos.estado ?? null,
-            nivel: datos.nivel ?? "sin_dato",
-            fuente: "saih_chj",
-            urlFicha: SAIH_CHJ_AFOROS_URL,
-          },
+          estacion: vivo,
         });
         continue;
       }
@@ -475,7 +613,7 @@ export async function getResumenAforos(
     out.push({
       etiqueta: e.etiqueta,
       nombre: e.nombre,
-      estacion: aforoSimulado(e.nombre, e.rio),
+      estacion: await aforoOCacheOEjemplo(e.nombre, e.rio),
     });
   }
   return out;
@@ -517,7 +655,7 @@ export async function getEstadoHidrologico(
           if (!datos || (datos.porcentajeLleno == null && datos.volumenEmbalsadoHm3 == null)) {
             throw new Error("No se encontró el embalse en SAIH CHG");
           }
-          return {
+          const vivo: EstacionHidrologica = {
             id: nombreSAIH,
             nombre: nombreSAIH,
             volumenEmbalsadoHm3: datos.volumenEmbalsadoHm3 ?? null,
@@ -530,6 +668,8 @@ export async function getEstadoHidrologico(
             fuente: "saih_chg",
             urlFicha: url,
           };
+          await guardarUltimoEmbalse(vivo);
+          return vivo;
         } catch (err) {
           ultimoError = err;
         }
@@ -543,7 +683,7 @@ export async function getEstadoHidrologico(
       throw new Error("No se encontró el embalse en la página");
     }
 
-    return {
+    const vivo: EstacionHidrologica = {
       id: nombreSAIH,
       nombre: nombreSAIH,
       volumenEmbalsadoHm3: datos.volumenEmbalsadoHm3 ?? null,
@@ -558,8 +698,12 @@ export async function getEstadoHidrologico(
         datos.urlFicha ??
         (fichaId ? `https://saih.chj.es/embalses/${fichaId}` : SAIH_CHJ_URL),
     };
+    await guardarUltimoEmbalse(vivo);
+    return vivo;
   } catch (err) {
-    console.warn("No se pudo consultar el SAIH real, usando datos de ejemplo:", err);
+    console.warn("No se pudo consultar el SAIH real; último dato o ejemplo:", err);
+    const cached = await leerUltimoEmbalse(nombreSAIH, urlFallback);
+    if (cached) return cached;
     return datosSimulados(nombreSAIH, nombreSAIH, red, urlFallback);
   }
 }

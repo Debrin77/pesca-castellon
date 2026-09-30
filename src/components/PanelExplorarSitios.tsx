@@ -24,7 +24,13 @@ import {
   obtenerPuntosGuardados,
   PuntoGuardado,
 } from "../services/storageService";
-import { getResumenEmbalses, getResumenAforos, type NivelAforo } from "../services/saihService";
+import {
+  getResumenEmbalses,
+  getResumenAforos,
+  etiquetaFuenteSaih,
+  esFuenteSaihReal,
+  type NivelAforo,
+} from "../services/saihService";
 import { leerCacheOffline, guardarCacheOffline } from "../services/offlineService";
 import { obtenerUbicacionActual } from "../services/locationService";
 import QuieroPescarBlock from "./QuieroPescarBlock";
@@ -39,7 +45,13 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
+type SaihChip = {
+  etiqueta: string;
+  zoneId: string;
+  pct: number | null;
+  fuente: string;
+  fechaDato?: string | null;
+};
 type AforoChip = {
   etiqueta: string;
   nombre: string;
@@ -47,7 +59,18 @@ type AforoChip = {
   caudalM3s: number | null;
   nivel: NivelAforo;
   fuente: string;
+  fechaDato?: string | null;
 };
+
+function metaFuentePanel(
+  items: { fuente: string; fechaDato?: string | null }[],
+  vivoLabel: string
+): string {
+  if (items.some((s) => s.fuente === "saih_chj" || s.fuente === "saih_chg")) return vivoLabel;
+  const cache = items.find((s) => s.fuente === "cache");
+  if (cache) return etiquetaFuenteSaih("cache", cache.fechaDato);
+  return "ejemplo / reintentar";
+}
 
 function colorNivelAforo(nivel: NivelAforo): string {
   if (nivel === "rojo") return "#b33a3a";
@@ -125,11 +148,16 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                 zoneId: meta.zoneId,
                 pct: r.estacion.porcentajeLleno,
                 fuente: r.estacion.fuente,
+                fechaDato: r.estacion.fechaDato,
               };
             })
             .filter((x): x is SaihChip => x != null);
-          setSaihPanel(panel);
-          await guardarCacheOffline({ saih: panel });
+          const hayReal = panel.some((s) => esFuenteSaihReal(s.fuente));
+          // No pisar un panel previo bueno con solo ejemplos inventados.
+          if (hayReal || !(Array.isArray(cache?.saih) && cache!.saih.length > 0)) {
+            setSaihPanel(panel);
+            if (hayReal) await guardarCacheOffline({ saih: panel });
+          }
         } catch {
           /* cache ya aplicada */
         }
@@ -148,9 +176,13 @@ export default function PanelExplorarSitios({ navigation }: Props) {
             caudalM3s: r.estacion.caudalM3s,
             nivel: r.estacion.nivel,
             fuente: r.estacion.fuente,
+            fechaDato: r.estacion.fechaDato,
           }));
-          setAforoPanel(panel);
-          await guardarCacheOffline({ saihAforos: panel });
+          const hayReal = panel.some((s) => esFuenteSaihReal(s.fuente));
+          if (hayReal || !(Array.isArray(cache?.saihAforos) && cache!.saihAforos.length > 0)) {
+            setAforoPanel(panel);
+            if (hayReal) await guardarCacheOffline({ saihAforos: panel });
+          }
         } catch {
           /* cache ya aplicada */
         }
@@ -324,9 +356,7 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                       <TerminoAyuda id="saih" />
                     </View>
                     <Text style={styles.sectionMeta}>
-                      {saihPanel.some((s) => s.fuente === "saih_chj" || s.fuente === "saih_chg")
-                        ? "en vivo"
-                        : "ejemplo / reintentar"}
+                      {metaFuentePanel(saihPanel, "en vivo")}
                     </Text>
                   </View>
                   <ScrollView
@@ -339,11 +369,19 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                         key={s.zoneId}
                         style={styles.saihChip}
                         onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
+                        accessibilityLabel={`${s.etiqueta}, ${
+                          s.pct != null ? `${s.pct.toFixed(0)} por ciento` : "sin dato"
+                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
                       >
                         <Text style={styles.saihName}>{s.etiqueta}</Text>
                         <Text style={styles.saihPct}>
                           {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
                         </Text>
+                        {s.fuente === "cache" && s.fechaDato ? (
+                          <Text style={styles.saihFecha} numberOfLines={1}>
+                            {s.fechaDato}
+                          </Text>
+                        ) : null}
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
@@ -358,7 +396,7 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                       <TerminoAyuda id="aforo" />
                     </View>
                     <Text style={styles.sectionMeta}>
-                      {aforoPanel.some((s) => s.fuente === "saih_chj") ? "SAIH Júcar" : "ejemplo"}
+                      {metaFuentePanel(aforoPanel, "SAIH Júcar")}
                     </Text>
                   </View>
                   <ScrollView
@@ -374,7 +412,7 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                           s.caudalM3s != null
                             ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo`
                             : "sin dato"
-                        }`}
+                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
                       >
                         <Text style={styles.saihName}>{s.etiqueta}</Text>
                         <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
@@ -384,6 +422,11 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                         {s.rio ? (
                           <Text style={styles.aforoRio} numberOfLines={1}>
                             {s.rio}
+                          </Text>
+                        ) : null}
+                        {s.fechaDato && (s.fuente === "cache" || s.fuente === "saih_chj") ? (
+                          <Text style={styles.saihFecha} numberOfLines={1}>
+                            {s.fechaDato}
                           </Text>
                         ) : null}
                       </View>
@@ -520,6 +563,7 @@ const styles = StyleSheet.create({
   },
   saihName: { fontSize: 11, fontWeight: "700", color: COLORS.textSecondary },
   saihPct: { fontSize: 18, fontWeight: "800", color: COLORS.waterDark, marginTop: 2 },
+  saihFecha: { fontSize: 9, fontWeight: "600", color: COLORS.textMuted, marginTop: 2 },
   aforoChip: {
     backgroundColor: "rgba(255,255,255,0.72)",
     borderRadius: RADIUS.md,
