@@ -98,6 +98,7 @@ import MapaFabHerramientas, { type AccionFabMapa } from "../components/MapaFabHe
 import PinPuntoPersonal from "../components/PinPuntoPersonal";
 import GlassCard from "../components/GlassCard";
 import { nombreParaPuntoGuardado } from "../services/nombreSitioMapaService";
+import PanelExplorarSitios from "../components/PanelExplorarSitios";
 
 type LatLng = { latitude: number; longitude: number };
 
@@ -1699,6 +1700,8 @@ export default function ZonasLibresScreen({ navigation }: Props) {
           </TouchableOpacity>
         ) : null}
       </View>
+
+      {!modoAnadir ? <PanelExplorarSitios navigation={navigation} /> : null}
       </ScrollView>
 
       <VentanaConsulta

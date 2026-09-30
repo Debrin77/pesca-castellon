@@ -23,16 +23,16 @@ for (const n of [
   "continuarSesion",
   "reanudarSesion",
   "Continuar ·",
-  "herramientasKicker",
-  "Herramientas",
+  "explorarChip",
+  "Ideas y sitios",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
-if (!home.includes('navigate("Aparejos"') || !home.includes("herramientasKicker")) {
-  fail("Home herramientas debe enlazar Aparejos");
+if (!home.includes('navigate("Aparejos"')) {
+  fail("Home debe enlazar Aparejos");
 }
-if (!/herramientasKicker[\s\S]{0,800}navigate\("License"\)/.test(home)) {
-  fail("Home herramientas debe enlazar Licencia");
+if (!home.includes('navigate("License")')) {
+  fail("Home debe enlazar Licencia");
 }
 
 const app = read("App.tsx");

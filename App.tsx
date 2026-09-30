@@ -168,6 +168,11 @@ function ConsejosStackScreen() {
       />
       <ConsejosStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
       <ConsejosStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
+      <ConsejosStack.Screen
+        name="PrimeraSalida"
+        component={PrimeraSalidaScreen}
+        options={{ title: "Mi primera salida" }}
+      />
     </ConsejosStack.Navigator>
   );
 }

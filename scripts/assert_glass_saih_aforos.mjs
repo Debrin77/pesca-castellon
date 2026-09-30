@@ -43,19 +43,24 @@ if (!/esFondoTransparente[\s\S]*delete chrome\.backgroundColor/.test(glass)) {
 } else ok("GlassCard no anula velo con transparent");
 
 const home = read("src/screens/HomeScreen.tsx");
+const explorar = read("src/components/PanelExplorarSitios.tsx");
+for (const n of ["import GlassCard", "<GlassCard"]) {
+  if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+}
 for (const n of [
-  "import GlassCard",
   "getResumenAforos",
   "aforoPanel",
   "saihAforos",
   "Aforos · caudal",
   "setAforoPanel",
-  "<GlassCard",
-  "if (!aforosMeta.length && vivo) setAforoPanel([])",
 ]) {
-  if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+  if (!explorar.includes(n)) fail(`PanelExplorarSitios sin ${n}`);
 }
-ok("HomeScreen glass + aforos");
+const mapaMount = read("src/screens/ZonasLibresScreen.tsx");
+if (!mapaMount.includes("PanelExplorarSitios")) {
+  fail("Mapa debe montar PanelExplorarSitios (aforos/embalses fuera de Inicio)");
+}
+ok("HomeScreen glass + aforos en Mapa/PanelExplorarSitios");
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
 for (const n of [

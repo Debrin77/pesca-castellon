@@ -167,11 +167,12 @@ if (!pkg.includes("assert_montajes_especie.mjs")) {
 }
 
 const homeChip = read("src/screens/HomeScreen.tsx");
-if (
-  !(homeChip.includes('navigate("Consejos"') || homeChip.includes("irAConsejos(")) ||
-  !homeChip.includes("Montajes")
-) {
-  fail("Inicio debe enlazar Consejos con etiqueta Montajes");
+const consejosChip = read("src/screens/ConsejosScreen.tsx");
+if (!(homeChip.includes('navigate("Consejos"') || homeChip.includes("irAConsejos("))) {
+  fail("Inicio debe enlazar Consejos (montajes viven en tab Consejos)");
+}
+if (!consejosChip.includes("montajes") && !consejosChip.includes("Montajes")) {
+  fail("Consejos debe exponer categoría montajes");
 }
 
 console.log("OK: montajes visuales por especie (12 + enlaces + Salgo a pescar)");

@@ -59,12 +59,22 @@ if (card.includes("elegirRecomendacionHoy")) {
   fail("RecomendacionHoyCard no debe usar elegirRecomendacionHoy; continental usa top 3");
 }
 
-const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes("modos={disponibles}")) fail("Home debe pasar modos disponibles a RecomendacionHoyCard");
-if (!home.includes("ancla={{")) fail("Home debe pasar ancla (GPS/centro) a RecomendacionHoyCard");
-if (!home.includes("anclaCosta=")) fail("Home debe pasar anclaCosta (regionCosta) a RecomendacionHoyCard");
-if (!home.includes("setModo(modoRec)")) {
-  fail("Home debe setModo al tocar una modalidad de «Hoy te conviene»");
+const explorar = read("src/components/PanelExplorarSitios.tsx");
+if (!explorar.includes("modos={disponibles}")) {
+  fail("PanelExplorarSitios debe pasar modos disponibles a RecomendacionHoyCard");
+}
+if (!explorar.includes("ancla={{")) {
+  fail("PanelExplorarSitios debe pasar ancla (GPS/centro) a RecomendacionHoyCard");
+}
+if (!explorar.includes("anclaCosta=")) {
+  fail("PanelExplorarSitios debe pasar anclaCosta (regionCosta) a RecomendacionHoyCard");
+}
+if (!explorar.includes("setModo(modoRec)")) {
+  fail("PanelExplorarSitios debe setModo al tocar una modalidad de «Hoy te conviene»");
+}
+const mapa = read("src/screens/ZonasLibresScreen.tsx");
+if (!mapa.includes("PanelExplorarSitios")) {
+  fail("Mapa debe montar PanelExplorarSitios con RecomendacionHoyCard");
 }
 
 const pkg = read("package.json");

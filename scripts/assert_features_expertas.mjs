@@ -65,8 +65,10 @@ if (!pkg.includes("assert_features_expertas.mjs")) {
 }
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
-if (!home.includes("PanelCampoHoy")) {
-  console.error("FAIL HomeScreen sin PanelCampoHoy");
+const explorar = fs.readFileSync(path.join(root, "src/components/PanelExplorarSitios.tsx"), "utf8");
+const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
+if (!explorar.includes("PanelCampoHoy") || !mapa.includes("PanelExplorarSitios")) {
+  console.error("FAIL PanelCampoHoy debe vivir en PanelExplorarSitios montado en Mapa");
   fallos++;
 }
 if (!home.includes("rafagaKmh") && !home.includes("rafagaMaxKmh")) {
@@ -92,7 +94,6 @@ if (!license.includes("PescaRecBanner") || !license.includes("infoPermisoCoto"))
   fallos++;
 }
 
-const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
 if (!mapa.includes("activarRadar") || !mapa.includes("Radar lluvia")) {
   console.error("FAIL Mapa sin activarRadar / etiqueta Radar lluvia");
   fallos++;

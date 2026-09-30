@@ -17,6 +17,8 @@ function read(rel) {
 }
 
 const home = read("src/screens/HomeScreen.tsx");
+const explorar = read("src/components/PanelExplorarSitios.tsx");
+const mapa = read("src/screens/ZonasLibresScreen.tsx");
 const catches = read("src/screens/MyCatchesScreen.tsx");
 const zone = read("src/screens/ZoneDetailScreen.tsx");
 const glosario = read("src/data/glosario.ts");
@@ -28,8 +30,11 @@ const avisos = read("src/components/PanelAvisosSeguridad.tsx");
 const campo = read("src/components/PanelCampoHoy.tsx");
 const consejos = read("src/data/consejos.ts");
 
-if (!home.includes("<RecomendacionHoyCard") || !rec.includes("Hoy te conviene")) {
-  fail("Inicio sin recomendación «Hoy te conviene»");
+if (!explorar.includes("<RecomendacionHoyCard") || !rec.includes("Hoy te conviene")) {
+  fail("PanelExplorarSitios sin recomendación «Hoy te conviene»");
+}
+if (!mapa.includes("PanelExplorarSitios")) {
+  fail("Mapa debe montar PanelExplorarSitios (recomendación fuera de Inicio)");
 }
 if (!rec.includes("elegirRecomendacionesHoyPack") || !rec.includes("modosLista")) {
   fail("Hoy te conviene debe resumir modalidades (pack + lista)");
