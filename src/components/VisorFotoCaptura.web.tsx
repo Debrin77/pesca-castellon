@@ -70,8 +70,10 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
 
   useEffect(() => {
     if (!uri) return;
-    const prev = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Oculta la barra de tabs / chrome de la app mientras el visor está abierto.
+    document.body.classList.add("pesca-visor-foto-abierto");
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCerrar();
       if (e.key === "+" || e.key === "=") setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP));
@@ -79,7 +81,8 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
     };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
+      document.body.classList.remove("pesca-visor-foto-abierto");
       window.removeEventListener("keydown", onKey);
     };
   }, [uri, onCerrar]);
@@ -113,13 +116,19 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
       data-testid="visor-foto-captura"
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: "100vw",
+        height: "100dvh",
         zIndex: 2147483646,
-        background: "rgba(0,0,0,0.97)",
+        background: "#000",
         display: "flex",
         flexDirection: "column",
-        padding: "12px 0 16px",
+        padding: "max(12px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom))",
         boxSizing: "border-box",
+        isolation: "isolate",
       }}
     >
       <div

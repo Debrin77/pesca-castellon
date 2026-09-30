@@ -48,6 +48,11 @@ if (!fs.existsSync(visorWeb)) {
   } else {
     ok("VisorFotoCaptura.web testid");
   }
+  if (!vw.includes("pesca-visor-foto-abierto") || !vw.includes("100dvh")) {
+    fail("VisorFotoCaptura.web debe cubrir pantalla completa (dvh + clase body)");
+  } else {
+    ok("VisorFotoCaptura.web pantalla completa");
+  }
 }
 
 const backupPath = path.join(root, "src/services/backupCapturasService.ts");
@@ -108,6 +113,13 @@ if (!pkg.includes("assert_visor_backup_capturas.mjs")) {
   fail("assert_visor_backup_capturas no está en package.json assert");
 } else {
   ok("assert en package.json");
+}
+
+const chrome = read("src/webChrome.ts");
+if (!chrome.includes("pesca-visor-foto-abierto")) {
+  fail("webChrome debe ocultar tabs con clase pesca-visor-foto-abierto");
+} else {
+  ok("webChrome oculta tabs con visor abierto");
 }
 
 if (fallos) {

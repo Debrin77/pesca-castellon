@@ -128,6 +128,12 @@ export function aplicarEstilosWeb() {
       background: rgba(12, 36, 42, 0.42);
       border-color: rgba(255, 255, 255, 0.22);
     }
+    /* Visor de foto a pantalla completa: nada de chrome debajo */
+    body.pesca-visor-foto-abierto #barra-tabs-scroll,
+    body.pesca-visor-foto-abierto [data-testid="barra-tabs-scroll"] {
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
   `;
   document.head.appendChild(style);
 }
