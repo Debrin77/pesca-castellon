@@ -85,14 +85,16 @@ export default function VisorFotoCaptura({ uri, titulo, onCerrar }: Props) {
   }, [uri, onCerrar]);
 
   const imgStyle = useMemo(() => {
-    const base = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.7);
+    // Casi a pantalla completa a 1×; el zoom escala desde ahí.
+    const w = window.innerWidth * 0.96 * zoom;
+    const h = window.innerHeight * 0.72 * zoom;
     return {
-      width: `${base * zoom}px`,
-      height: `${base * zoom * 0.75}px`,
+      width: `${w}px`,
+      height: `${h}px`,
       maxWidth: "none" as const,
       objectFit: "contain" as const,
       display: "block" as const,
-      background: "#111",
+      background: "#000",
       userSelect: "none" as const,
     };
   }, [zoom]);
