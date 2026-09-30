@@ -1266,27 +1266,36 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   />
                 </View>
                 {fotoUri ? (
-                  <TouchableOpacity
-                    onPress={() =>
-                      setVisorFoto({
-                        uri: fotoUri,
-                        titulo: nombreLugar.trim() || "Vista previa de la captura",
-                      })
-                    }
-                    accessibilityRole="button"
-                    accessibilityLabel="Ver foto a pantalla completa con zoom"
-                    activeOpacity={0.9}
-                  >
+                  <View>
                     <FotoPreviewCaptura
                       uri={fotoUri}
+                      onPress={() =>
+                        setVisorFoto({
+                          uri: fotoUri,
+                          titulo: nombreLugar.trim() || "Vista previa de la captura",
+                        })
+                      }
+                      accessibilityLabel="Ver foto a pantalla completa con zoom"
                       onBroken={() => {
                         setErrorForm(
                           "La foto no se pudo mostrar. Prueba otra imagen JPEG/PNG (no HEIC)."
                         );
                       }}
                     />
-                    <Text style={styles.hintMini}>Toca la foto para verla completa y con zoom</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.verFotoBtn}
+                      onPress={() =>
+                        setVisorFoto({
+                          uri: fotoUri,
+                          titulo: nombreLugar.trim() || "Vista previa de la captura",
+                        })
+                      }
+                      accessibilityRole="button"
+                      accessibilityLabel="Abrir visor de foto con zoom"
+                    >
+                      <Text style={styles.verFotoBtnTxt}>Ver foto completa · zoom</Text>
+                    </TouchableOpacity>
+                  </View>
                 ) : null}
 
                 {errorForm ? (
@@ -1342,26 +1351,44 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     {showGrupo ? <Text style={styles.grupoTitulo}>{grupoLabel}</Text> : null}
                     <View style={styles.card}>
                       {c.fotoUri ? (
-                        <TouchableOpacity
-                          onPress={() =>
-                            setVisorFoto({
-                              uri: c.fotoUri!,
-                              titulo: [
-                                sp?.nombre ?? c.especieId,
-                                c.fecha,
-                                c.nombreLugar,
-                              ]
-                                .filter(Boolean)
-                                .join(" · "),
-                            })
-                          }
-                          accessibilityRole="button"
-                          accessibilityLabel={`Ver foto de ${sp?.nombre ?? "captura"} a pantalla completa`}
-                          activeOpacity={0.9}
-                        >
-                          <FotoPreviewCaptura uri={c.fotoUri} style={styles.fotoCardPreview} />
-                          <Text style={styles.fotoVerHint}>Ver foto · zoom →</Text>
-                        </TouchableOpacity>
+                        <View>
+                          <FotoPreviewCaptura
+                            uri={c.fotoUri}
+                            style={styles.fotoCardPreview}
+                            onPress={() =>
+                              setVisorFoto({
+                                uri: c.fotoUri!,
+                                titulo: [
+                                  sp?.nombre ?? c.especieId,
+                                  c.fecha,
+                                  c.nombreLugar,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · "),
+                              })
+                            }
+                            accessibilityLabel={`Ver foto de ${sp?.nombre ?? "captura"} a pantalla completa`}
+                          />
+                          <TouchableOpacity
+                            style={styles.verFotoBtnCard}
+                            onPress={() =>
+                              setVisorFoto({
+                                uri: c.fotoUri!,
+                                titulo: [
+                                  sp?.nombre ?? c.especieId,
+                                  c.fecha,
+                                  c.nombreLugar,
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · "),
+                              })
+                            }
+                            accessibilityRole="button"
+                            accessibilityLabel={`Abrir visor de foto de ${sp?.nombre ?? "captura"}`}
+                          >
+                            <Text style={styles.verFotoBtnTxt}>Ver foto completa · zoom →</Text>
+                          </TouchableOpacity>
+                        </View>
                       ) : (
                         <LinearGradient colors={[...cara.gradiente]} style={styles.fotoCardPlaceholder}>
                           <Text style={{ fontSize: 36 }}>{cara.emoji}</Text>
@@ -1993,18 +2020,25 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderRadius: 0,
   },
-  fotoVerHint: {
-    position: "absolute",
-    right: 8,
-    bottom: 8,
-    backgroundColor: "rgba(0,0,0,0.55)",
+  verFotoBtn: {
+    marginTop: 8,
+    marginBottom: 4,
+    alignSelf: "flex-start",
+    backgroundColor: COLORS.waterDark,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: RADIUS.sm,
+  },
+  verFotoBtnCard: {
+    backgroundColor: COLORS.waterDark,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  verFotoBtnTxt: {
     color: "#fff",
-    fontSize: 11,
-    fontWeight: "700",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    overflow: "hidden",
+    fontSize: 13,
+    fontWeight: "800",
   },
   toolsBox: {
     marginBottom: 14,
