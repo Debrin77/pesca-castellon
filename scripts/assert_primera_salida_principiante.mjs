@@ -59,11 +59,16 @@ must("src/screens/PrimeraSalidaScreen.tsx", [
 
 must("src/screens/HomeScreen.tsx", [
   "BannerLicenciaPendiente",
-  "BloqueAprende",
   "SheetPermisoGps",
   "PrimeraSalida",
   "pedirGpsConSheet",
   "primeraSalidaHecha",
+  "Aprende en Consejos",
+]);
+
+must("src/screens/ConsejosScreen.tsx", [
+  "BloqueAprende",
+  "PrimeraSalida",
 ]);
 
 must("src/components/SemaforoVeredicto.tsx", ["SIN TRAMO", "No es veda", "cartel"]);

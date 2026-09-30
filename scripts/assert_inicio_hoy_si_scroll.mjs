@@ -53,7 +53,7 @@ if (!(iSalgo >= 0 && iTitulo > iSalgo)) {
   fail("Detalle del tramo debe ir después del CTA Salgo a pescar");
 }
 
-// Aprende / recomendación vacía no deben empujar el detalle lejos del chip
+// Aprende / recomendación viven fuera de Inicio; el detalle no debe quedar empujado
 const iAprende = home.indexOf("<BloqueAprende");
 const iRec = home.indexOf("<RecomendacionHoyCard");
 if (iAprende > 0 && iTitulo > 0 && !(iTitulo < iAprende)) {
@@ -61,6 +61,9 @@ if (iAprende > 0 && iTitulo > 0 && !(iTitulo < iAprende)) {
 }
 if (iRec > 0 && iTitulo > 0 && !(iTitulo < iRec)) {
   fail("Detalle del tramo debe ir antes de RecomendacionHoyCard");
+}
+if (home.includes("<BloqueAprende") || home.includes("<RecomendacionHoyCard")) {
+  fail("Inicio no debe montar BloqueAprende ni RecomendacionHoyCard (viven en Consejos/Mapa)");
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");

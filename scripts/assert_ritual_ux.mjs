@@ -28,7 +28,8 @@ if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido"))
   fail("HomeScreen sin veredicto rápido en el hero (gesto Inicio → detalle)");
 }
 
-// Orden: CTA Salgo → bloque detalle del tramo → PanelCampoHoy
+// Orden Inicio corto: CTA Salgo → detalle del tramo → Antes de salir
+// Ideas/sitios/campo viven en Mapa (PanelExplorarSitios), no en el feed de Inicio.
 const iSalgo =
   home.indexOf("ctaSalgoTitle") >= 0
     ? home.indexOf("ctaSalgoTitle")
@@ -42,13 +43,16 @@ const iTramo =
       ? home.indexOf("Normativa del tramo")
       : home.indexOf("Tu tramo");
 const iAntes = home.indexOf("Antes de salir");
-const iSitios = home.indexOf("Tus sitios");
-const iCampo = home.indexOf("<PanelCampoHoy");
-if (iSalgo < 0 || iTramo < 0 || iCampo < 0 || !(iSalgo < iTramo && iTramo < iCampo)) {
-  fail("HomeScreen orden ritual: Salgo a pescar → Detalle del tramo → PanelCampoHoy");
+if (iSalgo < 0 || iTramo < 0 || iAntes < 0 || !(iSalgo < iTramo && iTramo < iAntes)) {
+  fail("HomeScreen orden ritual: Salgo a pescar → Detalle del tramo → Antes de salir");
 }
-if (iAntes > 0 && iSitios > 0 && !(iAntes < iCampo)) {
-  fail("HomeScreen: Antes de salir debería ir antes de Campo/Ahora");
+
+const explorar = fs.readFileSync(path.join(root, "src/components/PanelExplorarSitios.tsx"), "utf8");
+if (!explorar.includes("QuieroPescarBlock") || !explorar.includes("PanelCampoHoy") || !explorar.includes("Tus sitios")) {
+  fail("PanelExplorarSitios debe agrupar QuieroPescar, Tus sitios y PanelCampoHoy");
+}
+if (!mapa.includes("PanelExplorarSitios")) {
+  fail("Mapa debe montar PanelExplorarSitios (ideas/sitios fuera de Inicio)");
 }
 
 // Ahora compacto

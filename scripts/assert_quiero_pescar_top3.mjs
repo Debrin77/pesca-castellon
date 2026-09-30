@@ -33,8 +33,12 @@ for (const n of [
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes("QuieroPescarBlock")) fail("HomeScreen sin QuieroPescarBlock");
-if (!home.includes("onAbrirSitio=")) fail("Home debe cablear onAbrirSitio de QuieroPescar");
+const panel = read("src/components/PanelExplorarSitios.tsx");
+if (!panel.includes("QuieroPescarBlock")) fail("PanelExplorarSitios sin QuieroPescarBlock");
+if (!panel.includes("onAbrirSitio=")) fail("PanelExplorarSitios debe cablear onAbrirSitio de QuieroPescar");
+if (!home.includes("Ideas y sitios") && !home.includes('navigate("Mapa")')) {
+  fail("Inicio debe enlazar Ideas y sitios / Mapa (QuieroPescar vive en el mapa)");
+}
 
 const top = read("src/components/TopSitiosEspecie.tsx");
 for (const n of ["modosPregunta", "¿Desde orilla, kayak o barco?", "onModoElegido"]) {

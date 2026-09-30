@@ -187,8 +187,15 @@ for (const n of [
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-for (const n of ["pintaHeroLine", "modoBajoHero", "GraficoIndiceScrubable"]) {
+for (const n of ["pintaHeroLine", "modoBajoHero", "pulsoVerDia", "Previsión"]) {
   if (!home.includes(n)) fail(`HomeScreen sin «${n}»`);
+}
+if (home.includes("<GraficoIndiceScrubable")) {
+  fail("HomeScreen no debe montar GraficoIndiceScrubable (vive en Previsión)");
+}
+const prev = read("src/screens/PrevisionScreen.tsx");
+if (!prev.includes("GraficoIndiceScrubable")) {
+  fail("PrevisionScreen debe montar GraficoIndiceScrubable");
 }
 
 const catches = read("src/screens/MyCatchesScreen.tsx");

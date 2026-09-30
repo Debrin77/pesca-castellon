@@ -34,7 +34,7 @@ for (const needle of [
 }
 
 if (!home.includes("Promise.all") || !home.includes("cargarAvisos()")) {
-  fail("HomeScreen debe cargar pulso en paralelo con avisos/SAIH");
+  fail("HomeScreen debe cargar pulso en paralelo con avisos");
 }
 
 if (!home.includes("void (async () => {") || !home.includes("solicitarPermisoNotificaciones")) {

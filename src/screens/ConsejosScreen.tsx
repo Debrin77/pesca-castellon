@@ -15,7 +15,9 @@ import { montajesParaProvincia } from "../data/montajesEspecie";
 import DiagramaConsejo from "../components/DiagramaConsejo";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import ListaAnimada from "../components/ListaAnimada";
+import BloqueAprende from "../components/BloqueAprende";
 import { useProvincia } from "../context/ProvinciaContext";
+import { primeraSalidaHecha } from "../services/primeraSalidaService";
 
 function coincide(item: ConsejoItem, q: string): boolean {
   if (!q) return true;
@@ -55,6 +57,17 @@ export default function ConsejosScreen({ navigation }: { navigation?: any }) {
   const [abierto, setAbierto] = useState<string | null>(
     params.consejoId ?? SECCIONES_CONSEJOS.find((s) => s.id === "montajes")?.items[0]?.id ?? SECCIONES_CONSEJOS[0]?.items[0]?.id ?? null
   );
+  const [mostrarAprende, setMostrarAprende] = useState(false);
+
+  useEffect(() => {
+    let vivo = true;
+    primeraSalidaHecha().then((hecha) => {
+      if (vivo) setMostrarAprende(!hecha);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, []);
 
   useEffect(() => {
     const p = (route.params ?? {}) as ParamsConsejos;
@@ -120,6 +133,28 @@ export default function ConsejosScreen({ navigation }: { navigation?: any }) {
             <Text style={styles.atajoChipTxt}>Licencia ›</Text>
           </TouchableOpacity>
         </View>
+
+        {mostrarAprende ? (
+          <BloqueAprende
+            onCana={() => {
+              setCategoria("aparejos");
+              setAbierto("ap-cana-carrete");
+              requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: true }));
+            }}
+            onKit={() => {
+              setCategoria("aparejos");
+              setAbierto("ap-kit-principiante");
+              requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: true }));
+            }}
+            onNudo={() => {
+              setCategoria("nudos");
+              setAbierto("nudo-palomar");
+              requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: true }));
+            }}
+            onSitios={() => navigation?.navigate?.("PrimeraSalida")}
+            onPrimeraSalida={() => navigation?.navigate?.("PrimeraSalida")}
+          />
+        ) : null}
 
         <View style={styles.introCard}>
           <Text style={styles.introTitle}>Si empiezas de cero</Text>
