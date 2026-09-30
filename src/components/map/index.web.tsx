@@ -334,31 +334,32 @@ function ManejadorGestos({
     if (dx * dx + dy * dy > 100) cancelHold();
   }
 
+  // Leaflet tipa touch* de forma incompleta; el runtime sí los dispara en web móvil.
   useMapEvents({
-    click(e) {
+    click(e: { latlng: { lat: number; lng: number } }) {
       if (longFired.current) {
         longFired.current = false;
         return;
       }
       onPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
     },
-    contextmenu(e) {
+    contextmenu(e: { latlng: { lat: number; lng: number }; originalEvent?: { preventDefault?: () => void } }) {
       e.originalEvent?.preventDefault?.();
       onLongPress?.(eventoCoords(e.latlng.lat, e.latlng.lng));
     },
-    mousedown(e) {
-      const oe = e.originalEvent as MouseEvent | undefined;
+    mousedown(e: { latlng: { lat: number; lng: number }; originalEvent?: MouseEvent }) {
+      const oe = e.originalEvent;
       beginHold(e.latlng.lat, e.latlng.lng, oe?.clientX, oe?.clientY);
     },
     mouseup() {
       cancelHold();
     },
-    mousemove(e) {
-      const oe = e.originalEvent as MouseEvent | undefined;
+    mousemove(e: { originalEvent?: MouseEvent }) {
+      const oe = e.originalEvent;
       maybeCancelPorMovimiento(oe?.clientX, oe?.clientY);
     },
-    touchstart(e) {
-      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+    touchstart(e: { latlng: { lat: number; lng: number }; originalEvent?: TouchEvent }) {
+      const t = e.originalEvent?.touches?.[0];
       beginHold(e.latlng.lat, e.latlng.lng, t?.clientX, t?.clientY);
     },
     touchend() {
@@ -367,11 +368,11 @@ function ManejadorGestos({
     touchcancel() {
       cancelHold();
     },
-    touchmove(e) {
-      const t = (e.originalEvent as TouchEvent | undefined)?.touches?.[0];
+    touchmove(e: { originalEvent?: TouchEvent }) {
+      const t = e.originalEvent?.touches?.[0];
       maybeCancelPorMovimiento(t?.clientX, t?.clientY);
     },
-  });
+  } as Parameters<typeof useMapEvents>[0]);
   return null;
 }
 

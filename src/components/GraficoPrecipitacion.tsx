@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
   },
   titulo: {
     flex: 1,
-    fontFamily: FONTS.semiBold,
+    fontFamily: FONTS.semibold,
     fontSize: 14,
-    color: COLORS.text,
+    color: COLORS.textPrimary,
   },
   toggle: {
     paddingHorizontal: 10,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   valor: {
     fontFamily: FONTS.display,
     fontSize: 22,
-    color: COLORS.text,
+    color: COLORS.textPrimary,
     marginBottom: 2,
   },
   rafaga: { fontSize: 12, color: COLORS.textSecondary, marginBottom: 8 },
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 2,
     marginLeft: -1,
-    backgroundColor: COLORS.accent,
+    backgroundColor: COLORS.water,
     opacity: 0.85,
   },
   hint: { marginTop: 8, fontSize: 11, color: COLORS.textMuted },

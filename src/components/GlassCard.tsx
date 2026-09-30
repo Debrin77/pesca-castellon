@@ -33,7 +33,7 @@ const webBlurDark: ViewStyle =
     : {};
 
 function esFondoTransparente(bg: ViewStyle["backgroundColor"]): boolean {
-  if (bg == null || bg === false) return false;
+  if (bg == null) return false;
   if (bg === "transparent") return true;
   if (typeof bg !== "string") return false;
   const n = bg.replace(/\s/g, "").toLowerCase();

@@ -74,7 +74,7 @@ function HomeStackScreen() {
         component={HomeScreen}
         options={{ title: provincia?.nombreApp ?? "Pesca" }}
       />
-      <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
+      <HomeStack.Screen name="ZoneDetail" component={ZoneDetailScreen as React.ComponentType<any>} options={{ title: "Detalle de zona" }} />
       <HomeStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <HomeStack.Screen name="Ajustes" component={AjustesScreen} options={{ title: "Ajustes" }} />
       <HomeStack.Screen name="SalgoAPescar" component={SalgoAPescarScreen} options={{ title: "Salgo a pescar" }} />
@@ -99,7 +99,7 @@ function ZonasLibresStackScreen() {
         component={ZonasLibresScreen}
         options={{ title: provincia ? `Mapa · ${provincia.nombre}` : "Mapa" }}
       />
-      <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
+      <ZonasLibresStack.Screen name="ZoneDetail" component={ZoneDetailScreen as React.ComponentType<any>} options={{ title: "Detalle de zona" }} />
       <ZonasLibresStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <ZonasLibresStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
       <ZonasLibresStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
@@ -116,7 +116,7 @@ function EspeciesStackScreen() {
         component={EspeciesScreen}
         options={{ title: provincia ? `Especies · ${provincia.nombre}` : "Especies" }}
       />
-      <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
+      <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen as React.ComponentType<any>} options={{ title: "Detalle de zona" }} />
       <EspeciesStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
       <EspeciesStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
       <EspeciesStack.Screen name="Consejos" component={ConsejosScreen} options={{ title: "Consejos" }} />
@@ -153,7 +153,7 @@ function CapturasStackScreen() {
   return (
     <CapturasStack.Navigator screenOptions={stackScreenOptions}>
       <CapturasStack.Screen name="CapturasMain" component={MyCatchesScreen} options={{ title: "Capturas" }} />
-      <CapturasStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
+      <CapturasStack.Screen name="ZoneDetail" component={ZoneDetailScreen as React.ComponentType<any>} options={{ title: "Detalle de zona" }} />
     </CapturasStack.Navigator>
   );
 }

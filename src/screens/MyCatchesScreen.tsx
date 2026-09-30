@@ -1134,6 +1134,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       ? "Ej. Guadalquivir, embalse, orilla…"
                       : "Ej. Embalse o tramo"
                   }
+                  placeholderTextColor={COLORS.textMuted}
                   autoCorrect={false}
                   accessibilityLabel={
                     puntoSeleccionadoId
@@ -1162,6 +1163,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                     setErrorForm(null);
                   }}
                   placeholder="AAAA/MM/DD"
+                  placeholderTextColor={COLORS.textMuted}
                   autoCapitalize="none"
                   autoCorrect={false}
                   accessibilityLabel="Fecha de la captura AAAA/MM/DD"
@@ -1173,16 +1175,16 @@ export default function MyCatchesScreen({ navigation }: Props) {
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.formLabel}>Talla (cm)</Text>
-                    <TextInput style={styles.input} value={tallaCm} onChangeText={setTallaCm} keyboardType="numeric" placeholder="—" />
+                    <TextInput style={styles.input} value={tallaCm} onChangeText={setTallaCm} keyboardType="numeric" placeholder="—" placeholderTextColor={COLORS.textMuted} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.formLabel}>Peso (kg)</Text>
-                    <TextInput style={styles.input} value={pesoKg} onChangeText={setPesoKg} keyboardType="numeric" placeholder="—" />
+                    <TextInput style={styles.input} value={pesoKg} onChangeText={setPesoKg} keyboardType="numeric" placeholder="—" placeholderTextColor={COLORS.textMuted} />
                   </View>
                 </View>
 
                 <Text style={styles.formLabel}>Notas (opcional)</Text>
-                <TextInput style={[styles.input, { height: 60 }]} value={notas} onChangeText={setNotas} multiline placeholder="Señuelo usado, condiciones..." />
+                <TextInput style={[styles.input, { height: 60 }]} value={notas} onChangeText={setNotas} multiline placeholder="Señuelo usado, condiciones..." placeholderTextColor={COLORS.textMuted} />
 
                 <Text style={styles.formLabel}>Ubicación (opcional)</Text>
                 <View style={{ flexDirection: "row", gap: 8, marginTop: 4 }}>
@@ -1229,6 +1231,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           onChangeText={setLatCaptura}
                           keyboardType="default"
                           placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
+                          placeholderTextColor={COLORS.textMuted}
                           autoCapitalize="characters"
                           autoCorrect={false}
                         />
@@ -1241,6 +1244,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                           onChangeText={setLngCaptura}
                           keyboardType="default"
                           placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
+                          placeholderTextColor={COLORS.textMuted}
                           autoCapitalize="characters"
                           autoCorrect={false}
                         />
@@ -1340,7 +1344,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
             )}
             {capturasFiltradas.map((c, i) => {
               const sp = especieInfo(c.especieId);
-              const cara = caraDeEspecie(sp);
+              const cara = caraDeEspecie(sp ?? null);
               const prev = capturasFiltradas[i - 1];
               const showGrupo =
                 grupoLista === "dia"
@@ -1484,6 +1488,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   value={nombrePunto}
                   onChangeText={setNombrePunto}
                   placeholder="Ej. Guadalquivir, embalse…"
+                  placeholderTextColor={COLORS.textMuted}
                   accessibilityLabel="Nombre del lugar del mapa"
                 />
                 <View style={{ flexDirection: "row", gap: 10 }}>
@@ -1495,6 +1500,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       onChangeText={setLatPunto}
                       keyboardType="default"
                       placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
+                      placeholderTextColor={COLORS.textMuted}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
@@ -1507,6 +1513,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                       onChangeText={setLngPunto}
                       keyboardType="default"
                       placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
+                      placeholderTextColor={COLORS.textMuted}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
@@ -1522,6 +1529,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
                   onChangeText={setNotasPunto}
                   multiline
                   placeholder="Acceso, aparcamiento, señuelo…"
+                  placeholderTextColor={COLORS.textMuted}
                 />
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 12 }}>
                   <TouchableOpacity
@@ -1689,6 +1697,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
               value={editarNombrePunto}
               onChangeText={setEditarNombrePunto}
               placeholder="Ej. Guadalquivir, embalse…"
+              placeholderTextColor={COLORS.textMuted}
               autoCorrect={false}
               accessibilityLabel="Editar nombre del sitio guardado"
             />
@@ -1737,6 +1746,7 @@ export default function MyCatchesScreen({ navigation }: Props) {
               autoCapitalize="none"
               autoCorrect={false}
               placeholder={'<?xml version="1.0"?>… <kml>…'}
+              placeholderTextColor={COLORS.textMuted}
               accessibilityLabel="Pegar contenido KML"
             />
             <View style={styles.pegarKmlAcciones}>

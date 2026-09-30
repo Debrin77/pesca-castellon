@@ -238,7 +238,8 @@ const styles = StyleSheet.create({
   },
   arrowOff: { opacity: 0.4 },
   arrowTxt: { fontSize: 18, fontWeight: "800", color: COLORS.primaryDark, lineHeight: 20 },
-  scroll: { maxHeight: 72 },
+  /** Orb (size+22) + etiqueta + paddings: 72 recortaba las labels en web. */
+  scroll: { maxHeight: 92 },
   row: {
     paddingHorizontal: 4,
     alignItems: "center",

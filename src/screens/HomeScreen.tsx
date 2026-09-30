@@ -16,7 +16,7 @@ import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/l
 import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
-import { getResumenEmbalses, getResumenAforos, type NivelAforo } from "../services/saihService";
+import { getResumenEmbalses, getResumenAforos, type FuenteSaih, type NivelAforo } from "../services/saihService";
 import GlassCard from "../components/GlassCard";
 import { FavoritoZona, obtenerFavoritos, obtenerPuntosGuardados, PuntoGuardado } from "../services/storageService";
 import LicenseBanner from "../components/LicenseBanner";
@@ -83,7 +83,7 @@ import GraficoIndiceScrubable from "../components/GraficoIndiceScrubable";
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: string };
+type SaihChip = { etiqueta: string; zoneId: string; pct: number | null; fuente: FuenteSaih };
 type AforoChip = {
   etiqueta: string;
   nombre: string;
@@ -128,7 +128,7 @@ function aplicarCache(cache: CacheOffline, setters: {
 function colorNivelAforo(nivel: NivelAforo): string {
   if (nivel === "rojo") return "#b33a3a";
   if (nivel === "naranja") return "#c46a1a";
-  if (nivel === "amarillo") return "#c4a01a";
+  if (nivel === "amarillo") return COLORS.goldText;
   if (nivel === "fallo" || nivel === "sin_dato") return COLORS.textMuted;
   return COLORS.waterDark;
 }
@@ -345,18 +345,20 @@ export default function HomeScreen({ navigation }: Props) {
           try {
             const rows = await getResumenEmbalses(embalsesPanel);
             if (!vivo) return;
-            const panel: SaihChip[] = rows.map((r) => {
-              const meta =
-                embalsesPanel.find((e) => e.nombre === r.nombre) ??
-                embalsesPanel.find((e) => e.etiqueta === r.etiqueta);
-              if (!meta) return null;
-              return {
-                etiqueta: r.etiqueta,
-                zoneId: meta.zoneId,
-                pct: r.estacion.porcentajeLleno,
-                fuente: r.estacion.fuente,
-              };
-            }).filter((x): x is SaihChip => x != null);
+            const panel = rows
+              .map((r) => {
+                const meta =
+                  embalsesPanel.find((e) => e.nombre === r.nombre) ??
+                  embalsesPanel.find((e) => e.etiqueta === r.etiqueta);
+                if (!meta) return null;
+                return {
+                  etiqueta: r.etiqueta,
+                  zoneId: meta.zoneId,
+                  pct: r.estacion.porcentajeLleno,
+                  fuente: r.estacion.fuente,
+                } satisfies SaihChip;
+              })
+              .filter((x): x is SaihChip => x != null);
             setSaihPanel(panel);
             await guardarCacheOffline({ saih: panel });
           } catch {
@@ -590,7 +592,10 @@ export default function HomeScreen({ navigation }: Props) {
     const scroll = scrollRef.current;
     if (ancla && scroll) {
       ancla.measureInWindow((_ax, anclaY) => {
-        scroll.measureInWindow((_sx, scrollY) => {
+        const medir = scroll as unknown as {
+          measureInWindow: (cb: (_sx: number, scrollY: number) => void) => void;
+        };
+        medir.measureInWindow((_sx, scrollY) => {
           // Y en contenido = offset actual + posición visible del ancla respecto al ScrollView
           const y = Math.max(0, scrollYRef.current + (anclaY - scrollY) - margen);
           tramoYRef.current = y + margen;

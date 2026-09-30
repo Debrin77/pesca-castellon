@@ -573,6 +573,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       onChangeText={setLatTxt}
                       keyboardType="default"
                       placeholder={String(provincia.regionMapa.latitude.toFixed(3))}
+                      placeholderTextColor={COLORS.textMuted}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />
@@ -585,6 +586,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                       onChangeText={setLngTxt}
                       keyboardType="default"
                       placeholder={String(Math.abs(provincia.regionMapa.longitude).toFixed(3))}
+                      placeholderTextColor={COLORS.textMuted}
                       autoCapitalize="characters"
                       autoCorrect={false}
                     />

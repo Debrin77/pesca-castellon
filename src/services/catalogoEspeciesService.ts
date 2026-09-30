@@ -78,7 +78,9 @@ export function idsOrillaUsuales(): string[] {
 /** Catálogo embarcación / kayak mar (Castellón). */
 export function especiesEmbarcacionUsuales(): EspecieCatalogo[] {
   const byId = mapaEmbarcacion();
-  return USUALES_EMBARCACION_IDS.map((id) => byId.get(id)).filter(Boolean).map(conIcono) as EspecieCatalogo[];
+  return USUALES_EMBARCACION_IDS.map((id) => byId.get(id))
+    .filter((sp): sp is EspecieCatalogo => !!sp)
+    .map(conIcono);
 }
 
 export function especiesEmbarcacionTodas(): EspecieCatalogo[] {

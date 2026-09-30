@@ -6,18 +6,19 @@
 import React, { useEffect, useState } from "react";
 import {
   Image,
+  ImageStyle,
   Platform,
   Pressable,
+  StyleProp,
   StyleSheet,
   Text,
   View,
-  ViewStyle,
 } from "react-native";
 import { COLORS, RADIUS } from "../theme";
 
 type Props = {
   uri: string;
-  style?: ViewStyle;
+  style?: StyleProp<ImageStyle>;
   onBroken?: () => void;
   onPress?: () => void;
   accessibilityLabel?: string;
@@ -144,8 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.mist,
   },
   clickable: {
-    // @ts-expect-error cursor solo en web
-    cursor: "pointer",
+    cursor: "pointer" as const,
   },
   fallback: {
     alignItems: "center",

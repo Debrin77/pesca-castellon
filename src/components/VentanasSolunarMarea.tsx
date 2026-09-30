@@ -88,9 +88,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     marginTop: 12,
   },
+  /** Misma opacidad que meteoSky.GLASS: texto blanco legible sobre cielos claros. */
   wrapGlass: {
-    backgroundColor: "rgba(255,255,255,0.18)",
-    borderColor: "rgba(255,255,255,0.35)",
+    backgroundColor: "rgba(10,24,42,0.62)",
+    borderColor: "rgba(255,255,255,0.28)",
   },
   title: { fontSize: 14, fontWeight: "800", color: COLORS.textPrimary },
   textGlass: { color: "#fff" },
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   chip: { borderRadius: RADIUS.md, padding: 10, minWidth: 120 },
   chipMayor: { backgroundColor: COLORS.primaryLight },
   chipMenor: { backgroundColor: COLORS.waterLight },
-  chipGlass: { backgroundColor: "rgba(255,255,255,0.22)" },
+  chipGlass: { backgroundColor: "rgba(10,24,42,0.45)" },
   chipTipo: { fontSize: 10, fontWeight: "800", color: COLORS.textMuted, letterSpacing: 0.5 },
   chipTipoGlass: { color: "rgba(255,255,255,0.75)" },
   chipHora: { fontSize: 15, fontWeight: "800", color: COLORS.textPrimary, marginTop: 2 },

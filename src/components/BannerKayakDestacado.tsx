@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.kayak,
   },
-  chipStar: { color: COLORS.kayakSun, fontWeight: "800", fontSize: 12 },
+  chipStar: { color: COLORS.kayakDark, fontWeight: "800", fontSize: 12 },
   chipTxt: { flex: 1, fontSize: 12, fontWeight: "700", color: COLORS.kayakDark },
   box: {
     marginBottom: 14,

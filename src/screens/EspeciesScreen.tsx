@@ -75,7 +75,12 @@ function puntoCompartible(
   return !!(
     punto &&
     (punto.fuente === "mapa" || punto.fuente === "zona" || punto.fuente === "gps") &&
-    puntoEnRegionMapa(punto.lat, punto.lng, regionMapa)
+    puntoEnRegionMapa(punto.lat, punto.lng, {
+      latitude: regionMapa.latitude,
+      longitude: regionMapa.longitude,
+      latitudeDelta: regionMapa.latitudeDelta ?? 1,
+      longitudeDelta: regionMapa.longitudeDelta ?? 1,
+    })
   );
 }
 
