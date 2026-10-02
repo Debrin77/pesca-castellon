@@ -617,7 +617,7 @@ export default function HomeScreen({ navigation }: Props) {
             </Text>
             <Text style={styles.continuarSesionCta}>Sí ›</Text>
           </TouchableOpacity>
-        ) : !cargando && modoListo && !consultaViva ? (
+        ) : modoListo && modoElegido && !consultaViva && !cargando ? (
           <View style={styles.heroPromptBloque}>
             {puntoAnterior && etiquetaPuntoAnterior ? (
               <TouchableOpacity
