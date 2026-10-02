@@ -1,7 +1,7 @@
 /**
- * Assert: Inicio no muestra «¿Puedo?» ni «Tu punto de hoy» solo porque
- * haya un punto restaurado de la sesión anterior. Hace falta gesto en esta
- * sesión (mapa / GPS / zona / recomendación) o «Usar último».
+ * Assert: Inicio no muestra «¿Puedo?» solo porque haya un punto restaurado.
+ * Hace falta gesto en esta sesión (mapa / GPS / zona / recomendación) o «Usar último».
+ * «Hoy te conviene» vive en Mapa → PanelExplorarSitios (no en Hoy).
  */
 import fs from "fs";
 import path from "path";
@@ -27,7 +27,6 @@ for (const n of [
 ]) {
   if (!ctx.includes(n)) fail(`PuntoConsultaContext sin ${n}`);
 }
-// Al restaurar desde AsyncStorage no debe marcar elegido.
 if (!/leerPuntoConsulta[\s\S]{0,400}setPuntoElegido\(false\)/.test(ctx)) {
   fail("punto restaurado no debe activar puntoElegido");
 }
@@ -49,11 +48,13 @@ for (const n of [
 if (!home.includes("puntoElegido &&")) {
   fail("puntoExplicito / consultaViva debe exigir puntoElegido de esta sesión");
 }
-// Tocar recomendación fija el punto (desbloquea veredicto al volver).
-if (!/onAbrir=\{\(r\) => \{[\s\S]{0,800}fijarPunto\(/.test(home)) {
-  fail("Hoy te conviene debe fijarPunto al tocar una recomendación");
+
+// Recomendaciones viven en Mapa (PanelExplorarSitios), no en Hoy.
+const explorar = read("src/components/PanelExplorarSitios.tsx");
+if (!/onAbrir=\{\(r\) => \{[\s\S]{0,800}fijarPunto\(/.test(explorar)) {
+  fail("Hoy te conviene (Mapa) debe fijarPunto al tocar una recomendación");
 }
-if (!home.includes("zonaConocida")) {
+if (!explorar.includes("zonaConocida")) {
   fail("Recomendación: no abrir ZoneDetail con ids de tramo GeoJSON");
 }
 

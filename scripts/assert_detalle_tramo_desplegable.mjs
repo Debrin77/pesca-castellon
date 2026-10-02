@@ -1,5 +1,5 @@
 /**
- * Assert: «Detalle y avisos» en Hoy es un bloque desplegable (acordeón).
+ * Assert: «Más de hoy» en Hoy es un bloque desplegable (acordeón).
  */
 import fs from "fs";
 import path from "path";
@@ -15,31 +15,33 @@ function fail(msg) {
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
 
-const iTitulo = home.indexOf("Detalle y avisos");
-if (iTitulo < 0) fail("HomeScreen sin Detalle y avisos");
+const iTitulo = home.indexOf("Más de hoy");
+if (iTitulo < 0) fail("HomeScreen sin Más de hoy");
 
 const bloque = home.slice(
-  home.indexOf("{/* Un solo desplegable"),
-  home.indexOf("styles.guiaRow") > 0 ? home.indexOf("<View style={styles.guiaRow}") : home.length
+  Math.max(0, home.indexOf("Más de hoy") - 200),
+  home.indexOf("Más de hoy") + 2200
 );
 for (const n of [
   "accessibilityState={{ expanded: detalleTramo || antesAbierto }}",
-  "Desplegar detalle del punto y avisos",
+  "Desplegar más de hoy",
   "bloqueCabecera",
   "bloqueSub",
   "toca para ver",
   "TemporadaBanner",
   "PanelAvisosSeguridad",
   "LicenseBanner",
+  "modoPanelAbierto",
+  "Cómo pescas",
 ]) {
-  if (!bloque.includes(n) && !home.includes(n)) fail(`Detalle y avisos sin ${n}`);
+  if (!home.includes(n)) fail(`Hoy sin ${n}`);
 }
 
 if (!home.includes("detalleTramo || antesAbierto")) {
-  fail("Detalle y avisos debe condicionar el contenido al desplegable");
+  fail("Más de hoy debe condicionar el contenido al desplegable");
 }
 if (!bloque.includes("ConsultaPescaCard") && !home.includes("ConsultaPescaCard")) {
-  fail("Detalle y avisos debe montar ConsultaPescaCard al desplegar");
+  fail("Más de hoy debe montar ConsultaPescaCard al desplegar");
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");

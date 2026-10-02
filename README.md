@@ -107,7 +107,7 @@ Barra inferior tipo tienda (**5**, sin scroll en móviles normales):
 4. **Previsión** — 7 días, índice scrubable, solunar/marea.
 5. **Capturas** — favoritos, puntos, diario, GPX.
 
-**Consejos**, **Aparejos**, **Licencia** y **Ajustes** viven en stacks anidados (no en la barra), para no cansar el primer uso. En Hoy hay un desplegable «Detalle y avisos» y una fila Guía al final.
+**Consejos**, **Aparejos**, **Licencia** y **Ajustes** viven en stacks anidados (no en la barra), para no cansar el primer uso. En Hoy: modalidad plegable + un desplegable «Más de hoy» (detalle, avisos, guía).
 
 ## Web / GitHub Pages
 

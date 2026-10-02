@@ -28,7 +28,7 @@ if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido"))
   fail("HomeScreen sin veredicto rápido en el hero (gesto Hoy → detalle)");
 }
 
-// Orden Hoy corto: CTA Salgo → siguiente paso → Detalle y avisos
+// Orden Hoy corto: CTA Salgo → siguiente paso → Más de hoy
 const iSalgo =
   home.indexOf("ctaSalgoTitle") >= 0
     ? home.indexOf("ctaSalgoTitle")
@@ -36,12 +36,12 @@ const iSalgo =
       ? home.indexOf("<SiguientePasoCard")
       : home.indexOf("Abrir Salgo a pescar");
 const iPaso = home.indexOf("<SiguientePasoCard");
-const iDetalle = home.indexOf("Detalle y avisos");
+const iDetalle = home.indexOf("Más de hoy");
 if (iSalgo < 0 || iDetalle < 0 || !(iSalgo < iDetalle)) {
-  fail("HomeScreen orden ritual: Salgo a pescar → Detalle y avisos");
+  fail("HomeScreen orden ritual: Salgo a pescar → Más de hoy");
 }
 if (iPaso >= 0 && !(iSalgo < iPaso && iPaso < iDetalle)) {
-  fail("HomeScreen orden: Salgo → Siguiente paso → Detalle y avisos");
+  fail("HomeScreen orden: Salgo → Siguiente paso → Más de hoy");
 }
 
 const explorar = fs.readFileSync(path.join(root, "src/components/PanelExplorarSitios.tsx"), "utf8");
