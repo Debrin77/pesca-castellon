@@ -1,6 +1,6 @@
 /**
  * Apartado plegable para Inicio (y paneles densos).
- * Misma tipografía/cabecera en todos los bloques: diferencia clara sin omitir contenido.
+ * Superficie limpia sin borde duro: jerarquía por tipografía y espacio.
  */
 import React, { useEffect, useState } from "react";
 import {
@@ -14,7 +14,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { COLORS, FONTS, RADIUS, SHADOW_SOFT, SPACING } from "../theme";
+import { COLORS, FONTS, RADIUS, SPACING } from "../theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -85,6 +85,7 @@ export default function ApartadoPlegable({
         accessibilityState={{ expanded: abierto }}
         accessibilityLabel={abierto ? labelCerrar : labelAbrir}
         style={styles.cabecera}
+        activeOpacity={0.7}
       >
         {orden != null ? (
           <View style={[styles.ordenBadge, interno && styles.ordenBadgeInterno]}>
@@ -95,13 +96,15 @@ export default function ApartadoPlegable({
           <Text style={[styles.titulo, interno && styles.tituloInterno]} numberOfLines={2}>
             {titulo}
           </Text>
-          <Text style={styles.sub} numberOfLines={2}>
+          <Text style={[styles.sub, interno && styles.subInterno]} numberOfLines={2}>
             {abierto ? subAbierto ?? subCerrado : subCerrado}
           </Text>
         </View>
-        <Text style={styles.chevron} accessibilityElementsHidden>
-          {abierto ? "▲" : "▼"}
-        </Text>
+        <View style={[styles.chevronWrap, abierto && styles.chevronWrapAbierto]}>
+          <Text style={styles.chevron} accessibilityElementsHidden>
+            ›
+          </Text>
+        </View>
       </TouchableOpacity>
       {abierto ? <View style={styles.cuerpo}>{children}</View> : null}
     </View>
@@ -139,47 +142,42 @@ export function ApartadoFijo({
           ) : null}
         </View>
       </View>
-      <View style={styles.cuerpo}>{children}</View>
+      <View style={styles.cuerpoFijo}>{children}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
-    marginHorizontal: SPACING.sm,
-    marginTop: 10,
-    marginBottom: 6,
-    borderRadius: RADIUS.md,
+    marginHorizontal: SPACING.md,
+    marginTop: 14,
+    marginBottom: 2,
+    borderRadius: RADIUS.lg,
     backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
     overflow: "hidden",
-    ...SHADOW_SOFT,
   },
   wrapInterno: {
     marginHorizontal: 0,
-    marginTop: 8,
-    marginBottom: 4,
-    borderRadius: RADIUS.sm,
+    marginTop: 10,
+    marginBottom: 2,
+    borderRadius: RADIUS.md,
     backgroundColor: COLORS.mist,
-    borderWidth: 1,
-    borderColor: COLORS.border,
     overflow: "hidden",
   },
   cabecera: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    gap: 12,
   },
   cabeceraFija: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingTop: 12,
-    paddingBottom: 4,
-    gap: 10,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 2,
+    gap: 12,
   },
   ordenBadge: {
     minWidth: 28,
@@ -204,34 +202,55 @@ const styles = StyleSheet.create({
   },
   titulos: { flex: 1, minWidth: 0 },
   titulo: {
-    fontSize: 16,
-    fontWeight: "800",
+    fontSize: 18,
+    fontWeight: "700",
     fontFamily: FONTS.displaySemi,
     color: COLORS.textPrimary,
+    letterSpacing: -0.25,
   },
   tituloInterno: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: FONTS.bold,
+    letterSpacing: -0.1,
   },
   sub: {
-    marginTop: 2,
+    marginTop: 3,
+    fontSize: 13.5,
+    lineHeight: 18,
+    color: COLORS.textSecondary,
+    fontWeight: "500",
+    fontFamily: FONTS.regular,
+  },
+  subInterno: {
     fontSize: 12.5,
     lineHeight: 17,
-    color: COLORS.textSecondary,
-    fontWeight: "600",
-    fontFamily: FONTS.semibold,
+  },
+  chevronWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: COLORS.mist,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  chevronWrapAbierto: {
+    transform: [{ rotate: "90deg" }],
+    backgroundColor: COLORS.primaryLight,
   },
   chevron: {
-    fontSize: 14,
-    color: COLORS.textMuted,
-    fontWeight: "800",
-    marginLeft: 4,
+    fontSize: 18,
+    color: COLORS.primaryDark,
+    fontWeight: "600",
+    marginTop: -1,
   },
   cuerpo: {
-    paddingHorizontal: SPACING.sm,
-    paddingBottom: SPACING.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
-    paddingTop: SPACING.sm,
+    paddingHorizontal: 14,
+    paddingBottom: 16,
+    paddingTop: 2,
+  },
+  cuerpoFijo: {
+    paddingHorizontal: 14,
+    paddingBottom: 16,
+    paddingTop: 8,
   },
 });
