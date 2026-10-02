@@ -89,7 +89,8 @@ ok("ZonasLibres contraste buscador mar");
 // No debe quedar el searchBox abierto como View sin cerrar GlassCard correctamente
 const openGlass = (mapa.match(/<GlassCard\b/g) || []).length;
 const closeGlass = (mapa.match(/<\/GlassCard>/g) || []).length;
-if (openGlass < 4) fail(`ZonasLibres debería usar ≥4 GlassCard (tiene ${openGlass})`);
+// Barra superior unificada (búsqueda+modo+capas) → menos GlassCard, sin solapes.
+if (openGlass < 3) fail(`ZonasLibres debería usar ≥3 GlassCard (tiene ${openGlass})`);
 if (openGlass !== closeGlass) fail(`GlassCard sin equilibrar: ${openGlass} abiertos / ${closeGlass} cierres`);
 ok(`ZonasLibres glass (${openGlass})`);
 

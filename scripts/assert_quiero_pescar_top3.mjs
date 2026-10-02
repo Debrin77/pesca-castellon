@@ -36,8 +36,8 @@ const home = read("src/screens/HomeScreen.tsx");
 const panel = read("src/components/PanelExplorarSitios.tsx");
 if (!panel.includes("QuieroPescarBlock")) fail("PanelExplorarSitios sin QuieroPescarBlock");
 if (!panel.includes("onAbrirSitio=")) fail("PanelExplorarSitios debe cablear onAbrirSitio de QuieroPescar");
-if (!home.includes("Ideas y sitios") && !home.includes('navigate("Mapa")')) {
-  fail("Inicio debe enlazar Ideas y sitios / Mapa (QuieroPescar vive en el mapa)");
+if (!home.includes("Ideas y sitios") || !home.includes("abrirExplorar")) {
+  fail("Inicio debe enlazar Ideas y sitios con abrirExplorar (SAIH + recomendaciones + Quiero pescar)");
 }
 
 const top = read("src/components/TopSitiosEspecie.tsx");

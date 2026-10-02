@@ -867,7 +867,10 @@ export default function HomeScreen({ navigation }: Props) {
           lng={ubicacion?.lng}
           onAccion={(accion: SiguientePasoAccion) => {
             if (accion.tipo === "mapa") {
-              navigation.navigate("Mapa");
+              navigation.navigate("Mapa", {
+                screen: "ZonasLibresMain",
+                params: { abrirExplorar: true },
+              });
               return;
             }
             if (accion.tipo === "primera_salida") {
@@ -892,6 +895,24 @@ export default function HomeScreen({ navigation }: Props) {
             }
           }}
         />
+
+        {/* Acceso directo a SAIH + recomendaciones + Quiero pescar (viven en Mapa) */}
+        <TouchableOpacity
+          style={styles.ideasCta}
+          onPress={() =>
+            navigation.navigate("Mapa", {
+              screen: "ZonasLibresMain",
+              params: { abrirExplorar: true },
+            })
+          }
+          accessibilityRole="button"
+          accessibilityLabel="Ideas y sitios: embalses SAIH, aforos, recomendaciones y quiero pescar"
+        >
+          <Text style={styles.ideasCtaTitulo}>Ideas y sitios ›</Text>
+          <Text style={styles.ideasCtaSub}>
+            Embalses SAIH · aforos · Hoy te conviene · Quiero pescar (top 3)
+          </Text>
+        </TouchableOpacity>
 
         {/* Un solo bloque «Más de hoy»: normativa, avisos, licencia y guía */}
         <View
@@ -1582,6 +1603,27 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: COLORS.textPrimary,
     marginTop: 2,
+  },
+  ideasCta: {
+    marginBottom: SPACING.md,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.waterLight,
+    borderWidth: 1,
+    borderColor: "#b7d4de",
+    ...SHADOW_SOFT,
+  },
+  ideasCtaTitulo: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: COLORS.waterDark,
+  },
+  ideasCtaSub: {
+    marginTop: 3,
+    fontSize: 12.5,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
   },
   guiaRow: {
     marginHorizontal: 0,
