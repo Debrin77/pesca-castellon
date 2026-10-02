@@ -1,5 +1,5 @@
 /**
- * Assert: Inicio reorganizado en apartados numerados plegables (sin omitir contenido).
+ * Assert: Inicio con apartados plegables (sin numeración escolar; sin omitir contenido).
  */
 import fs from "fs";
 import path from "path";
@@ -27,10 +27,6 @@ for (const n of [
   'titulo="Pulso del día"',
   'titulo="Más de hoy"',
   'titulo="Herramientas"',
-  "orden={1}",
-  "orden={2}",
-  "orden={3}",
-  "orden={4}",
   "<TarjetaPuntoHoy",
   "<PanelExplorarSitios",
   "<BloqueAprende",
@@ -40,7 +36,15 @@ for (const n of [
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
 
-for (const n of ["ordenBadge", "subCerrado", "accessibilityState={{ expanded: abierto }}", "interno"]) {
+// Sin numeración visible tipo 1·2·3 / A·B·C en Inicio
+if (/orden=\{[0-9]+\}/.test(home)) {
+  fail("HomeScreen no debe numerar apartados (orden={n})");
+}
+if (/orden="[A-E]"/.test(explorar) || /orden=\{orden\}/.test(explorar)) {
+  fail("PanelExplorarSitios no debe numerar bloques (A–E / orden prop)");
+}
+
+for (const n of ["subCerrado", "accessibilityState={{ expanded: abierto }}", "interno"]) {
   if (!apartado.includes(n)) fail(`ApartadoPlegable sin ${n}`);
 }
 
@@ -51,7 +55,6 @@ for (const n of [
   'titulo="Hoy te conviene"',
   'titulo="Para salir hoy"',
   "inicialAbierto",
-  "orden",
 ]) {
   if (!explorar.includes(n)) fail(`PanelExplorarSitios sin ${n}`);
 }

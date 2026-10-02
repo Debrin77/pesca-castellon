@@ -46,7 +46,6 @@ export default function TarjetaPuntoHoy({
       </Text>
 
       <Fila
-        orden="1"
         kicker={`${EJE_LEGAL.tituloCorto} · ${certeza.sello}`}
         titulo={hoy.texto}
         sub={hoy.sub}
@@ -55,7 +54,6 @@ export default function TarjetaPuntoHoy({
         cta="Ver norma"
       />
       <Fila
-        orden="2"
         kicker={EJE_METEO.tituloCorto}
         titulo={cat ? `${indice!.puntuacion} · ${cat.texto}` : "Sin índice aún"}
         sub={
@@ -68,7 +66,6 @@ export default function TarjetaPuntoHoy({
         cta="Previsión"
       />
       <Fila
-        orden="3"
         kicker="Equipo"
         titulo="Aparejos y guía de compra"
         sub="Caña, línea, anzuelo según especie"
@@ -77,7 +74,6 @@ export default function TarjetaPuntoHoy({
         cta="Abrir"
       />
       <Fila
-        orden="4"
         kicker="Especies"
         titulo="Qué puedes encontrar aquí"
         sub="Catálogo del punto / tramo"
@@ -91,7 +87,6 @@ export default function TarjetaPuntoHoy({
 }
 
 function Fila({
-  orden,
   kicker,
   titulo,
   sub,
@@ -100,7 +95,6 @@ function Fila({
   cta,
   ultimo,
 }: {
-  orden: string;
   kicker: string;
   titulo: string;
   sub: string;
@@ -116,9 +110,7 @@ function Fila({
       accessibilityRole="button"
       accessibilityLabel={`${kicker}. ${titulo}. ${cta}`}
     >
-      <View style={[styles.orden, { backgroundColor: accent }]}>
-        <Text style={styles.ordenTxt}>{orden}</Text>
-      </View>
+      <View style={[styles.acento, { backgroundColor: accent }]} />
       <View style={styles.filaTxt}>
         <Text style={styles.filaKicker}>{kicker}</Text>
         <Text style={styles.filaTitulo} numberOfLines={1}>
@@ -158,14 +150,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   filaBorde: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
-  orden: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+  acento: {
+    width: 4,
+    alignSelf: "stretch",
+    borderRadius: 2,
+    minHeight: 36,
   },
-  ordenTxt: { color: "#fff", fontWeight: "800", fontSize: 13 },
   filaTxt: { flex: 1, minWidth: 0 },
   filaKicker: {
     fontSize: 10,

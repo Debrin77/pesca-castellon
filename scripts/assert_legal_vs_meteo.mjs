@@ -40,14 +40,22 @@ if (!ejeComp.includes("EJE_LEGAL") || !ejeComp.includes("EJE_METEO")) {
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-for (const n of ["EJE_LEGAL", "EJE_METEO", "indexLabel", "tituloCorto"]) {
+for (const n of ["EJE_METEO", "indexLabel"]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+}
+if (home.includes("EJE_LEGAL.tituloCorto")) {
+  fail("Home hero no debe repetir EJE_LEGAL.tituloCorto (veredicto en TarjetaPuntoHoy)");
 }
 if (home.includes('eje="meteo"') || (home.includes("EjeLegalMeteo") && home.includes('eje="meteo"'))) {
   fail("Home no debe mostrar la pregunta «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
 }
 if (home.includes(">Índice de pesca<")) {
   fail("Home no debe mostrar «Índice de pesca» sin eje clima");
+}
+
+const tarjeta = read("src/components/TarjetaPuntoHoy.tsx");
+for (const n of ["EJE_LEGAL", "EJE_METEO", "tituloCorto"]) {
+  if (!tarjeta.includes(n)) fail(`TarjetaPuntoHoy sin ${n}`);
 }
 
 const salgo = read("src/screens/SalgoAPescarScreen.tsx");

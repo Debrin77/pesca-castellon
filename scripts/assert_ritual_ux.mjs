@@ -20,12 +20,12 @@ const app = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
 const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
 const tabs = fs.readFileSync(path.join(root, "src/components/BarraTabsScroll.tsx"), "utf8");
 
-// Hero: marca + veredicto + ¿Pinta? + CTA
+// Hero: marca + ¿Pinta? + CTA (veredicto legal en Tu salida, no en el hero)
 if (!home.includes("brandMark") || !home.includes("pintaHeroLine")) {
   fail("HomeScreen sin hero (brandMark / pintaHeroLine)");
 }
-if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido")) {
-  fail("HomeScreen sin veredicto rápido en el hero (gesto → detalle)");
+if (!home.includes("abrirVeredictoRapido") || !home.includes("<TarjetaPuntoHoy")) {
+  fail("HomeScreen sin veredicto en Tu salida (TarjetaPuntoHoy → detalle)");
 }
 if (!home.includes("pulsoRow") || !home.includes("pulsoIndice") || !home.includes("Pulso del día")) {
   fail("HomeScreen debe mostrar Pulso del día (pulsoRow / pulsoIndice)");
@@ -40,7 +40,7 @@ const iSalgo =
       : home.indexOf("Abrir Salgo a pescar");
 const iPaso = home.indexOf("<SiguientePasoCard");
 const iExplorar = home.indexOf("<PanelExplorarSitios");
-const iDetalle = home.indexOf("Más de hoy");
+const iDetalle = home.indexOf('titulo="Más de hoy"');
 if (iSalgo < 0 || iDetalle < 0 || !(iSalgo < iDetalle)) {
   fail("HomeScreen orden ritual: Salgo a pescar → Más de hoy");
 }

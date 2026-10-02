@@ -1,6 +1,6 @@
 /**
- * Assert: Inicio muestra veredicto del punto en el primer pantallazo
- * y el detalle de «Tu tramo» va plegado (gesto único → expandir).
+ * Assert: veredicto legal del punto en Tu salida (gesto → Más de hoy);
+ * detalle de tramo plegado.
  */
 import fs from "fs";
 import path from "path";
@@ -17,31 +17,34 @@ function fail(msg) {
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
 const card = fs.readFileSync(path.join(root, "src/components/ConsultaPescaCard.tsx"), "utf8");
+const tarjeta = fs.readFileSync(path.join(root, "src/components/TarjetaPuntoHoy.tsx"), "utf8");
 
 for (const needle of [
-  "EJE_LEGAL",
   "EJE_METEO",
-  "veredictoRapido",
   "abrirVeredictoRapido",
   "etiquetaHoy",
-  "colorSemaforo",
   "detalleTramo",
   "compacto",
   "expandido={detalleTramo}",
   "onToggleDetalle",
-  "EJE_LEGAL",
+  "<TarjetaPuntoHoy",
+  "onPuedo={abrirVeredictoRapido}",
 ]) {
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
 }
 if (home.includes('eje="meteo"')) {
   fail("Home no debe mostrar «¿Cómo pinta el día?» (EjeLegalMeteo meteo)");
 }
+if (home.includes("EJE_LEGAL.tituloCorto")) {
+  fail("Home hero no debe repetir EJE_LEGAL.tituloCorto (veredicto en TarjetaPuntoHoy)");
+}
 
-// El chip del hero debe ir antes del CTA Salgo (respuesta sin scroll)
-const iChip = home.indexOf("veredictoRapido");
-const iSalgo = home.indexOf('ctaSalgoTitle');
-if (iChip < 0 || iSalgo < 0 || !(iChip < iSalgo)) {
-  fail("veredictoRapido debe aparecer en el hero antes del CTA Salgo a pescar");
+// Veredicto en tarjeta del punto, no como chip numerado del hero
+if (!tarjeta.includes("EJE_LEGAL") || !tarjeta.includes("certeza.sello")) {
+  fail("TarjetaPuntoHoy debe mostrar veredicto legal con certeza");
+}
+if (/orden="[0-9]"/.test(tarjeta) || /styles\.orden\b/.test(tarjeta)) {
+  fail("TarjetaPuntoHoy no debe numerar filas (1·2·3)");
 }
 
 for (const needle of [

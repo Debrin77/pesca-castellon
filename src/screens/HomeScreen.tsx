@@ -33,7 +33,7 @@ import ApartadoPlegable, { ApartadoFijo } from "../components/ApartadoPlegable";
 import GraficoIndiceScrubable from "../components/GraficoIndiceScrubable";
 import { consultarCosta } from "../services/consultaCostaService";
 import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
-import { colorSemaforo, consultarPuntoPesca } from "../services/consultaPescaService";
+import { consultarPuntoPesca } from "../services/consultaPescaService";
 import {
   AvisoSeguridad,
   obtenerAvisosSeguridadPesca,
@@ -55,7 +55,6 @@ import {
   etiquetaModo,
   esModoEmbarcado,
   esModoKayak,
-  modoEsMar,
   textoPedirModo,
 } from "../data/modoPesca";
 import { getProvinciaActiva } from "../provincias/runtime";
@@ -64,8 +63,7 @@ import { etiquetaFuente } from "../services/puntoConsultaService";
 import { resolverPoblacionCercana } from "../services/poblacionCercanaService";
 import { irAEspeciesDelPunto, irAConsejos } from "../navigation/irATab";
 import { consejoIdMontajeEspecie } from "../data/montajesEspecie";
-import { EJE_LEGAL, EJE_METEO } from "../data/ejesLegalMeteo";
-import { certezaDeConsulta } from "../data/certezaConsulta";
+import { EJE_METEO } from "../data/ejesLegalMeteo";
 import { confirmarCambiarProvincia } from "../utils/confirmarCambiarProvincia";
 import { COLORS, FONTS, GRADIENTS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 import AtmosferaMeteo from "../components/AtmosferaMeteo";
@@ -445,15 +443,6 @@ export default function HomeScreen({ navigation }: Props) {
           : consultarPuntoPesca(punto!.lat, punto!.lng)
       : null;
   const hoyEtiqueta = consultaViva ? etiquetaHoy(consultaViva) : null;
-  const certezaHero = consultaViva
-    ? certezaDeConsulta(consultaViva, { provinciaId: provincia.id })
-    : null;
-  const heroNoOficial = !!(certezaHero && certezaHero.nivel !== "oficial");
-  /** Punto continental con modo mar / barco (o viceversa): no confundir con veda. */
-  const puntoNoEncajaModo =
-    !!consultaViva &&
-    consultaViva.veredicto === "fuera_catalogo" &&
-    modoEsMar(modo);
   const mensajeOffline = mensajeOfflineCorto(online, cache);
   const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const alertasClima = clima ? detectarAlertas(clima) : [];
@@ -592,53 +581,20 @@ export default function HomeScreen({ navigation }: Props) {
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
 
-        {consultaViva && hoyEtiqueta && certezaHero ? (
-          <TouchableOpacity
-            style={[
-              styles.veredictoRapido,
-              { backgroundColor: colorSemaforo(consultaViva) },
-              heroNoOficial && styles.veredictoRapidoAprox,
-            ]}
-            onPress={abrirVeredictoRapido}
-            activeOpacity={0.88}
-            accessibilityRole="button"
-            accessibilityLabel={`${EJE_LEGAL.a11y} ${hoyEtiqueta.texto}. ${hoyEtiqueta.sub}. ${certezaHero.a11y}. Abrir detalle`}
-          >
-            <View style={styles.veredictoRapidoTxt}>
-              <View style={styles.veredictoRapidoSelloRow}>
-                <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-                <Text
-                  style={[
-                    styles.veredictoRapidoSello,
-                    heroNoOficial ? styles.veredictoRapidoSelloAprox : styles.veredictoRapidoSelloOficial,
-                  ]}
-                >
-                  {certezaHero.sello}
-                </Text>
-              </View>
-              <Text style={styles.veredictoRapidoTitulo}>{hoyEtiqueta.texto}</Text>
-              <Text style={styles.veredictoRapidoSub} numberOfLines={puntoNoEncajaModo ? 2 : 1}>
-                {puntoNoEncajaModo
-                  ? `No encaja con ${etiquetaModoLarga(modo)} · elige punto en el mapa`
-                  : `${hoyEtiqueta.sub}${consultaViva.titulo ? ` · ${consultaViva.titulo}` : ""}`}
-              </Text>
-            </View>
-            <Text style={styles.veredictoRapidoChevron}>›</Text>
-          </TouchableOpacity>
-        ) : modoListo && !modoElegido ? (
-          <View style={styles.veredictoRapidoBloque}>
+        {/* Sin veredicto legal en el hero: vive en Tu salida y el detalle del tramo. */}
+        {modoListo && !modoElegido ? (
+          <View style={styles.heroPromptBloque}>
             <View
-              style={styles.veredictoRapidoVacio}
+              style={styles.heroPrompt}
               accessibilityRole="summary"
               accessibilityLabel={textoPedirModo(disponibles)}
             >
-              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-              <Text style={styles.veredictoRapidoTitulo}>{textoPedirModo(disponibles)}</Text>
-              <Text style={styles.veredictoRapidoSub}>
+              <Text style={styles.heroPromptTitulo}>{textoPedirModo(disponibles)}</Text>
+              <Text style={styles.heroPromptSub}>
                 {continuarSesion
                   ? "Un toque recupera modalidad y punto de la última salida"
                   : puntoExplicito || puntoAnterior
-                    ? "Tienes un punto guardado · el veredicto sale al elegir modalidad"
+                    ? "Tienes un punto guardado · elige modalidad para continuar"
                     : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
               </Text>
             </View>
@@ -656,18 +612,17 @@ export default function HomeScreen({ navigation }: Props) {
               </TouchableOpacity>
             ) : null}
           </View>
-        ) : !cargando && modoListo ? (
-          <View style={styles.veredictoRapidoBloque}>
+        ) : !cargando && modoListo && !consultaViva ? (
+          <View style={styles.heroPromptBloque}>
             <TouchableOpacity
-              style={styles.veredictoRapidoVacio}
+              style={styles.heroPrompt}
               onPress={() => navigation.navigate("Mapa")}
               activeOpacity={0.88}
               accessibilityRole="button"
-              accessibilityLabel="Elegir punto en el mapa para el veredicto"
+              accessibilityLabel="Elegir punto en el mapa"
             >
-              <Text style={styles.veredictoRapidoKicker}>{EJE_LEGAL.tituloCorto}</Text>
-              <Text style={styles.veredictoRapidoTitulo}>Elige un punto</Text>
-              <Text style={styles.veredictoRapidoSub}>
+              <Text style={styles.heroPromptTitulo}>Elige un punto</Text>
+              <Text style={styles.heroPromptSub}>
                 {puntoAnterior
                   ? "Mapa, GPS o una recomendación · o reutiliza el último"
                   : `Pulsa el mapa, GPS o una recomendación · ${etiquetaModoLarga(modo)}`}
@@ -815,9 +770,8 @@ export default function HomeScreen({ navigation }: Props) {
           </TouchableOpacity>
         ) : null}
 
-        {/* 1 · Modalidad */}
+        {/* Modalidad */}
         <ApartadoPlegable
-          orden={1}
           titulo="Cómo pescas"
           subCerrado={
             modoElegido ? etiquetaModoLarga(modo) : textoPedirModo(disponibles)
@@ -882,9 +836,8 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         ) : null}
 
-        {/* 2 · Tu salida (siempre visible: siguiente paso + punto) */}
+        {/* Tu salida (siempre visible: siguiente paso + punto) */}
         <ApartadoFijo
-          orden={2}
           titulo="Tu salida"
           sub="Siguiente paso y punto del día"
           style={styles.apartadoSalida}
@@ -949,9 +902,8 @@ export default function HomeScreen({ navigation }: Props) {
           ) : null}
         </ApartadoFijo>
 
-        {/* 3 · Pulso del día (plegable: índice, clima, gráfico) */}
+        {/* Pulso del día (plegable: índice, clima, gráfico) */}
         <ApartadoPlegable
-          orden={3}
           titulo="Pulso del día"
           subCerrado={
             indiceHoy && catInfo
@@ -964,7 +916,7 @@ export default function HomeScreen({ navigation }: Props) {
           }
           subAbierto={
             modoElegido
-              ? "Orientativo · el permiso está arriba en el veredicto"
+              ? "Orientativo · el permiso está en Tu salida"
               : "Clima e índice · elige modalidad arriba para el veredicto legal"
           }
           abierto={pulsoAbierto}
@@ -1073,13 +1025,12 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </ApartadoPlegable>
 
-        {/* 4 · SAIH, Quiero pescar, Hoy te conviene, Panel campo — plegable, sin omitir */}
-        <PanelExplorarSitios navigation={navigation} orden={4} inicialAbierto={false} />
+        {/* SAIH, Quiero pescar, Hoy te conviene, Panel campo — plegable, sin omitir */}
+        <PanelExplorarSitios navigation={navigation} inicialAbierto={false} />
 
-        {/* 5 · Aprende (si aplica) */}
+        {/* Aprende (si aplica) */}
         {mostrarAprende ? (
           <ApartadoPlegable
-            orden={5}
             titulo="Aprende"
             subCerrado="Caña, kit, nudo y sitios fáciles"
             subAbierto="Si empiezas de cero"
@@ -1101,7 +1052,7 @@ export default function HomeScreen({ navigation }: Props) {
           </ApartadoPlegable>
         ) : null}
 
-        {/* 6 · Más de hoy: normativa, avisos, licencia y guía */}
+        {/* Más de hoy: normativa, avisos, licencia y guía */}
         <View
           ref={tramoAnchorRef}
           collapsable={false}
@@ -1111,7 +1062,6 @@ export default function HomeScreen({ navigation }: Props) {
           }}
         >
           <ApartadoPlegable
-            orden={mostrarAprende ? 6 : 5}
             titulo="Más de hoy"
             subCerrado={
               consultaViva
@@ -1176,9 +1126,8 @@ export default function HomeScreen({ navigation }: Props) {
           </ApartadoPlegable>
         </View>
 
-        {/* 7 · Herramientas */}
+        {/* Herramientas */}
         <ApartadoFijo
-          orden={mostrarAprende ? 7 : 6}
           titulo="Herramientas"
           sub="Atajos siempre a mano"
         >
@@ -1454,26 +1403,10 @@ const styles = StyleSheet.create({
   },
   weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
-  veredictoRapido: {
-    marginTop: 14,
-    borderRadius: RADIUS.md,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-  },
-  veredictoRapidoAprox: {
-    borderWidth: 2,
-    borderColor: COLORS.warning,
-    borderStyle: "dashed",
-  },
-  veredictoRapidoBloque: {
+  heroPromptBloque: {
     marginTop: 14,
   },
-  veredictoRapidoVacio: {
+  heroPrompt: {
     borderRadius: RADIUS.md,
     paddingVertical: 12,
     paddingHorizontal: 14,
@@ -1532,63 +1465,19 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#fff",
   },
-  veredictoRapidoTxt: { flex: 1 },
-  veredictoRapidoSelloRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  veredictoRapidoSello: {
-    fontSize: 10,
-    fontWeight: "900",
-    letterSpacing: 0.6,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  veredictoRapidoSelloOficial: {
+  heroPromptTitulo: {
     color: "#fff",
-    backgroundColor: "rgba(0,0,0,0.28)",
-  },
-  veredictoRapidoSelloAprox: {
-    color: "#fff",
-    backgroundColor: COLORS.warning,
-  },
-  veredictoRapidoAviso: {
-    color: "rgba(255,255,255,0.85)",
-    fontSize: 11,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  veredictoRapidoKicker: {
-    color: "rgba(255,255,255,0.88)",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
-    flexShrink: 1,
-  },
-  veredictoRapidoTitulo: {
-    color: "#fff",
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "700",
     fontFamily: FONTS.display,
     letterSpacing: -0.2,
-    marginTop: 2,
   },
-  veredictoRapidoSub: {
+  heroPromptSub: {
     color: "rgba(255,255,255,0.95)",
     fontSize: 12.5,
     fontWeight: "600",
-    marginTop: 2,
-  },
-  veredictoRapidoChevron: {
-    color: "#fff",
-    fontSize: 28,
-    fontWeight: "300",
-    marginTop: -2,
+    marginTop: 4,
+    lineHeight: 17,
   },
   atajosPunto: {
     flexDirection: "row",
