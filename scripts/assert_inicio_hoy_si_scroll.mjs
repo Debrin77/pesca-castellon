@@ -1,7 +1,7 @@
 /**
- * Assert: chip HOY SÍ / veredictoRapido hace scroll fiable a «Detalle y avisos».
+ * Assert: chip HOY SÍ / veredictoRapido hace scroll fiable a «Más de hoy».
  * - Ancla con onLayout + measureInWindow
- * - Orden ritual: Salgo → Detalle y avisos (cerca del hero)
+ * - Orden ritual: Salgo → Más de hoy (cerca del hero)
  */
 import fs from "fs";
 import path from "path";
@@ -24,7 +24,7 @@ for (const needle of [
   "scrollADetalleTramo",
   "measureInWindow",
   "abrirVeredictoRapido",
-  "Detalle y avisos",
+  "Más de hoy",
   "collapsable={false}",
   "mostrarAprende",
   "indexHint",
@@ -32,13 +32,13 @@ for (const needle of [
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
 }
 
-const iTitulo = home.indexOf("bloqueTitulo}>Detalle y avisos");
+const iTitulo = home.indexOf("bloqueTitulo}>Más de hoy");
 const ventana = home.slice(Math.max(0, iTitulo - 1200), iTitulo + 40);
 if (iTitulo < 0 || !ventana.includes("ref={tramoAnchorRef}")) {
   fail("El ancla del detalle debe envolver el bloque (ref={tramoAnchorRef})");
 }
 if (iTitulo < 0 || !ventana.includes("bloqueCabecera")) {
-  fail("Detalle y avisos debe ser cabecera desplegable (bloqueCabecera)");
+  fail("Más de hoy debe ser cabecera desplegable (bloqueCabecera)");
 }
 
 const iSalgo =
@@ -48,7 +48,7 @@ const iSalgo =
       ? home.indexOf("<SiguientePasoCard")
       : home.indexOf("Abrir Salgo a pescar");
 if (!(iSalgo >= 0 && iTitulo > iSalgo)) {
-  fail("Detalle y avisos debe ir después del CTA Salgo a pescar");
+  fail("Más de hoy debe ir después del CTA Salgo a pescar");
 }
 
 if (home.includes("<BloqueAprende") || home.includes("<RecomendacionHoyCard")) {

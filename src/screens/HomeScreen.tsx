@@ -134,10 +134,17 @@ export default function HomeScreen({ navigation }: Props) {
   const [cache, setCache] = useState<CacheOffline | null>(null);
   const [detalleTramo, setDetalleTramo] = useState(false);
   const [antesAbierto, setAntesAbierto] = useState(false);
+  /** Modalidad abierta solo si aún no eligió; si ya hay modo, va plegada. */
+  const [modoPanelAbierto, setModoPanelAbierto] = useState(false);
   /** Invita a primera salida desde «Siguiente paso» (Aprende vive en Consejos). */
   const [mostrarAprende, setMostrarAprende] = useState(false);
   /** Aviso «Sigues en…» solo al reanudar sesión; se puede cerrar en esta sesión. */
   const [avisoSesionVisible, setAvisoSesionVisible] = useState(restauradaAlArrancar);
+
+  useEffect(() => {
+    // Sin modalidad: el panel debe verse. Con modalidad: plegado (un toque lo abre).
+    setModoPanelAbierto(!modoElegido);
+  }, [modoElegido]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -758,99 +765,93 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
 
-        <GlassCard style={styles.modoBajoHero} compacto>
-          <SelectorModoPesca
-            modo={modoElegido ? modo : null}
-            disponibles={disponibles}
-            modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}
-            onChange={(m) => void setModo(m)}
-          />
-          {modoElegido && esModoKayak(modo) ? (
-            <BannerKayakDestacado
-              modo={modo}
-              provinciaId={provincia.id}
-              onVerDocumentacion={() => navigation.navigate("License")}
-            />
-          ) : null}
+        {/* Meta mínima: provincia + GPS. Sin banners ni filas competidoras. */}
+        <View style={styles.metaHoy}>
+          <TouchableOpacity
+            style={styles.metaChip}
+            onPress={() =>
+              confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
+            }
+            accessibilityRole="button"
+            accessibilityLabel={`Provincia ${provincia.nombre}. Cambiar`}
+          >
+            <Text style={styles.metaChipTxt} numberOfLines={1}>
+              {provincia.nombre}
+              {modoElegido ? ` · ${etiquetaModo(modo)}` : ""}
+            </Text>
+            <Text style={styles.metaChipCta}>Cambiar</Text>
+          </TouchableOpacity>
           {!puntoExplicito ? (
             <TouchableOpacity
-              style={styles.gpsChipClaro}
+              style={styles.metaChipSec}
               onPress={() => void usarMiUbicacion()}
               accessibilityRole="button"
               accessibilityLabel="Usar mi ubicación"
             >
-              <Text style={styles.gpsChipClaroTxt}>Usar mi ubicación</Text>
+              <Text style={styles.metaChipSecTxt}>GPS</Text>
             </TouchableOpacity>
           ) : null}
-        </GlassCard>
+        </View>
 
         {avisoSesionVisible ? (
-          <View
-            style={styles.sesionBanner}
-            accessibilityRole="summary"
-            accessibilityLabel={
-              modoElegido
-                ? `Sigues en ${provincia.nombre}, modo ${etiquetaModo(modo)}`
-                : `Sigues en ${provincia.nombre}. Elige cómo vas a pescar`
-            }
+          <TouchableOpacity
+            style={styles.sesionMini}
+            onPress={() => setAvisoSesionVisible(false)}
+            accessibilityRole="button"
+            accessibilityLabel="Cerrar aviso de sesión anterior"
           >
-            <View style={{ flex: 1, paddingRight: 8 }}>
-              <Text style={styles.sesionKicker}>Sesión anterior</Text>
-              <Text style={styles.sesionTitulo}>
-                {modoElegido
-                  ? `Sigues en ${provincia.nombre} · ${etiquetaModo(modo)}`
-                  : `Sigues en ${provincia.nombre}`}
-              </Text>
-              <Text style={styles.sesionSub}>
-                {modoElegido
-                  ? "Capturas y rutas se mantienen. Cambia solo si pescas en otra provincia."
-                  : `${textoPedirModo(disponibles)} arriba para el veredicto y tu punto.`}
-              </Text>
-            </View>
-            <View style={styles.sesionAcciones}>
-              <TouchableOpacity
-                onPress={() =>
-                  confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
-                }
-                accessibilityRole="button"
-                accessibilityLabel="Cambiar provincia"
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Text style={styles.sesionCambiar}>Cambiar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setAvisoSesionVisible(false)}
-                accessibilityRole="button"
-                accessibilityLabel="Cerrar aviso de sesión"
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Text style={styles.sesionCerrar}>✕</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.provinciaRow}>
-            <Text style={styles.provinciaLbl}>
-              Provincia · <Text style={styles.provinciaNombre}>{provincia.nombre}</Text>
-              {modoElegido ? (
-                <>
-                  {" · "}
-                  <Text style={styles.provinciaNombre}>{etiquetaModo(modo)}</Text>
-                </>
-              ) : null}
+            <Text style={styles.sesionMiniTxt} numberOfLines={1}>
+              Sesión anterior en {provincia.nombre}
+              {modoElegido ? ` · ${etiquetaModo(modo)}` : ""} · toca para ocultar
             </Text>
-            <TouchableOpacity
-              onPress={() =>
-                confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
-              }
-              accessibilityRole="button"
-              accessibilityLabel="Cambiar provincia"
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <Text style={styles.provinciaCambio}>Cambiar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          </TouchableOpacity>
+        ) : null}
+
+        {/* Modalidad: solo ocupa sitio si aún no eligió (o al expandir). */}
+        <GlassCard style={styles.modoBajoHero} compacto>
+          <TouchableOpacity
+            onPress={() => {
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+              setModoPanelAbierto((v) => !v);
+            }}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: modoPanelAbierto }}
+            accessibilityLabel={
+              modoPanelAbierto
+                ? "Ocultar selector de modalidad"
+                : modoElegido
+                  ? `Modalidad ${etiquetaModoLarga(modo)}. Cambiar`
+                  : textoPedirModo(disponibles)
+            }
+            style={styles.modoCabecera}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.modoCabeceraKicker}>Cómo pescas</Text>
+              <Text style={styles.modoCabeceraTitulo}>
+                {modoElegido ? etiquetaModoLarga(modo) : textoPedirModo(disponibles)}
+              </Text>
+            </View>
+            <Text style={styles.chevron}>{modoPanelAbierto ? "▲" : "▼"}</Text>
+          </TouchableOpacity>
+          {modoPanelAbierto ? (
+            <>
+              <SelectorModoPesca
+                modo={modoElegido ? modo : null}
+                disponibles={disponibles}
+                modoRecordado={!modoElegido && !continuarSesion ? modoRecordado : null}
+                onChange={(m) => void setModo(m)}
+                compacto
+              />
+              {modoElegido && esModoKayak(modo) ? (
+                <BannerKayakDestacado
+                  modo={modo}
+                  provinciaId={provincia.id}
+                  onVerDocumentacion={() => navigation.navigate("License")}
+                />
+              ) : null}
+            </>
+          ) : null}
+        </GlassCard>
 
         <SiguientePasoCard
           provinciaId={provincia.id}
@@ -892,9 +893,7 @@ export default function HomeScreen({ navigation }: Props) {
           }}
         />
 
-        <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
-
-        {/* Un solo desplegable: detalle legal + avisos (no duplicar Previsión ni Mapa) */}
+        {/* Un solo bloque «Más de hoy»: normativa, avisos, licencia y guía */}
         <View
           ref={tramoAnchorRef}
           collapsable={false}
@@ -915,27 +914,26 @@ export default function HomeScreen({ navigation }: Props) {
               accessibilityState={{ expanded: detalleTramo || antesAbierto }}
               accessibilityLabel={
                 detalleTramo || antesAbierto
-                  ? "Ocultar detalle del punto y avisos"
-                  : "Desplegar detalle del punto y avisos"
+                  ? "Ocultar más de hoy"
+                  : "Desplegar más de hoy: detalle, avisos y guía"
               }
               style={styles.bloqueCabecera}
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.bloqueTitulo}>Detalle y avisos</Text>
+                <Text style={styles.bloqueTitulo}>Más de hoy</Text>
                 <Text style={styles.bloqueSub}>
                   {consultaViva
                     ? detalleTramo || antesAbierto
-                      ? "Normativa, temporada y seguridad"
+                      ? "Normativa, avisos, licencia y guía"
                       : `${consultaViva.titulo} · toca para ver`
-                    : avisosSeguridad.length > 0
-                      ? `${avisosSeguridad.length} aviso${avisosSeguridad.length === 1 ? "" : "s"} · toca para ver`
-                      : "Normativa del punto, temporada y seguridad"}
+                    : "Detalle, avisos, licencia y guía · toca para ver"}
                 </Text>
               </View>
               <Text style={styles.chevron}>{detalleTramo || antesAbierto ? "▲" : "▼"}</Text>
             </TouchableOpacity>
             {detalleTramo || antesAbierto ? (
               <>
+                <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
                 {consultaViva ? (
                   <View style={{ marginBottom: 12 }}>
                     <ConsultaPescaCard
@@ -981,43 +979,42 @@ export default function HomeScreen({ navigation }: Props) {
                   compacto
                 />
                 <LicenseBanner onPress={() => navigation.navigate("License")} />
+                <View style={styles.guiaRow}>
+                  <Text style={styles.guiaKicker}>Guía</Text>
+                  <View style={styles.guiaChips}>
+                    <TouchableOpacity
+                      style={styles.guiaChip}
+                      onPress={() => irAConsejos(navigation)}
+                      accessibilityRole="button"
+                      accessibilityLabel="Consejos y montajes"
+                    >
+                      <Text style={styles.guiaChipTxt}>Consejos</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.guiaChip}
+                      onPress={() =>
+                        navigation.navigate("Aparejos", {
+                          ambitoEmbarcacion: modoElegido && esModoEmbarcado(modo),
+                          ambitoModo: modoElegido ? modo : undefined,
+                        })
+                      }
+                      accessibilityRole="button"
+                      accessibilityLabel="Aparejos"
+                    >
+                      <Text style={styles.guiaChipTxt}>Aparejos</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.guiaChip}
+                      onPress={() => navigation.navigate("License")}
+                      accessibilityRole="button"
+                      accessibilityLabel="Licencia de pesca"
+                    >
+                      <Text style={styles.guiaChipTxt}>Licencia</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </>
             ) : null}
-          </View>
-        </View>
-
-        <View style={styles.guiaRow}>
-          <Text style={styles.guiaKicker}>Guía</Text>
-          <View style={styles.guiaChips}>
-            <TouchableOpacity
-              style={styles.guiaChip}
-              onPress={() => irAConsejos(navigation)}
-              accessibilityRole="button"
-              accessibilityLabel="Consejos y montajes"
-            >
-              <Text style={styles.guiaChipTxt}>Consejos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.guiaChip}
-              onPress={() =>
-                navigation.navigate("Aparejos", {
-                  ambitoEmbarcacion: modoElegido && esModoEmbarcado(modo),
-                  ambitoModo: modoElegido ? modo : undefined,
-                })
-              }
-              accessibilityRole="button"
-              accessibilityLabel="Aparejos"
-            >
-              <Text style={styles.guiaChipTxt}>Aparejos</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.guiaChip}
-              onPress={() => navigation.navigate("License")}
-              accessibilityRole="button"
-              accessibilityLabel="Licencia de pesca"
-            >
-              <Text style={styles.guiaChipTxt}>Licencia</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -1510,9 +1507,86 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
     gap: 8,
   },
+  metaHoy: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+    paddingHorizontal: 2,
+  },
+  metaChip: {
+    flex: 1,
+    minHeight: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  metaChipTxt: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "700",
+    color: COLORS.text,
+    paddingRight: 8,
+  },
+  metaChipCta: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+  },
+  metaChipSec: {
+    minHeight: 40,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.primaryLight,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  metaChipSecTxt: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: COLORS.primaryDark,
+  },
+  sesionMini: {
+    marginBottom: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(22,74,54,0.08)",
+  },
+  sesionMiniTxt: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.textSecondary,
+  },
+  modoCabecera: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  modoCabeceraKicker: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: COLORS.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+  },
+  modoCabeceraTitulo: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: COLORS.text,
+    marginTop: 2,
+  },
   guiaRow: {
-    marginHorizontal: SPACING.md,
-    marginBottom: SPACING.xl,
+    marginHorizontal: 0,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.sm,
     paddingTop: 4,
   },
   guiaKicker: {

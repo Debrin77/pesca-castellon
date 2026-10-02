@@ -43,10 +43,10 @@ if (!rec.includes("Mejor de cada modalidad hoy")) {
   fail("Hoy te conviene multi-modo debe titular «Mejor de cada modalidad hoy»");
 }
 if (!home.includes("antesAbierto") || !home.includes("setAntesAbierto")) {
-  fail("Hoy sin avisos plegables (antesAbierto en Detalle y avisos)");
+  fail("Hoy sin avisos plegables (antesAbierto en Más de hoy)");
 }
-if (!home.includes("Detalle y avisos")) {
-  fail("Hoy sin desplegable Detalle y avisos");
+if (!home.includes("Más de hoy")) {
+  fail("Hoy sin desplegable Más de hoy");
 }
 if (!home.includes("abrirCapturaRapida")) {
   fail("Inicio sin atajo a captura rápida");

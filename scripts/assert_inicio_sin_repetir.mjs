@@ -21,7 +21,7 @@ function read(rel) {
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
   "ocultarVeredictoCompacto",
-  "Detalle y avisos",
+  "Más de hoy",
   "SiguientePasoCard",
   "veredictoRapido",
 ]) {
