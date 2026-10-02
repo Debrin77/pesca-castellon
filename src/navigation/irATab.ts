@@ -28,22 +28,10 @@ export function irAEspeciesDelPunto(navigation: {
   irATab(navigation, "Especies", "EspeciesMain", { abrirConsulta: true });
 }
 
-/**
- * Abre Consejos (montajes, nudos, vocabulario).
- * Ya no es pestaña: se empuja en el stack actual si existe, si no vía Hoy.
- */
+/** Abre la pestaña Consejos (montajes, nudos, vocabulario) con params opcionales. */
 export function irAConsejos(
-  navigation: {
-    navigate: (...args: any[]) => void;
-    getParent?: () => any;
-    getState?: () => { routeNames?: string[] };
-  },
+  navigation: { navigate: (...args: any[]) => void; getParent?: () => any },
   params?: { consejoId?: string; categoria?: string }
 ) {
-  const names = navigation.getState?.()?.routeNames;
-  if (names?.includes("Consejos")) {
-    navigation.navigate("Consejos", params ?? {});
-    return;
-  }
-  irATab(navigation, "Inicio", "Consejos", params);
+  irATab(navigation, "Consejos", "ConsejosMain", params);
 }

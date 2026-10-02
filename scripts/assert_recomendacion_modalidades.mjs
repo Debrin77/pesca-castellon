@@ -72,9 +72,13 @@ if (!explorar.includes("anclaCosta=")) {
 if (!explorar.includes("setModo(modoRec)")) {
   fail("PanelExplorarSitios debe setModo al tocar una modalidad de «Hoy te conviene»");
 }
+const home = read("src/screens/HomeScreen.tsx");
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
+if (!home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar PanelExplorarSitios con RecomendacionHoyCard");
+}
 if (!mapa.includes("PanelExplorarSitios")) {
-  fail("Mapa debe montar PanelExplorarSitios con RecomendacionHoyCard");
+  fail("Mapa debe seguir montando PanelExplorarSitios con RecomendacionHoyCard");
 }
 
 const pkg = read("package.json");

@@ -1,6 +1,6 @@
 /**
- * Ideas y sitios: recomendaciones, Quiero pescar (top 3), SAIH embalses/aforos.
- * Abierto por defecto: el usuario no debe perder datos al reorganizar Inicio.
+ * Ideas y sitios: SAIH embalses/aforos, Quiero pescar (top 3), recomendaciones, campo.
+ * Montado en Inicio (y también en Mapa). Abierto por defecto; plegable para no cansar.
  */
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -82,9 +82,22 @@ function colorNivelAforo(nivel: NivelAforo): string {
 
 type Props = {
   navigation: any;
-  /** Fuerza abrir (p. ej. desde Hoy → Ideas y sitios). */
+  /** Fuerza abrir (p. ej. deep-link / mapa). */
   forzarAbrir?: boolean;
 };
+
+/** Centra el mapa desde Inicio o desde el propio stack Mapa. */
+function irAMapaCentrar(
+  navigation: { navigate: (...args: any[]) => void; getParent?: () => any },
+  centrarEn: { lat: number; lng: number; nombre?: string }
+) {
+  const parent = navigation.getParent?.();
+  if (parent?.navigate) {
+    parent.navigate("Mapa", { screen: "ZonasLibresMain", params: { centrarEn } });
+    return;
+  }
+  navigation.navigate("ZonasLibresMain", { centrarEn });
+}
 
 export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
@@ -376,12 +389,10 @@ export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) 
                 navigation.navigate("ZoneDetail", { zoneId: sitio.zoneId! });
                 return;
               }
-              navigation.navigate("ZonasLibresMain", {
-                centrarEn: {
-                  lat: sitio.lat,
-                  lng: sitio.lng,
-                  nombre: sitio.nombre,
-                },
+              irAMapaCentrar(navigation, {
+                lat: sitio.lat,
+                lng: sitio.lng,
+                nombre: sitio.nombre,
               });
             }}
           />
@@ -406,6 +417,11 @@ export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) 
                 : null
             }
             onExplorarMapa={() => {
+              const parent = navigation.getParent?.();
+              if (parent?.navigate) {
+                parent.navigate("Mapa", { screen: "ZonasLibresMain" });
+                return;
+              }
               LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
               setAbierto(false);
             }}
@@ -427,12 +443,10 @@ export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) 
                 navigation.navigate("ZoneDetail", { zoneId: zid });
                 return;
               }
-              navigation.navigate("ZonasLibresMain", {
-                centrarEn: {
-                  lat: r.candidato.lat,
-                  lng: r.candidato.lng,
-                  nombre: r.candidato.nombre,
-                },
+              irAMapaCentrar(navigation, {
+                lat: r.candidato.lat,
+                lng: r.candidato.lng,
+                nombre: r.candidato.nombre,
               });
             }}
           />
@@ -476,8 +490,10 @@ export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) 
                         key={p.id}
                         style={styles.puntoChip}
                         onPress={() =>
-                          navigation.navigate("ZonasLibresMain", {
-                            centrarEn: { lat: p.lat, lng: p.lng, nombre: p.nombre },
+                          irAMapaCentrar(navigation, {
+                            lat: p.lat,
+                            lng: p.lng,
+                            nombre: p.nombre,
                           })
                         }
                       >

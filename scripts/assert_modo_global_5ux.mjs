@@ -83,11 +83,11 @@ for (const n of [
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
-if (home.includes("<TarjetaPuntoHoy")) {
-  fail("Hoy no debe montar TarjetaPuntoHoy (duplica veredicto del hero)");
+if (!home.includes("<TarjetaPuntoHoy")) {
+  fail("Inicio debe montar TarjetaPuntoHoy (punto del día organizado)");
 }
-if (home.includes("Pulso del día")) {
-  fail("Pulso detallado no debe vivir en Hoy");
+if (!home.includes("Pulso del día")) {
+  fail("Inicio debe mostrar Pulso del día (clima/índice)");
 }
 if (!home.includes("modoElegido ? modo : null")) {
   fail("Home selector debe pasar null si aún no hay modalidad");

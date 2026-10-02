@@ -1,6 +1,6 @@
 /**
- * Assert: Hoy con hero claro (marca + veredicto + CTA) y barra tipo tienda (5 tabs).
- * Consejos ya no es pestaña: vive en stacks + Guía.
+ * Assert: Inicio con hero claro (marca + veredicto + CTA) y tab Consejos.
+ * Contenido completo organizado — no «modo tienda» de 5 tabs.
  */
 import fs from "fs";
 import path from "path";
@@ -36,29 +36,34 @@ if (!(iBrand < iVer && iVer < iCta)) fail("Orden hero: marca → veredicto → C
 if (home.includes("styles.brandPulse") && /brandPulse\}>\{provincia\.nombreApp/.test(home)) {
   fail("Home no debe mostrar el texto del nombre de app en el hero (solo logo)");
 }
-if (!home.includes("irAConsejos") || !home.includes("guiaChip")) {
-  fail("Hoy debe exponer Guía (Consejos) sin saturar el hero");
+if (!home.includes("atajosPunto") || !home.includes("irAConsejos")) {
+  fail("Con punto elegido, Inicio debe mostrar atajos Aparejos/Consejos");
 }
-if (!home.includes('navigate("Aparejos"') || !home.includes('navigate("License")')) {
-  fail("Hoy debe exponer Aparejos/Licencia en Guía");
+if (!home.includes("herramientasKicker") || !home.includes('navigate("License")') || !home.includes('navigate("Aparejos"')) {
+  fail("Inicio debe exponer herramientas Aparejos/Licencia sin depender del punto");
 }
-if (home.includes("Pulso del día") || home.includes("<TarjetaPuntoHoy")) {
-  fail("Pulso/tarjeta detallados no deben vivir en Hoy (van a Previsión / hero)");
+if (!home.includes("pulsoCard") || !home.includes("pulsoRow") || !home.includes("Pulso del día")) {
+  fail("Pulso meteo debe vivir en Inicio (pulsoCard / Pulso del día)");
+}
+if (!home.includes("<TarjetaPuntoHoy") || !home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar TarjetaPuntoHoy y PanelExplorarSitios (contenido completo)");
+}
+if (!home.includes("<BloqueAprende")) {
+  fail("Inicio debe poder mostrar BloqueAprende (primera salida)");
 }
 
 const tabScreens = [...app.matchAll(/<Tab\.Screen name="([^"]+)"/g)].map((m) => m[1]);
-const esperadas = ["Inicio", "Mapa", "Especies", "Previsión", "Capturas"];
+const esperadas = ["Inicio", "Mapa", "Especies", "Consejos", "Previsión", "Capturas"];
 if (tabScreens.join() !== esperadas.join()) {
   fail(`Tabs deben ser ${esperadas.join(" · ")} (got ${tabScreens.join(" · ")})`);
 }
-if (tabs.includes("Consejos:")) fail("BarraTabsScroll no debe iconar Consejos como tab");
-if (app.includes("ConsejosStackScreen") || app.includes('name="ConsejosMain"')) {
-  fail("Consejos no debe ser stack-tab; va anidado en Hoy/Mapa/Especies");
+if (!tabs.includes("Consejos:") || !tabs.includes('"book"')) fail("BarraTabsScroll debe iconar Consejos");
+if (!app.includes("ConsejosStackScreen") || !app.includes('name="ConsejosMain"')) {
+  fail("App debe tener stack ConsejosMain");
 }
-if (!app.includes('HomeStack.Screen name="Consejos"')) {
-  fail("HomeStack debe incluir pantalla Consejos");
+if (!ir.includes("irAConsejos") || !ir.includes('"Consejos"') || !ir.includes("ConsejosMain")) {
+  fail("irATab debe exponer irAConsejos a la pestaña Consejos");
 }
-if (!ir.includes("irAConsejos") || !ir.includes('"Consejos"')) fail("irATab debe exponer irAConsejos");
 if (!consejos.includes("FONTS.display") && !consejos.includes("TYPE.displayHero")) fail("Consejos hero debe usar Fraunces");
 if (!salgo.includes("FONTS.display") && !salgo.includes("TYPE.displayHero") && !salgo.includes("TYPE.displayTitle")) fail("Salgo a pescar título debe usar Fraunces");
 
@@ -71,4 +76,4 @@ if (fallos) {
   console.error(`assert_inicio_hero_consejos_tab: ${fallos} fallo(s)`);
   process.exit(1);
 }
-console.log("OK: hero Hoy + barra 5 tabs (Consejos en Guía)");
+console.log("OK: hero Inicio + tab Consejos + contenido completo");
