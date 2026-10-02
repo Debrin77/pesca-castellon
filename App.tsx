@@ -51,6 +51,7 @@ const ZonasLibresStack = createNativeStackNavigator();
 const EspeciesStack = createNativeStackNavigator();
 const PrevisionStack = createNativeStackNavigator();
 const CapturasStack = createNativeStackNavigator();
+const ConsejosStack = createNativeStackNavigator();
 
 const navTheme = {
   ...DefaultTheme,
@@ -157,14 +158,29 @@ function CapturasStackScreen() {
   );
 }
 
+function ConsejosStackScreen() {
+  return (
+    <ConsejosStack.Navigator screenOptions={stackScreenOptions}>
+      <ConsejosStack.Screen
+        name="ConsejosMain"
+        component={ConsejosScreen}
+        options={{ title: "Consejos" }}
+      />
+      <ConsejosStack.Screen name="Aparejos" component={AparejosScreen} options={{ title: "Aparejos" }} />
+      <ConsejosStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />
+    </ConsejosStack.Navigator>
+  );
+}
+
 /**
- * Barra inferior tipo tienda (máx. 5): Hoy · Mapa · Especies · Previsión · Capturas.
- * Consejos/Aparejos/Licencia viven en stacks anidados (no cansan el primer uso).
+ * Barra: Inicio · Mapa · Especies · Consejos · Previsión · Capturas.
+ * Aparejos/Licencia siguen en stacks anidados (no saturan la barra).
  */
 const TAB_RAIZ: Record<string, { stack: string; screen: string }> = {
   Inicio: { stack: "Inicio", screen: "HomeMain" },
   Mapa: { stack: "Mapa", screen: "ZonasLibresMain" },
   Especies: { stack: "Especies", screen: "EspeciesMain" },
+  Consejos: { stack: "Consejos", screen: "ConsejosMain" },
   Previsión: { stack: "Previsión", screen: "PrevisionMain" },
   Capturas: { stack: "Capturas", screen: "CapturasMain" },
 };
@@ -215,9 +231,10 @@ function AppNavegacion({ provinciaKey }: { provinciaKey: string }) {
           tabBarHideOnKeyboard: true,
         }}
       >
-        <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Hoy" }} listeners={listenerIrArriba("Inicio")} />
+        <Tab.Screen name="Inicio" component={HomeStackScreen} options={{ title: "Inicio" }} listeners={listenerIrArriba("Inicio")} />
         <Tab.Screen name="Mapa" component={ZonasLibresStackScreen} options={{ title: "Mapa" }} listeners={listenerIrArriba("Mapa")} />
         <Tab.Screen name="Especies" component={EspeciesStackScreen} options={{ title: "Especies" }} listeners={listenerIrArriba("Especies")} />
+        <Tab.Screen name="Consejos" component={ConsejosStackScreen} options={{ title: "Consejos" }} listeners={listenerIrArriba("Consejos")} />
         <Tab.Screen name="Previsión" component={PrevisionStackScreen} options={{ title: "Previsión" }} listeners={listenerIrArriba("Previsión")} />
         <Tab.Screen name="Capturas" component={CapturasStackScreen} options={{ title: "Capturas" }} listeners={listenerIrArriba("Capturas")} />
       </Tab.Navigator>

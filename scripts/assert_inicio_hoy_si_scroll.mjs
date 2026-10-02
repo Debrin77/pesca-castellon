@@ -1,7 +1,7 @@
 /**
  * Assert: chip HOY SÍ / veredictoRapido hace scroll fiable a «Más de hoy».
  * - Ancla con onLayout + measureInWindow
- * - Orden ritual: Salgo → Más de hoy (cerca del hero)
+ * - Orden: Salgo → contenido → Más de hoy
  */
 import fs from "fs";
 import path from "path";
@@ -51,8 +51,9 @@ if (!(iSalgo >= 0 && iTitulo > iSalgo)) {
   fail("Más de hoy debe ir después del CTA Salgo a pescar");
 }
 
-if (home.includes("<BloqueAprende") || home.includes("<RecomendacionHoyCard")) {
-  fail("Hoy no debe montar BloqueAprende ni RecomendacionHoyCard (viven en Consejos/Mapa)");
+// Contenido completo en Inicio (organizado, no omitido)
+if (!home.includes("<BloqueAprende") || !home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar BloqueAprende y PanelExplorarSitios (sin omitir)");
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");

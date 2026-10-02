@@ -67,8 +67,12 @@ if (!pkg.includes("assert_features_expertas.mjs")) {
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
 const explorar = fs.readFileSync(path.join(root, "src/components/PanelExplorarSitios.tsx"), "utf8");
 const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
-if (!explorar.includes("PanelCampoHoy") || !mapa.includes("PanelExplorarSitios")) {
-  console.error("FAIL PanelCampoHoy debe vivir en PanelExplorarSitios montado en Mapa");
+if (!explorar.includes("PanelCampoHoy") || !home.includes("<PanelExplorarSitios")) {
+  console.error("FAIL PanelCampoHoy debe vivir en PanelExplorarSitios montado en Inicio");
+  fallos++;
+}
+if (!mapa.includes("PanelExplorarSitios")) {
+  console.error("FAIL Mapa debe seguir montando PanelExplorarSitios");
   fallos++;
 }
 // Ráfagas viven en Previsión (Hoy solo muestra ¿Pinta? en el hero).

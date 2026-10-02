@@ -1,7 +1,7 @@
 /**
  * Assert: Inicio no muestra «¿Puedo?» solo porque haya un punto restaurado.
  * Hace falta gesto en esta sesión (mapa / GPS / zona / recomendación) o «Usar último».
- * «Hoy te conviene» vive en Mapa → PanelExplorarSitios (no en Hoy).
+ * «Hoy te conviene» vive en PanelExplorarSitios (Inicio y Mapa).
  */
 import fs from "fs";
 import path from "path";
@@ -49,10 +49,13 @@ if (!home.includes("puntoElegido &&")) {
   fail("puntoExplicito / consultaViva debe exigir puntoElegido de esta sesión");
 }
 
-// Recomendaciones viven en Mapa (PanelExplorarSitios), no en Hoy.
+// Recomendaciones en PanelExplorarSitios (Inicio + Mapa).
 const explorar = read("src/components/PanelExplorarSitios.tsx");
+if (!home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar PanelExplorarSitios (Hoy te conviene visible)");
+}
 if (!/onAbrir=\{\(r\) => \{[\s\S]{0,800}fijarPunto\(/.test(explorar)) {
-  fail("Hoy te conviene (Mapa) debe fijarPunto al tocar una recomendación");
+  fail("Hoy te conviene debe fijarPunto al tocar una recomendación");
 }
 if (!explorar.includes("zonaConocida")) {
   fail("Recomendación: no abrir ZoneDetail con ids de tramo GeoJSON");

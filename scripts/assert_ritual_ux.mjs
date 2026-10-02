@@ -1,5 +1,5 @@
 /**
- * Assert: ritual de pesca UX — Hoy ordenado, 5 tabs tipo tienda, Ahora compacto, mapa con capas plegadas.
+ * Assert: ritual de pesca UX — Inicio completo organizado, 6 tabs, Ahora compacto, mapa con capas plegadas.
  */
 import fs from "fs";
 import path from "path";
@@ -20,15 +20,18 @@ const app = fs.readFileSync(path.join(root, "App.tsx"), "utf8");
 const mapa = fs.readFileSync(path.join(root, "src/screens/ZonasLibresScreen.tsx"), "utf8");
 const tabs = fs.readFileSync(path.join(root, "src/components/BarraTabsScroll.tsx"), "utf8");
 
-// Hero: marca + veredicto + ¿Pinta? (índice en línea) + CTA
+// Hero: marca + veredicto + ¿Pinta? + CTA
 if (!home.includes("brandMark") || !home.includes("pintaHeroLine")) {
   fail("HomeScreen sin hero (brandMark / pintaHeroLine)");
 }
 if (!home.includes("veredictoRapido") || !home.includes("abrirVeredictoRapido")) {
-  fail("HomeScreen sin veredicto rápido en el hero (gesto Hoy → detalle)");
+  fail("HomeScreen sin veredicto rápido en el hero (gesto → detalle)");
+}
+if (!home.includes("pulsoRow") || !home.includes("pulsoIndice") || !home.includes("Pulso del día")) {
+  fail("HomeScreen debe mostrar Pulso del día (pulsoRow / pulsoIndice)");
 }
 
-// Orden Hoy corto: CTA Salgo → siguiente paso → Más de hoy
+// Orden: CTA Salgo → siguiente paso → Ideas/PanelExplorar → Más de hoy
 const iSalgo =
   home.indexOf("ctaSalgoTitle") >= 0
     ? home.indexOf("ctaSalgoTitle")
@@ -36,6 +39,7 @@ const iSalgo =
       ? home.indexOf("<SiguientePasoCard")
       : home.indexOf("Abrir Salgo a pescar");
 const iPaso = home.indexOf("<SiguientePasoCard");
+const iExplorar = home.indexOf("<PanelExplorarSitios");
 const iDetalle = home.indexOf("Más de hoy");
 if (iSalgo < 0 || iDetalle < 0 || !(iSalgo < iDetalle)) {
   fail("HomeScreen orden ritual: Salgo a pescar → Más de hoy");
@@ -43,13 +47,20 @@ if (iSalgo < 0 || iDetalle < 0 || !(iSalgo < iDetalle)) {
 if (iPaso >= 0 && !(iSalgo < iPaso && iPaso < iDetalle)) {
   fail("HomeScreen orden: Salgo → Siguiente paso → Más de hoy");
 }
+if (iExplorar < 0 || !(iPaso < iExplorar && iExplorar < iDetalle)) {
+  fail("HomeScreen: PanelExplorarSitios (SAIH/recomendaciones) entre Siguiente paso y Más de hoy");
+}
 
 const explorar = fs.readFileSync(path.join(root, "src/components/PanelExplorarSitios.tsx"), "utf8");
 if (!explorar.includes("QuieroPescarBlock") || !explorar.includes("PanelCampoHoy") || !explorar.includes("Tus sitios")) {
   fail("PanelExplorarSitios debe agrupar QuieroPescar, Tus sitios y PanelCampoHoy");
 }
+if (!home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar PanelExplorarSitios (contenido visible, no solo en Mapa)");
+}
+// Mapa también puede montarlo (acceso secundario); no se borra
 if (!mapa.includes("PanelExplorarSitios")) {
-  fail("Mapa debe montar PanelExplorarSitios (ideas/sitios fuera de Hoy)");
+  fail("Mapa debe seguir montando PanelExplorarSitios (sin borrar acceso)");
 }
 
 // Ahora compacto
@@ -60,10 +71,10 @@ if (!campo.includes("trioCard") || !campo.includes("activarRadar: true") || !cam
   fail("PanelCampoHoy sin trio de acciones (solunar / radar / ID)");
 }
 
-// 5 tabs visibles (tipo tienda; sin Consejos)
+// 6 tabs (Consejos incluido; no «modo tienda» de 5)
 const tabScreens = [...app.matchAll(/<Tab\.Screen name="([^"]+)"/g)].map((m) => m[1]);
-const esperadas = ["Inicio", "Mapa", "Especies", "Previsión", "Capturas"];
-if (tabScreens.length !== 5 || esperadas.some((t, i) => tabScreens[i] !== t)) {
+const esperadas = ["Inicio", "Mapa", "Especies", "Consejos", "Previsión", "Capturas"];
+if (tabScreens.length !== 6 || esperadas.some((t, i) => tabScreens[i] !== t)) {
   fail(`App tabs visibles deben ser ${esperadas.join(" · ")} (got ${tabScreens.join(" · ")})`);
 }
 if (app.includes('name="Aparejos" component={AparejosStackScreen}') || app.includes("AparejosStackScreen")) {
@@ -73,12 +84,15 @@ if (!app.includes('HomeStack.Screen name="Aparejos"') || !app.includes('HomeStac
   fail("HomeStack debe incluir Aparejos y Consejos");
 }
 
-// Barra: Aparejos y Consejos fuera de tabs
-if (tabs.includes("Aparejos:") || tabs.includes("Consejos:")) {
-  fail("BarraTabsScroll no debe mapear tabs Aparejos ni Consejos");
+// Barra: Aparejos fuera; Consejos sí es tab
+if (tabs.includes("Aparejos:")) {
+  fail("BarraTabsScroll no debe mapear tab Aparejos");
 }
-if (!tabs.includes("ANCHO_ITEM = 72")) {
-  fail("BarraTabsScroll debería usar ANCHO_ITEM = 72 (5 tabs sin scroll)");
+if (!tabs.includes("Consejos:")) {
+  fail("BarraTabsScroll debe mapear tab Consejos");
+}
+if (!tabs.includes("ANCHO_ITEM = 78")) {
+  fail("BarraTabsScroll debería usar ANCHO_ITEM = 78 (6 tabs con scroll)");
 }
 
 // Mapa: capas plegadas + cierre visible

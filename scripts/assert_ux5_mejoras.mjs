@@ -33,8 +33,11 @@ const consejos = read("src/data/consejos.ts");
 if (!explorar.includes("<RecomendacionHoyCard") || !rec.includes("Hoy te conviene")) {
   fail("PanelExplorarSitios sin recomendación «Hoy te conviene»");
 }
+if (!home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar PanelExplorarSitios («Hoy te conviene» visible)");
+}
 if (!mapa.includes("PanelExplorarSitios")) {
-  fail("Mapa debe montar PanelExplorarSitios (recomendación fuera de Inicio)");
+  fail("Mapa debe seguir montando PanelExplorarSitios (sin borrar acceso)");
 }
 if (!rec.includes("elegirRecomendacionesHoyPack") || !rec.includes("modosLista")) {
   fail("Hoy te conviene debe resumir modalidades (pack + lista)");

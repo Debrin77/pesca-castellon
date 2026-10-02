@@ -56,11 +56,14 @@ for (const n of [
 ]) {
   if (!explorar.includes(n)) fail(`PanelExplorarSitios sin ${n}`);
 }
+if (!home.includes("<PanelExplorarSitios")) {
+  fail("Inicio debe montar PanelExplorarSitios (aforos/embalses visibles en Inicio)");
+}
 const mapaMount = read("src/screens/ZonasLibresScreen.tsx");
 if (!mapaMount.includes("PanelExplorarSitios")) {
-  fail("Mapa debe montar PanelExplorarSitios (aforos/embalses fuera de Inicio)");
+  fail("Mapa debe seguir montando PanelExplorarSitios (acceso secundario, sin borrar)");
 }
-ok("HomeScreen glass + aforos en Mapa/PanelExplorarSitios");
+ok("HomeScreen glass + aforos en Inicio/PanelExplorarSitios");
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
 for (const n of [
