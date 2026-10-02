@@ -233,28 +233,27 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", gap: 8 },
   btn: {
     flex: 1,
-    minHeight: 52,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.surface,
+    minHeight: 48,
+    borderRadius: RADIUS.lg,
+    borderWidth: 0,
+    backgroundColor: COLORS.mist,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 6,
     paddingVertical: 8,
   },
   btnKayakIdle: {
-    borderColor: COLORS.kayak,
+    borderColor: "transparent",
     backgroundColor: COLORS.kayakLight,
-    borderWidth: 1.5,
+    borderWidth: 0,
   },
   btnOscuro: {
     backgroundColor: "rgba(255,255,255,0.12)",
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: "transparent",
   },
   btnKayakIdleOscuro: {
     backgroundColor: "rgba(26, 138, 120, 0.35)",
-    borderColor: "rgba(180, 240, 220, 0.65)",
+    borderColor: "transparent",
   },
   btnOnRio: {
     backgroundColor: COLORS.primaryDark,
@@ -266,8 +265,8 @@ const styles = StyleSheet.create({
   },
   btnOnKayak: {
     backgroundColor: COLORS.kayakDark,
-    borderColor: COLORS.kayakSun,
-    borderWidth: 2,
+    borderColor: COLORS.kayakDark,
+    borderWidth: 0,
   },
   estrella: {
     position: "absolute",

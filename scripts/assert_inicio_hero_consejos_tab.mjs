@@ -38,7 +38,7 @@ if (home.includes("styles.brandPulse") && /brandPulse\}>\{provincia\.nombreApp/.
 if (!home.includes("atajosPunto") || !home.includes("irAConsejos")) {
   fail("Con punto elegido, Inicio debe mostrar atajos Aparejos/Consejos");
 }
-if (!home.includes("herramientasKicker") || !home.includes('navigate("License")') || !home.includes('navigate("Aparejos"')) {
+if (!home.includes('titulo="Herramientas"') || !home.includes('navigate("License")') || !home.includes('navigate("Aparejos"')) {
   fail("Inicio debe exponer herramientas Aparejos/Licencia sin depender del punto");
 }
 if (!home.includes("pulsoRow") || !home.includes("Pulso del día")) {

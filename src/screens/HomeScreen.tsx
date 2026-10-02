@@ -581,7 +581,7 @@ export default function HomeScreen({ navigation }: Props) {
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
 
-        {/* Provincia destacada · contexto de la sesión */}
+        {/* Provincia · tipografía limpia, sin caja dura */}
         <TouchableOpacity
           style={styles.provinciaHero}
           onPress={() =>
@@ -589,19 +589,17 @@ export default function HomeScreen({ navigation }: Props) {
           }
           accessibilityRole="button"
           accessibilityLabel={`Provincia ${provincia.nombre}. Cambiar`}
+          activeOpacity={0.75}
         >
-          <Text style={styles.provinciaHeroKicker}>Provincia</Text>
-          <View style={styles.provinciaHeroRow}>
-            <Text style={styles.provinciaHeroNombre} numberOfLines={1}>
-              {provincia.nombre}
+          <Text style={styles.provinciaHeroNombre} numberOfLines={1}>
+            {provincia.nombre}
+          </Text>
+          <View style={styles.provinciaHeroMeta}>
+            <Text style={styles.provinciaHeroKicker}>
+              {modoElegido ? etiquetaModoLarga(modo) : "Provincia"}
             </Text>
-            <Text style={styles.provinciaHeroCta}>Cambiar ›</Text>
+            <Text style={styles.provinciaHeroCta}>Cambiar</Text>
           </View>
-          {modoElegido ? (
-            <Text style={styles.provinciaHeroModo} numberOfLines={1}>
-              {etiquetaModoLarga(modo)}
-            </Text>
-          ) : null}
         </TouchableOpacity>
 
         {/* Sin recuadro «Elige modalidad»: ya está en Cómo pescas / Continuar. */}
@@ -692,12 +690,12 @@ export default function HomeScreen({ navigation }: Props) {
             ]}
             style={styles.ctaSalgoInner}
           >
-            <OndaAgua intensidad={0.9} />
+            <OndaAgua intensidad={0.45} />
             <View style={styles.ctaSalgoRow}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ctaSalgoKicker}>
                   {modoElegido
-                    ? `Preparar salida · ${etiquetaModoLarga(modo)}`
+                    ? etiquetaModoLarga(modo)
                     : "Preparar salida"}
                 </Text>
                 <Text style={styles.ctaSalgoTitle}>
@@ -712,8 +710,8 @@ export default function HomeScreen({ navigation }: Props) {
                 <Text style={styles.ctaSalgoSub}>
                   {!modoElegido
                     ? continuarSesion
-                      ? "Retoma la última salida o elige modalidad abajo"
-                      : "Elige modalidad abajo o sigue desde aquí"
+                      ? "Retoma o elige modalidad abajo"
+                      : "Modalidad abajo · o sigue desde aquí"
                     : modo === "barco"
                       ? "Legal · oleaje · qué llevar · Columbretes"
                       : modo === "kayak_mar"
@@ -1123,7 +1121,6 @@ export default function HomeScreen({ navigation }: Props) {
           titulo="Herramientas"
           sub="Atajos siempre a mano"
         >
-          <Text style={styles.herramientasKicker}>Herramientas</Text>
           <View style={styles.linksRow}>
             <TouchableOpacity
               style={styles.linkChip}
@@ -1162,32 +1159,32 @@ export default function HomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: "#f3f6f3" },
   hero: {
     paddingTop: SPACING.lg,
-    paddingBottom: SPACING.lg + 2,
+    paddingBottom: SPACING.xl,
     paddingHorizontal: SPACING.lg,
-    borderBottomLeftRadius: RADIUS.xl,
-    borderBottomRightRadius: RADIUS.xl,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
     overflow: "hidden",
   },
   brandRow: {
     alignItems: "center",
     zIndex: 1,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   brandMark: {
-    shadowOpacity: 0.4,
-    marginBottom: 8,
+    shadowOpacity: 0.28,
+    marginBottom: 10,
   },
   dateText: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.92)",
+    fontSize: 13.5,
+    color: "rgba(255,255,255,0.78)",
     textTransform: "capitalize",
     marginBottom: 0,
-    fontWeight: "600",
-    fontFamily: FONTS.semibold,
-    letterSpacing: 0.2,
+    fontWeight: "500",
+    fontFamily: FONTS.regular,
+    letterSpacing: 0.15,
     textAlign: "center",
   },
   actualizandoTxt: {
@@ -1205,13 +1202,20 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   pintaHeroLine: {
-    marginTop: 8,
-    marginBottom: 2,
+    marginTop: 10,
+    marginBottom: 4,
+    alignSelf: "center",
     textAlign: "center",
-    color: "rgba(255,255,255,0.9)",
+    color: "rgba(255,255,255,0.88)",
     fontFamily: FONTS.semibold,
     fontSize: 13,
+    letterSpacing: 0.15,
     zIndex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: RADIUS.pill,
+    backgroundColor: "rgba(0,0,0,0.18)",
+    overflow: "hidden",
   },
   modoBajoHero: {
     marginHorizontal: SPACING.md,
@@ -1396,58 +1400,48 @@ const styles = StyleSheet.create({
   weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
   provinciaHero: {
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: RADIUS.md,
-    backgroundColor: "rgba(255,255,255,0.16)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.38)",
-  },
-  provinciaHeroKicker: {
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-    color: "rgba(255,255,255,0.78)",
-    fontFamily: FONTS.extrabold,
-  },
-  provinciaHeroRow: {
-    marginTop: 2,
-    flexDirection: "row",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    gap: 10,
+    marginTop: 14,
+    marginBottom: 2,
+    alignItems: "center",
+    zIndex: 1,
   },
   provinciaHeroNombre: {
-    flex: 1,
-    fontSize: 26,
+    fontSize: 32,
     fontWeight: "700",
     fontFamily: FONTS.display,
     color: "#fff",
-    letterSpacing: -0.3,
+    letterSpacing: -0.6,
+    textAlign: "center",
   },
-  provinciaHeroCta: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: "rgba(255,255,255,0.95)",
+  provinciaHeroMeta: {
+    marginTop: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
-  provinciaHeroModo: {
-    marginTop: 2,
+  provinciaHeroKicker: {
     fontSize: 13,
     fontWeight: "600",
-    color: "rgba(255,255,255,0.88)",
+    fontFamily: FONTS.semibold,
+    color: "rgba(255,255,255,0.78)",
+  },
+  provinciaHeroCta: {
+    fontSize: 13,
+    fontWeight: "700",
+    fontFamily: FONTS.bold,
+    color: "rgba(255,255,255,0.95)",
+    textDecorationLine: "underline",
+    textDecorationColor: "rgba(255,255,255,0.45)",
   },
   heroPromptBloque: {
     marginTop: 12,
   },
   heroPrompt: {
-    borderRadius: RADIUS.md,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderRadius: RADIUS.lg,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: "rgba(255,255,255,0.12)",
   },
   ultimoPuntoChip: {
     marginTop: 0,
@@ -1456,49 +1450,49 @@ const styles = StyleSheet.create({
     gap: 8,
     alignSelf: "stretch",
     maxWidth: "100%",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: RADIUS.md,
-    backgroundColor: "rgba(255,255,255,0.16)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.32)",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.lg,
+    backgroundColor: "rgba(255,255,255,0.14)",
   },
   ultimoPuntoTxt: {
     flexShrink: 1,
     flex: 1,
     fontSize: 14,
-    fontWeight: "700",
-    color: "rgba(255,255,255,0.92)",
+    fontWeight: "600",
+    fontFamily: FONTS.semibold,
+    color: "rgba(255,255,255,0.95)",
   },
   ultimoPuntoCta: {
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: "700",
+    fontFamily: FONTS.bold,
     color: "#fff",
   },
   continuarSesionChip: {
-    marginTop: 10,
+    marginTop: 12,
     minHeight: 48,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: RADIUS.md,
-    backgroundColor: "rgba(255,255,255,0.22)",
-    borderWidth: 1.5,
-    borderColor: "rgba(255,255,255,0.55)",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.lg,
+    backgroundColor: "rgba(255,255,255,0.16)",
   },
   continuarSesionTxt: {
     flex: 1,
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: "700",
+    fontFamily: FONTS.bold,
     color: "#fff",
     lineHeight: 18,
   },
   continuarSesionCta: {
     fontSize: 15,
-    fontWeight: "900",
+    fontWeight: "800",
+    fontFamily: FONTS.extrabold,
     color: "#fff",
   },
   heroPromptTitulo: {
@@ -1509,11 +1503,12 @@ const styles = StyleSheet.create({
     letterSpacing: -0.2,
   },
   heroPromptSub: {
-    color: "rgba(255,255,255,0.95)",
-    fontSize: 12.5,
-    fontWeight: "600",
+    color: "rgba(255,255,255,0.88)",
+    fontSize: 13,
+    fontWeight: "500",
+    fontFamily: FONTS.regular,
     marginTop: 4,
-    lineHeight: 17,
+    lineHeight: 18,
   },
   atajosPunto: {
     flexDirection: "row",
@@ -1641,37 +1636,38 @@ const styles = StyleSheet.create({
   metaHoy: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
-    marginBottom: 10,
+    marginTop: 4,
+    marginBottom: 6,
     paddingHorizontal: 2,
   },
   metaGps: {
-    minHeight: 44,
-    paddingHorizontal: 16,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.primaryLight,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    minHeight: 36,
+    paddingHorizontal: 4,
     alignItems: "center",
     justifyContent: "center",
   },
   metaGpsTxt: {
     fontSize: 14,
-    fontWeight: "800",
+    fontWeight: "700",
     color: COLORS.primaryDark,
-    fontFamily: FONTS.extrabold,
+    fontFamily: FONTS.bold,
+    textDecorationLine: "underline",
+    textDecorationColor: COLORS.border,
   },
   sesionMini: {
-    marginBottom: 10,
+    marginHorizontal: SPACING.md,
+    marginBottom: 8,
     paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: RADIUS.md,
-    backgroundColor: "rgba(22,74,54,0.08)",
+    paddingHorizontal: 4,
   },
   sesionMiniTxt: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: COLORS.textSecondary,
+    fontSize: 12.5,
+    fontWeight: "500",
+    fontFamily: FONTS.regular,
+    color: COLORS.textMuted,
+    textAlign: "center",
   },
   modoCabecera: {
     flexDirection: "row",
@@ -1866,54 +1862,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   ctaSalgo: {
-    marginTop: 12,
-    borderRadius: RADIUS.lg,
+    marginTop: 14,
+    borderRadius: RADIUS.xl,
     overflow: "hidden",
-    marginBottom: SPACING.md,
-    ...SHADOW_SOFT,
+    marginBottom: 4,
   },
   ctaSalgoInner: {
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    borderRadius: RADIUS.lg,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: RADIUS.xl,
     overflow: "hidden",
   },
   ctaSalgoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 14,
     zIndex: 1,
   },
   ctaSalgoKicker: {
-    fontSize: 11,
-    fontWeight: "800",
-    fontFamily: FONTS.extrabold,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: FONTS.semibold,
+    letterSpacing: 0.2,
     color: "rgba(255,255,255,0.82)",
-    marginBottom: 2,
+    marginBottom: 3,
   },
   ctaSalgoTitle: {
-    fontSize: 22,
-    fontWeight: "800",
-    fontFamily: FONTS.extrabold,
+    fontSize: 24,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
     color: "#fff",
-    letterSpacing: 0.2,
+    letterSpacing: -0.35,
   },
   ctaSalgoSub: {
-    fontSize: 13,
-    color: "rgba(255,255,255,0.95)",
-    fontWeight: "700",
-    fontFamily: FONTS.bold,
-    marginTop: 3,
+    fontSize: 13.5,
+    color: "rgba(255,255,255,0.88)",
+    fontWeight: "500",
+    fontFamily: FONTS.regular,
+    marginTop: 4,
+    lineHeight: 18,
   },
   ctaSalgoArrow: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.22)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.35)",
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: "rgba(255,255,255,0.2)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -2050,16 +2043,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: "22%",
     minWidth: 72,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.sm,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    paddingVertical: 10,
+    backgroundColor: COLORS.mist,
+    borderRadius: RADIUS.lg,
+    paddingVertical: 12,
     alignItems: "center",
   },
   linkChipTxt: {
-    fontSize: 12.5,
+    fontSize: 13.5,
     fontWeight: "700",
-    color: COLORS.textSecondary,
+    fontFamily: FONTS.bold,
+    color: COLORS.primaryDark,
   },
 });
