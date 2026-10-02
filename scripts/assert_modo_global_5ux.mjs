@@ -72,7 +72,8 @@ const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
   "SelectorModoPesca",
   "puntoExplicito",
-  "Pulsa el mapa, GPS o una recomendación",
+  "provinciaHero",
+  "Mapa, GPS o una recomendación",
   "useModoPesca",
   "modoElegido",
   "modoRecordado",
@@ -105,8 +106,11 @@ if (!home.includes("modoListo && modoElegido && puntoExplicito")) {
 if (!home.includes("puntoElegido")) {
   fail("Home debe exigir puntoElegido de esta sesión (no restaurar veredicto)");
 }
-if (!home.includes("modoListo && !modoElegido")) {
-  fail("Hero debe pedir modalidad antes del veredicto vacío de punto");
+if (!home.includes("modoListo && !modoElegido && continuarSesion")) {
+  fail("Hero debe ofrecer Continuar si hay sesión previa (sin recuadro reiterativo de modalidad)");
+}
+if (home.includes("Así alineamos mapa, especies") || home.includes("Un toque recupera modalidad")) {
+  fail("Hero no debe mostrar el recuadro reiterativo «Elige río/embalse…»");
 }
 // Un solo CTA principal (no gemelo Salgo en barco fijo en hero)
 if (home.includes("Embarcación / kayak</Text>") && home.includes("Salgo a pescar</Text>") && home.includes("Salgo en barco</Text>") && !home.includes("modo === \"barco\"")) {

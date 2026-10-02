@@ -581,53 +581,44 @@ export default function HomeScreen({ navigation }: Props) {
           <ActivityIndicator color="#fff" style={{ marginVertical: 16 }} />
         ) : null}
 
-        {/* Sin veredicto legal en el hero: vive en Tu salida y el detalle del tramo. */}
-        {modoListo && !modoElegido ? (
-          <View style={styles.heroPromptBloque}>
-            <View
-              style={styles.heroPrompt}
-              accessibilityRole="summary"
-              accessibilityLabel={textoPedirModo(disponibles)}
-            >
-              <Text style={styles.heroPromptTitulo}>{textoPedirModo(disponibles)}</Text>
-              <Text style={styles.heroPromptSub}>
-                {continuarSesion
-                  ? "Un toque recupera modalidad y punto de la última salida"
-                  : puntoExplicito || puntoAnterior
-                    ? "Tienes un punto guardado · elige modalidad para continuar"
-                    : "Así alineamos mapa, especies, aparejos y tu punto de hoy"}
-              </Text>
-            </View>
-            {continuarSesion ? (
-              <TouchableOpacity
-                style={styles.continuarSesionChip}
-                onPress={() => void reanudarSesion()}
-                accessibilityRole="button"
-                accessibilityLabel={`Continuar en ${etiquetaModo(continuarSesion.modo)} · ${continuarSesion.etiqueta}`}
-              >
-                <Text style={styles.continuarSesionTxt} numberOfLines={2}>
-                  Continuar · {etiquetaModo(continuarSesion.modo)} · {continuarSesion.etiqueta}
-                </Text>
-                <Text style={styles.continuarSesionCta}>Sí ›</Text>
-              </TouchableOpacity>
-            ) : null}
+        {/* Provincia destacada · contexto de la sesión */}
+        <TouchableOpacity
+          style={styles.provinciaHero}
+          onPress={() =>
+            confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
+          }
+          accessibilityRole="button"
+          accessibilityLabel={`Provincia ${provincia.nombre}. Cambiar`}
+        >
+          <Text style={styles.provinciaHeroKicker}>Provincia</Text>
+          <View style={styles.provinciaHeroRow}>
+            <Text style={styles.provinciaHeroNombre} numberOfLines={1}>
+              {provincia.nombre}
+            </Text>
+            <Text style={styles.provinciaHeroCta}>Cambiar ›</Text>
           </View>
-        ) : !cargando && modoListo && !consultaViva ? (
+          {modoElegido ? (
+            <Text style={styles.provinciaHeroModo} numberOfLines={1}>
+              {etiquetaModoLarga(modo)}
+            </Text>
+          ) : null}
+        </TouchableOpacity>
+
+        {/* Sin recuadro «Elige modalidad»: ya está en Cómo pescas / Continuar. */}
+        {modoListo && !modoElegido && continuarSesion ? (
+          <TouchableOpacity
+            style={styles.continuarSesionChip}
+            onPress={() => void reanudarSesion()}
+            accessibilityRole="button"
+            accessibilityLabel={`Continuar en ${etiquetaModo(continuarSesion.modo)} · ${continuarSesion.etiqueta}`}
+          >
+            <Text style={styles.continuarSesionTxt} numberOfLines={2}>
+              Continuar · {etiquetaModo(continuarSesion.modo)} · {continuarSesion.etiqueta}
+            </Text>
+            <Text style={styles.continuarSesionCta}>Sí ›</Text>
+          </TouchableOpacity>
+        ) : modoListo && modoElegido && !consultaViva && !cargando ? (
           <View style={styles.heroPromptBloque}>
-            <TouchableOpacity
-              style={styles.heroPrompt}
-              onPress={() => navigation.navigate("Mapa")}
-              activeOpacity={0.88}
-              accessibilityRole="button"
-              accessibilityLabel="Elegir punto en el mapa"
-            >
-              <Text style={styles.heroPromptTitulo}>Elige un punto</Text>
-              <Text style={styles.heroPromptSub}>
-                {puntoAnterior
-                  ? "Mapa, GPS o una recomendación · o reutiliza el último"
-                  : `Pulsa el mapa, GPS o una recomendación · ${etiquetaModoLarga(modo)}`}
-              </Text>
-            </TouchableOpacity>
             {puntoAnterior && etiquetaPuntoAnterior ? (
               <TouchableOpacity
                 style={styles.ultimoPuntoChip}
@@ -640,7 +631,20 @@ export default function HomeScreen({ navigation }: Props) {
                 </Text>
                 <Text style={styles.ultimoPuntoCta}>Usar ›</Text>
               </TouchableOpacity>
-            ) : null}
+            ) : (
+              <TouchableOpacity
+                style={styles.heroPrompt}
+                onPress={() => navigation.navigate("Mapa")}
+                activeOpacity={0.88}
+                accessibilityRole="button"
+                accessibilityLabel="Elegir punto en el mapa"
+              >
+                <Text style={styles.heroPromptTitulo}>Elige un punto</Text>
+                <Text style={styles.heroPromptSub}>
+                  Mapa, GPS o una recomendación · {etiquetaModoLarga(modo)}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         ) : null}
 
@@ -707,7 +711,9 @@ export default function HomeScreen({ navigation }: Props) {
                 </Text>
                 <Text style={styles.ctaSalgoSub}>
                   {!modoElegido
-                    ? `${textoPedirModo(disponibles)} o sigue desde aquí`
+                    ? continuarSesion
+                      ? "Retoma la última salida o elige modalidad abajo"
+                      : "Elige modalidad abajo o sigue desde aquí"
                     : modo === "barco"
                       ? "Legal · oleaje · qué llevar · Columbretes"
                       : modo === "kayak_mar"
@@ -728,33 +734,19 @@ export default function HomeScreen({ navigation }: Props) {
       <View style={styles.body}>
         <BannerOffline mensaje={mensajeOffline} />
 
-        {/* Meta mínima: provincia + GPS. Sin banners ni filas competidoras. */}
-        <View style={styles.metaHoy}>
-          <TouchableOpacity
-            style={styles.metaChip}
-            onPress={() =>
-              confirmarCambiarProvincia(provincia.nombre, () => cambiarProvincia())
-            }
-            accessibilityRole="button"
-            accessibilityLabel={`Provincia ${provincia.nombre}. Cambiar`}
-          >
-            <Text style={styles.metaChipTxt} numberOfLines={1}>
-              {provincia.nombre}
-              {modoElegido ? ` · ${etiquetaModo(modo)}` : ""}
-            </Text>
-            <Text style={styles.metaChipCta}>Cambiar</Text>
-          </TouchableOpacity>
-          {!puntoExplicito ? (
+        {/* GPS si aún no hay punto; la provincia ya va en el hero. */}
+        {!puntoExplicito ? (
+          <View style={styles.metaHoy}>
             <TouchableOpacity
-              style={styles.metaChipSec}
+              style={styles.metaGps}
               onPress={() => void usarMiUbicacion()}
               accessibilityRole="button"
               accessibilityLabel="Usar mi ubicación"
             >
-              <Text style={styles.metaChipSecTxt}>GPS</Text>
+              <Text style={styles.metaGpsTxt}>Usar GPS</Text>
             </TouchableOpacity>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
 
         {avisoSesionVisible ? (
           <TouchableOpacity
@@ -1403,8 +1395,51 @@ const styles = StyleSheet.create({
   },
   weatherAlertDanger: { backgroundColor: "rgba(180,35,24,0.92)" },
   weatherAlertText: { fontSize: 12.5, color: "#fff", fontWeight: "700" },
+  provinciaHero: {
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.38)",
+  },
+  provinciaHeroKicker: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    color: "rgba(255,255,255,0.78)",
+    fontFamily: FONTS.extrabold,
+  },
+  provinciaHeroRow: {
+    marginTop: 2,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  provinciaHeroNombre: {
+    flex: 1,
+    fontSize: 26,
+    fontWeight: "700",
+    fontFamily: FONTS.display,
+    color: "#fff",
+    letterSpacing: -0.3,
+  },
+  provinciaHeroCta: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "rgba(255,255,255,0.95)",
+  },
+  provinciaHeroModo: {
+    marginTop: 2,
+    fontSize: 13,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.88)",
+  },
   heroPromptBloque: {
-    marginTop: 14,
+    marginTop: 12,
   },
   heroPrompt: {
     borderRadius: RADIUS.md,
@@ -1415,27 +1450,28 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.28)",
   },
   ultimoPuntoChip: {
-    marginTop: 8,
+    marginTop: 0,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    alignSelf: "flex-start",
+    alignSelf: "stretch",
     maxWidth: "100%",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: RADIUS.pill,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
     backgroundColor: "rgba(255,255,255,0.16)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.32)",
   },
   ultimoPuntoTxt: {
     flexShrink: 1,
-    fontSize: 13,
+    flex: 1,
+    fontSize: 14,
     fontWeight: "700",
     color: "rgba(255,255,255,0.92)",
   },
   ultimoPuntoCta: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "800",
     color: "#fff",
   },
@@ -1467,7 +1503,7 @@ const styles = StyleSheet.create({
   },
   heroPromptTitulo: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
     fontFamily: FONTS.display,
     letterSpacing: -0.2,
@@ -1609,33 +1645,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 2,
   },
-  metaChip: {
-    flex: 1,
-    minHeight: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  metaChipTxt: {
-    flex: 1,
-    fontSize: 13,
-    fontWeight: "700",
-    color: COLORS.textPrimary,
-    paddingRight: 8,
-  },
-  metaChipCta: {
-    fontSize: 12,
-    fontWeight: "800",
-    color: COLORS.primaryDark,
-  },
-  metaChipSec: {
-    minHeight: 40,
-    paddingHorizontal: 14,
+  metaGps: {
+    minHeight: 44,
+    paddingHorizontal: 16,
     borderRadius: RADIUS.md,
     backgroundColor: COLORS.primaryLight,
     borderWidth: 1,
@@ -1643,10 +1655,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  metaChipSecTxt: {
-    fontSize: 13,
+  metaGpsTxt: {
+    fontSize: 14,
     fontWeight: "800",
     color: COLORS.primaryDark,
+    fontFamily: FONTS.extrabold,
   },
   sesionMini: {
     marginBottom: 10,
