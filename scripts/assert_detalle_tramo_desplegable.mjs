@@ -23,11 +23,9 @@ const bloque = home.slice(
   home.indexOf("Más de hoy") + 2200
 );
 for (const n of [
-  "accessibilityState={{ expanded: detalleTramo || antesAbierto }}",
+  "abierto={detalleTramo || antesAbierto}",
   "Desplegar más de hoy",
-  "bloqueCabecera",
-  "bloqueSub",
-  "toca para ver",
+  "ApartadoPlegable",
   "TemporadaBanner",
   "PanelAvisosSeguridad",
   "LicenseBanner",
