@@ -1530,7 +1530,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: "700",
-    color: COLORS.text,
+    color: COLORS.textPrimary,
     paddingRight: 8,
   },
   metaChipCta: {
@@ -1580,7 +1580,7 @@ const styles = StyleSheet.create({
   modoCabeceraTitulo: {
     fontSize: 16,
     fontWeight: "800",
-    color: COLORS.text,
+    color: COLORS.textPrimary,
     marginTop: 2,
   },
   guiaRow: {

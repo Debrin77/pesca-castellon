@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTS.semiBold,
     fontSize: 14,
-    color: COLORS.text,
+    color: COLORS.textPrimary,
   },
   toggle: {
     paddingHorizontal: 10,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   valor: {
     fontFamily: FONTS.display,
     fontSize: 22,
-    color: COLORS.text,
+    color: COLORS.textPrimary,
     marginBottom: 2,
   },
   rafaga: { fontSize: 12, color: COLORS.textSecondary, marginBottom: 8 },
