@@ -44,8 +44,8 @@ if (!/esFondoTransparente[\s\S]*delete chrome\.backgroundColor/.test(glass)) {
 
 const home = read("src/screens/HomeScreen.tsx");
 const explorar = read("src/components/PanelExplorarSitios.tsx");
-for (const n of ["import GlassCard", "<GlassCard"]) {
-  if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
+if (!home.includes("ApartadoPlegable") && !home.includes("GlassCard")) {
+  fail("HomeScreen sin ApartadoPlegable ni GlassCard");
 }
 for (const n of [
   "getResumenAforos",
@@ -53,6 +53,7 @@ for (const n of [
   "saihAforos",
   "Aforos · caudal",
   "setAforoPanel",
+  "ApartadoPlegable",
 ]) {
   if (!explorar.includes(n)) fail(`PanelExplorarSitios sin ${n}`);
 }

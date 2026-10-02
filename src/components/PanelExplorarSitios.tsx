@@ -1,6 +1,6 @@
 /**
  * Ideas y sitios: SAIH embalses/aforos, Quiero pescar (top 3), recomendaciones, campo.
- * Montado en Inicio (y también en Mapa). Abierto por defecto; plegable para no cansar.
+ * Montado en Inicio (y también en Mapa). Plegable por apartados; no se omite contenido.
  */
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -37,7 +37,7 @@ import QuieroPescarBlock from "./QuieroPescarBlock";
 import RecomendacionHoyCard from "./RecomendacionHoyCard";
 import PanelCampoHoy from "./PanelCampoHoy";
 import TerminoAyuda from "./TerminoAyuda";
-import GlassCard from "./GlassCard";
+import ApartadoPlegable from "./ApartadoPlegable";
 import type { SitioEspecieHoy } from "../utils/recomendacionPorEspecie";
 import { COLORS, RADIUS, SHADOW_SOFT, SPACING, TYPE } from "../theme";
 
@@ -84,6 +84,10 @@ type Props = {
   navigation: any;
   /** Fuerza abrir (p. ej. deep-link / mapa). */
   forzarAbrir?: boolean;
+  /** Abierto al montar (Inicio suele ir cerrado; Mapa puede abrir). */
+  inicialAbierto?: boolean;
+  /** Número del apartado en Inicio (p. ej. 4). */
+  orden?: string | number;
 };
 
 /** Centra el mapa desde Inicio o desde el propio stack Mapa. */
@@ -99,12 +103,17 @@ function irAMapaCentrar(
   navigation.navigate("ZonasLibresMain", { centrarEn });
 }
 
-export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) {
+export default function PanelExplorarSitios({
+  navigation,
+  forzarAbrir,
+  inicialAbierto = false,
+  orden,
+}: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { fijarPunto } = usePuntoConsulta();
   const { modo, modoElegido, disponibles, setModo } = useModoPesca();
-  const [abierto, setAbierto] = useState(true);
+  const [abierto, setAbierto] = useState(inicialAbierto);
 
   useEffect(() => {
     if (forzarAbrir) {
@@ -224,342 +233,319 @@ export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) 
     };
   }, [provincia.id, provincia.tieneSaih, provincia.embalsesPanel, provincia.aforosPanel]);
 
-  function toggle() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setAbierto((v) => !v);
-  }
-
   const nSitios =
     saihPanel.length + aforoPanel.length + favoritos.length + Math.min(puntos.length, 6);
   const etiquetaClima = ubicacion
     ? `${ubicacion.lat.toFixed(2)}, ${ubicacion.lng.toFixed(2)}`
     : provincia.nombre;
+  const tieneSaih = saihPanel.length > 0 || aforoPanel.length > 0;
+  const tieneSitios = favoritos.length > 0 || puntos.length > 0;
 
   return (
-    <View style={styles.wrap}>
-      <TouchableOpacity
-        onPress={toggle}
-        accessibilityRole="button"
-        accessibilityState={{ expanded: abierto }}
-        accessibilityLabel={
-          abierto ? "Ocultar ideas y sitios" : "Mostrar ideas y sitios: recomendaciones, embalses y favoritos"
-        }
-        style={styles.cabecera}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={styles.titulo}>Ideas y sitios</Text>
-          <Text style={styles.sub}>
-            {abierto
-              ? "Quiero pescar, recomendaciones, embalses y favoritos"
-              : nSitios > 0
-                ? `${nSitios} pistas · toca para explorar`
-                : "Recomendaciones y tus sitios · toca para ver"}
-          </Text>
-        </View>
-        <Text style={styles.chevron}>{abierto ? "▲" : "▼"}</Text>
-      </TouchableOpacity>
-
-      {abierto ? (
-        <View style={styles.cuerpo}>
-          {/* SAIH primero: no debe quedar enterrado bajo recomendaciones */}
-          {(saihPanel.length > 0 || aforoPanel.length > 0) && (
-            <GlassCard style={styles.bloqueSitios}>
-              <Text style={styles.bloqueTitulo}>Niveles SAIH</Text>
-              {saihPanel.length > 0 && (
-                <View style={{ marginBottom: aforoPanel.length > 0 ? 12 : 0 }}>
-                  <View style={styles.sectionRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <Text style={styles.sectionTitle}>Embalses</Text>
-                      <TerminoAyuda id="saih" />
-                    </View>
-                    <Text style={styles.sectionMeta}>
-                      {metaFuentePanel(saihPanel, "en vivo")}
+    <ApartadoPlegable
+      orden={orden}
+      titulo="Ideas y sitios"
+      subCerrado={
+        nSitios > 0
+          ? `${nSitios} pistas · SAIH, recomendaciones y favoritos`
+          : "Quiero pescar, recomendaciones, embalses y favoritos"
+      }
+      subAbierto="Elige un bloque · nada se omite"
+      abierto={abierto}
+      onAbiertoChange={setAbierto}
+      accessibilityLabelAbrir="Mostrar ideas y sitios: recomendaciones, embalses y favoritos"
+      accessibilityLabelCerrar="Ocultar ideas y sitios"
+      style={styles.wrapSinMargen}
+    >
+      {tieneSaih ? (
+        <ApartadoPlegable
+          interno
+          orden="A"
+          titulo="Niveles SAIH"
+          subCerrado={`${saihPanel.length} embalses · ${aforoPanel.length} aforos`}
+          subAbierto="Embalses y caudal en vivo o caché"
+          inicialAbierto={false}
+        >
+          {saihPanel.length > 0 && (
+            <View style={{ marginBottom: aforoPanel.length > 0 ? 12 : 0 }}>
+              <View style={styles.sectionRow}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                  <Text style={styles.sectionTitle}>Embalses</Text>
+                  <TerminoAyuda id="saih" />
+                </View>
+                <Text style={styles.sectionMeta}>{metaFuentePanel(saihPanel, "en vivo")}</Text>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8 }}
+              >
+                {saihPanel.map((s) => (
+                  <TouchableOpacity
+                    key={`top-${s.zoneId}`}
+                    style={styles.saihChip}
+                    onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
+                    accessibilityLabel={`${s.etiqueta}, ${
+                      s.pct != null ? `${s.pct.toFixed(0)} por ciento` : "sin dato"
+                    }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
+                  >
+                    <Text style={styles.saihName}>{s.etiqueta}</Text>
+                    <Text style={styles.saihPct}>
+                      {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
                     </Text>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
-                  >
-                    {saihPanel.map((s) => (
-                      <TouchableOpacity
-                        key={`top-${s.zoneId}`}
-                        style={styles.saihChip}
-                        onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
-                        accessibilityLabel={`${s.etiqueta}, ${
-                          s.pct != null ? `${s.pct.toFixed(0)} por ciento` : "sin dato"
-                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
-                      >
-                        <Text style={styles.saihName}>{s.etiqueta}</Text>
-                        <Text style={styles.saihPct}>
-                          {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
-                        </Text>
-                        {s.fuente === "cache" && s.fechaDato ? (
-                          <Text style={styles.saihFecha} numberOfLines={1}>
-                            {s.fechaDato}
-                          </Text>
-                        ) : null}
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
+                    {s.fuente === "cache" && s.fechaDato ? (
+                      <Text style={styles.saihFecha} numberOfLines={1}>
+                        {s.fechaDato}
+                      </Text>
+                    ) : null}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+          {aforoPanel.length > 0 && (
+            <View>
+              <View style={styles.sectionRow}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                  <Text style={styles.sectionTitle}>Aforos · caudal</Text>
+                  <TerminoAyuda id="aforo" />
                 </View>
-              )}
-              {aforoPanel.length > 0 && (
-                <View>
-                  <View style={styles.sectionRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <Text style={styles.sectionTitle}>Aforos · caudal</Text>
-                      <TerminoAyuda id="aforo" />
-                    </View>
-                    <Text style={styles.sectionMeta}>
-                      {metaFuentePanel(aforoPanel, "SAIH Júcar")}
+                <Text style={styles.sectionMeta}>
+                  {metaFuentePanel(aforoPanel, "SAIH Júcar")}
+                </Text>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8 }}
+              >
+                {aforoPanel.map((s) => (
+                  <View
+                    key={`top-aforo-${s.nombre}`}
+                    style={[styles.aforoChip, { borderColor: colorNivelAforo(s.nivel) }]}
+                    accessibilityLabel={`${s.etiqueta}${s.rio ? `, ${s.rio}` : ""}, ${
+                      s.caudalM3s != null
+                        ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo`
+                        : "sin dato"
+                    }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
+                  >
+                    <Text style={styles.saihName}>{s.etiqueta}</Text>
+                    <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
+                      {s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)}` : "—"}
+                      <Text style={styles.aforoUnidad}> m³/s</Text>
                     </Text>
+                    {s.rio ? (
+                      <Text style={styles.aforoRio} numberOfLines={1}>
+                        {s.rio}
+                      </Text>
+                    ) : null}
+                    {s.fechaDato && (s.fuente === "cache" || s.fuente === "saih_chj") ? (
+                      <Text style={styles.saihFecha} numberOfLines={1}>
+                        {s.fechaDato}
+                      </Text>
+                    ) : null}
                   </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
-                  >
-                    {aforoPanel.map((s) => (
-                      <View
-                        key={`top-aforo-${s.nombre}`}
-                        style={[styles.aforoChip, { borderColor: colorNivelAforo(s.nivel) }]}
-                        accessibilityLabel={`${s.etiqueta}${s.rio ? `, ${s.rio}` : ""}, ${
-                          s.caudalM3s != null
-                            ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo`
-                            : "sin dato"
-                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
-                      >
-                        <Text style={styles.saihName}>{s.etiqueta}</Text>
-                        <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
-                          {s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)}` : "—"}
-                          <Text style={styles.aforoUnidad}> m³/s</Text>
-                        </Text>
-                        {s.rio ? (
-                          <Text style={styles.aforoRio} numberOfLines={1}>
-                            {s.rio}
-                          </Text>
-                        ) : null}
-                        {s.fechaDato && (s.fuente === "cache" || s.fuente === "saih_chj") ? (
-                          <Text style={styles.saihFecha} numberOfLines={1}>
-                            {s.fechaDato}
-                          </Text>
-                        ) : null}
-                      </View>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-            </GlassCard>
+                ))}
+              </ScrollView>
+            </View>
           )}
-
-          <QuieroPescarBlock
-            disponibles={disponibles}
-            especiesRio={
-              (provincia.species as {
-                id: string;
-                nombre: string;
-                icono?: string;
-                nombreCientifico?: string;
-                invasora?: boolean;
-              }[]) ?? []
-            }
-            ancla={{
-              lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
-              lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
-            }}
-            anclaCosta={
-              provincia.regionCosta
-                ? { lat: provincia.regionCosta.latitude, lng: provincia.regionCosta.longitude }
-                : null
-            }
-            modoActual={modoElegido ? modo : null}
-            onElegirModo={(m) => void setModo(m)}
-            onAbrirSitio={(sitio: SitioEspecieHoy, modoSitio) => {
-              void setModo(modoSitio);
-              const zonas = provincia.zones as { id: string }[];
-              const zonaConocida = !!sitio.zoneId && zonas.some((z) => z.id === sitio.zoneId);
-              void fijarPunto({
-                lat: sitio.lat,
-                lng: sitio.lng,
-                fuente: zonaConocida || sitio.origen === "zona" ? "zona" : "mapa",
-                etiqueta: sitio.nombre,
-              });
-              if (zonaConocida) {
-                navigation.navigate("ZoneDetail", { zoneId: sitio.zoneId! });
-                return;
-              }
-              irAMapaCentrar(navigation, {
-                lat: sitio.lat,
-                lng: sitio.lng,
-                nombre: sitio.nombre,
-              });
-            }}
-          />
-
-          <RecomendacionHoyCard
-            favoritos={favoritos}
-            puntos={puntos}
-            actual={
-              ubicacion
-                ? { lat: ubicacion.lat, lng: ubicacion.lng, nombre: etiquetaClima }
-                : null
-            }
-            coordsFavorito={coordsFavorito}
-            modos={disponibles}
-            ancla={{
-              lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
-              lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
-            }}
-            anclaCosta={
-              provincia.regionCosta
-                ? { lat: provincia.regionCosta.latitude, lng: provincia.regionCosta.longitude }
-                : null
-            }
-            onExplorarMapa={() => {
-              const parent = navigation.getParent?.();
-              if (parent?.navigate) {
-                parent.navigate("Mapa", { screen: "ZonasLibresMain" });
-                return;
-              }
-              LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-              setAbierto(false);
-            }}
-            onAbrir={(r) => {
-              const modoRec = "modo" in r ? r.modo : null;
-              if (modoRec) void setModo(modoRec);
-              const fuente =
-                r.candidato.tipo === "favorito" || r.candidato.zoneId ? "zona" : "mapa";
-              void fijarPunto({
-                lat: r.candidato.lat,
-                lng: r.candidato.lng,
-                fuente,
-                etiqueta: r.candidato.nombre,
-              });
-              const zid = r.candidato.zoneId;
-              const zonaConocida =
-                !!zid && (provincia.zones as { id: string }[]).some((z) => z.id === zid);
-              if (zonaConocida) {
-                navigation.navigate("ZoneDetail", { zoneId: zid });
-                return;
-              }
-              irAMapaCentrar(navigation, {
-                lat: r.candidato.lat,
-                lng: r.candidato.lng,
-                nombre: r.candidato.nombre,
-              });
-            }}
-          />
-
-          {(favoritos.length > 0 || puntos.length > 0) && (
-            <GlassCard style={styles.bloqueSitios}>
-              <Text style={styles.bloqueTitulo}>Tus sitios</Text>
-                <View>
-                  <View style={styles.sectionRow}>
-                    <Text style={styles.sectionTitle}>Favoritos y puntos</Text>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("Capturas", {
-                          screen: "CapturasMain",
-                          params: { abrirCapturaRapida: true },
-                        })
-                      }
-                    >
-                      <Text style={styles.linkMini}>Ver todo</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8, paddingBottom: 4 }}
-                  >
-                    {favoritos.map((f) => (
-                      <TouchableOpacity
-                        key={f.zonaId}
-                        style={styles.favChip}
-                        onPress={() => navigation.navigate("ZoneDetail", { zoneId: f.zonaId })}
-                      >
-                        <Text style={styles.favChipStar}>★</Text>
-                        <Text style={styles.favChipTxt} numberOfLines={2}>
-                          {f.nombre}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                    {puntos.slice(0, 6).map((p) => (
-                      <TouchableOpacity
-                        key={p.id}
-                        style={styles.puntoChip}
-                        onPress={() =>
-                          irAMapaCentrar(navigation, {
-                            lat: p.lat,
-                            lng: p.lng,
-                            nombre: p.nombre,
-                          })
-                        }
-                      >
-                        <Text style={styles.favChipStar}>●</Text>
-                        <Text style={styles.favChipTxt} numberOfLines={2}>
-                          {p.nombre}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-            </GlassCard>
-          )}
-
-          <PanelCampoHoy navigation={navigation} />
-        </View>
+        </ApartadoPlegable>
       ) : null}
-    </View>
+
+      <ApartadoPlegable
+        interno
+        orden="B"
+        titulo="Quiero pescar"
+        subCerrado="Especie → top 3 sitios de hoy"
+        subAbierto="Elige modalidad y especie"
+        inicialAbierto={false}
+      >
+        <QuieroPescarBlock
+          disponibles={disponibles}
+          especiesRio={
+            (provincia.species as {
+              id: string;
+              nombre: string;
+              icono?: string;
+              nombreCientifico?: string;
+              invasora?: boolean;
+            }[]) ?? []
+          }
+          ancla={{
+            lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
+            lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
+          }}
+          anclaCosta={
+            provincia.regionCosta
+              ? { lat: provincia.regionCosta.latitude, lng: provincia.regionCosta.longitude }
+              : null
+          }
+          modoActual={modoElegido ? modo : null}
+          onElegirModo={(m) => void setModo(m)}
+          onAbrirSitio={(sitio: SitioEspecieHoy, modoSitio) => {
+            void setModo(modoSitio);
+            const zonas = provincia.zones as { id: string }[];
+            const zonaConocida = !!sitio.zoneId && zonas.some((z) => z.id === sitio.zoneId);
+            void fijarPunto({
+              lat: sitio.lat,
+              lng: sitio.lng,
+              fuente: zonaConocida || sitio.origen === "zona" ? "zona" : "mapa",
+              etiqueta: sitio.nombre,
+            });
+            if (zonaConocida) {
+              navigation.navigate("ZoneDetail", { zoneId: sitio.zoneId! });
+              return;
+            }
+            irAMapaCentrar(navigation, {
+              lat: sitio.lat,
+              lng: sitio.lng,
+              nombre: sitio.nombre,
+            });
+          }}
+        />
+      </ApartadoPlegable>
+
+      <ApartadoPlegable
+        interno
+        orden="C"
+        titulo="Hoy te conviene"
+        subCerrado="Mejor sitio por modalidad"
+        subAbierto="Según favoritos, puntos y catálogo"
+        inicialAbierto={false}
+      >
+        <RecomendacionHoyCard
+          favoritos={favoritos}
+          puntos={puntos}
+          actual={
+            ubicacion
+              ? { lat: ubicacion.lat, lng: ubicacion.lng, nombre: etiquetaClima }
+              : null
+          }
+          coordsFavorito={coordsFavorito}
+          modos={disponibles}
+          ancla={{
+            lat: ubicacion?.lat ?? provincia.regionMapa.latitude,
+            lng: ubicacion?.lng ?? provincia.regionMapa.longitude,
+          }}
+          anclaCosta={
+            provincia.regionCosta
+              ? { lat: provincia.regionCosta.latitude, lng: provincia.regionCosta.longitude }
+              : null
+          }
+          onExplorarMapa={() => {
+            const parent = navigation.getParent?.();
+            if (parent?.navigate) {
+              parent.navigate("Mapa", { screen: "ZonasLibresMain" });
+              return;
+            }
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setAbierto(false);
+          }}
+          onAbrir={(r) => {
+            const modoRec = "modo" in r ? r.modo : null;
+            if (modoRec) void setModo(modoRec);
+            const fuente =
+              r.candidato.tipo === "favorito" || r.candidato.zoneId ? "zona" : "mapa";
+            void fijarPunto({
+              lat: r.candidato.lat,
+              lng: r.candidato.lng,
+              fuente,
+              etiqueta: r.candidato.nombre,
+            });
+            const zid = r.candidato.zoneId;
+            const zonaConocida =
+              !!zid && (provincia.zones as { id: string }[]).some((z) => z.id === zid);
+            if (zonaConocida) {
+              navigation.navigate("ZoneDetail", { zoneId: zid });
+              return;
+            }
+            irAMapaCentrar(navigation, {
+              lat: r.candidato.lat,
+              lng: r.candidato.lng,
+              nombre: r.candidato.nombre,
+            });
+          }}
+        />
+      </ApartadoPlegable>
+
+      {tieneSitios ? (
+        <ApartadoPlegable
+          interno
+          orden="D"
+          titulo="Tus sitios"
+          subCerrado={`${favoritos.length} favoritos · ${Math.min(puntos.length, 6)} puntos`}
+          subAbierto="Favoritos y puntos guardados"
+          inicialAbierto={false}
+        >
+          <View style={styles.sectionRow}>
+            <Text style={styles.sectionTitle}>Favoritos y puntos</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Capturas", {
+                  screen: "CapturasMain",
+                  params: { abrirCapturaRapida: true },
+                })
+              }
+            >
+              <Text style={styles.linkMini}>Ver todo</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8, paddingBottom: 4 }}
+          >
+            {favoritos.map((f) => (
+              <TouchableOpacity
+                key={f.zonaId}
+                style={styles.favChip}
+                onPress={() => navigation.navigate("ZoneDetail", { zoneId: f.zonaId })}
+              >
+                <Text style={styles.favChipStar}>★</Text>
+                <Text style={styles.favChipTxt} numberOfLines={2}>
+                  {f.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+            {puntos.slice(0, 6).map((p) => (
+              <TouchableOpacity
+                key={p.id}
+                style={styles.puntoChip}
+                onPress={() =>
+                  irAMapaCentrar(navigation, {
+                    lat: p.lat,
+                    lng: p.lng,
+                    nombre: p.nombre,
+                  })
+                }
+              >
+                <Text style={styles.favChipStar}>●</Text>
+                <Text style={styles.favChipTxt} numberOfLines={2}>
+                  {p.nombre}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </ApartadoPlegable>
+      ) : null}
+
+      <ApartadoPlegable
+        interno
+        orden="E"
+        titulo="Para salir hoy"
+        subCerrado="Campo: solunar, radar, ID y más"
+        subAbierto="Herramientas de campo"
+        inicialAbierto={false}
+      >
+        <PanelCampoHoy navigation={navigation} />
+      </ApartadoPlegable>
+    </ApartadoPlegable>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    marginHorizontal: 8,
-    marginTop: 8,
-    marginBottom: 16,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    overflow: "hidden",
-    ...SHADOW_SOFT,
-  },
-  cabecera: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  titulo: {
-    fontSize: 15,
-    fontWeight: "800",
-    color: COLORS.textPrimary,
-  },
-  sub: {
-    marginTop: 2,
-    fontSize: 12.5,
-    color: COLORS.textSecondary,
-    fontWeight: "600",
-  },
-  chevron: { fontSize: 14, color: COLORS.textMuted, fontWeight: "800", marginLeft: 8 },
-  cuerpo: {
-    paddingHorizontal: SPACING.sm,
-    paddingBottom: SPACING.md,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingTop: SPACING.sm,
-  },
-  bloqueSitios: { marginBottom: 12 },
-  bloqueTitulo: {
-    fontSize: 13,
-    fontWeight: "800",
-    color: COLORS.textSecondary,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    marginBottom: SPACING.sm,
+  wrapSinMargen: {
+    marginHorizontal: SPACING.sm,
   },
   sectionRow: {
     flexDirection: "row",
@@ -567,7 +553,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: SPACING.sm,
   },
-  sectionTitle: { ...TYPE.displayTitle, fontSize: 18, color: COLORS.textPrimary },
+  sectionTitle: { ...TYPE.displayTitle, fontSize: 16, color: COLORS.textPrimary },
   sectionMeta: { fontSize: 11, color: COLORS.textMuted, fontWeight: "600" },
   linkMini: { fontSize: 12, fontWeight: "700", color: COLORS.water },
   saihChip: {
@@ -613,6 +599,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     ...SHADOW_SOFT,
   },
-  favChipStar: { fontSize: 12, marginBottom: 4 },
-  favChipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary },
+  favChipStar: { color: COLORS.goldText, fontWeight: "800", marginBottom: 4 },
+  favChipTxt: { fontSize: 12, fontWeight: "700", color: COLORS.textPrimary, lineHeight: 16 },
 });

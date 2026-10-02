@@ -42,8 +42,11 @@ if (!home.includes("atajosPunto") || !home.includes("irAConsejos")) {
 if (!home.includes("herramientasKicker") || !home.includes('navigate("License")') || !home.includes('navigate("Aparejos"')) {
   fail("Inicio debe exponer herramientas Aparejos/Licencia sin depender del punto");
 }
-if (!home.includes("pulsoCard") || !home.includes("pulsoRow") || !home.includes("Pulso del día")) {
-  fail("Pulso meteo debe vivir en Inicio (pulsoCard / Pulso del día)");
+if (!home.includes("pulsoRow") || !home.includes("Pulso del día")) {
+  fail("Pulso meteo debe vivir en Inicio (pulsoRow / Pulso del día)");
+}
+if (!home.includes("ApartadoPlegable") || !home.includes("orden={3}")) {
+  fail("Pulso del día debe ser apartado plegable numerado");
 }
 if (!home.includes("<TarjetaPuntoHoy") || !home.includes("<PanelExplorarSitios")) {
   fail("Inicio debe montar TarjetaPuntoHoy y PanelExplorarSitios (contenido completo)");

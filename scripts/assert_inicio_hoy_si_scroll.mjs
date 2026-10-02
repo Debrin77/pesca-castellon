@@ -32,13 +32,13 @@ for (const needle of [
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
 }
 
-const iTitulo = home.indexOf("bloqueTitulo}>Más de hoy");
-const ventana = home.slice(Math.max(0, iTitulo - 1200), iTitulo + 40);
+const iTitulo = home.indexOf('titulo="Más de hoy"');
+const ventana = home.slice(Math.max(0, iTitulo - 800), iTitulo + 200);
 if (iTitulo < 0 || !ventana.includes("ref={tramoAnchorRef}")) {
   fail("El ancla del detalle debe envolver el bloque (ref={tramoAnchorRef})");
 }
-if (iTitulo < 0 || !ventana.includes("bloqueCabecera")) {
-  fail("Más de hoy debe ser cabecera desplegable (bloqueCabecera)");
+if (iTitulo < 0 || !ventana.includes("ApartadoPlegable")) {
+  fail("Más de hoy debe ser apartado desplegable (ApartadoPlegable)");
 }
 
 const iSalgo =
