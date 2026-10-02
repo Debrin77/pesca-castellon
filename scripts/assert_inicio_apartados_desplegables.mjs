@@ -44,7 +44,7 @@ if (/orden="[A-E]"/.test(explorar) || /orden=\{orden\}/.test(explorar)) {
   fail("PanelExplorarSitios no debe numerar bloques (A–E / orden prop)");
 }
 
-for (const n of ["subCerrado", "accessibilityState={{ expanded: abierto }}", "interno"]) {
+for (const n of ["subCerrado", "accessibilityState={{ expanded: abierto }}", "interno", "chevronWrap"]) {
   if (!apartado.includes(n)) fail(`ApartadoPlegable sin ${n}`);
 }
 
