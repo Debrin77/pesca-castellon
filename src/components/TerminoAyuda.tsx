@@ -13,6 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { terminoGlosario } from "../data/glosario";
 import { primeraFotoGuia } from "../data/consejosMedia";
+import { irAConsejos } from "../navigation/irATab";
 import { COLORS, RADIUS, SHADOW, SPACING } from "../theme";
 
 type Props = {
@@ -41,7 +42,7 @@ export default function TerminoAyuda({
   const irFicha = () => {
     setAbierto(false);
     if (!t.consejoId) return;
-    navigation.navigate("Consejos", {
+    irAConsejos(navigation, {
       consejoId: t.consejoId,
       categoria: "vocabulario",
     });

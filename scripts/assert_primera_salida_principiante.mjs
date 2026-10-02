@@ -63,7 +63,8 @@ must("src/screens/HomeScreen.tsx", [
   "PrimeraSalida",
   "pedirGpsConSheet",
   "primeraSalidaHecha",
-  "Aprende en Consejos",
+  "mostrarAprende",
+  "irAConsejos",
 ]);
 
 must("src/screens/ConsejosScreen.tsx", [

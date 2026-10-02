@@ -38,7 +38,8 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
   color / icono), import KML/KMZ, «Llévame» y compartir enlace del punto.
   Puedes **enlazar una captura a un sitio guardado** (misma orilla, otra fecha)
   desde Capturas → Sitio guardado o desde Puntos → «Añadir captura».
-- **Inicio**: hero una composición (marca · veredicto · ¿Pinta? · Salgo).
+- **Hoy**: hero una composición (marca · veredicto · ¿Pinta? · Salgo). Sin batiburrillo:
+  el pulso detallado vive en Previsión; sitios e ideas en Mapa; aprendizaje en Guía.
 - **Bloqueo con PIN** (4–8 dígitos), configurable en Ajustes, con teclado numérico
   a pantalla completa al abrir o al volver de segundo plano.
 - **Biometría** (Face ID / huella) opcional una vez activo el PIN.
@@ -98,13 +99,15 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 
 ## Pestañas
 
-1. **Inicio** — veredicto, clima, SAIH, atajos a salir / primera salida.
-2. **Mapa** — zonas, consulta al tocar, radar, puntos personales.
-3. **Especies** — catálogo + mapa por tramo/costa.
-4. **Previsión** — 7 días + solunar/marea.
+Barra inferior tipo tienda (**5**, sin scroll en móviles normales):
+
+1. **Hoy** — decisión del día: veredicto legal, ¿pinta?, modalidad y «Salgo a pescar».
+2. **Mapa** — zonas, consulta al tocar, ideas/sitios, radar, puntos personales.
+3. **Especies** — catálogo + mapa por tramo/costa (atajos a Consejos / Aparejos / Licencia).
+4. **Previsión** — 7 días, índice scrubable, solunar/marea.
 5. **Capturas** — favoritos, puntos, diario, GPX.
 
-(Aparejos, consejos, licencia y ajustes viven en stacks anidados.)
+**Consejos**, **Aparejos**, **Licencia** y **Ajustes** viven en stacks anidados (no en la barra), para no cansar el primer uso. En Hoy hay un desplegable «Detalle y avisos» y una fila Guía al final.
 
 ## Web / GitHub Pages
 

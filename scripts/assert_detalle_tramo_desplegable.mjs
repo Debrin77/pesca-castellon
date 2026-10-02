@@ -1,5 +1,5 @@
 /**
- * Assert: «Detalle del tramo» en Inicio es un bloque desplegable (acordeón).
+ * Assert: «Detalle y avisos» en Hoy es un bloque desplegable (acordeón).
  */
 import fs from "fs";
 import path from "path";
@@ -15,33 +15,31 @@ function fail(msg) {
 
 const home = fs.readFileSync(path.join(root, "src/screens/HomeScreen.tsx"), "utf8");
 
-const iTitulo = home.indexOf("Detalle del tramo");
-if (iTitulo < 0) fail("HomeScreen sin Detalle del tramo");
+const iTitulo = home.indexOf("Detalle y avisos");
+if (iTitulo < 0) fail("HomeScreen sin Detalle y avisos");
 
-// Cabecera tappable con estado expanded
 const bloque = home.slice(
-  home.indexOf("{/* Detalle del tramo"),
-  home.indexOf("<ListaAnimada index={2}>")
+  home.indexOf("{/* Un solo desplegable"),
+  home.indexOf("styles.guiaRow") > 0 ? home.indexOf("<View style={styles.guiaRow}") : home.length
 );
 for (const n of [
-  "toggleDetalleTramo",
-  "accessibilityState={{ expanded: detalleTramo }}",
-  "Desplegar detalle del tramo",
+  "accessibilityState={{ expanded: detalleTramo || antesAbierto }}",
+  "Desplegar detalle del punto y avisos",
   "bloqueCabecera",
   "bloqueSub",
   "toca para ver",
-  "detalleTramo ? \"▲\" : \"▼\"",
-  "detalleTramo ? (",
+  "TemporadaBanner",
+  "PanelAvisosSeguridad",
+  "LicenseBanner",
 ]) {
-  if (!bloque.includes(n) && !home.includes(n)) fail(`Detalle del tramo sin ${n}`);
+  if (!bloque.includes(n) && !home.includes(n)) fail(`Detalle y avisos sin ${n}`);
 }
 
-// El card solo se monta al desplegar (no queda siempre el compacto a la vista)
-if (!bloque.includes("detalleTramo ? (")) {
-  fail("Detalle del tramo debe condicionar el contenido a detalleTramo");
+if (!home.includes("detalleTramo || antesAbierto")) {
+  fail("Detalle y avisos debe condicionar el contenido al desplegable");
 }
-if (!bloque.includes("expandido={detalleTramo}")) {
-  fail("ConsultaPescaCard debe seguir ligado a detalleTramo");
+if (!bloque.includes("ConsultaPescaCard") && !home.includes("ConsultaPescaCard")) {
+  fail("Detalle y avisos debe montar ConsultaPescaCard al desplegar");
 }
 
 const pkg = fs.readFileSync(path.join(root, "package.json"), "utf8");

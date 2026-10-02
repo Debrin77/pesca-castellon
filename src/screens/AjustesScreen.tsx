@@ -44,7 +44,7 @@ function esPinValido(v: string): boolean {
   return /^\d{4,8}$/.test(v.trim());
 }
 
-export default function AjustesScreen() {
+export default function AjustesScreen({ navigation }: { navigation: any }) {
   const { config, biometria, refrescar, marcarDesbloqueado } = useAcceso();
   const { provincia: provinciaCtx, cambiarProvincia } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -179,6 +179,29 @@ export default function AjustesScreen() {
       <PanelOfflineMapa />
       <CalendarioConcursos provinciaId={provincia.id} limite={8} />
       {!provincia.continentalOnly ? <PescaRecBanner /> : null}
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Guía</Text>
+        <Text style={styles.rowSub}>
+          Aprendizaje y trámites fuera de la barra principal: no saturan el primer uso.
+        </Text>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigation.navigate("Consejos")}
+          accessibilityRole="button"
+          accessibilityLabel="Abrir consejos y montajes"
+        >
+          <Text style={styles.btnTxt}>Consejos y montajes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.btnGhost, { marginTop: 8 }]}
+          onPress={() => navigation.navigate("License")}
+          accessibilityRole="button"
+          accessibilityLabel="Licencia de pesca"
+        >
+          <Text style={styles.btnGhostTxt}>Licencia de pesca</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Acceso a la app</Text>

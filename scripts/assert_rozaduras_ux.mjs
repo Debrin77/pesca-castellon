@@ -23,8 +23,8 @@ for (const n of [
   "continuarSesion",
   "reanudarSesion",
   "Continuar ·",
-  "explorarChip",
-  "Ideas y sitios",
+  "guiaChip",
+  "irAConsejos",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
@@ -36,8 +36,11 @@ if (!home.includes('navigate("License")')) {
 }
 
 const app = read("App.tsx");
-if (!app.includes('name="License"') || !/ConsejosStack[\s\S]*License/.test(app)) {
-  fail("ConsejosStack debe incluir License");
+if (!app.includes('name="License"') || !/HomeStack[\s\S]*License/.test(app)) {
+  fail("HomeStack debe incluir License");
+}
+if (!app.includes('HomeStack.Screen name="Consejos"')) {
+  fail("HomeStack debe incluir Consejos (ya no es tab)");
 }
 
 const consejos = read("src/screens/ConsejosScreen.tsx");

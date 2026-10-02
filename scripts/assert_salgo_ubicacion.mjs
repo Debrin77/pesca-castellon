@@ -65,8 +65,11 @@ if (!mapa.includes("pickConfirmar && marcador")) {
 }
 
 const home = read("src/screens/HomeScreen.tsx");
-if (!home.includes("consultarToqueMapa")) {
-  fail("Inicio debe consultar con consultarToqueMapa (costa + continental)");
+if (
+  !home.includes("consultarToqueMapa") &&
+  !(home.includes("consultarCosta") && home.includes("consultarPuntoPesca"))
+) {
+  fail("Hoy debe consultar costa/continental (consultarToqueMapa o Costa+PuntoPesca)");
 }
 
 const pkg = read("package.json");

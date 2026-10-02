@@ -71,7 +71,6 @@ if (!selector.includes("¿Seguir en") || !selector.includes("modoRecordado")) {
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
   "SelectorModoPesca",
-  "TarjetaPuntoHoy",
   "puntoExplicito",
   "Pulsa el mapa, GPS o una recomendación",
   "useModoPesca",
@@ -79,16 +78,16 @@ for (const n of [
   "modoRecordado",
   "modoListo",
   "textoPedirModo",
-  "pulsoCard",
+  "pintaHeroLine",
+  "SiguientePasoCard",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
-if (!home.includes("modoElegido && consultaViva")) {
-  fail("Home debe mostrar «Tu punto de hoy» solo tras elegir modalidad");
+if (home.includes("<TarjetaPuntoHoy")) {
+  fail("Hoy no debe montar TarjetaPuntoHoy (duplica veredicto del hero)");
 }
-// Pulso visible sin modalidad (clima); el gate legal sigue en consultaViva / tarjeta.
-if (home.includes("{modoElegido ? (\n          <View style={styles.pulsoCard}")) {
-  fail("Pulso del día debe verse también sin modalidad elegida");
+if (home.includes("Pulso del día")) {
+  fail("Pulso detallado no debe vivir en Hoy");
 }
 if (!home.includes("modoElegido ? modo : null")) {
   fail("Home selector debe pasar null si aún no hay modalidad");
