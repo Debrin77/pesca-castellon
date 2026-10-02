@@ -169,7 +169,7 @@ if (!pkg.includes("assert_montajes_especie.mjs")) {
 const homeChip = read("src/screens/HomeScreen.tsx");
 const consejosChip = read("src/screens/ConsejosScreen.tsx");
 if (!(homeChip.includes('navigate("Consejos"') || homeChip.includes("irAConsejos("))) {
-  fail("Inicio debe enlazar Consejos (montajes viven en tab Consejos)");
+  fail("Hoy debe enlazar Consejos (montajes en Guía / stack anidado)");
 }
 if (!consejosChip.includes("montajes") && !consejosChip.includes("Montajes")) {
   fail("Consejos debe exponer categoría montajes");

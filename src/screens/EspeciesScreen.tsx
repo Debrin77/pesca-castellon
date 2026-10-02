@@ -137,6 +137,15 @@ export default function EspeciesScreen({ navigation, route }: Props) {
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
           <TouchableOpacity
+            onPress={() => irAConsejos(navigation)}
+            accessibilityRole="button"
+            accessibilityLabel="Consejos y montajes"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+          >
+            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Consejos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => navigation.navigate("Aparejos")}
             accessibilityRole="button"
             accessibilityLabel="Aparejos"

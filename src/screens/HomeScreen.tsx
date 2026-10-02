@@ -13,7 +13,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
-import { obtenerClimaActual, descripcionTiempo, detectarAlertas, ClimaActual } from "../services/weatherService";
+import { obtenerClimaActual, ClimaActual } from "../services/weatherService";
 import { calcularIndicePesca, IndicePescaDia, CATEGORIA_INFO } from "../services/fishingIndexService";
 import { solicitarPermisoNotificaciones, programarAlertasPesca } from "../services/notificationService";
 import GlassCard from "../components/GlassCard";
@@ -27,8 +27,7 @@ import TemporadaBanner from "../components/TemporadaBanner";
 import PanelAvisosSeguridad from "../components/PanelAvisosSeguridad";
 import BannerOffline from "../components/BannerOffline";
 import PulsePress from "../components/PulsePress";
-import ListaAnimada from "../components/ListaAnimada";
-import { consultarCosta, consultarToqueMapa } from "../services/consultaCostaService";
+import { consultarCosta } from "../services/consultaCostaService";
 import { consultarEmbarcacion } from "../services/consultaEmbarcacionService";
 import { colorSemaforo, consultarPuntoPesca } from "../services/consultaPescaService";
 import {
@@ -47,7 +46,6 @@ import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
 import SelectorModoPesca from "../components/SelectorModoPesca";
 import BannerKayakDestacado from "../components/BannerKayakDestacado";
-import TarjetaPuntoHoy from "../components/TarjetaPuntoHoy";
 import {
   etiquetaModoLarga,
   etiquetaModo,
@@ -381,7 +379,6 @@ export default function HomeScreen({ navigation }: Props) {
     if (okVivo()) setCargando(false);
   }
 
-  const tiempo = clima ? descripcionTiempo(clima.codigoTiempo) : null;
   const catInfo = indiceHoy ? CATEGORIA_INFO[indiceHoy.categoria] : null;
   /**
    * Solo veredicto legal si eligió punto en esta sesión (GPS/mapa/zona/recomendación).
@@ -445,15 +442,6 @@ export default function HomeScreen({ navigation }: Props) {
     consultaViva.veredicto === "fuera_catalogo" &&
     modoEsMar(modo);
   const mensajeOffline = mensajeOfflineCorto(online, cache);
-  const alertasClima =
-    clima
-      ? detectarAlertas({
-          codigoTiempo: clima.codigoTiempo,
-          vientoMaxKmh: clima.velocidadVientoKmh,
-          rafagaMaxKmh: clima.rafagaKmh,
-          precipitacionMm: clima.precipitacionMm,
-        })
-      : [];
   const etiquetaClima = (() => {
     if (punto?.fuente === "gps") return "Tu ubicación";
     if (punto?.poblacion) {
@@ -493,14 +481,10 @@ export default function HomeScreen({ navigation }: Props) {
   function abrirVeredictoRapido() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setDetalleTramo(true);
+    setAntesAbierto(true);
     // Doble pase: tras pintar el expandido y tras LayoutAnimation (web/nativo).
     requestAnimationFrame(() => scrollADetalleTramo(true));
     setTimeout(() => scrollADetalleTramo(true), Platform.OS === "web" ? 90 : 220);
-  }
-
-  function toggleDetalleTramo() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setDetalleTramo((v) => !v);
   }
 
   async function pedirGpsConSheet(): Promise<boolean> {
@@ -691,10 +675,18 @@ export default function HomeScreen({ navigation }: Props) {
         ) : null}
 
         {indiceHoy && catInfo ? (
-          <Text style={styles.pintaHeroLine} numberOfLines={1}>
-            ¿Pinta? · {indiceHoy.puntuacion} · {catInfo.texto}
-            {indiceHoy.mejorFranjaInicio ? ` · ${indiceHoy.mejorFranjaInicio}` : ""}
-          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Previsión")}
+            accessibilityRole="button"
+            accessibilityLabel={`${EJE_METEO.pregunta} ${indiceHoy.puntuacion}, ${catInfo.texto}. ${EJE_METEO.indexLabel}. Abrir Previsión`}
+            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+          >
+            <Text style={styles.pintaHeroLine} numberOfLines={1}>
+              ¿Pinta? · {indiceHoy.puntuacion} · {catInfo.texto}
+              {indiceHoy.mejorFranjaInicio ? ` · ${indiceHoy.mejorFranjaInicio}` : ""}
+              {"  ›"}
+            </Text>
+          </TouchableOpacity>
         ) : null}
 
         <PulsePress
@@ -790,39 +782,6 @@ export default function HomeScreen({ navigation }: Props) {
               <Text style={styles.gpsChipClaroTxt}>Usar mi ubicación</Text>
             </TouchableOpacity>
           ) : null}
-          {modoElegido && consultaViva ? (
-            <View style={styles.atajosPunto}>
-              <TouchableOpacity
-                style={styles.atajoChipClaro}
-                onPress={() =>
-                  navigation.navigate("Aparejos", {
-                    ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
-                    ambitoModo: modo,
-                  })
-                }
-                accessibilityRole="button"
-                accessibilityLabel="Ver aparejos"
-              >
-                <Text style={styles.atajoChipClaroTxt}>Aparejos</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.atajoChipClaro}
-                onPress={() => irAConsejos(navigation, { categoria: "montajes" })}
-                accessibilityRole="button"
-                accessibilityLabel="Ver consejos y montajes"
-              >
-                <Text style={styles.atajoChipClaroTxt}>Consejos</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.atajoChipClaro}
-                onPress={() => irAEspeciesDelPunto(navigation)}
-                accessibilityRole="button"
-                accessibilityLabel="Ver especies del punto"
-              >
-                <Text style={styles.atajoChipClaroTxt}>Especies</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
         </GlassCard>
 
         {avisoSesionVisible ? (
@@ -893,212 +852,102 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         )}
 
-        {modoElegido && consultaViva ? (
-          <TarjetaPuntoHoy
-            consulta={consultaViva}
-            indice={indiceHoy}
-            etiquetaPunto={etiquetaClima}
-            onPuedo={abrirVeredictoRapido}
-            onPinta={() => navigation.navigate("Previsión")}
-            onEquipo={() =>
-              navigation.navigate("Aparejos", {
-                ambitoEmbarcacion: modo === "barco" || modo === "kayak_mar",
-                ambitoModo: modo,
-              })
+        <SiguientePasoCard
+          provinciaId={provincia.id}
+          checklistTextos={provincia.checklistAntesDePescar}
+          tienePunto={puntoExplicito && !!consultaViva}
+          tieneSitios={favoritos.length > 0 || puntos.length > 0}
+          invitarPrimeraSalida={mostrarAprende}
+          etiquetaPunto={etiquetaClima}
+          veredictoTexto={hoyEtiqueta?.texto ?? null}
+          veredictoSub={hoyEtiqueta?.sub ?? null}
+          tituloTramo={consultaViva?.titulo ?? null}
+          lat={ubicacion?.lat}
+          lng={ubicacion?.lng}
+          onAccion={(accion: SiguientePasoAccion) => {
+            if (accion.tipo === "mapa") {
+              navigation.navigate("Mapa");
+              return;
             }
-            onEspecies={() => irAEspeciesDelPunto(navigation)}
-          />
-        ) : null}
-
-        <GlassCard style={styles.pulsoCard} accessibilityLabel="Pulso del día">
-          <Text style={styles.pulsoCardTitle}>Pulso del día</Text>
-          <Text style={styles.pulsoCardSub}>
-            {modoElegido
-              ? "Orientativo · el permiso está arriba en el veredicto"
-              : "Clima e índice · elige modalidad arriba para el veredicto legal"}
-          </Text>
-          {indiceHoy && catInfo ? (
-            <View style={styles.pulsoRow}>
-              <View
-                style={[
-                  styles.pulsoIndice,
-                  { backgroundColor: catInfo.fondo, borderColor: catInfo.color },
-                ]}
-                accessibilityLabel={`Condiciones ${indiceHoy.puntuacion} de 100, ${catInfo.texto}`}
-              >
-                <Text style={[styles.pulsoIndexLabel, { color: catInfo.color }]}>
-                  {EJE_METEO.indexLabel}
-                </Text>
-                <View style={[styles.pulsoScoreBadge, { backgroundColor: catInfo.color }]}>
-                  <Text style={styles.pulsoIndexScore}>{indiceHoy.puntuacion}</Text>
-                </View>
-                <View style={[styles.indexCatPill, { backgroundColor: "rgba(255,255,255,0.72)" }]}>
-                  <Text style={[styles.indexCategoria, { color: catInfo.color }]}>
-                    {catInfo.icono} {catInfo.texto}
-                    <Text style={[styles.indexMoon, { color: catInfo.color }]}>
-                      {" "}
-                      · {indiceHoy.iconoLuna}
-                    </Text>
-                  </Text>
-                </View>
-                {indiceHoy.mejorFranjaInicio && indiceHoy.mejorFranjaFin ? (
-                  <Text style={[styles.pulsoFranja, { color: catInfo.color }]} numberOfLines={1}>
-                    Mejor franja ~ {indiceHoy.mejorFranjaInicio}–{indiceHoy.mejorFranjaFin}
-                  </Text>
-                ) : null}
-              </View>
-              <View style={styles.pulsoClimaCard}>
-                {tiempo && clima ? (
-                  <>
-                    <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
-                    <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
-                    <Text style={styles.pulsoWeatherDesc} numberOfLines={2}>
-                      {tiempo.texto}
-                    </Text>
-                  </>
-                ) : (
-                  <Text style={styles.pulsoFallback}>Sin clima</Text>
-                )}
-              </View>
-            </View>
-          ) : clima && tiempo ? (
-            <View style={styles.pulsoRow}>
-              <View style={styles.pulsoIndice}>
-                <Text style={styles.pulsoFallback}>Sin índice aún</Text>
-              </View>
-              <View style={styles.pulsoClimaCard}>
-                <Text style={styles.pulsoWeatherIcon}>{tiempo.icono}</Text>
-                <Text style={styles.pulsoWeatherTemp}>{Math.round(clima.temperatura)}°</Text>
-              </View>
-            </View>
-          ) : (
-            <Text style={styles.pulsoFallback}>
-              Activa la ubicación o toca un tramo en el mapa
-            </Text>
-          )}
-          {indiceHoy?.horasIndice?.length ? (
-            <TouchableOpacity
-              style={styles.pulsoVerDia}
-              onPress={() => navigation.navigate("Previsión")}
-              accessibilityRole="button"
-              accessibilityLabel="Ver el día completo en Previsión"
-            >
-              <Text style={styles.pulsoVerDiaTxt}>Ver el día en Previsión ›</Text>
-            </TouchableOpacity>
-          ) : null}
-          {clima ? (
-            <Text style={styles.pulsoMeta} numberOfLines={1}>
-              Viento {Math.round(clima.velocidadVientoKmh)} km/h
-              {clima.rafagaKmh != null ? ` · ráfaga ${Math.round(clima.rafagaKmh)}` : ""}
-              {clima.precipitacionMm != null && clima.precipitacionMm > 0
-                ? ` · ${clima.precipitacionMm.toFixed(1)} mm`
-                : ""}
-            </Text>
-          ) : null}
-          {alertasClima.length > 0 ? (
-            <View style={styles.alertRow}>
-              {alertasClima.slice(0, 3).map((alerta, idx) => (
-                <View
-                  key={idx}
-                  style={[styles.weatherAlert, alerta.nivel === "peligro" && styles.weatherAlertDanger]}
-                >
-                  <Text style={styles.weatherAlertText}>
-                    {alerta.icono} {alerta.texto}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          ) : null}
-        </GlassCard>
-
-        <View>
-                    <SiguientePasoCard
-            provinciaId={provincia.id}
-            checklistTextos={provincia.checklistAntesDePescar}
-            tienePunto={puntoExplicito && !!consultaViva}
-            tieneSitios={favoritos.length > 0 || puntos.length > 0}
-            invitarPrimeraSalida={mostrarAprende}
-            etiquetaPunto={etiquetaClima}
-            veredictoTexto={hoyEtiqueta?.texto ?? null}
-            veredictoSub={hoyEtiqueta?.sub ?? null}
-            tituloTramo={consultaViva?.titulo ?? null}
-            lat={ubicacion?.lat}
-            lng={ubicacion?.lng}
-            onAccion={(accion: SiguientePasoAccion) => {
-              if (accion.tipo === "mapa") {
-                navigation.navigate("Mapa");
+            if (accion.tipo === "primera_salida") {
+              navigation.navigate("PrimeraSalida");
+              return;
+            }
+            if (accion.tipo === "captura") {
+              navigation.navigate("Capturas", {
+                screen: "CapturasMain",
+                params: { abrirCapturaRapida: true },
+              });
+              return;
+            }
+            if (accion.tipo === "salgo") {
+              if (esModoEmbarcado(modo)) {
+                navigation.navigate("SalgoEnBarco");
                 return;
               }
-              if (accion.tipo === "primera_salida") {
-                navigation.navigate("PrimeraSalida");
-                return;
-              }
-              if (accion.tipo === "captura") {
-                navigation.navigate("Capturas", {
-                  screen: "CapturasMain",
-                  params: { abrirCapturaRapida: true },
-                });
-                return;
-              }
-              if (accion.tipo === "salgo") {
-                if (esModoEmbarcado(modo)) {
-                  navigation.navigate("SalgoEnBarco");
-                  return;
-                }
-                navigation.navigate("SalgoAPescar", {
-                  irAChecklist: !!accion.irAChecklist,
-                });
-              }
-            }}
-          />
-        </View>
+              navigation.navigate("SalgoAPescar", {
+                irAChecklist: !!accion.irAChecklist,
+              });
+            }
+          }}
+        />
 
         <BannerLicenciaPendiente onAbrirLicencias={() => navigation.navigate("License")} />
 
-        {/* Detalle del tramo justo tras el CTA: el chip HOY SÍ cae aquí sin saltar a medias */}
+        {/* Un solo desplegable: detalle legal + avisos (no duplicar Previsión ni Mapa) */}
         <View
           ref={tramoAnchorRef}
           collapsable={false}
           onLayout={(e) => {
-            // Hijo directo de body → y relativo al body (no a ListaAnimada ≈ 0).
             tramoYRef.current =
               heroHRef.current + e.nativeEvent.layout.y - SPACING.md;
           }}
         >
-          <ListaAnimada index={1}>
-            <View style={styles.bloque}>
-              <TouchableOpacity
-                onPress={toggleDetalleTramo}
-                accessibilityRole="button"
-                accessibilityState={{ expanded: detalleTramo }}
-                accessibilityLabel={
-                  detalleTramo
-                    ? "Ocultar detalle del tramo"
-                    : "Desplegar detalle del tramo"
-                }
-                style={styles.bloqueCabecera}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.bloqueTitulo}>Detalle del tramo</Text>
-                  <Text style={styles.bloqueSub}>
-                    {consultaViva
-                      ? detalleTramo
-                        ? "Normativa y fichas del punto"
-                        : `${consultaViva.titulo} · toca para ver`
-                      : "Sin punto aún · usa Salgo a pescar o el mapa"}
-                  </Text>
-                </View>
-                <Text style={styles.chevron}>{detalleTramo ? "▲" : "▼"}</Text>
-              </TouchableOpacity>
-              {detalleTramo ? (
-                consultaViva ? (
+          <View style={styles.bloque}>
+            <TouchableOpacity
+              onPress={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                const next = !(detalleTramo || antesAbierto);
+                setDetalleTramo(next);
+                setAntesAbierto(next);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: detalleTramo || antesAbierto }}
+              accessibilityLabel={
+                detalleTramo || antesAbierto
+                  ? "Ocultar detalle del punto y avisos"
+                  : "Desplegar detalle del punto y avisos"
+              }
+              style={styles.bloqueCabecera}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={styles.bloqueTitulo}>Detalle y avisos</Text>
+                <Text style={styles.bloqueSub}>
+                  {consultaViva
+                    ? detalleTramo || antesAbierto
+                      ? "Normativa, temporada y seguridad"
+                      : `${consultaViva.titulo} · toca para ver`
+                    : avisosSeguridad.length > 0
+                      ? `${avisosSeguridad.length} aviso${avisosSeguridad.length === 1 ? "" : "s"} · toca para ver`
+                      : "Normativa del punto, temporada y seguridad"}
+                </Text>
+              </View>
+              <Text style={styles.chevron}>{detalleTramo || antesAbierto ? "▲" : "▼"}</Text>
+            </TouchableOpacity>
+            {detalleTramo || antesAbierto ? (
+              <>
+                {consultaViva ? (
                   <View style={{ marginBottom: 12 }}>
                     <ConsultaPescaCard
                       consulta={consultaViva}
                       compacto
                       ocultarVeredictoCompacto
                       expandido={detalleTramo}
-                      onToggleDetalle={toggleDetalleTramo}
+                      onToggleDetalle={() => {
+                        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                        setDetalleTramo(false);
+                        setAntesAbierto(false);
+                      }}
                       onFicha={
                         consultaViva.tramo?.fichaId
                           ? () =>
@@ -1110,7 +959,10 @@ export default function HomeScreen({ navigation }: Props) {
                       onEspecies={() => irAEspeciesDelPunto(navigation)}
                       onAparejos={(id) => navigation.navigate("Aparejos", { especieId: id })}
                       onMontaje={(id) => {
-                        const consejoId = consejoIdMontajeEspecie(id, { provinciaId: getProvinciaActiva()?.id, soloContinental: !!getProvinciaActiva()?.continentalOnly });
+                        const consejoId = consejoIdMontajeEspecie(id, {
+                          provinciaId: getProvinciaActiva()?.id,
+                          soloContinental: !!getProvinciaActiva()?.continentalOnly,
+                        });
                         if (!consejoId) return;
                         irAConsejos(navigation, { consejoId, categoria: "montajes" });
                       }}
@@ -1120,80 +972,33 @@ export default function HomeScreen({ navigation }: Props) {
                   <Text style={styles.sinConsulta}>
                     Sin punto aún. Usa «Salgo a pescar» o el mapa.
                   </Text>
-                )
-              ) : null}
-
-              <PulsePress onPress={() => navigation.navigate("Mapa")} style={styles.mapaCta}>
-                <View style={styles.mapaCtaRow}>
-                  <View style={styles.mapaCtaGlyph}>
-                    <Text style={styles.mapaCtaIcon}>◉</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.mapaCtaTitle}>Abrir mapa</Text>
-                    <Text style={styles.mapaCtaSub}>
-                      {provincia.continentalOnly
-                        ? "Cotos, vedados y consulta al pulsar"
-                        : "Cotos, vedados, costa y consulta al pulsar"}
-                    </Text>
-                  </View>
-                  <Text style={styles.chevron}>›</Text>
-                </View>
-              </PulsePress>
-            </View>
-          </ListaAnimada>
-        </View>
-
-        {/* Seguridad compacta */}
-        <ListaAnimada index={2}>
-          <View style={styles.bloque}>
-            <TouchableOpacity
-              onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                setAntesAbierto((v) => !v);
-              }}
-              accessibilityRole="button"
-              accessibilityState={{ expanded: antesAbierto }}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text style={styles.bloqueTitulo}>Antes de salir</Text>
-                <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: -2, marginBottom: 4 }}>
-                  {avisosCargando
-                    ? "Consultando avisos…"
-                    : avisosSeguridad.length === 0
-                      ? "Sin avisos activos · licencia y temporada"
-                      : `${avisosSeguridad.length} aviso${avisosSeguridad.length === 1 ? "" : "s"} · toca para ver`}
-                </Text>
-              </View>
-              <Text style={styles.chevron}>{antesAbierto ? "▲" : "▼"}</Text>
-            </TouchableOpacity>
-            {antesAbierto ? (
-              <>
-            <TemporadaBanner />
-            <PanelAvisosSeguridad
-              avisos={avisosSeguridad}
-              cargando={avisosCargando}
-              error={avisosError}
-              compacto
-            />
-            <LicenseBanner onPress={() => navigation.navigate("License")} />
+                )}
+                <TemporadaBanner />
+                <PanelAvisosSeguridad
+                  avisos={avisosSeguridad}
+                  cargando={avisosCargando}
+                  error={avisosError}
+                  compacto
+                />
+                <LicenseBanner onPress={() => navigation.navigate("License")} />
               </>
             ) : null}
           </View>
-        </ListaAnimada>
+        </View>
 
-        <View style={styles.explorarRow}>
-          <TouchableOpacity
-            style={styles.explorarChip}
-            onPress={() => navigation.navigate("Mapa")}
-            accessibilityRole="button"
-            accessibilityLabel="Explorar sitios e ideas en el mapa"
-          >
-            <Text style={styles.explorarChipTxt}>Ideas y sitios en el mapa ›</Text>
-          </TouchableOpacity>
-          <View style={styles.explorarMiniRow}>
+        <View style={styles.guiaRow}>
+          <Text style={styles.guiaKicker}>Guía</Text>
+          <View style={styles.guiaChips}>
             <TouchableOpacity
-              style={styles.explorarChipSec}
+              style={styles.guiaChip}
+              onPress={() => irAConsejos(navigation)}
+              accessibilityRole="button"
+              accessibilityLabel="Consejos y montajes"
+            >
+              <Text style={styles.guiaChipTxt}>Consejos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.guiaChip}
               onPress={() =>
                 navigation.navigate("Aparejos", {
                   ambitoEmbarcacion: modoElegido && esModoEmbarcado(modo),
@@ -1201,29 +1006,19 @@ export default function HomeScreen({ navigation }: Props) {
                 })
               }
               accessibilityRole="button"
-              accessibilityLabel="Aparejos y montajes"
+              accessibilityLabel="Aparejos"
             >
-              <Text style={styles.explorarChipSecTxt}>Aparejos ›</Text>
+              <Text style={styles.guiaChipTxt}>Aparejos</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.explorarChipSec}
+              style={styles.guiaChip}
               onPress={() => navigation.navigate("License")}
               accessibilityRole="button"
               accessibilityLabel="Licencia de pesca"
             >
-              <Text style={styles.explorarChipSecTxt}>Licencia ›</Text>
+              <Text style={styles.guiaChipTxt}>Licencia</Text>
             </TouchableOpacity>
           </View>
-          {mostrarAprende ? (
-            <TouchableOpacity
-              style={styles.explorarChipSec}
-              onPress={() => navigation.navigate("Consejos")}
-              accessibilityRole="button"
-              accessibilityLabel="Aprender en Consejos"
-            >
-              <Text style={styles.explorarChipSecTxt}>Aprende en Consejos ›</Text>
-            </TouchableOpacity>
-          ) : null}
         </View>
       </View>
     </ScrollView>
@@ -1714,6 +1509,40 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
     marginBottom: SPACING.lg,
     gap: 8,
+  },
+  guiaRow: {
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.xl,
+    paddingTop: 4,
+  },
+  guiaKicker: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: COLORS.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+    marginBottom: 8,
+  },
+  guiaChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  guiaChip: {
+    minHeight: 40,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    ...SHADOW_SOFT,
+  },
+  guiaChipTxt: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: COLORS.primaryDark,
   },
   explorarChip: {
     minHeight: 46,

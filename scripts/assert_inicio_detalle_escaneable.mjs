@@ -30,7 +30,7 @@ if (!card.includes(".slice(0, 3)")) {
 }
 
 const tabs = fs.readFileSync(path.join(root, "src/components/BarraTabsScroll.tsx"), "utf8");
-if (!tabs.includes("ANCHO_ITEM = 78")) fail("BarraTabsScroll debe mantener ANCHO_ITEM = 78");
+if (!tabs.includes("ANCHO_ITEM = 72")) fail("BarraTabsScroll debe usar ANCHO_ITEM = 72 (5 tabs)");
 if (!tabs.includes("needsScroll ? (")) {
   fail("BarraTabsScroll debe mostrar la fila de flechas solo si needsScroll");
 }

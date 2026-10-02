@@ -71,8 +71,10 @@ if (!explorar.includes("PanelCampoHoy") || !mapa.includes("PanelExplorarSitios")
   console.error("FAIL PanelCampoHoy debe vivir en PanelExplorarSitios montado en Mapa");
   fallos++;
 }
-if (!home.includes("rafagaKmh") && !home.includes("rafagaMaxKmh")) {
-  console.error("FAIL HomeScreen sin ráfagas en alertas/clima");
+// Ráfagas viven en Previsión (Hoy solo muestra ¿Pinta? en el hero).
+const prevClima = fs.readFileSync(path.join(root, "src/screens/PrevisionScreen.tsx"), "utf8");
+if (!prevClima.includes("rafagaKmh") && !prevClima.includes("rafagaMaxKmh")) {
+  console.error("FAIL Previsión sin ráfagas en clima/alertas");
   fallos++;
 }
 
