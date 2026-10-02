@@ -1,6 +1,6 @@
 /**
- * Ideas y sitios: vivía en Inicio; ahora cuelga del Mapa (patrón apps de pesca).
- * Cerrado por defecto para no alargar el scroll del mapa.
+ * Ideas y sitios: recomendaciones, Quiero pescar (top 3), SAIH embalses/aforos.
+ * Abierto por defecto: el usuario no debe perder datos al reorganizar Inicio.
  */
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -82,14 +82,23 @@ function colorNivelAforo(nivel: NivelAforo): string {
 
 type Props = {
   navigation: any;
+  /** Fuerza abrir (p. ej. desde Hoy → Ideas y sitios). */
+  forzarAbrir?: boolean;
 };
 
-export default function PanelExplorarSitios({ navigation }: Props) {
+export default function PanelExplorarSitios({ navigation, forzarAbrir }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
   const { fijarPunto } = usePuntoConsulta();
   const { modo, modoElegido, disponibles, setModo } = useModoPesca();
-  const [abierto, setAbierto] = useState(false);
+  const [abierto, setAbierto] = useState(true);
+
+  useEffect(() => {
+    if (forzarAbrir) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      setAbierto(true);
+    }
+  }, [forzarAbrir]);
   const [favoritos, setFavoritos] = useState<FavoritoZona[]>([]);
   const [puntos, setPuntos] = useState<PuntoGuardado[]>([]);
   const [saihPanel, setSaihPanel] = useState<SaihChip[]>([]);
@@ -239,6 +248,98 @@ export default function PanelExplorarSitios({ navigation }: Props) {
 
       {abierto ? (
         <View style={styles.cuerpo}>
+          {/* SAIH primero: no debe quedar enterrado bajo recomendaciones */}
+          {(saihPanel.length > 0 || aforoPanel.length > 0) && (
+            <GlassCard style={styles.bloqueSitios}>
+              <Text style={styles.bloqueTitulo}>Niveles SAIH</Text>
+              {saihPanel.length > 0 && (
+                <View style={{ marginBottom: aforoPanel.length > 0 ? 12 : 0 }}>
+                  <View style={styles.sectionRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={styles.sectionTitle}>Embalses</Text>
+                      <TerminoAyuda id="saih" />
+                    </View>
+                    <Text style={styles.sectionMeta}>
+                      {metaFuentePanel(saihPanel, "en vivo")}
+                    </Text>
+                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                  >
+                    {saihPanel.map((s) => (
+                      <TouchableOpacity
+                        key={`top-${s.zoneId}`}
+                        style={styles.saihChip}
+                        onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
+                        accessibilityLabel={`${s.etiqueta}, ${
+                          s.pct != null ? `${s.pct.toFixed(0)} por ciento` : "sin dato"
+                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
+                      >
+                        <Text style={styles.saihName}>{s.etiqueta}</Text>
+                        <Text style={styles.saihPct}>
+                          {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
+                        </Text>
+                        {s.fuente === "cache" && s.fechaDato ? (
+                          <Text style={styles.saihFecha} numberOfLines={1}>
+                            {s.fechaDato}
+                          </Text>
+                        ) : null}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+              {aforoPanel.length > 0 && (
+                <View>
+                  <View style={styles.sectionRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Text style={styles.sectionTitle}>Aforos · caudal</Text>
+                      <TerminoAyuda id="aforo" />
+                    </View>
+                    <Text style={styles.sectionMeta}>
+                      {metaFuentePanel(aforoPanel, "SAIH Júcar")}
+                    </Text>
+                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                  >
+                    {aforoPanel.map((s) => (
+                      <View
+                        key={`top-aforo-${s.nombre}`}
+                        style={[styles.aforoChip, { borderColor: colorNivelAforo(s.nivel) }]}
+                        accessibilityLabel={`${s.etiqueta}${s.rio ? `, ${s.rio}` : ""}, ${
+                          s.caudalM3s != null
+                            ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo`
+                            : "sin dato"
+                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
+                      >
+                        <Text style={styles.saihName}>{s.etiqueta}</Text>
+                        <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
+                          {s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)}` : "—"}
+                          <Text style={styles.aforoUnidad}> m³/s</Text>
+                        </Text>
+                        {s.rio ? (
+                          <Text style={styles.aforoRio} numberOfLines={1}>
+                            {s.rio}
+                          </Text>
+                        ) : null}
+                        {s.fechaDato && (s.fuente === "cache" || s.fuente === "saih_chj") ? (
+                          <Text style={styles.saihFecha} numberOfLines={1}>
+                            {s.fechaDato}
+                          </Text>
+                        ) : null}
+                      </View>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+            </GlassCard>
+          )}
+
           <QuieroPescarBlock
             disponibles={disponibles}
             especiesRio={
@@ -336,106 +437,9 @@ export default function PanelExplorarSitios({ navigation }: Props) {
             }}
           />
 
-          {(saihPanel.length > 0 ||
-            aforoPanel.length > 0 ||
-            favoritos.length > 0 ||
-            puntos.length > 0) && (
+          {(favoritos.length > 0 || puntos.length > 0) && (
             <GlassCard style={styles.bloqueSitios}>
               <Text style={styles.bloqueTitulo}>Tus sitios</Text>
-
-              {saihPanel.length > 0 && (
-                <View
-                  style={{
-                    marginBottom:
-                      aforoPanel.length > 0 || favoritos.length > 0 || puntos.length > 0 ? 12 : 0,
-                  }}
-                >
-                  <View style={styles.sectionRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <Text style={styles.sectionTitle}>Embalses</Text>
-                      <TerminoAyuda id="saih" />
-                    </View>
-                    <Text style={styles.sectionMeta}>
-                      {metaFuentePanel(saihPanel, "en vivo")}
-                    </Text>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
-                  >
-                    {saihPanel.map((s) => (
-                      <TouchableOpacity
-                        key={s.zoneId}
-                        style={styles.saihChip}
-                        onPress={() => navigation.navigate("ZoneDetail", { zoneId: s.zoneId })}
-                        accessibilityLabel={`${s.etiqueta}, ${
-                          s.pct != null ? `${s.pct.toFixed(0)} por ciento` : "sin dato"
-                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
-                      >
-                        <Text style={styles.saihName}>{s.etiqueta}</Text>
-                        <Text style={styles.saihPct}>
-                          {s.pct != null ? `${s.pct.toFixed(0)}%` : "—"}
-                        </Text>
-                        {s.fuente === "cache" && s.fechaDato ? (
-                          <Text style={styles.saihFecha} numberOfLines={1}>
-                            {s.fechaDato}
-                          </Text>
-                        ) : null}
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-
-              {aforoPanel.length > 0 && (
-                <View style={{ marginBottom: favoritos.length > 0 || puntos.length > 0 ? 12 : 0 }}>
-                  <View style={styles.sectionRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                      <Text style={styles.sectionTitle}>Aforos · caudal</Text>
-                      <TerminoAyuda id="aforo" />
-                    </View>
-                    <Text style={styles.sectionMeta}>
-                      {metaFuentePanel(aforoPanel, "SAIH Júcar")}
-                    </Text>
-                  </View>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
-                  >
-                    {aforoPanel.map((s) => (
-                      <View
-                        key={s.nombre}
-                        style={[styles.aforoChip, { borderColor: colorNivelAforo(s.nivel) }]}
-                        accessibilityLabel={`${s.etiqueta}${s.rio ? `, ${s.rio}` : ""}, ${
-                          s.caudalM3s != null
-                            ? `${s.caudalM3s.toFixed(2)} metros cúbicos por segundo`
-                            : "sin dato"
-                        }${s.fuente === "cache" && s.fechaDato ? `, último ${s.fechaDato}` : ""}`}
-                      >
-                        <Text style={styles.saihName}>{s.etiqueta}</Text>
-                        <Text style={[styles.aforoCaudal, { color: colorNivelAforo(s.nivel) }]}>
-                          {s.caudalM3s != null ? `${s.caudalM3s.toFixed(2)}` : "—"}
-                          <Text style={styles.aforoUnidad}> m³/s</Text>
-                        </Text>
-                        {s.rio ? (
-                          <Text style={styles.aforoRio} numberOfLines={1}>
-                            {s.rio}
-                          </Text>
-                        ) : null}
-                        {s.fechaDato && (s.fuente === "cache" || s.fuente === "saih_chj") ? (
-                          <Text style={styles.saihFecha} numberOfLines={1}>
-                            {s.fechaDato}
-                          </Text>
-                        ) : null}
-                      </View>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-
-              {(favoritos.length > 0 || puntos.length > 0) && (
                 <View>
                   <View style={styles.sectionRow}>
                     <Text style={styles.sectionTitle}>Favoritos y puntos</Text>
@@ -485,7 +489,6 @@ export default function PanelExplorarSitios({ navigation }: Props) {
                     ))}
                   </ScrollView>
                 </View>
-              )}
             </GlassCard>
           )}
 

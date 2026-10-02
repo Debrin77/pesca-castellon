@@ -51,7 +51,9 @@ for (const n of ["atajosRow", 'navigate?.("Aparejos")', 'navigate?.("License")',
 const especies = read("src/screens/EspeciesScreen.tsx");
 for (const n of [
   "busquedaCatalogo",
+  "busquedaMain",
   "Busca especie (barbo",
+  "Buscar especie por nombre",
   "autoSitiosRio",
   "autoAbrir",
   "headerRight",

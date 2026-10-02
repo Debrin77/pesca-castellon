@@ -604,6 +604,34 @@ export default function EspeciesScreen({ navigation, route }: Props) {
         </View>
       )}
 
+      <View style={[styles.busquedaMainWrap, costa && styles.busquedaMainWrapMar]}>
+        <TextInput
+          style={[styles.busquedaMain, costa && styles.busquedaMainMar]}
+          value={busquedaCatalogo}
+          onChangeText={(t) => {
+            setBusquedaCatalogo(t);
+            if (t.trim().length > 0) {
+              setCatalogo(costa ? "mar" : "rio");
+              setCatalogoAbierto(true);
+            }
+          }}
+          onFocus={() => {
+            setCatalogo(costa ? "mar" : "rio");
+            setCatalogoAbierto(true);
+          }}
+          placeholder={
+            costa
+              ? "Busca especie (lubina, dorada, sargo…)"
+              : "Busca especie (barbo, carpa, bass…)"
+          }
+          placeholderTextColor={COLORS.textMuted}
+          autoCorrect={false}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+          accessibilityLabel="Buscar especie por nombre"
+        />
+      </View>
+
       <ScrollView
         style={styles.scrollMapa}
         contentContainerStyle={styles.scrollMapaContent}
@@ -988,6 +1016,27 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     lineHeight: 18,
     marginBottom: 10,
+  },
+  busquedaMainWrap: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 8,
+    backgroundColor: COLORS.background,
+  },
+  busquedaMainWrapMar: { backgroundColor: COLORS.waterLight },
+  busquedaMain: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 15,
+    color: COLORS.textPrimary,
+  },
+  busquedaMainMar: {
+    borderColor: COLORS.water,
+    color: COLORS.waterDark,
   },
   busquedaCatalogo: {
     backgroundColor: COLORS.mist,

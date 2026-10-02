@@ -113,6 +113,8 @@ type ParamsMapa = {
   activarRadar?: boolean;
   /** Al abrir desde «Salgo a pescar»: forzar costa o continental. */
   modoMapa?: "continental" | "costa";
+  /** Desde Hoy: abrir Ideas y sitios (SAIH, recomendaciones, Quiero pescar). */
+  abrirExplorar?: boolean;
 };
 
 export default function ZonasLibresScreen({ navigation }: Props) {
@@ -317,6 +319,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
     setCapas((prev) => ({ ...prev, radar: true }));
     setCapasExtra(true);
     navigation.setParams?.({ activarRadar: undefined });
+  }, [route.params, navigation]);
+
+  useEffect(() => {
+    if (!(route.params as ParamsMapa | undefined)?.abrirExplorar) return;
+    // Consumir param para no reabrir en cada foco.
+    navigation.setParams?.({ abrirExplorar: undefined });
   }, [route.params, navigation]);
 
   useEffect(() => {
@@ -905,11 +913,12 @@ export default function ZonasLibresScreen({ navigation }: Props) {
   const pickCaptura = modoAnadir && (motivoPick === "captura" || hayPickUbicacion("captura"));
   const pickConfirmar = pickSalgo || pickCaptura;
 
-  // Mapa protagonista: ~62% de la pantalla (mín. 440). El pie (hora, leyenda) va debajo con scroll.
+  // Mapa protagonista pero deja ver Ideas/SAIH sin scroll eterno (~50%, mín. 380).
   const altoMapa = useMemo(() => {
     const h = Dimensions.get("window").height;
-    return Math.max(Math.round(h * 0.62), 440);
+    return Math.max(Math.round(h * 0.5), 380);
   }, []);
+  const abrirExplorar = !!(route.params as ParamsMapa | undefined)?.abrirExplorar;
 
   return (
     <View style={[styles.container, mar && styles.containerMar]}>
@@ -943,7 +952,7 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         nestedScrollEnabled
       >
-      {/* Glass claro siempre: el fondo del mapa es waterLight; oscuro+texto blanco dejaba la búsqueda ilegible. */}
+      {/* Una sola barra superior: búsqueda + modalidad + consulta/capas (evita solapes). */}
       <GlassCard
         compacto
         style={[styles.searchBox, mar && styles.searchBoxMar]}
@@ -1016,66 +1025,57 @@ export default function ZonasLibresScreen({ navigation }: Props) {
             ))}
           </View>
         )}
-      </GlassCard>
-
-      {modosDisp.length > 1 ? (
-        <GlassCard
-          compacto
-          style={[
-            styles.modoBar,
-            mar && styles.modoBarMar,
-            modoKayak && !mar && styles.modoBarKayak,
-          ]}
-        >
-          <SelectorModoPesca
-            modo={modoElegido ? modoGlobal : null}
-            disponibles={modosDisp}
-            modoRecordado={!modoElegido ? modoRecordado : null}
-            compacto
-            onChange={(m) => {
-              void setModoGlobal(m);
-              setModo(modoAMapaModo(m));
-              setModalidad(modalidadDesdeModoGlobal(m));
-              if (modoAMapaModo(m) === "costa") {
-                const costa = provincia.regionCosta ?? {
-                  latitude: provincia.regionMapa.latitude,
-                  longitude: provincia.regionMapa.longitude,
-                  zoom: 10,
-                };
-                setCamara({
-                  latitude: costa.latitude,
-                  longitude: costa.longitude,
-                  zoom: costa.zoom,
-                  nonce: Date.now(),
-                });
-              }
+        {modosDisp.length > 1 ? (
+          <View style={[styles.modoBarInSearch, modoKayak && !mar && styles.modoBarKayak]}>
+            <SelectorModoPesca
+              modo={modoElegido ? modoGlobal : null}
+              disponibles={modosDisp}
+              modoRecordado={!modoElegido ? modoRecordado : null}
+              compacto
+              onChange={(m) => {
+                void setModoGlobal(m);
+                setModo(modoAMapaModo(m));
+                setModalidad(modalidadDesdeModoGlobal(m));
+                if (modoAMapaModo(m) === "costa") {
+                  const costa = provincia.regionCosta ?? {
+                    latitude: provincia.regionMapa.latitude,
+                    longitude: provincia.regionMapa.longitude,
+                    zoom: 10,
+                  };
+                  setCamara({
+                    latitude: costa.latitude,
+                    longitude: costa.longitude,
+                    zoom: costa.zoom,
+                    nonce: Date.now(),
+                  });
+                }
+              }}
+            />
+          </View>
+        ) : null}
+        <View style={styles.mapaModoRowInSearch}>
+          <TouchableOpacity
+            style={[styles.mapaModoBtn, mapaSimple && styles.mapaModoBtnOn]}
+            onPress={() => {
+              setMapaSimple(true);
+              setCapasExtra(false);
             }}
-          />
-        </GlassCard>
-      ) : null}
-
-      <GlassCard compacto style={[styles.mapaModoRow, mar && styles.modoBarMar]}>
-        <TouchableOpacity
-          style={[styles.mapaModoBtn, mapaSimple && styles.mapaModoBtnOn]}
-          onPress={() => {
-            setMapaSimple(true);
-            setCapasExtra(false);
-          }}
-          accessibilityRole="button"
-          accessibilityState={{ selected: mapaSimple }}
-          accessibilityLabel="Solo consulta"
-        >
-          <Text style={[styles.mapaModoTxt, mapaSimple && styles.mapaModoTxtOn]}>Solo consulta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.mapaModoBtn, !mapaSimple && styles.mapaModoBtnOn]}
-          onPress={() => setMapaSimple(false)}
-          accessibilityRole="button"
-          accessibilityState={{ selected: !mapaSimple }}
-          accessibilityLabel="Capas avanzadas"
-        >
-          <Text style={[styles.mapaModoTxt, !mapaSimple && styles.mapaModoTxtOn]}>Capas avanzadas</Text>
-        </TouchableOpacity>
+            accessibilityRole="button"
+            accessibilityState={{ selected: mapaSimple }}
+            accessibilityLabel="Solo consulta"
+          >
+            <Text style={[styles.mapaModoTxt, mapaSimple && styles.mapaModoTxtOn]}>Solo consulta</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.mapaModoBtn, !mapaSimple && styles.mapaModoBtnOn]}
+            onPress={() => setMapaSimple(false)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: !mapaSimple }}
+            accessibilityLabel="Capas avanzadas"
+          >
+            <Text style={[styles.mapaModoTxt, !mapaSimple && styles.mapaModoTxtOn]}>Capas</Text>
+          </TouchableOpacity>
+        </View>
       </GlassCard>
 
       {!mapaSimple ? (
@@ -1701,7 +1701,9 @@ export default function ZonasLibresScreen({ navigation }: Props) {
         ) : null}
       </View>
 
-      {!modoAnadir ? <PanelExplorarSitios navigation={navigation} /> : null}
+      {!modoAnadir ? (
+        <PanelExplorarSitios navigation={navigation} forzarAbrir={abrirExplorar} />
+      ) : null}
       </ScrollView>
 
       <VentanaConsulta
@@ -1800,12 +1802,20 @@ const styles = StyleSheet.create({
   scrollMapa: { flex: 1 },
   scrollMapaContent: { flexGrow: 1, paddingBottom: 8 },
   searchBox: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
+    paddingHorizontal: 12,
+    paddingTop: 8,
     paddingBottom: 8,
     backgroundColor: "transparent",
-    zIndex: 10,
     marginHorizontal: 8,
+    marginTop: 4,
+  },
+  modoBarInSearch: {
+    marginTop: 6,
+    paddingTop: 4,
+  },
+  mapaModoRowInSearch: {
+    flexDirection: "row",
+    gap: 8,
     marginTop: 6,
   },
   searchBoxMar: { backgroundColor: "transparent" },
@@ -1931,7 +1941,7 @@ const styles = StyleSheet.create({
   modoBtnOnMar: { backgroundColor: COLORS.waterDark, borderColor: COLORS.waterDark },
   modoTxt: { ...TYPE.mapChip, fontSize: 14, color: COLORS.textPrimary },
   modoTxtOn: { color: "#fff" },
-  mapWrap: { position: "relative", minHeight: 440, backgroundColor: COLORS.mist },
+  mapWrap: { position: "relative", minHeight: 380, backgroundColor: COLORS.mist },
   radarScrub: {
     position: "absolute",
     top: 44,
