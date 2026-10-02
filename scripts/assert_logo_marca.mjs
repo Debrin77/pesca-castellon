@@ -105,7 +105,7 @@ if (!home.includes('accessibilityLabel="Vámonos de pesca"')) {
 if (/brandPulse\}>\s*\{provincia\.nombreApp\}/.test(home) || /\{provincia\.nombreApp\}<\/Text>/.test(home.replace(/accessibilityLabel=\{provincia\.nombreApp\}/g, ""))) {
   const heroSlice = home.slice(
     home.indexOf("<AtmosferaMeteo"),
-    home.indexOf("veredictoRapido") > 0 ? home.indexOf("veredictoRapido") : home.length
+    home.indexOf("ctaSalgoTitle") > 0 ? home.indexOf("ctaSalgoTitle") : home.length
   );
   if (heroSlice.includes("{provincia.nombreApp}") && heroSlice.includes("</Text>")) {
     fail("Hero de Inicio no debe renderizar el texto del nombre de app");

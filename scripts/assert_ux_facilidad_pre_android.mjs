@@ -22,20 +22,20 @@ function read(rel) {
 
 const home = read("src/screens/HomeScreen.tsx");
 for (const n of [
-  "certezaDeConsulta",
-  "certezaHero",
-  "veredictoRapidoSello",
-  "veredictoRapidoAprox",
-  "puntoNoEncajaModo",
   'navigate("License")',
   'navigate("Ajustes")',
   "headerRight",
   "ambitoModo",
+  "abrirVeredictoRapido",
+  "<TarjetaPuntoHoy",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
 if (home.includes("oleaje · checklist")) {
   fail("Home no debe mostrar «checklist» en el CTA de barco");
+}
+if (home.includes("EJE_LEGAL.tituloCorto")) {
+  fail("Home no debe repetir Normativa · ¿puedo? en el hero");
 }
 
 const modo = read("src/data/modoPesca.ts");

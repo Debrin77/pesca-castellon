@@ -1,5 +1,5 @@
 /**
- * Assert: Inicio con hero claro (marca + veredicto + CTA) y tab Consejos.
+ * Assert: Inicio con hero claro (marca + CTA) y tab Consejos.
  * Contenido completo organizado — no «modo tienda» de 5 tabs.
  */
 import fs from "fs";
@@ -26,13 +26,12 @@ const salgo = read("src/screens/SalgoAPescarScreen.tsx");
 if (!home.includes("LogoMarcaEstatico") && !home.includes("FONTS.display") && !home.includes("TYPE.displayHero")) {
   fail("Home debe usar logo de marca o Fraunces en el hero");
 }
-if (!home.includes("brandMark") || !home.includes("veredictoRapido") || !home.includes("ctaSalgoTitle")) {
-  fail("Home hero debe tener marca (logo) + veredicto + CTA Salgo");
+if (!home.includes("brandMark") || !home.includes("ctaSalgoTitle")) {
+  fail("Home hero debe tener marca (logo) + CTA Salgo");
 }
 const iBrand = home.indexOf("brandMark");
-const iVer = home.indexOf("veredictoRapido");
 const iCta = home.indexOf("ctaSalgoTitle");
-if (!(iBrand < iVer && iVer < iCta)) fail("Orden hero: marca → veredicto → CTA");
+if (!(iBrand < iCta)) fail("Orden hero: marca → CTA");
 if (home.includes("styles.brandPulse") && /brandPulse\}>\{provincia\.nombreApp/.test(home)) {
   fail("Home no debe mostrar el texto del nombre de app en el hero (solo logo)");
 }
@@ -45,8 +44,11 @@ if (!home.includes("herramientasKicker") || !home.includes('navigate("License")'
 if (!home.includes("pulsoRow") || !home.includes("Pulso del día")) {
   fail("Pulso meteo debe vivir en Inicio (pulsoRow / Pulso del día)");
 }
-if (!home.includes("ApartadoPlegable") || !home.includes("orden={3}")) {
-  fail("Pulso del día debe ser apartado plegable numerado");
+if (!home.includes("ApartadoPlegable") || !home.includes('titulo="Pulso del día"')) {
+  fail("Pulso del día debe ser apartado plegable");
+}
+if (/orden=\{[0-9]+\}/.test(home)) {
+  fail("Inicio no debe numerar apartados");
 }
 if (!home.includes("<TarjetaPuntoHoy") || !home.includes("<PanelExplorarSitios")) {
   fail("Inicio debe montar TarjetaPuntoHoy y PanelExplorarSitios (contenido completo)");

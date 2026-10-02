@@ -1,5 +1,5 @@
 /**
- * Assert: Inicio no repite el veredicto HOY SÍ/NO en hero + tarjeta compacta.
+ * Assert: Inicio no repite el veredicto legal en el hero (vive en Tu salida / Más de hoy).
  */
 import fs from "fs";
 import path from "path";
@@ -23,27 +23,28 @@ for (const n of [
   "ocultarVeredictoCompacto",
   "Más de hoy",
   "SiguientePasoCard",
-  "veredictoRapido",
+  "TarjetaPuntoHoy",
+  "abrirVeredictoRapido",
 ]) {
   if (!home.includes(n)) fail(`HomeScreen sin ${n}`);
 }
 
-if (home.includes("Normativa del tramo")) {
-  fail("Home no debe titular el bloque inferior «Normativa del tramo» (ya está en el hero)");
+// El hero no debe mostrar el chip de normativa ¿puedo? (duplicado)
+if (home.includes("EJE_LEGAL.tituloCorto") || home.includes("veredictoRapidoKicker")) {
+  fail("Hero no debe mostrar Normativa · ¿puedo? (va en Tu salida / Más de hoy)");
 }
-
-const idx = home.indexOf("consultaViva && hoyEtiqueta");
-const idx2 = home.indexOf("veredictoRapidoVacio");
-if (idx > 0 && idx2 > idx) {
-  const heroChip = home.slice(idx, idx2);
-  if (heroChip.includes("EJE_LEGAL.aviso") || heroChip.includes("styles.veredictoRapidoAviso")) {
-    fail("Hero con consulta no debe repetir EJE_LEGAL.aviso");
-  }
+if (home.includes("Normativa del tramo")) {
+  fail("Home no debe titular el bloque inferior «Normativa del tramo»");
 }
 
 const card = read("src/components/ConsultaPescaCard.tsx");
 if (!card.includes("ocultarVeredictoCompacto")) {
   fail("ConsultaPescaCard debe soportar ocultarVeredictoCompacto");
+}
+
+const tarjeta = read("src/components/TarjetaPuntoHoy.tsx");
+if (!tarjeta.includes("EJE_LEGAL") || !tarjeta.includes("onPuedo")) {
+  fail("TarjetaPuntoHoy debe mostrar el veredicto legal (¿puedo?)");
 }
 
 const pkg = read("package.json");

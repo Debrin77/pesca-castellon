@@ -86,8 +86,6 @@ type Props = {
   forzarAbrir?: boolean;
   /** Abierto al montar (Inicio suele ir cerrado; Mapa puede abrir). */
   inicialAbierto?: boolean;
-  /** Número del apartado en Inicio (p. ej. 4). */
-  orden?: string | number;
 };
 
 /** Centra el mapa desde Inicio o desde el propio stack Mapa. */
@@ -107,7 +105,6 @@ export default function PanelExplorarSitios({
   navigation,
   forzarAbrir,
   inicialAbierto = false,
-  orden,
 }: Props) {
   const { provincia: provinciaCtx } = useProvincia();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -243,7 +240,6 @@ export default function PanelExplorarSitios({
 
   return (
     <ApartadoPlegable
-      orden={orden}
       titulo="Ideas y sitios"
       subCerrado={
         nSitios > 0
@@ -260,7 +256,6 @@ export default function PanelExplorarSitios({
       {tieneSaih ? (
         <ApartadoPlegable
           interno
-          orden="A"
           titulo="Niveles SAIH"
           subCerrado={`${saihPanel.length} embalses · ${aforoPanel.length} aforos`}
           subAbierto="Embalses y caudal en vivo o caché"
@@ -354,7 +349,6 @@ export default function PanelExplorarSitios({
 
       <ApartadoPlegable
         interno
-        orden="B"
         titulo="Quiero pescar"
         subCerrado="Especie → top 3 sitios de hoy"
         subAbierto="Elige modalidad y especie"
@@ -407,7 +401,6 @@ export default function PanelExplorarSitios({
 
       <ApartadoPlegable
         interno
-        orden="C"
         titulo="Hoy te conviene"
         subCerrado="Mejor sitio por modalidad"
         subAbierto="Según favoritos, puntos y catálogo"
@@ -471,7 +464,6 @@ export default function PanelExplorarSitios({
       {tieneSitios ? (
         <ApartadoPlegable
           interno
-          orden="D"
           titulo="Tus sitios"
           subCerrado={`${favoritos.length} favoritos · ${Math.min(puntos.length, 6)} puntos`}
           subAbierto="Favoritos y puntos guardados"
@@ -531,7 +523,6 @@ export default function PanelExplorarSitios({
 
       <ApartadoPlegable
         interno
-        orden="E"
         titulo="Para salir hoy"
         subCerrado="Campo: solunar, radar, ID y más"
         subAbierto="Herramientas de campo"

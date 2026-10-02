@@ -1,5 +1,5 @@
 /**
- * Apartado numerado y plegable para Inicio (y paneles densos).
+ * Apartado plegable para Inicio (y paneles densos).
  * Misma tipografía/cabecera en todos los bloques: diferencia clara sin omitir contenido.
  */
 import React, { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export type ApartadoPlegableProps = {
-  /** Número visible (1, 2…) o etiqueta corta («A»). */
+  /** Etiqueta opcional a la izquierda del título (poco habitual; preferir sin número). */
   orden?: string | number;
   titulo: string;
   /** Resumen cuando está cerrado; detalle cuando abierto. */
