@@ -430,7 +430,7 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
             <Text style={styles.cardTitle}>1 · Dónde estás · normativa</Text>
             <Text style={styles.hint}>
               {permiteCosta
-                ? "Elige costa o ríos/embalses, luego GPS, mapa, coordenadas o un sitio."
+                ? "Elige Río, Embalse, Kayak o Mar. Kayak al mar y barco matriculado solo aparecen si eliges Mar."
                 : `Elige GPS, un punto en el mapa, coordenadas o una zona de ${provincia.nombre}.`}
             </Text>
 
