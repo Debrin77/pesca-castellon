@@ -126,9 +126,13 @@ if (!/cordobilla\|malpasillo\|genil/.test(builderSev)) fail("builder Sevilla deb
 if (/\/torre\|[aá]guila\|aguila\|santiago/.test(builderSev)) fail("builder Sevilla no debe usar /aguila/ sin word-boundary (rompe Aguilar→Genil)");
 else ok("builder Sevilla evita Aguilar→Corbones");
 
-// Placas regeneradas: herrera sin mancha caudal; oblada con mancha; tenca presente
+// Placas regeneradas: herrera sin mancha caudal; oblada con mancha; tenca placa técnica (no placeholder)
 for (const id of ["herrera", "oblada", "tenca"]) {
   if (!exists(`assets/medicion/especies/${id}.jpg`)) fail(`falta placa ${id}`);
+}
+{
+  const tencaBytes = fs.statSync(path.join(root, "assets/medicion/especies/tenca.jpg")).size;
+  if (tencaBytes < 80000) fail(`tenca.jpg placeholder (${tencaBytes} B); regenerar placa técnica`);
 }
 ok("placas herrera/oblada/tenca presentes");
 

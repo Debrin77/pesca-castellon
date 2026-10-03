@@ -79,6 +79,15 @@ for (const id of [...idsOrilla, ...idsMar, ...idsContinental]) {
   if (!fs.existsSync(jpg)) fail(`Falta asset ${id}.jpg`);
 }
 
+// Tenca: no aceptar de nuevo el placeholder geométrico (~39 KB).
+{
+  const tencaJpg = path.join(dir, "tenca.jpg");
+  const tencaBytes = fs.statSync(tencaJpg).size;
+  if (tencaBytes < 80000) {
+    fail(`tenca.jpg demasiado pequeña (${tencaBytes} B): parece placeholder, regenerar placa técnica`);
+  }
+}
+
 // Cada especie debe tener una placa inédita (sin reutilizar el mismo archivo).
 const hashes = new Map();
 for (const f of fs.readdirSync(dir).filter((x) => x.endsWith(".jpg"))) {
