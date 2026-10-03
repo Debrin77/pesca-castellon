@@ -51,7 +51,8 @@ export function esModoEmbarcado(modo: ModoPescaGlobal): boolean {
 
 export function etiquetaModo(modo: ModoPescaGlobal): string {
   if (modo === "embalse") return "Embalse";
-  if (modo === "orilla") return "Orilla";
+  // Costa desde tierra: «Mar» (no «Orilla») para no confundir con río/embalse «desde orilla».
+  if (modo === "orilla") return "Mar";
   if (modo === "barco") return "Barco";
   if (modo === "kayak") return "Kayak";
   if (modo === "kayak_mar") return "Kayak";

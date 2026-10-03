@@ -41,7 +41,8 @@ const idxBarcoLinks = salgo.indexOf("¿Vas en kayak al mar?");
 if (idxBarcoLinks < 0) {
   fail("SalgoAPescarScreen sin enlace kayak al mar");
 } else {
-  const ventana = salgo.slice(Math.max(0, idxBarcoLinks - 500), idxBarcoLinks);
+  // Condición queda ~700–900 chars arriba (comentario + TouchableOpacity).
+  const ventana = salgo.slice(Math.max(0, idxBarcoLinks - 1200), idxBarcoLinks);
   if (!ventana.includes("modoElegido") || !ventana.includes('medio === "maritimo"')) {
     fail(
       "Enlaces kayak al mar / barco deben condicionarse a modoElegido && medio === \"maritimo\""
