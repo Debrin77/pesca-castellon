@@ -30,8 +30,23 @@ for (const n of [
   "ambito === \"maritimo\"",
   "aplicandoRef.current = false",
   "Playas fáciles para empezar",
+  "¿Vas en kayak al mar?",
+  "¿Vas en barco matriculado?",
 ]) {
   if (!salgo.includes(n)) fail(`SalgoAPescarScreen sin ${n}`);
+}
+
+// Kayak al mar / barco: solo tras elegir Costa·Orilla (no río/embalse/kayak continental).
+const idxBarcoLinks = salgo.indexOf("¿Vas en kayak al mar?");
+if (idxBarcoLinks < 0) {
+  fail("SalgoAPescarScreen sin enlace kayak al mar");
+} else {
+  const ventana = salgo.slice(Math.max(0, idxBarcoLinks - 500), idxBarcoLinks);
+  if (!ventana.includes("modoElegido") || !ventana.includes('medio === "maritimo"')) {
+    fail(
+      "Enlaces kayak al mar / barco deben condicionarse a modoElegido && medio === \"maritimo\""
+    );
+  }
 }
 
 const mapa = read("src/screens/ZonasLibresScreen.tsx");
