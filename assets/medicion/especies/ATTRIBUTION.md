@@ -11,3 +11,7 @@ Placas técnicas en español (longitud total / peso) usadas en «Cómo medir».
 
 ## Auditoría experta 2026-09 (3.ª)
 - Placas `herrera`, `oblada`, `tenca` regeneradas in-app (silueta + longitud total) para corregir rasgos diagnósticos.
+
+## Auditoría 2026-10
+- Placa `tenca` regenerada: deja el esquema geométrico placeholder y vuelve a placa técnica
+  (silueta de tenca + longitud total hocico→extremo de cola, estilo NOAA / resto del catálogo).
