@@ -466,7 +466,10 @@ export default function SalgoAPescarScreen({ navigation }: Props) {
                 }}
               />
             ) : null}
+            {/* Kayak al mar / barco: solo si ya eligió Costa·Orilla (no en río, embalse ni kayak continental). */}
             {permiteCosta &&
+            modoElegido &&
+            medio === "maritimo" &&
             (modosDisp.includes("barco") || modosDisp.includes("kayak_mar")) ? (
               <View style={{ gap: 8 }}>
                 {modosDisp.includes("kayak_mar") ? (
