@@ -32,12 +32,13 @@ import {
 } from "../provincias/cuenca/normativa";
 import TemporadaBanner from "../components/TemporadaBanner";
 import PescaRecBanner from "../components/PescaRecBanner";
+import ApartadoPlegable from "../components/ApartadoPlegable";
 import { infoPermisoCoto } from "../data/permisosCoto";
 import { documentacionKayakDeProvincia } from "../data/documentacionKayak";
 import { useProvincia } from "../context/ProvinciaContext";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
-import { COLORS, GRADIENTS, RADIUS, SHADOW } from "../theme";
+import { COLORS, GRADIENTS, RADIUS, SHADOW, SPACING } from "../theme";
 import {
   diasHastaCaducidad,
   eliminarLicencia,
@@ -137,8 +138,22 @@ export default function LicenseScreen() {
     cargar();
   }
 
+  const tituloSeguro = provincia.requisitosLicencia.seguroObligatorio
+    ? "Seguro obligatorio (Andalucía)"
+    : esClm
+      ? "Seguro de pescador (Castilla-La Mancha)"
+      : "Seguro de pescador (C. Valenciana)";
+  const subSeguro = provincia.requisitosLicencia.seguroObligatorio
+    ? "Obligatorio · responsabilidad civil"
+    : esClm
+      ? "No obligatorio con carácter general en CLM"
+      : "No obligatorio en GVA";
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 100, paddingTop: 8 }}
+    >
       <LinearGradient colors={[...GRADIENTS.primary]} style={styles.headerCard}>
         <Text style={styles.headerIcon}>🎫</Text>
         <Text style={styles.headerTitle}>Licencias y normativa</Text>
@@ -147,21 +162,34 @@ export default function LicenseScreen() {
             ? provincia.etiquetaLicenciaContinental
             : "Continental y marítima recreativa desde tierra"}
         </Text>
+        <Text style={styles.headerHint}>Toca cada apartado para leerlo</Text>
       </LinearGradient>
 
-      <TemporadaBanner />
+      <View style={styles.bannerWrap}>
+        <TemporadaBanner />
+      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Normativa en vigor · {provincia.nombre}</Text>
+      <Text style={styles.resumen}>{provincia.requisitosLicencia.resumen}</Text>
+      <Text style={styles.vigencia}>{vigencia}</Text>
+
+      <ApartadoPlegable
+        titulo={`Normativa en vigor · ${provincia.nombre}`}
+        subCerrado={fuente.titulo}
+        subAbierto="Fuente y vigencia oficiales"
+      >
         <Text style={styles.cardText}>{fuente.titulo}</Text>
         <Text style={[styles.cardText, { marginTop: 4 }]}>{fuente.vigenciaNota}</Text>
         <Text style={styles.privacy}>
-          Consulta en la app: {new Date().toISOString().slice(0, 10)}. El cartel y el boletín oficial mandan.
+          Consulta en la app: {new Date().toISOString().slice(0, 10)}. El cartel y el boletín oficial
+          mandan.
         </Text>
-      </View>
+      </ApartadoPlegable>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Cupos (catálogo {provincia.nombre})</Text>
+      <ApartadoPlegable
+        titulo={`Cupos (catálogo ${provincia.nombre})`}
+        subCerrado="Límites por especie de esta provincia"
+        subAbierto="Solo especies locales · el coto puede endurecer"
+      >
         <Text style={styles.privacy}>
           Solo especies de esta provincia. El plan técnico / permiso del coto puede endurecer el cupo.
         </Text>
@@ -171,23 +199,32 @@ export default function LicenseScreen() {
             <Text style={styles.tallaVal}>{sp.cupo ?? sp.tallaOficial ?? "—"}</Text>
           </View>
         ))}
-      </View>
+      </ApartadoPlegable>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Permisos de coto</Text>
+      <ApartadoPlegable
+        titulo="Permisos de coto"
+        subCerrado="Cómo obtener el permiso del día"
+        subAbierto="Trámite y aviso PTOP"
+      >
         <Text style={styles.cardText}>{infoPermisoCoto(provincia.id).comoObtener}</Text>
-        <Text style={[styles.privacy, { marginTop: 6 }]}>{infoPermisoCoto(provincia.id).avisoPtop}</Text>
+        <Text style={[styles.privacy, { marginTop: 6 }]}>
+          {infoPermisoCoto(provincia.id).avisoPtop}
+        </Text>
         {esAndalucia ? (
           <Text style={[styles.cardText, { marginTop: 8 }]}>
-            En {provincia.nombre} (ciprínidos) no hay cotos tipificados como en Castellón: las aguas libres y los
-            refugios (VP) mandan. Si aparece un coto en cartel, pide el permiso al titular.
+            En {provincia.nombre} (ciprínidos) no hay cotos tipificados como en Castellón: las aguas
+            libres y los refugios (VP) mandan. Si aparece un coto en cartel, pide el permiso al
+            titular.
           </Text>
         ) : null}
-      </View>
+      </ApartadoPlegable>
 
       {docKayak ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kayak · documentación que debes pedir</Text>
+        <ApartadoPlegable
+          titulo="Kayak · documentación"
+          subCerrado="Qué pedir en embalse y, si aplica, en mar"
+          subAbierto="Navegación, pesca y mar"
+        >
           <Text style={styles.cardText}>{docKayak.embalse.resumen}</Text>
           <Text style={[styles.cardTitle, { marginTop: 12 }]}>
             Embalse · navegación ({docKayak.embalse.organismoTipico})
@@ -221,27 +258,30 @@ export default function LicenseScreen() {
             </>
           ) : (
             <Text style={[styles.privacy, { marginTop: 12 }]}>
-              En {provincia.nombre} esta guía es continental: no hay flujo de pesca marítima desde kayak/barco
-              en la app.
+              En {provincia.nombre} esta guía es continental: no hay flujo de pesca marítima desde
+              kayak/barco en la app.
             </Text>
           )}
           <Text style={[styles.privacy, { marginTop: 10 }]}>
-            Detalle por embalse: ficha del vaso → panel «Kayak · embalse». Confirma siempre en la web del
-            organismo.
+            Detalle por embalse: ficha del vaso → panel «Kayak · embalse». Confirma siempre en la web
+            del organismo.
           </Text>
-        </View>
+        </ApartadoPlegable>
       ) : null}
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Cartografía · qué está cubierto</Text>
+      <ApartadoPlegable
+        titulo="Cartografía · qué está cubierto"
+        subCerrado="Prohibiciones, aguas libres y «SIN TRAMO»"
+        subAbierto="Cobertura del mapa de la app"
+      >
         <Text style={styles.cardText}>{provincia.coberturaCartografica.resumen}</Text>
         <Text style={[styles.cardTitle, { marginTop: 12 }]}>Prohibiciones declaradas</Text>
         <Text style={styles.cardText}>{provincia.coberturaCartografica.prohibiciones}</Text>
         <Text style={[styles.cardTitle, { marginTop: 12 }]}>Aguas libres / cauces</Text>
         <Text style={styles.cardText}>{provincia.coberturaCartografica.aguasLibres}</Text>
         <Text style={[styles.privacy, { marginTop: 8 }]}>
-          «SIN TRAMO» en el semáforo no es veda automática: significa que el punto no está en el catálogo
-          geométrico de la app.
+          «SIN TRAMO» en el semáforo no es veda automática: significa que el punto no está en el
+          catálogo geométrico de la app.
         </Text>
         {provincia.coberturaCartografica.urlVisor ? (
           <TouchableOpacity
@@ -252,58 +292,57 @@ export default function LicenseScreen() {
             <Text style={styles.link}>Abrir visor / cartografía oficial</Text>
           </TouchableOpacity>
         ) : null}
-      </View>
+      </ApartadoPlegable>
 
       {soloContinental ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>PescaREC</Text>
+        <ApartadoPlegable
+          titulo="PescaREC"
+          subCerrado="No aplica en ríos y embalses"
+          subAbierto="App estatal de pesca marítima"
+        >
           <Text style={styles.cardText}>
-            PescaREC es la app estatal para pesca marítima recreativa. En {provincia.nombre} esta guía es
-            continental: no aplica ni se exige en ríos/embalses.
+            PescaREC es la app estatal para pesca marítima recreativa. En {provincia.nombre} esta
+            guía es continental: no aplica ni se exige en ríos/embalses.
           </Text>
-        </View>
+        </ApartadoPlegable>
       ) : (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>PescaREC (marítima)</Text>
+        <ApartadoPlegable
+          titulo="PescaREC (marítima)"
+          subCerrado="Declaraciones en costa y mar"
+          subAbierto="Banner y enlace a la app estatal"
+        >
           <PescaRecBanner />
-        </View>
+        </ApartadoPlegable>
       )}
 
-      <Text style={styles.resumen}>{provincia.requisitosLicencia.resumen}</Text>
-      <Text style={styles.vigencia}>{vigencia}</Text>
-
-      <View
-        style={[
-          styles.card,
-          provincia.requisitosLicencia.seguroObligatorio ? styles.cardSeguroOn : styles.cardSeguroOff,
-        ]}
+      <ApartadoPlegable
+        titulo={tituloSeguro}
+        subCerrado={subSeguro}
+        subAbierto={`Requisitos en ${provincia.nombre}`}
+        style={
+          provincia.requisitosLicencia.seguroObligatorio
+            ? styles.apartadoSeguroOn
+            : styles.apartadoSeguroOff
+        }
       >
-        <Text style={styles.cardTitle}>
-          {provincia.requisitosLicencia.seguroObligatorio
-            ? "Seguro obligatorio (Andalucía)"
-            : esClm
-              ? "Seguro de pescador (Castilla-La Mancha)"
-              : "Seguro de pescador (C. Valenciana)"}
-        </Text>
-        <Text style={styles.seguroBadge}>
-          {provincia.requisitosLicencia.seguroObligatorio
-            ? "Obligatorio · responsabilidad civil"
-            : esClm
-              ? "No obligatorio con carácter general en CLM"
-              : "No obligatorio en GVA"}
-        </Text>
+        <Text style={styles.seguroBadge}>{subSeguro}</Text>
         <Text style={styles.cardText}>{provincia.requisitosLicencia.seguroNota}</Text>
-        <Text style={[styles.cardTitle, { marginTop: 12 }]}>Requisitos en {provincia.nombre}</Text>
+        <Text style={[styles.cardTitle, { marginTop: 12 }]}>
+          Requisitos en {provincia.nombre}
+        </Text>
         {provincia.requisitosLicencia.requisitos.map((r, i) => (
           <Text key={i} style={styles.bullet}>
             • {r}
           </Text>
         ))}
-      </View>
+      </ApartadoPlegable>
 
       {!soloContinental ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Ámbitos oficiales (GVA)</Text>
+        <ApartadoPlegable
+          titulo="Ámbitos oficiales (GVA)"
+          subCerrado="Continental y marítima desde tierra"
+          subAbierto="Dónde aplica cada licencia"
+        >
           {LICENCIA_INFO.ambitos.map((a) => (
             <View key={a.id} style={styles.ambitoBlock}>
               <Text style={styles.ambitoTitulo}>{a.titulo}</Text>
@@ -311,20 +350,31 @@ export default function LicenseScreen() {
               <Text style={styles.cardText}>{a.detalle}</Text>
             </View>
           ))}
-        </View>
+        </ApartadoPlegable>
       ) : (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Ámbito continental</Text>
+        <ApartadoPlegable
+          titulo="Ámbito continental"
+          subCerrado={provincia.etiquetaLicenciaContinental}
+          subAbierto="Licencia de ríos y embalses"
+        >
           <Text style={styles.cardText}>{provincia.etiquetaLicenciaContinental}</Text>
           <Text style={[styles.cardText, { marginTop: 6 }]}>{fuente.vigenciaNota}</Text>
-        </View>
+        </ApartadoPlegable>
       )}
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Mis licencias en este móvil</Text>
+      <ApartadoPlegable
+        titulo="Mis licencias en este móvil"
+        subCerrado={
+          licencias.length === 0
+            ? "Ninguna guardada · opcional para recordar caducidad"
+            : `${licencias.length} guardada${licencias.length === 1 ? "" : "s"} · solo en este dispositivo`
+        }
+        subAbierto="Datos locales · no sustituyen la licencia oficial"
+        inicialAbierto
+      >
         <Text style={styles.privacy}>
-          Datos opcionales, solo locales (no se envían a ningún servidor). Sirven para recordar la caducidad. No
-          sustituyen llevar la licencia oficial encima.
+          Datos opcionales, solo locales (no se envían a ningún servidor). Sirven para recordar la
+          caducidad. No sustituyen llevar la licencia oficial encima.
         </Text>
 
         {licencias.length === 0 ? (
@@ -403,30 +453,41 @@ export default function LicenseScreen() {
           placeholderTextColor={COLORS.textMuted}
         />
         <TouchableOpacity style={styles.ctaButton} onPress={onGuardar} disabled={guardando}>
-          <Text style={styles.ctaText}>{guardando ? "Guardando…" : "Guardar licencia en el móvil"}</Text>
+          <Text style={styles.ctaText}>
+            {guardando ? "Guardando…" : "Guardar licencia en el móvil"}
+          </Text>
         </TouchableOpacity>
-      </View>
+      </ApartadoPlegable>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Reglas generales</Text>
+      <ApartadoPlegable
+        titulo="Reglas generales"
+        subCerrado="Normas básicas de la temporada"
+        subAbierto="Resumen operativo"
+      >
         {reglas.map((e, i) => (
           <Text key={i} style={styles.bullet}>
             • {e}
           </Text>
         ))}
-      </View>
+      </ApartadoPlegable>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Antes de salir</Text>
+      <ApartadoPlegable
+        titulo="Antes de salir"
+        subCerrado="Checklist rápido previo a la jornada"
+        subAbierto="Documentación y comprobaciones"
+      >
         {checklist.map((e, i) => (
           <Text key={i} style={styles.bullet}>
             • {e}
           </Text>
         ))}
-      </View>
+      </ApartadoPlegable>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Tallas y régimen por especie</Text>
+      <ApartadoPlegable
+        titulo="Tallas y régimen por especie"
+        subCerrado="Talla mínima / régimen oficial"
+        subAbierto="Catálogo de esta provincia"
+      >
         {esAndalucia || esClm
           ? (provincia.species as any[]).map((sp) => (
               <View key={sp.id} style={styles.tallaRow}>
@@ -440,101 +501,122 @@ export default function LicenseScreen() {
                 <Text style={styles.tallaVal}>{texto}</Text>
               </View>
             ))}
-      </View>
+      </ApartadoPlegable>
 
       {esClm ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Tramitación Castilla-La Mancha</Text>
+        <ApartadoPlegable
+          titulo="Tramitación Castilla-La Mancha"
+          subCerrado="Sede JCCM · cotos y tasas"
+          subAbierto="Dónde tramitar la licencia CLM"
+        >
           <Text style={styles.cardText}>
-            Licencia y cotos: sede electrónica / oficinas de la Junta de Comunidades de Castilla-La Mancha.
-            Confirma el plan técnico del coto y la Orden de vedas vigente. Las tasas y exenciones las publica la
-            JCCM cada temporada (no uses importes de la GVA).
+            Licencia y cotos: sede electrónica / oficinas de la Junta de Comunidades de Castilla-La
+            Mancha. Confirma el plan técnico del coto y la Orden de vedas vigente. Las tasas y
+            exenciones las publica la JCCM cada temporada (no uses importes de la GVA).
           </Text>
-        </View>
+        </ApartadoPlegable>
       ) : !esAndalucia ? (
         <>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Tasas 2026 (continental)</Text>
+          <ApartadoPlegable
+            titulo="Tasas 2026 (continental)"
+            subCerrado="Importes oficiales GVA"
+            subAbierto="Concepto y precio"
+          >
             {LICENCIA_INFO.tasas2026.map((t, i) => (
               <View key={i} style={styles.row}>
                 <Text style={styles.rowLabel}>{t.concepto}</Text>
                 <Text style={styles.rowValue}>{t.precio}</Text>
               </View>
             ))}
-          </View>
+          </ApartadoPlegable>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Exenciones de la tasa</Text>
+          <ApartadoPlegable
+            titulo="Exenciones de la tasa"
+            subCerrado="Quién no paga la tasa"
+            subAbierto="Casos exentos"
+          >
             {LICENCIA_INFO.exentos.map((e, i) => (
               <Text key={i} style={styles.bullet}>
                 • {e}
               </Text>
             ))}
-          </View>
+          </ApartadoPlegable>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>A tener en cuenta</Text>
+          <ApartadoPlegable
+            titulo="A tener en cuenta"
+            subCerrado="Notas prácticas de la licencia"
+            subAbierto="Recordatorios útiles"
+          >
             {LICENCIA_INFO.notas.map((n, i) => (
               <Text key={i} style={styles.bullet}>
                 • {n}
               </Text>
             ))}
-          </View>
+          </ApartadoPlegable>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Oficina en Castellón</Text>
+          <ApartadoPlegable
+            titulo="Oficina en Castellón"
+            subCerrado="Atención presencial"
+            subAbierto="Dirección y contacto"
+          >
             <Text style={styles.cardText}>{LICENCIA_INFO.oficinaCastellon}</Text>
-          </View>
+          </ApartadoPlegable>
         </>
       ) : null}
 
-      <TouchableOpacity
-        style={styles.ctaButton}
-        onPress={() => Linking.openURL(esAndalucia || esClm ? fuente.urlLicencia : LICENCIA_INFO.tramiteOnline)}
-      >
-        <Text style={styles.ctaText}>
-          {esAndalucia
-            ? "Tramitar licencia continental (Junta de Andalucía)"
-            : esClm
-              ? "Tramitar licencia continental (JCCM)"
-              : "Tramitar licencia continental (Sede GVA)"}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.ctaWrap}>
+        <TouchableOpacity
+          style={styles.ctaButton}
+          onPress={() =>
+            Linking.openURL(esAndalucia || esClm ? fuente.urlLicencia : LICENCIA_INFO.tramiteOnline)
+          }
+        >
+          <Text style={styles.ctaText}>
+            {esAndalucia
+              ? "Tramitar licencia continental (Junta de Andalucía)"
+              : esClm
+                ? "Tramitar licencia continental (JCCM)"
+                : "Tramitar licencia continental (Sede GVA)"}
+          </Text>
+        </TouchableOpacity>
 
-      {!soloContinental ? (
+        {!soloContinental ? (
+          <TouchableOpacity
+            style={styles.ctaButtonSecondary}
+            onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
+          >
+            <Text style={styles.ctaTextSecondary}>
+              Licencia marítima recreativa desde tierra (GVA)
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+
         <TouchableOpacity
           style={styles.ctaButtonSecondary}
-          onPress={() => Linking.openURL(LICENCIA_INFO.tramiteMaritimaTierra)}
+          onPress={() => Linking.openURL(fuente.urlOrden || FUENTE_NORMATIVA.urlOrden)}
         >
-          <Text style={styles.ctaTextSecondary}>Licencia marítima recreativa desde tierra (GVA)</Text>
+          <Text style={styles.ctaTextSecondary}>
+            {esAndalucia || esClm
+              ? "Consultar normativa / orden de vedas"
+              : "Consultar resolución de tramos (DOGV)"}
+          </Text>
         </TouchableOpacity>
-      ) : null}
 
-      <TouchableOpacity
-        style={styles.ctaButtonSecondary}
-        onPress={() => Linking.openURL(fuente.urlOrden || FUENTE_NORMATIVA.urlOrden)}
-      >
-        <Text style={styles.ctaTextSecondary}>
-          {esAndalucia || esClm
-            ? "Consultar normativa / orden de vedas"
-            : "Consultar resolución de tramos (DOGV)"}
+        {!esAndalucia && !esClm ? (
+          <TouchableOpacity
+            style={styles.ctaButtonSecondary}
+            onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}
+          >
+            <Text style={styles.ctaTextSecondary}>Vía alternativa sin certificado digital</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        <Text style={styles.footnote}>
+          Los importes, vedas y anexos pueden actualizarse cada temporada. Confirma siempre los datos
+          vigentes en la sede electrónica
+          {esAndalucia ? " y el BOJA" : esClm ? " y el DOCM" : " y el DOGV"} antes de pescar.
         </Text>
-      </TouchableOpacity>
-
-      {!esAndalucia && !esClm ? (
-        <TouchableOpacity
-          style={styles.ctaButtonSecondary}
-          onPress={() => Linking.openURL(LICENCIA_INFO.tramiteAlternativo)}
-        >
-          <Text style={styles.ctaTextSecondary}>Vía alternativa sin certificado digital</Text>
-        </TouchableOpacity>
-      ) : null}
-
-      <Text style={styles.footnote}>
-        Los importes, vedas y anexos pueden actualizarse cada temporada. Confirma siempre los datos vigentes en la sede
-        electrónica
-        {esAndalucia ? " y el BOJA" : esClm ? " y el DOCM" : " y el DOGV"} antes de pescar.
-      </Text>
+      </View>
     </ScrollView>
   );
 }
@@ -545,27 +627,42 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     padding: 20,
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
+    marginHorizontal: SPACING.sm,
     ...SHADOW,
   },
   headerIcon: { fontSize: 32, marginBottom: 6 },
   headerTitle: { color: "#fff", fontSize: 19, fontWeight: "700" },
   headerSubtitle: { color: "#dfeee5", fontSize: 13, marginTop: 4, textAlign: "center" },
-  resumen: { fontSize: 14, color: COLORS.textPrimary, marginBottom: 8, lineHeight: 20 },
-  vigencia: { fontSize: 11.5, color: COLORS.textMuted, marginBottom: 14, lineHeight: 16, fontStyle: "italic" },
-  card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
-    padding: 14,
-    marginBottom: 12,
-    ...SHADOW,
+  headerHint: {
+    color: "rgba(223,238,229,0.85)",
+    fontSize: 12,
+    marginTop: 10,
+    fontWeight: "600",
+    textAlign: "center",
   },
-  cardSeguroOn: {
+  bannerWrap: { marginHorizontal: SPACING.sm, marginBottom: 4 },
+  resumen: {
+    fontSize: 14,
+    color: COLORS.textPrimary,
+    marginBottom: 8,
+    marginHorizontal: SPACING.md,
+    lineHeight: 20,
+  },
+  vigencia: {
+    fontSize: 11.5,
+    color: COLORS.textMuted,
+    marginBottom: 8,
+    marginHorizontal: SPACING.md,
+    lineHeight: 16,
+    fontStyle: "italic",
+  },
+  apartadoSeguroOn: {
     borderWidth: 1.5,
     borderColor: COLORS.warning,
     backgroundColor: COLORS.warningLight,
   },
-  cardSeguroOff: {
+  apartadoSeguroOff: {
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -593,7 +690,13 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
   },
   ambitoTitulo: { fontSize: 13.5, fontWeight: "800", color: COLORS.primaryDark },
-  ambitoDonde: { fontSize: 12, color: COLORS.waterDark, fontWeight: "700", marginTop: 2, marginBottom: 4 },
+  ambitoDonde: {
+    fontSize: 12,
+    color: COLORS.waterDark,
+    fontWeight: "700",
+    marginTop: 2,
+    marginBottom: 4,
+  },
   privacy: { fontSize: 12, color: COLORS.textMuted, lineHeight: 17, marginBottom: 10 },
   empty: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 8 },
   licRow: {
@@ -642,9 +745,15 @@ const styles = StyleSheet.create({
   rowLabel: { fontSize: 13, color: COLORS.textSecondary, flex: 1 },
   rowValue: { fontSize: 13, fontWeight: "700", color: COLORS.primary },
   bullet: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 4, lineHeight: 18 },
-  tallaRow: { marginBottom: 8, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  tallaRow: {
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
   tallaName: { fontSize: 13, fontWeight: "700", color: COLORS.textPrimary },
   tallaVal: { fontSize: 12.5, color: COLORS.textSecondary, marginTop: 2, lineHeight: 17 },
+  ctaWrap: { marginHorizontal: SPACING.md, marginTop: 8 },
   ctaButton: {
     backgroundColor: COLORS.primary,
     borderRadius: RADIUS.md,
@@ -662,5 +771,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   ctaTextSecondary: { color: COLORS.primary, fontWeight: "600", fontSize: 13 },
-  footnote: { fontSize: 11, color: COLORS.textMuted, marginTop: 14, textAlign: "center", lineHeight: 16 },
+  footnote: {
+    fontSize: 11,
+    color: COLORS.textMuted,
+    marginTop: 14,
+    textAlign: "center",
+    lineHeight: 16,
+  },
 });
