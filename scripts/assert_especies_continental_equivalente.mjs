@@ -28,7 +28,7 @@ for (const needle of [
   'cambiarModo("continental", { abrirCatalogo: true })',
   "especies continentales",
   "Catálogo ríos",
-  "Especies · Ríos",
+  "Ríos · ${provincia.nombre}",
 ]) {
   if (!especies.includes(needle)) fail(`EspeciesScreen sin ${needle}`);
 }

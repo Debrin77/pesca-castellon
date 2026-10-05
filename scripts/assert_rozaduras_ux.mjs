@@ -57,6 +57,7 @@ for (const n of [
   "autoSitiosRio",
   "autoAbrir",
   "headerRight",
+  "headerTitleAlign",
   'navigate("License")',
 ]) {
   if (!especies.includes(n)) fail(`EspeciesScreen sin ${n}`);

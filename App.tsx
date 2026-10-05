@@ -114,7 +114,7 @@ function EspeciesStackScreen() {
       <EspeciesStack.Screen
         name="EspeciesMain"
         component={EspeciesScreen}
-        options={{ title: provincia ? `Especies · ${provincia.nombre}` : "Especies" }}
+        options={{ title: "Especies", headerTitleAlign: "left" }}
       />
       <EspeciesStack.Screen name="ZoneDetail" component={ZoneDetailScreen} options={{ title: "Detalle de zona" }} />
       <EspeciesStack.Screen name="License" component={LicenseScreen} options={{ title: "Licencia de pesca" }} />

@@ -1,5 +1,16 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Dimensions, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  Dimensions,
+  TextInput,
+  Platform,
+  useWindowDimensions,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -80,6 +91,7 @@ function puntoCompartible(
 }
 
 export default function EspeciesScreen({ navigation, route }: Props) {
+  const { width: anchoPantalla } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { provincia: provinciaCtx, provinciaId } = useProvincia();
   const { punto, puntoElegido, fijarPunto } = usePuntoConsulta();
@@ -128,45 +140,53 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   const mar = costa || (!soloContinental && catalogoAbierto && catalogo === "mar");
   const provinciaAnteriorRef = useRef<string | null>(null);
 
+  const headerLinkFs = anchoPantalla < 380 ? 11 : 13;
+  const headerLinkPadH = anchoPantalla < 380 ? 5 : 8;
+
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: costa
-        ? `Especies · Costa · ${provincia.nombre}`
-        : `Especies · Ríos · ${provincia.nombre}`,
+      // Título corto: provincia y ámbito (ríos/costa) ya están en la barra de modo y el pie.
+      // Evita solaparse con Consejos · Aparejos · Licencia (iOS centra el título por defecto).
+      headerTitleAlign: "left",
+      headerTitleContainerStyle: Platform.select({
+        ios: { maxWidth: Math.min(120, anchoPantalla * 0.32) },
+        default: { flexGrow: 0, maxWidth: Math.min(140, anchoPantalla * 0.36) },
+      }),
+      title: "Especies",
       headerStyle: { backgroundColor: mar ? COLORS.waterDark : COLORS.primaryDark },
       headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 2, marginRight: 4, flexShrink: 0 }}>
           <TouchableOpacity
             onPress={() => irAConsejos(navigation)}
             accessibilityRole="button"
             accessibilityLabel="Consejos y montajes"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+            style={{ paddingHorizontal: headerLinkPadH, paddingVertical: 6 }}
           >
-            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Consejos</Text>
+            <Text style={{ color: "#fff", fontSize: headerLinkFs, fontWeight: "700" }}>Consejos</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("Aparejos")}
             accessibilityRole="button"
             accessibilityLabel="Aparejos"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+            style={{ paddingHorizontal: headerLinkPadH, paddingVertical: 6 }}
           >
-            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Aparejos</Text>
+            <Text style={{ color: "#fff", fontSize: headerLinkFs, fontWeight: "700" }}>Aparejos</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("License")}
             accessibilityRole="button"
             accessibilityLabel="Licencia de pesca"
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            style={{ paddingHorizontal: 8, paddingVertical: 6 }}
+            style={{ paddingHorizontal: headerLinkPadH, paddingVertical: 6 }}
           >
-            <Text style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}>Licencia</Text>
+            <Text style={{ color: "#fff", fontSize: headerLinkFs, fontWeight: "700" }}>Licencia</Text>
           </TouchableOpacity>
         </View>
       ),
     });
-  }, [costa, mar, navigation, provincia.nombre]);
+  }, [mar, navigation, anchoPantalla, headerLinkFs, headerLinkPadH]);
 
   useEffect(() => {
     if (soloContinental && (catalogo === "mar" || catalogo === "no" || catalogo === "tallas")) {
