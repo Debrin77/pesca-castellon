@@ -56,7 +56,8 @@ for (const n of [
   "Buscar especie por nombre",
   "autoSitiosRio",
   "autoAbrir",
-  "headerRight",
+  "atajosBar",
+  "headerTitleAlign",
   'navigate("License")',
 ]) {
   if (!especies.includes(n)) fail(`EspeciesScreen sin ${n}`);
