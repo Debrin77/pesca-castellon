@@ -56,7 +56,7 @@ for (const n of [
   "Buscar especie por nombre",
   "autoSitiosRio",
   "autoAbrir",
-  "headerRight",
+  "atajosBar",
   "headerTitleAlign",
   'navigate("License")',
 ]) {
