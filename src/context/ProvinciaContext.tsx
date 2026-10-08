@@ -7,8 +7,13 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LISTA_PROVINCIAS, provinciaPorId, esProvinciaId, type ProvinciaConfig, type ProvinciaId } from "../provincias";
+import { LISTA_PROVINCIAS, esProvinciaId, type ProvinciaConfig, type ProvinciaId } from "../provincias";
 import { clearProvinciaActiva, setProvinciaActiva } from "../provincias/runtime";
+import {
+  hidratarContenidoVivo,
+  provinciaConContenidoVivo,
+  suscribirContenidoVivo,
+} from "../services/contenidoVivoService";
 
 const CLAVE_PROVINCIA = "@pesca_app/provincia_activa";
 
@@ -21,6 +26,8 @@ interface ProvinciaContextValue {
   restauradaAlArrancar: boolean;
   /** True si el selector se muestra porque el usuario quiere cambiar, no por primer uso. */
   selectorEsCambio: boolean;
+  /** Revisión del pack OTA (cambia al sincronizar normativa/especies/zonas). */
+  contenidoRev: number;
   elegirProvincia: (id: ProvinciaId) => Promise<void>;
   cambiarProvincia: () => Promise<void>;
 }
@@ -32,11 +39,13 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   const [provinciaId, setProvinciaId] = useState<ProvinciaId | null>(null);
   const [restauradaAlArrancar, setRestauradaAlArrancar] = useState(false);
   const [selectorEsCambio, setSelectorEsCambio] = useState(false);
+  const [contenidoRev, setContenidoRev] = useState(0);
 
   useEffect(() => {
     let vivo = true;
     (async () => {
       try {
+        await hidratarContenidoVivo();
         const raw = await AsyncStorage.getItem(CLAVE_PROVINCIA);
         if (!vivo) return;
         if (esProvinciaId(raw)) {
@@ -52,6 +61,10 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
     return () => {
       vivo = false;
     };
+  }, []);
+
+  useEffect(() => {
+    return suscribirContenidoVivo(() => setContenidoRev((n) => n + 1));
   }, []);
 
   const elegirProvincia = useCallback(async (id: ProvinciaId) => {
@@ -71,8 +84,8 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const provincia = useMemo(
-    () => (provinciaId ? provinciaPorId(provinciaId) : null),
-    [provinciaId]
+    () => (provinciaId ? provinciaConContenidoVivo(provinciaId) : null),
+    [provinciaId, contenidoRev]
   );
 
   const value = useMemo<ProvinciaContextValue>(
@@ -83,6 +96,7 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
       provincias: LISTA_PROVINCIAS,
       restauradaAlArrancar,
       selectorEsCambio,
+      contenidoRev,
       elegirProvincia,
       cambiarProvincia,
     }),
@@ -92,6 +106,7 @@ export function ProvinciaProvider({ children }: { children: React.ReactNode }) {
       provinciaId,
       restauradaAlArrancar,
       selectorEsCambio,
+      contenidoRev,
       elegirProvincia,
       cambiarProvincia,
     ]

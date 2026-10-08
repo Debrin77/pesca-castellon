@@ -59,6 +59,7 @@ Expo (iOS/Android) + versión web para GitHub Pages / “Añadir a inicio” en 
 - Veredicto rápido: **¿Puedo?** (norma) vs **¿Pinta?** (meteo).
 - Índice de pesca 0–100 (presión, temp. aire/agua, nubes, viento, lluvia, luna/solunar + franjas), clima Open-Meteo, hidrología SAIH (CHJ / CHG).
 - **Aforos fluviales** (caudal m³/s + umbrales) en Castellón y Cuenca vía SAIH Júcar; Sevilla/Córdoba sin fuente HTML estable (CHG). Si falla la consulta en vivo, se muestra el **último dato correcto con fecha** (no un ejemplo inventado).
+- **«Actualizando…»** al abrir: clima + índice + avisos/crecidas + **pack OTA** (normativa meta, especies, zonas/tramos) + prefetch SAIH. El pack se publica en `public/content/` con `npm run sync:contenido` / `build:web`.
 - Liquid Glass ligero en Inicio y Mapa (blur + velo translúcido).
 - Flujo **«Salgo a pescar»** y **primera salida** para principiantes.
 - Checklist, avisos de seguridad, recomendaciones del día.
@@ -140,6 +141,7 @@ Scripts útiles:
 - `npm run assert` — comprobaciones de regresión de producto.
 - `npm run build:web` — export estático web.
 - `npm run sync:icv` / `npm run sync:sevilla` / `npm run sync:cordoba` — regenerar cartografía embebida.
+- `npm run sync:contenido` — regenerar pack OTA (`public/content/`) de normativa/especies/zonas.
 
 ## Estructura (resumen)
 

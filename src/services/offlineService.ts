@@ -98,7 +98,10 @@ export async function marcarFtueLongpressMapaVista(): Promise<void> {
   await AsyncStorage.setItem(CLAVE_FTUE_LONGPRESS_MAPA, "1");
 }
 
-/** Datos locales siempre disponibles sin red (normativa, zonas, especies van en el bundle). */
+/**
+ * Datos locales siempre disponibles sin red:
+ * normativa/zonas/especies del bundle (+ último pack OTA en AsyncStorage si hubo sync).
+ */
 export function mensajeOfflineCorto(online: boolean, cache: CacheOffline | null): string | null {
   if (online) return null;
   if (cache?.actualizadoEn) {

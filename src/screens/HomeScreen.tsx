@@ -45,6 +45,11 @@ import {
   guardarCacheOffline,
   mensajeOfflineCorto,
 } from "../services/offlineService";
+import {
+  hidratarContenidoVivo,
+  sincronizarContenidoVivo,
+} from "../services/contenidoVivoService";
+import { prefetchSaihInicio } from "../services/prefetchSaihService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
@@ -213,6 +218,8 @@ export default function HomeScreen({ navigation }: Props) {
   useEffect(() => {
     let vivo = true;
     (async () => {
+      await hidratarContenidoVivo();
+      if (!vivo) return;
       const cacheLocal = await leerCacheOffline();
       if (!vivo || !cacheLocal) return;
       setCache(cacheLocal);
@@ -290,10 +297,12 @@ export default function HomeScreen({ navigation }: Props) {
         }
       }
 
-      // Clima/índice en paralelo con avisos (SAIH/recomendaciones en Ideas y sitios).
+      // Clima/índice + avisos/crecidas + pack normativo/especies/zonas + SAIH.
       await Promise.all([
         cargar(true, () => vivo, { silencioso: hayPulsoCache }),
         cargarAvisos(),
+        sincronizarContenidoVivo(),
+        prefetchSaihInicio(),
       ]);
       if (vivo) setActualizando(false);
     }
@@ -572,7 +581,10 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.dateText}>{fechaLegible(new Date())}</Text>
         </View>
         {actualizando ? (
-          <Text style={styles.actualizandoTxt} accessibilityLabel="Actualizando clima e índice">
+          <Text
+            style={styles.actualizandoTxt}
+            accessibilityLabel="Actualizando clima, normativa, especies, zonas, SAIH y avisos"
+          >
             Actualizando…
           </Text>
         ) : null}

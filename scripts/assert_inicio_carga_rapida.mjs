@@ -1,7 +1,7 @@
 /**
  * Inicio: pulso (clima + índice) no debe dejar al usuario esperando en vacío.
  * - Caché al instante (también online / antes de puntoListo)
- * - Refresco en paralelo (no bloquear por avisos/SAIH/notificaciones)
+ * - Refresco en paralelo (avisos, pack OTA, SAIH; no bloquear por notificaciones)
  * - GPS con last-known
  */
 import fs from "fs";
@@ -29,12 +29,17 @@ for (const needle of [
   "cargarAvisos",
   "Actualizando…",
   "setCargando(false)",
+  "sincronizarContenidoVivo",
+  "prefetchSaihInicio",
 ]) {
   if (!home.includes(needle)) fail(`HomeScreen sin ${needle}`);
 }
 
 if (!home.includes("Promise.all") || !home.includes("cargarAvisos()")) {
   fail("HomeScreen debe cargar pulso en paralelo con avisos");
+}
+if (!home.includes("sincronizarContenidoVivo()") || !home.includes("prefetchSaihInicio()")) {
+  fail("HomeScreen debe sincronizar pack OTA y prefetch SAIH en paralelo");
 }
 
 if (!home.includes("void (async () => {") || !home.includes("solicitarPermisoNotificaciones")) {
