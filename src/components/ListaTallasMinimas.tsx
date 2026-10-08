@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import orilla from "../data/especiesOrilla.json";
+import { catalogoOrillaActivo } from "../services/catalogoEspeciesService";
 import { tallaDestacada } from "./TarjetaEspecie";
 import { getProvinciaActiva } from "../provincias/runtime";
 import { esProvinciaAndalucia, esProvinciaCastillaLaMancha } from "../provincias/types";
@@ -9,6 +9,7 @@ import { COLORS } from "../theme";
 type Fila = { id: string; nombre: string; sp: any };
 
 function filasCosta(): Fila[] {
+  const orilla = catalogoOrillaActivo();
   const lista = [...(orilla.invasorasOrilla as any[]), ...(orilla.pescablesOrilla as any[])];
   return lista.map((sp) => ({ id: sp.id, nombre: sp.nombre, sp }));
 }

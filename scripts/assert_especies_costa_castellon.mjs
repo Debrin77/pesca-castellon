@@ -52,7 +52,8 @@ for (const needle of [
   "especiesOrillaParaSeleccion",
   "catalogoParaModalidad",
   "resolverEspecie",
-  "USUALES_ORILLA_IDS",
+  "usualesOrillaIds",
+  "catalogoOrillaActivo",
 ]) {
   if (!svc.includes(needle)) fail(`catalogoEspeciesService sin ${needle}`);
 }

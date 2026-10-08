@@ -4,7 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { irAConsejos } from "../navigation/irATab";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Circle } from "../components/map";
-import orilla from "../data/especiesOrilla.json";
 import {
   consultarPorTramo,
   ConsultaPesca,
@@ -20,7 +19,10 @@ import {
 import { obtenerUbicacionActual, solicitarPermisoUbicacion } from "../services/locationService";
 import { estaEnVeda } from "../services/vedaService";
 import { puntoEnRegionMapa } from "../services/geoService";
-import { especiesOrillaParaSeleccion } from "../services/catalogoEspeciesService";
+import {
+  catalogoOrillaActivo,
+  especiesOrillaParaSeleccion,
+} from "../services/catalogoEspeciesService";
 import { useProvincia } from "../context/ProvinciaContext";
 import { usePuntoConsulta } from "../context/PuntoConsultaContext";
 import { useModoPesca } from "../context/ModoPescaContext";
@@ -81,7 +83,7 @@ function puntoCompartible(
 
 export default function EspeciesScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
-  const { provincia: provinciaCtx, provinciaId } = useProvincia();
+  const { provincia: provinciaCtx, provinciaId, contenidoRev } = useProvincia();
   const { punto, puntoElegido, fijarPunto } = usePuntoConsulta();
   const { modo: modoGlobal, modoElegido, setModo: setModoGlobal, disponibles } = useModoPesca();
   const provincia = provinciaCtx ?? getProvinciaActiva();
@@ -90,7 +92,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
   // Tramos de la provincia del contexto (no del singleton por defecto Castellón).
   const tramos = provincia.tramos as TramoOficial[];
   const playas = soloContinental ? [] : todasLasPlayas();
-  const orillaSeleccion = useMemo(() => (soloContinental ? [] : especiesOrillaParaSeleccion()), [soloContinental]);
+  const orilla = useMemo(() => catalogoOrillaActivo(), [contenidoRev]);
+  const orillaSeleccion = useMemo(
+    () => (soloContinental ? [] : especiesOrillaParaSeleccion()),
+    [soloContinental, contenidoRev]
+  );
   // Barra de tabs flotante; al hacer scroll el pie debe quedar por encima.
   const piePadBottom = 110 + Math.max(insets.bottom, 12);
   // Mapa protagonista (~62%, mín. 440), como en Mapa. El pie va debajo con scroll.
@@ -990,7 +996,11 @@ export default function EspeciesScreen({ navigation, route }: Props) {
           </>
         )}
         {!soloContinental && catalogo === "tallas" && <ListaTallasMinimas onEspecie={irAparejos} />}
-        {!soloContinental && catalogo === "no" && orilla.noCapturar.map((sp: any, i: number) => <TarjetaEspecie key={sp.id} sp={sp} index={i} />)}
+        {!soloContinental &&
+          catalogo === "no" &&
+          (orilla.noCapturar ?? []).map((sp: any, i: number) => (
+            <TarjetaEspecie key={sp.id} sp={sp} index={i} />
+          ))}
       </VentanaConsulta>
     </View>
   );

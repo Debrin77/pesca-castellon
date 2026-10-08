@@ -1,11 +1,13 @@
 /**
  * Catálogos de especies por ámbito (continental, orilla, embarcación).
  * Sevilla es solo continental: no mezcla especiesOrilla.
+ * Orilla/embarcación admiten overlay OTA (`contenidoVivoService`).
  */
-import orilla from "../data/especiesOrilla.json";
-import embarcacion from "../data/especiesEmbarcacion.json";
+import orillaBundle from "../data/especiesOrilla.json";
+import embarcacionBundle from "../data/especiesEmbarcacion.json";
 import { modalidadPorId, esModalidadEmbarcacionMar, type ModalidadPesca } from "../data/modalidades";
 import { caraDeEspecie } from "../data/carasVisuales";
+import { catalogoCostaVivo } from "./contenidoVivoService";
 
 export type EspecieCatalogo = {
   id: string;
@@ -21,15 +23,45 @@ export type EspecieCatalogo = {
   [key: string]: unknown;
 };
 
-const USUALES_ORILLA_IDS: string[] = Array.isArray((orilla as { usualesIds?: string[] }).usualesIds)
-  ? ([...(orilla as { usualesIds: string[] }).usualesIds] as string[])
-  : [];
+type CatalogoOrilla = {
+  usualesIds?: string[];
+  pescablesOrilla?: EspecieCatalogo[];
+  invasorasOrilla?: EspecieCatalogo[];
+  noCapturar?: EspecieCatalogo[];
+  fuenteTallas?: string;
+};
 
-const USUALES_EMBARCACION_IDS: string[] = Array.isArray(
-  (embarcacion as { usualesIds?: string[] }).usualesIds
-)
-  ? ([...(embarcacion as { usualesIds: string[] }).usualesIds] as string[])
-  : [];
+type CatalogoEmbarcacion = {
+  usualesIds?: string[];
+  pescables?: EspecieCatalogo[];
+  tecnicas?: { id: string; etiqueta: string; resumen: string }[];
+  aviso?: string;
+};
+
+function orillaActiva(): CatalogoOrilla {
+  const vivo = catalogoCostaVivo().orilla as CatalogoOrilla | null;
+  return vivo && Array.isArray(vivo.pescablesOrilla) ? vivo : (orillaBundle as CatalogoOrilla);
+}
+
+/** Catálogo orilla completo (bundle o pack OTA). */
+export function catalogoOrillaActivo(): CatalogoOrilla {
+  return orillaActiva();
+}
+
+function embarcacionActiva(): CatalogoEmbarcacion {
+  const vivo = catalogoCostaVivo().embarcacion as CatalogoEmbarcacion | null;
+  return vivo && Array.isArray(vivo.pescables) ? vivo : (embarcacionBundle as CatalogoEmbarcacion);
+}
+
+function usualesOrillaIds(): string[] {
+  const o = orillaActiva();
+  return Array.isArray(o.usualesIds) ? [...o.usualesIds] : [];
+}
+
+function usualesEmbarcacionIds(): string[] {
+  const e = embarcacionActiva();
+  return Array.isArray(e.usualesIds) ? [...e.usualesIds] : [];
+}
 
 function conIcono(sp: EspecieCatalogo): EspecieCatalogo {
   if (sp.icono) return sp;
@@ -37,23 +69,23 @@ function conIcono(sp: EspecieCatalogo): EspecieCatalogo {
 }
 
 function mapaPescables(): Map<string, EspecieCatalogo> {
-  return new Map((orilla.pescablesOrilla as EspecieCatalogo[]).map((s) => [s.id, s]));
+  return new Map((orillaActiva().pescablesOrilla ?? []).map((s) => [s.id, s]));
 }
 
 function mapaEmbarcacion(): Map<string, EspecieCatalogo> {
-  return new Map((embarcacion.pescables as EspecieCatalogo[]).map((s) => [s.id, s]));
+  return new Map((embarcacionActiva().pescables ?? []).map((s) => [s.id, s]));
 }
 
 /** Las 15 especies de orilla más habituales en Castellón (surfcasting / rockfishing). */
 export function especiesOrillaUsuales(): EspecieCatalogo[] {
   const byId = mapaPescables();
-  const ordenadas = USUALES_ORILLA_IDS.map((id) => byId.get(id)).filter(Boolean) as EspecieCatalogo[];
+  const ordenadas = usualesOrillaIds().map((id) => byId.get(id)).filter(Boolean) as EspecieCatalogo[];
   return ordenadas.map(conIcono);
 }
 
 /** Invasoras de orilla (p. ej. cangrejo azul) + 15 usuales. */
 export function especiesOrillaParaSeleccion(): EspecieCatalogo[] {
-  const invasoras = (orilla.invasorasOrilla as EspecieCatalogo[]).map((s) =>
+  const invasoras = (orillaActiva().invasorasOrilla ?? []).map((s) =>
     conIcono({ ...s, invasora: true })
   );
   return [...invasoras, ...especiesOrillaUsuales()];
@@ -61,37 +93,36 @@ export function especiesOrillaParaSeleccion(): EspecieCatalogo[] {
 
 /** Todas las pescables de orilla (tallas / normativa; incluye las menos frecuentes). */
 export function especiesOrillaTodas(): EspecieCatalogo[] {
-  return (orilla.pescablesOrilla as EspecieCatalogo[]).map(conIcono);
+  return (orillaActiva().pescablesOrilla ?? []).map(conIcono);
 }
 
 export function idsOrillaConocidos(): Set<string> {
   const ids = new Set<string>();
-  for (const s of orilla.pescablesOrilla as EspecieCatalogo[]) ids.add(s.id);
-  for (const s of orilla.invasorasOrilla as EspecieCatalogo[]) ids.add(s.id);
+  for (const s of orillaActiva().pescablesOrilla ?? []) ids.add(s.id);
+  for (const s of orillaActiva().invasorasOrilla ?? []) ids.add(s.id);
   return ids;
 }
 
 export function idsOrillaUsuales(): string[] {
-  return [...USUALES_ORILLA_IDS];
+  return [...usualesOrillaIds()];
 }
 
 /** Catálogo embarcación / kayak mar (Castellón). */
 export function especiesEmbarcacionUsuales(): EspecieCatalogo[] {
   const byId = mapaEmbarcacion();
-  return USUALES_EMBARCACION_IDS.map((id) => byId.get(id)).filter(Boolean).map(conIcono) as EspecieCatalogo[];
+  return usualesEmbarcacionIds().map((id) => byId.get(id)).filter(Boolean).map(conIcono) as EspecieCatalogo[];
 }
 
 export function especiesEmbarcacionTodas(): EspecieCatalogo[] {
-  return (embarcacion.pescables as EspecieCatalogo[]).map(conIcono);
+  return (embarcacionActiva().pescables ?? []).map(conIcono);
 }
 
 export function tecnicasEmbarcacion(): { id: string; etiqueta: string; resumen: string }[] {
-  return ((embarcacion as { tecnicas?: { id: string; etiqueta: string; resumen: string }[] }).tecnicas ??
-    []) as { id: string; etiqueta: string; resumen: string }[];
+  return embarcacionActiva().tecnicas ?? [];
 }
 
 export function avisoEmbarcacionCatalogo(): string {
-  return (embarcacion as { aviso?: string }).aviso ?? "";
+  return embarcacionActiva().aviso ?? "";
 }
 
 /**
@@ -132,10 +163,10 @@ export function resolverEspecie(
 ): EspecieCatalogo | undefined {
   const enRio = speciesContinentales.find((s) => s.id === id);
   if (enRio) return enRio;
-  const invasora = (orilla.invasorasOrilla as EspecieCatalogo[]).find((s) => s.id === id);
+  const invasora = (orillaActiva().invasorasOrilla ?? []).find((s) => s.id === id);
   if (invasora) return conIcono({ ...invasora, invasora: true });
-  const pescable = (orilla.pescablesOrilla as EspecieCatalogo[]).find((s) => s.id === id);
+  const pescable = (orillaActiva().pescablesOrilla ?? []).find((s) => s.id === id);
   if (pescable) return conIcono(pescable);
-  const barco = (embarcacion.pescables as EspecieCatalogo[]).find((s) => s.id === id);
+  const barco = (embarcacionActiva().pescables ?? []).find((s) => s.id === id);
   return barco ? conIcono(barco) : undefined;
 }
