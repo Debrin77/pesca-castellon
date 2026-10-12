@@ -109,6 +109,9 @@ if (
 ) {
   fail("consultaEmbarcacion debe marcar modalidadMar embarcacion|kayak según variante");
 }
+if (!embSvc.includes("Puerto · pesca prohibida") || !embSvc.includes("NO es coto")) {
+  fail("consultaEmbarcacion debe marcar puerto como pesca prohibida (no coto)");
+}
 ok("consultaEmbarcacion modalidadMar");
 
 const costaSvc = read("src/services/consultaCostaService.ts");

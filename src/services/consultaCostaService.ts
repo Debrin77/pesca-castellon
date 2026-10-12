@@ -150,16 +150,16 @@ export function consultarCosta(lat: number, lng: number): ConsultaPesca {
     return {
       ...baseMar(),
       veredicto: "vedado",
-      titulo: `Aguas portuarias · ${puerto.nombre}`,
+      titulo: `Puerto · pesca prohibida · ${puerto.nombre}`,
       color: COLORES.vedado,
       distanciaKm: null,
       dentroDelRadio: true,
       sePuedePescarHoy: false,
       restriccionesHoy: [
-        "Decreto 41/2013: prohibido en dársena, fondeo y varada, salvo autorización del puerto.",
-        "Pulsa la playa concreta junto al puerto, no este recinto.",
+        "NO es coto: está prohibido (Decreto 41/2013 + ordenanza APC). Muelles, Plaza del Mar, dársena y marina: no se pesca.",
+        "Pulsa una playa junto al puerto (Pinar, Almassora…), no este recinto.",
       ],
-      permisos: ["Modalidad: pesca marítima desde tierra, no desde barco."],
+      permisos: ["Modalidad: pesca marítima desde tierra, no desde barco ni kayak en el recinto."],
     };
   }
 

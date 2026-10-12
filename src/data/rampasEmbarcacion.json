@@ -1,5 +1,5 @@
 {
-  "aviso": "Rampas y puertos de salida orientativos en Castellón. La dársena no es zona de pesca: zarpas y pescas fuera. Confirma tarifas, horarios y normas del puerto.",
+  "aviso": "Rampas y puertos de salida orientativos en Castellón. El recinto portuario (dársena/marina) es pesca prohibida — no es coto: zarpas y pescas fuera. Confirma tarifas, horarios y normas del puerto.",
   "rampas": [
     {
       "id": "rampa_vinaros",
@@ -47,7 +47,7 @@
       "lat": 39.978,
       "lng": 0.015,
       "municipio": "Castelló de la Plana",
-      "nota": "Principal. Curricán y jigging costero fuera de dársena. Columbretes: reserva."
+      "nota": "Principal. No pesques en dársena/marina (prohibido). Curricán y jigging fuera de bocana. Columbretes: reserva."
     },
     {
       "id": "rampa_burriana",
