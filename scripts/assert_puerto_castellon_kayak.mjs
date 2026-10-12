@@ -112,6 +112,9 @@ const fuera = [
   { id: "grao_cs", name: "Playa del Pinar", lat: 39.98415, lng: 0.02415 },
   { id: "orpesa", name: "platja Orpesa norte (antiguo polígono erróneo)", lat: 40.092, lng: 0.138 },
   { id: "alcossebre", name: "Carregador/Romana (antiguo polígono)", lat: 40.2408, lng: 0.2905 },
+  { id: "alcossebre", name: "Cala Blanca", lat: 40.25845, lng: 0.29624 },
+  { id: "burriana", name: "Playa Arenal", lat: 39.852, lng: -0.062 },
+  { id: "vinaros", name: "Playa Fortí", lat: 40.468, lng: 0.4765 },
 ];
 
 for (const r of refs) {

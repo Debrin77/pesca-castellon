@@ -15,15 +15,6 @@ export type SitioFacil = {
 export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba" | "cuenca", SitioFacil[]> = {
   castellon: [
     {
-      id: "cs-sichar",
-      zoneId: "embalse_sichar",
-      nombre: "Embalse de Sichar",
-      lat: 40.0105,
-      lng: -0.2332,
-      porQue: "Embalse accesible, orillas amplias y especies habituales de principiante.",
-      ambito: "continental",
-    },
-    {
       id: "cs-maria",
       zoneId: "embalse_maria_cristina",
       nombre: "Embalse de María Cristina",
@@ -39,15 +30,6 @@ export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba" | "cuenc
       lat: 39.8899,
       lng: -0.5245,
       porQue: "Tramo libre sin muerte: ideal para aprender sin presión de cupo.",
-      ambito: "continental",
-    },
-    {
-      id: "cs-palancia",
-      zoneId: "rio_palancia_teresa_libre",
-      nombre: "Palancia · Teresa (libre)",
-      lat: 39.87,
-      lng: -0.58,
-      porQue: "Río libre sin muerte; confirma cartel y caudal antes de lanzar.",
       ambito: "continental",
     },
     {

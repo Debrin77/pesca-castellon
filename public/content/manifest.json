@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "version": "0.1.0+e03db98ea766",
-  "generatedAt": "2026-10-08T14:06:50.740Z",
+  "version": "0.1.0+6adddd24a06f",
+  "generatedAt": "2026-10-12T07:42:08.662Z",
   "pack": "pack.json",
-  "sha256Prefix": "e03db98ea766",
+  "sha256Prefix": "6adddd24a06f",
   "notas": "Normativa meta, especies y zonas/tramos. Clima/SAIH/avisos se piden en vivo aparte."
 }

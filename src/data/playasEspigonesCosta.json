@@ -1,6 +1,6 @@
 {
   "aviso": "Nombres según Turismo Castellón (Diputación). En el Grao: Pinar (desde el puerto hacia el NORTE), Gurugú (en medio), Serradal (hasta Benicàssim). Al sur del puerto no es el Pinar: es Almassora. Cada toque es una sola playa. Dársena prohibida. Irta: pesca a pie no.",
-  "kmOrilla": 2.4,
+  "kmOrilla": 0.45,
   "lineaCosta": [
     {
       "lat": 40.525,
@@ -1213,24 +1213,22 @@
           "cuando": "Alba y última luz legal",
           "detalle": "Irta / acceso natural."
         }
-      ],
-      "vedaOrilla": true,
-      "normaVeda": "Dentro o al borde de Irta: si hay cartel, no lances."
+      ]
     },
     {
       "id": "alcossebre_blanca",
       "nombre": "Cala Blanca (Alcossebre)",
-      "lat": 40.25,
-      "lng": 0.29,
+      "lat": 40.25845,
+      "lng": 0.29624,
       "anchoKm": 0.24,
       "tramo": [
         {
-          "lat": 40.252,
-          "lng": 0.292
+          "lat": 40.2605,
+          "lng": 0.298
         },
         {
-          "lat": 40.248,
-          "lng": 0.288
+          "lat": 40.2565,
+          "lng": 0.2945
         }
       ],
       "especies": "Sargo, lubina, sepia, dorada, espetón",
@@ -1682,17 +1680,17 @@
     {
       "id": "orpesa_renega",
       "nombre": "Playa La Renegà (Orpesa)",
-      "lat": 40.084,
-      "lng": 0.127,
+      "lat": 40.06214,
+      "lng": 0.11966,
       "anchoKm": 0.24,
       "tramo": [
         {
-          "lat": 40.086,
-          "lng": 0.13
+          "lat": 40.065,
+          "lng": 0.122
         },
         {
-          "lat": 40.082,
-          "lng": 0.124
+          "lat": 40.059,
+          "lng": 0.117
         }
       ],
       "especies": "Sargo, lubina, sepia, dorada, espetón",
@@ -1708,24 +1706,24 @@
           "nombre": "La Renegà",
           "especies": "Dorada, lubina, sargo",
           "cuando": "Alba y última luz legal",
-          "detalle": "Roca. No es La Concha."
+          "detalle": "Roca hacia Benicàssim, sur del puerto. No es La Concha."
         }
       ]
     },
     {
       "id": "orpesa_morro_gos",
       "nombre": "Playa Morro de Gos (Orpesa)",
-      "lat": 40.078,
-      "lng": 0.119,
+      "lat": 40.09144,
+      "lng": 0.13642,
       "anchoKm": 0.24,
       "tramo": [
         {
-          "lat": 40.082,
-          "lng": 0.124
+          "lat": 40.0935,
+          "lng": 0.138
         },
         {
-          "lat": 40.074,
-          "lng": 0.114
+          "lat": 40.0895,
+          "lng": 0.135
         }
       ],
       "especies": "Lubina, dorada, sargo, sepia, lisas",
@@ -1741,24 +1739,24 @@
           "nombre": "Morro de Gos",
           "especies": "Dorada, lubina, sargo",
           "cuando": "Alba y última luz legal",
-          "detalle": "Hacia Benicàssim. No es Bellver."
+          "detalle": "Entre Amplàries y Concha. No es Bellver."
         }
       ]
     },
     {
       "id": "orpesa_vella",
       "nombre": "Cala de Orpesa la Vella (Orpesa)",
-      "lat": 40.0905,
-      "lng": 0.1345,
+      "lat": 40.0945,
+      "lng": 0.141,
       "anchoKm": 0.2,
       "tramo": [
         {
-          "lat": 40.092,
-          "lng": 0.136
+          "lat": 40.096,
+          "lng": 0.143
         },
         {
-          "lat": 40.089,
-          "lng": 0.133
+          "lat": 40.093,
+          "lng": 0.139
         }
       ],
       "especies": "Sargo, lubina, sepia, dorada, espetón",
@@ -1771,10 +1769,10 @@
       ],
       "sitios": [
         {
-          "nombre": "Orpesa la Vella",
+          "nombre": "Orpesa la Vella (cala norte)",
           "especies": "Dorada, lubina, sargo",
           "cuando": "Alba y última luz legal",
-          "detalle": "Junto al pueblo viejo. Cala corta."
+          "detalle": "Cala al norte del núcleo; no confundir con el paseo junto al puerto."
         }
       ]
     },

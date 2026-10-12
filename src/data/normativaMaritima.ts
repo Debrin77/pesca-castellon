@@ -14,7 +14,7 @@ export const FUENTE_EMBARCACION = {
   urlPescaRec:
     "https://www.mapa.gob.es/es/pesca/temas/pesca-maritima-de-recreo/pesca-rec/",
   urlColumbretes:
-    "https://www.mapa.gob.es/es/pesca/temas/proteccion-recursos-pesqueros/reservas-marinas-de-interes-pesquero/rm-islas-columbretes/",
+    "https://www.boe.es/buscar/doc.php?id=BOE-A-2009-68",
   /** Carta náutica comercial (Garmin). Complemento de navegación; no es oficial IHM. */
   urlNavionics:
     "https://www.garmin.com/es-ES/p/136701",
@@ -87,7 +87,7 @@ export const REGLAS_EMBARCACION_MAR = [
   "Barco matriculado: licencia marítima DESDE EMBARCACIÓN (GVA) + documentación del barco + titulación del patrón si aplica. La de «desde tierra» sola no cubre el barco.",
   "PescaREC: declara cuando la norma lo exija (especies/zonas). Esta app solo enlaza; no declara por ti.",
   "Prohibido pescar en dársena, marina, canales, fondeo/varada (kayak y barco): NO es coto. Zarpa y pesca fuera del recinto.",
-  "Reserva marina de las Islas Columbretes: no entres a pescar sin comprobar la cartografía y normas oficiales.",
+  "Reserva marina Columbretes (Orden ARM/3841/2008): no entres a pescar sin comprobar BOE y cartografía oficial.",
   "Respeta distancias a bañistas, boyas de balizamiento y zonas de baño balizadas.",
   "No vender capturas. Tallas y cupos: RD 560/1995, RD 347/2011 y actualizaciones UE/BOE.",
   "Artes de recreo: sin redes ni artes profesionales. Poteras: máximo habitual dos en recreo.",
