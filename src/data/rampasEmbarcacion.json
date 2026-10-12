@@ -7,39 +7,39 @@
       "lat": 40.465,
       "lng": 0.475,
       "municipio": "Vinaròs",
-      "nota": "Salida norte de la provincia. No pesques en dársena."
+      "nota": "Salida norte. No pesques en dársena/marina (prohibido, no es coto)."
     },
     {
       "id": "rampa_benicarlo",
       "nombre": "Rampa / puerto de Benicarló",
-      "lat": 40.418,
-      "lng": 0.428,
+      "lat": 40.415,
+      "lng": 0.434,
       "municipio": "Benicarló",
-      "nota": "Buena base para costa norte. Fuera de aguas portuarias."
+      "nota": "Marina Benicarló. Zarpa y pesca fuera del recinto portuario."
     },
     {
       "id": "rampa_peniscola",
       "nombre": "Puerto de Peñíscola",
       "lat": 40.357,
-      "lng": 0.402,
+      "lng": 0.404,
       "municipio": "Peñíscola",
-      "nota": "Puerto deportivo; respeta canales y bañistas."
+      "nota": "Puerto deportivo. Prohibido pescar en dársena; respeta canales y bañistas."
     },
     {
       "id": "rampa_alcossebre",
-      "nombre": "Puerto de Alcossebre",
-      "lat": 40.234,
-      "lng": 0.275,
+      "nombre": "Puerto Las Fuentes (Alcossebre)",
+      "lat": 40.2495,
+      "lng": 0.288,
       "municipio": "Alcalà de Xivert",
-      "nota": "Salida media. Irta a pie ≠ zona de fondeo libre."
+      "nota": "P.D. Las Fuentes (GVA). No pesques en dársena; Irta a pie ≠ zona de fondeo libre."
     },
     {
       "id": "rampa_orpesa",
       "nombre": "Puerto de Orpesa",
-      "lat": 40.092,
-      "lng": 0.138,
+      "lat": 40.0756,
+      "lng": 0.1338,
       "municipio": "Orpesa",
-      "nota": "Base hacia Benicàssim / Grao."
+      "nota": "Marina Port d'Orpesa. Zarpa y pesca fuera del recinto."
     },
     {
       "id": "rampa_grao",
@@ -52,10 +52,10 @@
     {
       "id": "rampa_burriana",
       "nombre": "Puerto de Burriana",
-      "lat": 39.845,
-      "lng": -0.068,
+      "lat": 39.86,
+      "lng": -0.071,
       "municipio": "Burriana",
-      "nota": "Sur de la Plana. No pesques en el recinto portuario."
+      "nota": "Burriananova / Club Náutico. No pesques en el recinto portuario."
     },
     {
       "id": "rampa_moncofa",
@@ -63,7 +63,7 @@
       "lat": 39.791,
       "lng": -0.147,
       "municipio": "Moncofa",
-      "nota": "Salida sur Plana. Confirma acceso y normas del puerto; fuera de dársena."
+      "nota": "Salida sur Plana. Confirma acceso; fuera de dársena (prohibido, no es coto)."
     },
     {
       "id": "rampa_nules",
