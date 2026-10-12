@@ -3,7 +3,7 @@ import { Polygon } from "./map";
 import { SEMAFORO } from "../theme";
 import { todosLosPuertos } from "../services/consultaCostaService";
 
-/** Polígonos portuarios: siempre HOY NO (pesca desde tierra prohibida). */
+/** Polígonos portuarios: siempre HOY NO (orilla, kayak y barco: prohibido, no es coto). */
 export default function CapaPuertos() {
   const color = SEMAFORO.no;
   return (

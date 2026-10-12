@@ -1,7 +1,7 @@
 /**
  * Consulta legal orientativa para pesca desde embarcación / kayak en Castellón.
- * Distinta de consultarCosta (orilla): dársena ≠ vedado de pesca en mar abierto;
- * Columbretes y reservas marinas sí bloquean.
+ * Distinta de consultarCosta (orilla). Dentro de aguas portuarias → HOY NO
+ * (Decreto 41/2013; no es coto). Columbretes / reservas marinas también bloquean.
  */
 import vedadosMarinos from "../data/vedadosMarinos.json";
 import rampasData from "../data/rampasEmbarcacion.json";
@@ -147,19 +147,21 @@ export function consultarEmbarcacion(
     return {
       ...baseMar(variante),
       veredicto: "vedado",
-      titulo: `Dársena / aguas portuarias · ${puerto.nombre}`,
+      titulo: `Puerto · pesca prohibida · ${puerto.nombre}`,
       color: COLORES.vedado,
       distanciaKm: null,
       dentroDelRadio: true,
       sePuedePescarHoy: false,
       restriccionesHoy: [
-        "No pesques en dársena, fondeo ni canales de entrada salvo autorización del puerto.",
-        "Zarpa y consulta de nuevo fuera del recinto portuario.",
+        "NO es coto: está prohibido (Decreto 41/2013 art. 4.3). Dársena, marina, muelles, fondeo y canales: no se pesca.",
+        kayak
+          ? "Kayak incluido: puedes zarpar desde el puerto, pero pesca solo fuera del recinto (más allá de la bocana). Luego vuelve a pulsar el mapa."
+          : "Barco incluido: puedes zarpar desde el puerto, pero pesca solo fuera del recinto (más allá de la bocana). Luego vuelve a pulsar el mapa.",
       ],
       permisos: [
         kayak
-          ? "Modalidad: kayak — el puerto es para salir, no para pescar."
-          : "Modalidad: embarcación — el puerto es para salir, no para pescar.",
+          ? "Modalidad kayak: el puerto es salida, no caladero. Licencia marítima DESDE TIERRA fuera del recinto."
+          : "Modalidad embarcación: el puerto es salida, no caladero. Licencia DESDE EMBARCACIÓN fuera del recinto.",
       ],
       sitiosCosta: [
         {
