@@ -216,7 +216,7 @@ export function resumenTemporadaActual(fecha: Date = new Date()): {
       truchaAbierta: abierta,
       etiquetaTrucha: etiqueta,
       texto: abierta
-        ? `Temporada trucheras ABIERTA (baja montaña). Trucha solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6).`
+        ? `Temporada trucheras ABIERTA (baja montaña). Trucha solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía presa→Alcocer (cupo 6).`
         : `Temporada trucheras CERRADA fuera de periodo art. 2. En aguas no trucheras la pesca con caña puede seguir todo el año (Orden 20/2026). Barbos: sin muerte salvo excepciones.`,
     };
   }

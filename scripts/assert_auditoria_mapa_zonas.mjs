@@ -143,6 +143,12 @@ else if (teresa.estadoZona === "libre_sin_muerte" || /Libre sin muerte/i.test(te
   ok("Coto Teresa ya no se vende como libre");
 }
 
+// ZPL embalses no deben figurar como coto en la ficha
+for (const id of ["embalse_arenos", "embalse_maria_cristina", "embalse_ulldecona"]) {
+  const z = zones.find((x) => x.id === id);
+  if (z?.estadoZona === "controlada") fail(`${id} ZPL marcado controlada`);
+}
+
 if (/cs-sichar|Embalse de Sichar/.test(sitiosFaciles) && /porQue:.*principiante|accesible, orillas amplias/.test(sitiosFaciles)) {
   fail("Sichar no debe ser sitio fácil sin aviso de veda/mejillón");
 }

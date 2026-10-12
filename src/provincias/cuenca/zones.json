@@ -10,7 +10,7 @@
     "lat": 40.39105,
     "lng": -2.71214,
     "radioAproxKm": 8.5,
-    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · cupo barbos 6/día (Orden 20/2026). Confirma visor JCCM y cartel.",
+    "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres. Barbos: cupo 6/día SOLO presa → puente nuevo Alcocer (km 2,8 CHT); resto del vaso sin muerte. Confirma visor JCCM y cartel.",
     "avisos": [
       "Orden 20/2026 (Cuenca): barbos con cupo máximo 6/pescador/día en Buendía (presa → puente nuevo Alcocer km 2,8 CHT). Fuera de ese tramo: barbos solo sin muerte.",
       "Invasoras (bass, lucio, lucioperca, carpa…): sacrificio inmediato según Anexo I/III. No traslocar.",
@@ -68,7 +68,7 @@
     "municipio": "Alarcón",
     "lat": 39.65549,
     "lng": -2.20795,
-    "radioAproxKm": 7.0,
+    "radioAproxKm": 7,
     "descripcion": "Catálogo orientativo Cuenca (OSM + Orden 20/2026). Aguas libres · cupo barbos 6/día · restricciones de cebo. Confirma visor JCCM y cartel.",
     "avisos": [
       "Orden 20/2026 art. 7.C.4.4: en Alarcón prohibido pez vivo/muerto, peces artificiales >10 cm, boilies/pellets de masa endurecida, clonks y cebado no vegetal.",
@@ -617,7 +617,7 @@
     "municipio": "Zafrilla",
     "lat": 40.28,
     "lng": -1.72,
-    "radioAproxKm": 2.0,
+    "radioAproxKm": 2,
     "descripcion": "Catálogo orientativo Cuenca. No pescable. Confirma visor JCCM / Orden 20/2026.",
     "avisos": [
       "Refugio de pesca (Orden de vedas / Anexo II): pesca y baño prohibidos."
@@ -712,14 +712,14 @@
     "estadoZona": "libre",
     "vocacionOficial": "Truchera / ciprinícola",
     "rio": "Río Cabriel · Cristinas – Puente Vieja",
-    "municipio": "Villora",
-    "lat": 39.9,
-    "lng": -1.55,
-    "radioAproxKm": 2.5,
+    "municipio": "Pajaroncillo",
+    "lat": 39.912,
+    "lng": -1.723,
+    "radioAproxKm": 2.2,
     "descripcion": "Catálogo orientativo Cuenca. Aguas libres · régimen especial. Confirma visor JCCM / Orden 20/2026.",
     "avisos": [
-      "En veda de trucha: ciprínidos con cebo vegetal y anzuelo sin arponcillo (6,7 km).",
-      "Barbos: solo sin muerte. Confirma señalización de cotos especiales cercanos."
+      "Orden 20/2026 art. 7.C.5.1: régimen especial ciprínidos en veda de trucha (cebo vegetal, anzuelo sin arponcillo) en ~6,7 km Cristinas–Puente Vieja (Pajaroncillo).",
+      "Barbos: solo sin muerte. Aguas arriba: coto especial Cristinas (Puente de la Resinera → presa de Cristinas): permiso + licencia."
     ],
     "especies": [
       "trucha_comun",
@@ -810,5 +810,48 @@
     "saihUrl": null,
     "cuenca": "Cabriel",
     "fuenteOficial": "Orden 20/2026 DOCM · Ley 1/1992 CLM · radio orientativo"
+  },
+  {
+    "id": "coto_especial_cristinas",
+    "nombre": "Coto especial Cristinas (Cabriel)",
+    "tipo": "coto",
+    "estadoZona": "acotada",
+    "vocacionOficial": "Coto especial · trucha / sin muerte",
+    "rio": "Río Cabriel",
+    "municipio": "Pajaroncillo",
+    "lat": 39.935,
+    "lng": -1.723,
+    "radioAproxKm": 3.2,
+    "descripcion": "Coto especial del Cabriel (Anexo II Orden 20/2026): Puente de la Resinera → presa de Cristinas. Permiso del coto + licencia CLM. Aguas abajo empieza el tramo libre régimen especial Cristinas–Puente Vieja.",
+    "avisos": [
+      "Coto especial: permiso JCCM / titular obligatorio. Régimen típico sin muerte, mosca o cucharilla: confirma plan y cartel.",
+      "No confundir con el tramo libre Cristinas–Puente Vieja aguas abajo de la presa."
+    ],
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho"
+    ],
+    "mejoresEpocas": {
+      "trucha_comun": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ],
+      "barbo": [
+        "abril",
+        "mayo",
+        "junio",
+        "septiembre"
+      ]
+    },
+    "saihEstacion": null,
+    "saihNombre": null,
+    "saihFichaId": null,
+    "saihFuente": null,
+    "saihUrl": null,
+    "cuenca": "Cabriel",
+    "fuenteOficial": "Orden 20/2026 DOCM · Anexo II cotos especiales · radio orientativo"
   }
 ]

@@ -155,13 +155,16 @@ export function evaluarProximidad(lat: number, lng: number): ProximidadResultado
 
   for (const zona of zonesActivas()) {
     const d = distanciaKm(lat, lng, zona.lat, zona.lng);
-    const esLibre = zona.estadoZona === "libre_sin_muerte";
+    const estado = zona.estadoZona as string | undefined;
+    // Castellón: libre_sin_muerte; Andalucía/CLM: libre. Solo controlada/acotada = coto.
+    const esLibre = estado === "libre_sin_muerte" || estado === "libre";
+    const esCoto = estado === "controlada" || estado === "acotada";
     if (esLibre) {
       if (d < distLibre) {
         distLibre = d;
         libreMasCercana = zona;
       }
-    } else {
+    } else if (esCoto) {
       if (d < distCoto) {
         distCoto = d;
         cotoMasCercano = zona;
@@ -224,10 +227,10 @@ export function evaluarProximidad(lat: number, lng: number): ProximidadResultado
   };
 }
 
-/** Devuelve todas las zonas libre_sin_muerte ordenadas por distancia a un punto. */
+/** Devuelve todas las zonas libres (ZPL / libre_sin_muerte) ordenadas por distancia. */
 export function zonasLibresCercanas(lat: number, lng: number): { zona: any; distanciaKm: number }[] {
   return zonesActivas()
-    .filter((z) => z.estadoZona === "libre_sin_muerte")
+    .filter((z) => z.estadoZona === "libre_sin_muerte" || z.estadoZona === "libre")
     .map((z) => ({ zona: z, distanciaKm: distanciaKm(lat, lng, z.lat, z.lng) }))
     .sort((a, b) => a.distanciaKm - b.distanciaKm);
 }

@@ -171,6 +171,10 @@ function tramoDesdePoligono(p: PoligonoIcv): TramoOficial {
 export function tramoUsaRadioAnexo(t: TramoOficial): boolean {
   const p = getProvinciaActiva();
   if (!p.tieneIcv) return true;
+  // Vedados / reservas: radio de seguridad aunque exista polígono DERA/ICV
+  // incompleto o con agujeros (p. ej. Bembézar). El polígono sigue ganando
+  // si hay hit; el radio solo cubre los fallos de geometría.
+  if (t.aprovechamiento === "VP" || t.aprovechamiento === "ZRTC") return true;
   if (tramosConPoligono().has(t.id)) return false;
   if (t.matriculaCoto && matriculasConPoligono().has(t.matriculaCoto)) return false;
   return true;
@@ -333,11 +337,15 @@ function evaluarTramo(
         permisos.push(`Venta en línea JCCM: ${info.urlTramite}`);
       }
     } else {
+      const info = infoPermisoCoto("castellon", t.matriculaCoto, t.nombre);
       permisos.push(
-        `Permiso de coto intransferible (${t.matriculaCoto ?? "ZPC"}). Lo expide el titular / servicios territoriales.`
+        `Permiso de coto intransferible (${t.matriculaCoto ?? "ZPC"}). ${info.comoObtener}`
       );
       restricciones.push("Sin ese permiso no es zona libre: es coto (zona de pesca controlada).");
-      restricciones.push(ptopCotos.avisoPtop);
+      restricciones.push(info.avisoPtop);
+      if (info.urlTramite) {
+        permisos.push(`Trámite GVA (licencia / sede): ${info.urlTramite}`);
+      }
       {
         const mat = t.matriculaCoto;
         const ficha = mat

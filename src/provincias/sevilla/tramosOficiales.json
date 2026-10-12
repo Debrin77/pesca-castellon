@@ -367,6 +367,26 @@
     ]
   },
   {
+    "id": "sev-refugio_retortillo_margen_cordoba",
+    "codigo": "SE-16b",
+    "nombre": "Refugio Retortillo · margen Córdoba (Anexo IV)",
+    "rio": "Refugio Embalse del Retortillo (margen Córdoba)",
+    "lat": 37.85488,
+    "lng": -5.35942,
+    "radioKm": 1.89,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_del_retortillo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "Hornachuelos",
+      "La Puebla de los Infantes"
+    ]
+  },
+  {
     "id": "sev-embalse_del_pintado",
     "codigo": "SE-17",
     "nombre": "Embalse del Pintado",

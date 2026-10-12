@@ -12,13 +12,13 @@ export type AccesoZona = {
 const ACCESOS: AccesoZona[] = [
   {
     zoneId: "embalse_arenos",
-    resumen: "Accesos orientativos a Embalse de Arenós (Arenoso). Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    resumen: "Accesos orientativos a Embalse de Arenós (Arenoso). Orilla del vaso ZPL; evita el pie de presa (vedado). Confirma el último tramo en Maps.",
     puntos: [
       {
         nombre: "Entorno principal",
         detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
-        lat: 40.0867,
-        lng: -0.5471,
+        lat: 40.085,
+        lng: -0.555,
       },
     ],
   },
@@ -48,13 +48,13 @@ const ACCESOS: AccesoZona[] = [
   },
   {
     zoneId: "rio_palancia_regajo",
-    resumen: "Accesos orientativos a Embalse del Regajo / Río Palancia (Jérica-Teresa). Confirma el último tramo en Maps; el nivel cambia la orilla.",
+    resumen: "Accesos orientativos al Coto Segorbe (ZPC CS-009) en el Palancia. Confirma cartel y permiso del coto.",
     puntos: [
       {
         nombre: "Entorno principal",
         detalle: "Aparcamiento / ensanches habituales. No bloquees pistas ni curvas sin visibilidad.",
-        lat: 39.8899,
-        lng: -0.5245,
+        lat: 39.8588,
+        lng: -0.4846,
       },
     ],
   },
