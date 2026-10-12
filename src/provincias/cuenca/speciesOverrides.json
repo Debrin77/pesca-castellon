@@ -349,7 +349,7 @@
     "icono": "🐟",
     "notas": "Autóctono. En la provincia de Cuenca: solo pesca sin muerte en todas las aguas, excepto Contreras, Alarcón y Buendía (presa→puente Alcocer), donde el cupo es 6 ejemplares/pescador/día (talla mín. 18 cm).",
     "tallaOficial": "18 cm donde se autorice extracción. Resto: sin muerte.",
-    "cupo": "0 (sin muerte) salvo Contreras/Alarcón/Buendía: máx. 6/día.",
+    "cupo": "0 (sin muerte) salvo Contreras/Alarcón y Buendía (solo presa→Alcocer): máx. 6/día.",
     "mejoresMeses": [
       "abril",
       "mayo",
@@ -370,7 +370,7 @@
       "Ninfa pesada",
       "Cucharilla pequeña donde permita spinning"
     ],
-    "normativaResumen": "Cuenca: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6, talla 18 cm).",
+    "normativaResumen": "Cuenca: sin muerte salvo Contreras, Alarcón y Buendía presa→Alcocer (cupo 6, talla 18 cm).",
     "normativaEspecial": "⚠️ CUENCA: barbos — solo sin muerte en casi toda la provincia. Excepción: Contreras, Alarcón y Buendía (presa→puente nuevo Alcocer): hasta 6/día, talla mín. 18 cm (Orden 20/2026 art. 7.C).",
     "equipo": {
       "cana": "Feeder / river 3,60-3,90 m o spinning ligero",

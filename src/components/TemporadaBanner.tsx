@@ -50,7 +50,7 @@ export default function TemporadaBanner({ compact }: Props) {
           {abierta ? "Trucheras en temporada" : "Trucheras fuera de periodo"}
         </Text>
         <Text style={styles.body}>
-          Trucha: solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía (cupo 6).
+          Trucha: solo sin muerte. Barbos: sin muerte salvo Contreras, Alarcón y Buendía presa→Alcocer (cupo 6).
           Aguas no trucheras: caña todo el año con cebos y cupos de la Orden. Confirma visor JCCM.
         </Text>
         {!compact && (

@@ -338,8 +338,11 @@
     "lat": 37.97176,
     "lng": -5.28091,
     "radioAproxKm": 8,
-    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente. Límites DERA: Todo el embalse, excepto en la margen izquierda el tramo de 1,5 km a partir del cuerpo de presa, medido segun curva de nivel correspondiente a la maxima cota de embalse → Todo el embalse, excepto en la margen izquierda el tramo de 1,5 km a partir del cuerpo de presa, medido segun curva de nivel correspondiente a la maxima cota de embalse.",
-    "avisos": [],
+    "descripcion": "Refugio de pesca declarado en el Anexo IV de la Orden de 13 de enero de 2023 (BOJA nº 15). La pesca está prohibida con carácter permanente en casi todo el vaso.",
+    "avisos": [
+      "Anexo IV: pesca prohibida en todo el embalse del Bembézar, salvo la excepción DERA en la margen izquierda: tramo de 1,5 km a partir del cuerpo de presa (cota máxima). Confirma cartel y orilla.",
+      "Si el mapa no pinta rojo en el vaso abierto, no asumas art. 5.2: es refugio. Pregunta a agentes o mira el visor de la Junta."
+    ],
     "especies": [],
     "mejoresEpocas": {},
     "saihEstacion": null,

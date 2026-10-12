@@ -8,7 +8,7 @@
     "lng": -2.71214,
     "radioKm": 8.5,
     "vocacion": "Ciprinícola / depredadores",
-    "regimen": "Aguas libres · cupo barbos 6/día (Orden 20/2026)",
+    "regimen": "Aguas libres · barbos cupo 6 solo presa→puente Alcocer; resto sin muerte (Orden 20/2026)",
     "aprovechamiento": "ZPL",
     "notaAnexo": null,
     "matriculaCoto": null,
@@ -35,7 +35,7 @@
     "rio": "Embalse de Alarcón",
     "lat": 39.65549,
     "lng": -2.20795,
-    "radioKm": 7.0,
+    "radioKm": 7,
     "vocacion": "Ciprinícola / depredadores",
     "regimen": "Aguas libres · cupo barbos 6/día · restricciones de cebo",
     "aprovechamiento": "ZPL",
@@ -289,7 +289,7 @@
     "rio": "Refugio Arroyo de la Herrería",
     "lat": 40.28,
     "lng": -1.72,
-    "radioKm": 2.0,
+    "radioKm": 2,
     "vocacion": "Refugio de pesca",
     "regimen": "No pescable",
     "aprovechamiento": "VP",
@@ -329,9 +329,9 @@
     "codigo": "CU-14",
     "nombre": "Río Cabriel · Cristinas – Puente Vieja",
     "rio": "Río Cabriel · Cristinas – Puente Vieja",
-    "lat": 39.9,
-    "lng": -1.55,
-    "radioKm": 2.5,
+    "lat": 39.912,
+    "lng": -1.723,
+    "radioKm": 2.2,
     "vocacion": "Truchera / ciprinícola",
     "regimen": "Aguas libres · régimen especial",
     "aprovechamiento": "ZPL",
@@ -345,8 +345,7 @@
     ],
     "cuenca": "Cabriel",
     "municipios": [
-      "Villora",
-      "Enguídanos"
+      "Pajaroncillo"
     ]
   },
   {
@@ -369,6 +368,30 @@
     "cuenca": "Cabriel",
     "municipios": [
       "Laguna del Marquesado"
+    ]
+  },
+  {
+    "id": "cue-coto_especial_cristinas",
+    "codigo": "CU-16",
+    "nombre": "Coto especial Cristinas (Cabriel)",
+    "rio": "Río Cabriel",
+    "lat": 39.935,
+    "lng": -1.723,
+    "radioKm": 3.2,
+    "vocacion": "Coto especial · trucha",
+    "regimen": "Coto especial · permiso + licencia · sin muerte (confirma plan)",
+    "aprovechamiento": "ZPC",
+    "notaAnexo": null,
+    "matriculaCoto": "CE-CRISTINAS",
+    "fichaId": "coto_especial_cristinas",
+    "especies": [
+      "trucha_comun",
+      "barbo",
+      "cacho"
+    ],
+    "cuenca": "Cabriel",
+    "municipios": [
+      "Pajaroncillo"
     ]
   }
 ]

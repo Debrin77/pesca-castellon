@@ -404,6 +404,26 @@
     ]
   },
   {
+    "id": "cor-refugio_retortillo_margen_sevilla",
+    "codigo": "CO-RTb",
+    "nombre": "Refugio Retortillo · margen Sevilla (Anexo IV)",
+    "rio": "Refugio Embalse del Retortillo (margen Sevilla)",
+    "lat": 37.84636,
+    "lng": -5.37375,
+    "radioKm": 0.9,
+    "vocacion": "Refugio de pesca",
+    "regimen": "No pescable",
+    "aprovechamiento": "VP",
+    "notaAnexo": "ANEXO_IV",
+    "fichaId": "refugio_embalse_del_retortillo",
+    "especies": [],
+    "cuenca": "Guadalquivir",
+    "municipios": [
+      "La Puebla de los Infantes",
+      "Hornachuelos"
+    ]
+  },
+  {
     "id": "cor-refugio_embalse_de_cordobilla",
     "codigo": "CO-18",
     "nombre": "Refugio Embalse de Cordobilla",

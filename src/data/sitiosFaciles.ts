@@ -36,9 +36,9 @@ export const SITIOS_FACILES: Record<"castellon" | "sevilla" | "cordoba" | "cuenc
       id: "cs-arenos",
       zoneId: "embalse_arenos",
       nombre: "Embalse de Arenós",
-      lat: 40.0867,
-      lng: -0.5471,
-      porQue: "Gran vaso con muchas orillas; mira el nivel SAIH si baja mucho.",
+      lat: 40.085,
+      lng: -0.555,
+      porQue: "Gran vaso ZPL (orilla del vaso, no el pie de presa); mira el nivel SAIH si baja mucho.",
       ambito: "continental",
     },
     {

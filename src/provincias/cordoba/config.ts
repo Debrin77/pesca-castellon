@@ -130,7 +130,7 @@ export const cordobaConfig: ProvinciaConfig = {
     resumen:
       "Refugios (Anexo IV) tienen polígono DERA. Las aguas libres (art. 5.2) no hace falta que estén todas en el mapa: toda masa no delimitada como coto o refugio es libre, con licencia y resto de normas.",
     prohibiciones:
-      "Refugios de pesca (Anexo IV / DERA): geometría oficial de la Junta. Si el punto cae en rojo, la pesca está prohibida con carácter permanente (Bembézar, Cordobilla, Malpasillo, lagunas de la campiña…).",
+      "Refugios de pesca (Anexo IV / DERA): geometría oficial de la Junta. Si el punto cae en rojo (o en el radio de seguridad del refugio), la pesca está prohibida con carácter permanente (Bembézar —salvo 1,5 km margen izquierda desde presa—, Cordobilla, Malpasillo, lagunas de la campiña…).",
     aguasLibres:
       "Art. 5.2 Orden 13/01/2023: aguas libres = masa no delimitada como coto o refugio. DERA no dibuja todos los cauces; algunas masas libres van con radio orientativo. Fuera del mapa ≠ prohibido.",
     fueraCatalogoPermisos: [

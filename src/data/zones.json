@@ -3,14 +3,14 @@
     "id": "embalse_arenos",
     "nombre": "Embalse de Arenós (Arenoso)",
     "tipo": "embalse",
-    "estadoZona": "controlada",
+    "estadoZona": "libre",
     "vocacionOficial": "Ciprinícola",
     "rio": "Río Mijares",
     "municipio": "Puebla de Arenoso / Montanejos",
-    "lat": 40.0867,
-    "lng": -0.5471,
+    "lat": 40.085,
+    "lng": -0.555,
     "radioAproxKm": 3.5,
-    "descripcion": "Embalse de media montaña rodeado de pinares. Aguas limpias pero con fuerte estiaje estacional.",
+    "descripcion": "Embalse de media montaña (ZPL). Aguas limpias con fuerte estiaje. El pie de presa es vedado: pesca en el vaso, no en el desagüe.",
     "especies": [
       "black_bass",
       "lucio",
@@ -39,14 +39,14 @@
     "id": "embalse_sichar",
     "nombre": "Embalse de Sichar",
     "tipo": "embalse",
-    "estadoZona": "controlada",
+    "estadoZona": "libre",
     "vocacionOficial": "Ciprinícola",
     "rio": "Río Mijares",
     "municipio": "Onda",
     "lat": 40.0105,
     "lng": -0.2332,
     "radioAproxKm": 2.5,
-    "descripcion": "Aguas abajo de Arenós, en la cuenca baja del Mijares.",
+    "descripcion": "Embalse de Sichar (Sitjar) en la cuenca baja del Mijares. Catálogo ZPL con aviso histórico de veda por mejillón cebra: mira cartel.",
     "especies": [
       "black_bass",
       "carpa",
@@ -75,13 +75,16 @@
     "saihEstacion": null,
     "saihNombre": "EMBALSE DE SICHAR",
     "saihFichaId": 247,
-    "cuenca": "Mijares"
+    "cuenca": "Mijares",
+    "avisos": [
+      "Sitjar / Sichar: la Resolución 2/11/2006 (DOGV) prohibió la pesca deportiva por mejillón cebra. Turismo Castellón sigue diciendo que no se pesca. El anexo de 2024 lista un tramo ZPL de recreo: confirma señalización o agentes antes de lanzar."
+    ]
   },
   {
     "id": "embalse_maria_cristina",
     "nombre": "Embalse de María Cristina",
     "tipo": "embalse",
-    "estadoZona": "controlada",
+    "estadoZona": "libre",
     "vocacionOficial": "Ciprinícola",
     "rio": "Rambla de la Viuda",
     "municipio": "Alcora",
@@ -121,16 +124,16 @@
   },
   {
     "id": "rio_villahermosa_alto",
-    "nombre": "Río Villahermosa - tramos altos (Coto Benagés / Ludiente)",
+    "nombre": "Río Villahermosa - Coto Cedramán (ZPC CS-011)",
     "tipo": "rio_coto",
     "estadoZona": "controlada",
     "vocacionOficial": "Salmonícola",
     "rio": "Río Villahermosa",
-    "municipio": "Ludiente / Benagés",
-    "lat": 39.98,
-    "lng": -0.545,
-    "radioAproxKm": 2,
-    "descripcion": "Cabecera fría del Villahermosa, hábitat de trucha común. Aguas abajo, cerca del embalse de Arenoso, ya no hay trucha (agua demasiado cálida en verano).",
+    "municipio": "Ludiente / Castillo de Villamalefa",
+    "lat": 40.1762,
+    "lng": -0.3971,
+    "radioAproxKm": 2.2,
+    "descripcion": "Coto de pesca controlada CS-011 (Villahermosa-Cedramán). Aguas arriba hay reserva de trucha (ZRTC); aguas abajo, tramos ZPL y vedado. Confirma ICV/cartel.",
     "especies": [
       "trucha_comun"
     ],
@@ -146,37 +149,40 @@
   },
   {
     "id": "rio_palancia_regajo",
-    "nombre": "Embalse del Regajo / Río Palancia (Jérica-Teresa)",
-    "tipo": "mixto",
+    "nombre": "Río Palancia - Coto Segorbe (ZPC CS-009)",
+    "tipo": "coto",
     "estadoZona": "controlada",
-    "vocacionOficial": "Salmonícola / Ciprinícola mixto",
+    "vocacionOficial": "Ciprinícola - ZPC CS-009",
     "rio": "Río Palancia",
-    "municipio": "Jérica / Teresa",
-    "lat": 39.8899,
-    "lng": -0.5245,
-    "radioAproxKm": 2.5,
-    "descripcion": "Tramos libres sin muerte en el Palancia, con zonas de embalse y río.",
+    "municipio": "Segorbe",
+    "lat": 39.8588,
+    "lng": -0.4846,
+    "radioAproxKm": 1.5,
+    "descripcion": "Coto de pesca controlada CS-009 (Segorbe). No es el embalse del Regajo (ZPL aguas arriba). Hace falta permiso del coto además de la licencia continental.",
     "especies": [
-      "trucha_comun",
-      "black_bass",
-      "barbo"
+      "barbo",
+      "carpa"
     ],
     "mejoresEpocas": {
-      "trucha_comun": [
-        "marzo",
+      "barbo": [
         "abril",
-        "mayo"
+        "mayo",
+        "junio",
+        "septiembre"
       ],
-      "black_bass": [
+      "carpa": [
         "mayo",
         "junio",
         "septiembre"
       ]
     },
     "saihEstacion": null,
-    "saihNombre": "EMBALSE DE REGAJO",
-    "saihFichaId": 221,
-    "cuenca": "Palancia"
+    "saihNombre": null,
+    "saihFichaId": null,
+    "cuenca": "Palancia",
+    "avisos": [
+      "ZPC CS-009 Segorbe: permiso del coto obligatorio. El embalse del Regajo (ZPL) está aguas arriba, cerca de Jérica."
+    ]
   },
   {
     "id": "rio_mijares_puebla_arenoso_libre",
@@ -211,9 +217,9 @@
     "vocacionOficial": "Salmonícola - ZPC CS-008",
     "rio": "Río Palancia",
     "municipio": "Teresa",
-    "lat": 39.87,
-    "lng": -0.58,
-    "radioAproxKm": 2,
+    "lat": 39.8973,
+    "lng": -0.6789,
+    "radioAproxKm": 1.2,
     "descripcion": "Coto de pesca controlada CS-008 (Teresa). No es zona libre: hace falta permiso del coto además de la licencia continental. Confirma PTOP y cartel.",
     "avisos": [
       "ZPC CS-008: permiso del coto obligatorio. No es ZPL ni «libre sin muerte» genérico."
@@ -293,7 +299,7 @@
     "id": "embalse_ulldecona",
     "nombre": "Embalse de Ulldecona",
     "tipo": "embalse",
-    "estadoZona": "controlada",
+    "estadoZona": "libre",
     "vocacionOficial": "Ciprinícola",
     "rio": "Río Cenia",
     "municipio": "La Pobla de Benifassà",

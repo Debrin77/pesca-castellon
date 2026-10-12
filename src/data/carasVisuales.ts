@@ -14,7 +14,7 @@ const ZONA_POR_ID: Record<string, CaraVisual> = {
   embalse_maria_cristina: { emoji: "💧", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Embalse · Rambla" },
   embalse_ulldecona: { emoji: "🌄", gradiente: ["#164a36", "#1a6f8a"], etiqueta: "Embalse · Cérvol" },
   embalse_regajo_libre: { emoji: "🪞", gradiente: ["#2a7a94", "#0e4456"], etiqueta: "Embalse libre" },
-  rio_palancia_regajo: { emoji: "🏞️", gradiente: ["#1a5640", "#0f3326"], etiqueta: "Río Palancia" },
+  rio_palancia_regajo: { emoji: "🎫", gradiente: ["#9a4a0a", "#3d2208"], etiqueta: "Coto Segorbe CS-009" },
   rio_palancia_teresa_libre: { emoji: "🎫", gradiente: ["#9a4a0a", "#3d2208"], etiqueta: "Coto Teresa CS-008" },
   rio_palancia_teresa_bejis_libre: { emoji: "🍃", gradiente: ["#2f7d4a", "#13485a"], etiqueta: "Palancia alto" },
   rio_mijares_puebla_arenoso_libre: { emoji: "🏞️", gradiente: ["#1a6f8a", "#0c2c20"], etiqueta: "Mijares" },
