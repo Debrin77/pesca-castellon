@@ -3,12 +3,24 @@
     "id": "columbretes",
     "nombre": "Reserva marina de las Islas Columbretes",
     "tipo": "reserva_marina",
-    "norma": "Reserva marina estatal (OM 19/04/1990 y actualizaciones): pesca recreativa prohibida o muy restringida según zona. El polígono es orientativo; manda el BOE y la señalización. No entres a pescar sin comprobar la cartografía oficial.",
+    "norma": "Orden ARM/3841/2008 (BOE-A-2009-68): reserva marina de interés pesquero. Pesca recreativa prohibida o muy restringida según zona (integrales Murall del Cementeri / Carallot; usos restringidos en Grossa, Ferrera y Foradada). El polígono sigue los vértices oficiales A–D WGS-84; confirma BOE y señalización antes de entrar.",
     "anillo": [
-      { "lat": 39.94, "lng": 0.62 },
-      { "lat": 39.94, "lng": 0.76 },
-      { "lat": 39.84, "lng": 0.76 },
-      { "lat": 39.84, "lng": 0.62 }
+      { "lat": 39.928333, "lng": 0.6455 },
+      { "lat": 39.928333, "lng": 0.715167 },
+      { "lat": 39.823333, "lng": 0.686333 },
+      { "lat": 39.823333, "lng": 0.6455 }
+    ]
+  },
+  {
+    "id": "irta_mar",
+    "nombre": "Reserva marina Serra d'Irta (desde embarcación / kayak)",
+    "tipo": "reserva_marina",
+    "norma": "Decreto 163/2006: en la reserva de Serra d'Irta queda prohibida la pesca marítima recreativa de superficie desde embarcación (y por tanto desde kayak). También la pesca a pie en todo el litoral de la reserva.",
+    "anillo": [
+      { "lat": 40.3322, "lng": 0.355 },
+      { "lat": 40.3322, "lng": 0.395 },
+      { "lat": 40.2615, "lng": 0.355 },
+      { "lat": 40.2615, "lng": 0.288 }
     ]
   }
 ]

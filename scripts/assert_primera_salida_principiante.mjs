@@ -96,7 +96,7 @@ must("src/screens/SalgoAPescarScreen.tsx", [
   "pedirGpsConSheet",
 ]);
 
-must("src/data/sitiosFaciles.ts", ["embalse_sichar", "embalse_de_cala", "sitiosFacilesDe"]);
+must("src/data/sitiosFaciles.ts", ["embalse_maria_cristina", "embalse_de_cala", "sitiosFacilesDe"]);
 
 must("src/components/BannerLicenciaPendiente.tsx", ["licencia", "Ya la tengo"]);
 

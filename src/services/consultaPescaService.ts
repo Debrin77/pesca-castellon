@@ -176,22 +176,42 @@ export function tramoUsaRadioAnexo(t: TramoOficial): boolean {
   return true;
 }
 
+/** Prioridad al elegir entre radios que se solapan (más restrictivo primero). */
+const PRIORIDAD_RADIO: Record<string, number> = {
+  VP: 0,
+  ZRTC: 1,
+  ZPC: 2,
+  ZPL: 3,
+};
+
 export function buscarTramoCercano(
   lat: number,
   lng: number
 ): { tramo: TramoOficial; distanciaKm: number; dentro: boolean } | null {
-  let mejor: TramoOficial | null = null;
-  let mejorD = Infinity;
+  const dentro: { tramo: TramoOficial; distanciaKm: number }[] = [];
+  let mejorFuera: TramoOficial | null = null;
+  let mejorDFuera = Infinity;
   for (const t of tramosActivos()) {
     if (!tramoUsaRadioAnexo(t)) continue;
     const d = distanciaKm(lat, lng, t.lat, t.lng);
-    if (d < mejorD) {
-      mejorD = d;
-      mejor = t;
+    if (d <= t.radioKm) {
+      dentro.push({ tramo: t, distanciaKm: d });
+    } else if (d < mejorDFuera) {
+      mejorDFuera = d;
+      mejorFuera = t;
     }
   }
-  if (!mejor) return null;
-  return { tramo: mejor, distanciaKm: mejorD, dentro: mejorD <= mejor.radioKm };
+  if (dentro.length) {
+    dentro.sort((a, b) => {
+      const pa = PRIORIDAD_RADIO[a.tramo.aprovechamiento] ?? 9;
+      const pb = PRIORIDAD_RADIO[b.tramo.aprovechamiento] ?? 9;
+      if (pa !== pb) return pa - pb;
+      return a.distanciaKm - b.distanciaKm;
+    });
+    return { tramo: dentro[0].tramo, distanciaKm: dentro[0].distanciaKm, dentro: true };
+  }
+  if (!mejorFuera) return null;
+  return { tramo: mejorFuera, distanciaKm: mejorDFuera, dentro: false };
 }
 
 function evaluarTramo(

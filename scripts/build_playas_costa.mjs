@@ -194,7 +194,7 @@ const playas = [
 const data = {
   aviso:
     "Nombres según Turismo Castellón (Diputación). En el Grao: Pinar (desde el puerto hacia el NORTE), Gurugú (en medio), Serradal (hasta Benicàssim). Al sur del puerto no es el Pinar: es Almassora. Cada toque es una sola playa. Dársena prohibida. Irta: pesca a pie no.",
-  kmOrilla: 2.4,
+  kmOrilla: 0.45,
   lineaCosta: [
     { lat: 40.525, lng: 0.518 },
     { lat: 40.47, lng: 0.475 },

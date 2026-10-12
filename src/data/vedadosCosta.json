@@ -3,7 +3,7 @@
     "id": "irta",
     "nombre": "Reserva marina Serra d'Irta (Cala Volante–Cala Mundina)",
     "tipo": "reserva_marina",
-    "norma": "Decreto 163/2006: pesca recreativa a pie prohibida en todo el litoral de la reserva, de Cala Volante a Cala Mundina (ambas incluidas).",
+    "norma": "Decreto 163/2006: pesca recreativa a pie prohibida en todo el litoral de la reserva, de Cala Volante a Cala Mundina (ambas incluidas). Desde embarcación/kayak también está prohibida la pesca de superficie en la reserva.",
     "anillo": [
       { "lat": 40.3322, "lng": 0.355 },
       { "lat": 40.3322, "lng": 0.395 },
@@ -29,10 +29,10 @@
     "tipo": "desembocadura",
     "norma": "Anexo I: vedado continental de la desembocadura. Paisaje protegido: no uses artes ni lances en las golas. No es un atajo hacia el mar.",
     "anillo": [
-      { "lat": 39.915, "lng": -0.055 },
-      { "lat": 39.915, "lng": 0.015 },
-      { "lat": 39.875, "lng": 0.015 },
-      { "lat": 39.875, "lng": -0.055 }
+      { "lat": 39.902, "lng": -0.025 },
+      { "lat": 39.902, "lng": 0.005 },
+      { "lat": 39.888, "lng": 0.005 },
+      { "lat": 39.888, "lng": -0.025 }
     ]
   },
   {

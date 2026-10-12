@@ -147,7 +147,7 @@ export const NAVEGACION_KAYAK_EMBALSES: NavegacionKayakEmbalse[] = [
     cebra: "adulto",
     docPesca: DOC_PESCA_CS,
     nota:
-      "Figura en anexos/DR de la CHJ (zona A mejillón cebra). Confirma el listado y el formulario DR vigentes antes de sacar el kayak.",
+      "ATENCIÓN pesca: hay contradicción histórica (Res. 2/11/2006 mejillón cebra vs anexo ZPL). No lo trates como sitio «fácil»: mira cartel/agentes antes de lanzar. Navegación: zona A CHJ — confirma DR vigente.",
   }),
   chjRemo({
     zoneId: "embalse_maria_cristina",
